@@ -1,0 +1,44 @@
+[versions]
+ktor = "3.0.0-rc-1"
+
+kotlin = "2.0.20"
+coroutines = "1.8.1"
+io = "0.5.4"
+datetime = "0.6.1"
+bignum = "0.3.10"
+
+dokka = "1.9.20"
+kotlinter = "4.4.1"
+deteKT = "1.23.6"
+publisher = "0.29.0"
+binvalid = "0.16.3"
+kover = "0.8.3"
+
+kotest = "5.9.1"
+logback = "1.5.8"
+tcontainer-redis = "2.2.2"
+
+[libraries]
+kotlinx-io-core = { module = "org.jetbrains.kotlinx:kotlinx-io-core", version.ref = "io" }
+kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "datetime" }
+ktor-network = { module = "io.ktor:ktor-network", version.ref = "ktor" }
+bignum = { module = "com.ionspin.kotlin:bignum", version.ref = "bignum" }
+
+coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
+dokka-base = { module = "org.jetbrains.dokka:dokka-base", version.ref = "dokka" }
+
+# testing
+kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin" }
+test-kotest-junit5 = { module = "io.kotest:kotest-runner-junit5", version.ref = "kotest" }
+test-kotest-assertions = { module = "io.kotest:kotest-assertions-core", version.ref = "kotest" }
+logback = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
+testcontainer-redis = { module = "com.redis:testcontainers-redis", version.ref = "tcontainer-redis" }
+
+[plugins]
+kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+publish = { id = "com.vanniktech.maven.publish", version.ref = "publisher" }
+dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
+ktlinter = { id = "org.jmailen.kotlinter", version.ref = "kotlinter" }
+deteKT = { id = "io.gitlab.arturbosch.detekt", version.ref = "deteKT" }
+kover = { id = "org.jetbrains.kotlinx.kover", version.ref = "kover" }
+kotlin-binvalid = { id = "org.jetbrains.kotlinx.binary-compatibility-validator", version.ref = "binvalid" }

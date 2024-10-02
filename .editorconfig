@@ -1,0 +1,17 @@
+root = true
+
+[*.{kt,kts}]
+max_line_length = 120
+indent_size = 4
+insert_final_newline = true
+ij_kotlin_allow_trailing_comma = true
+ij_kotlin_allow_trailing_comma_on_call_site = true
+ktlint_standard_import-ordering = disabled
+ktlint_standard_multiline-if-else = disabled
+ktlint_standard_if-else-wrapping = disabled
+ktlint_standard_string-template-indent = disabled
+ktlint_standard_multiline-expression-wrapping = disabled
+ktlint_standard_blank-line-before-declaration = disabled
+ktlint_standard_function-signature = disabled
+ktlint_standard_package-name = disabled
+ktlint_standard_no-wildcard-imports = disabled

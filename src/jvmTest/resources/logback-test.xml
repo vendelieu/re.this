@@ -1,0 +1,17 @@
+<configuration>
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <Pattern>%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n</Pattern>
+        </layout>
+    </appender>
+
+    <root level="TRACE">
+        <appender-ref ref="STDOUT"/>
+    </root>
+
+    <!-- Set com.github.dockerjava to INFO -->
+    <logger name="eu.vendeli" level="TRACE"/>
+    <logger name="com.github.dockerjava" level="INFO"/>
+    <logger name="ch.qos.logback" level="ERROR"/>
+    <logger name="org.testcontainers" level="ERROR"/>
+</configuration>

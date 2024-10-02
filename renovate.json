@@ -1,0 +1,10 @@
+{
+  "extends": [
+    "config:base",
+    ":disableDependencyDashboard",
+    ":automergeMinor"
+  ],
+  "baseBranches": ["dev"],
+  "branchConcurrentLimit": 1,
+  "prHourlyLimit": 1
+}

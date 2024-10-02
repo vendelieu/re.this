@@ -1,0 +1,79 @@
+name: build
+
+on:
+  push:
+    branches:
+      - master
+    paths-ignore:
+      - '.editorconfig'
+      - '.gitignore'
+      - 'CHANGELOG.md'
+      - 'CODE_OF_CONDUCT.md'
+      - 'CONTRIBUTING.md'
+      - 'FUNDING.yml'
+      - 'LICENSE'
+      - 'README.md'
+      - 'SECURITY.md'
+      - 'gradlew'
+      - 'gradlew.bat'
+      - 'parse_changelog.sh'
+      - 'renovate.json'
+      - '.github/**'
+      - 'assets/**'
+  pull_request:
+    paths-ignore:
+      - '.editorconfig'
+      - '.gitignore'
+      - 'CHANGELOG.md'
+      - 'CODE_OF_CONDUCT.md'
+      - 'CONTRIBUTING.md'
+      - 'FUNDING.yml'
+      - 'LICENSE'
+      - 'README.md'
+      - 'SECURITY.md'
+      - 'gradlew'
+      - 'gradlew.bat'
+      - 'parse_changelog.sh'
+      - 'renovate.json'
+      - '.github/**'
+      - 'assets/**'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: 17
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: current
+          dependency-graph: generate-and-submit
+
+      - name: Cache konan dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.konan
+          key: ${{ runner.os }}-gradle-${{ hashFiles('*.gradle.kts') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: Build artifact
+        run: ./gradlew koverXmlReport
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+        with:
+          files: re.this/build/reports/kover/report.xml
+          verbose: true
