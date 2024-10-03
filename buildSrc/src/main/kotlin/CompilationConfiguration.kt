@@ -19,6 +19,7 @@ fun KotlinTarget.getHostType(): HostType? = when (platformType) {
     KotlinPlatformType.native -> when {
         name.startsWith("ios") -> HostType.MAC_OS
         name.startsWith("watchos") -> HostType.MAC_OS
+        name.startsWith("macos") -> HostType.MAC_OS
         name.startsWith("linux") -> HostType.LINUX
         name.startsWith("mingw") -> HostType.WINDOWS
         else -> error("Unsupported native target: $this")
