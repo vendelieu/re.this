@@ -26,6 +26,8 @@ bignum = { module = "com.ionspin.kotlin:bignum", version.ref = "bignum" }
 
 coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
 dokka-base = { module = "org.jetbrains.dokka:dokka-base", version.ref = "dokka" }
+kotlin-gradlePlugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
+publisher = { module = "com.vanniktech:gradle-maven-publish-plugin", version.ref = "publisher" }
 
 # testing
 kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin" }
@@ -35,8 +37,6 @@ logback = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
 testcontainer-redis = { module = "com.redis:testcontainers-redis", version.ref = "tcontainer-redis" }
 
 [plugins]
-kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
-publish = { id = "com.vanniktech.maven.publish", version.ref = "publisher" }
 dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
 ktlinter = { id = "org.jmailen.kotlinter", version.ref = "kotlinter" }
 deteKT = { id = "io.gitlab.arturbosch.detekt", version.ref = "deteKT" }

@@ -1,8 +1,5 @@
 @file:Suppress("PropertyName")
 
-import com.vanniktech.maven.publish.JavadocJar
-import com.vanniktech.maven.publish.KotlinMultiplatform
-import com.vanniktech.maven.publish.SonatypeHost
 import kotlinx.validation.ExperimentalBCVApi
 import org.jetbrains.dokka.base.DokkaBase
 import org.jetbrains.dokka.base.DokkaBaseConfiguration
@@ -11,60 +8,23 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import java.time.LocalDate
 
 plugins {
-    alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.deteKT)
     alias(libs.plugins.dokka)
     alias(libs.plugins.ktlinter)
-    alias(libs.plugins.publish)
     alias(libs.plugins.kotlin.binvalid)
     alias(libs.plugins.kover)
+    id("publish")
 }
 
 group = "eu.vendeli.re.this"
 description = "Lightweight, coroutine-based Redis client for Kotlin Multiplatform"
 version = providers.gradleProperty("libVersion").getOrElse("dev")
 
-kotlin {
-    @OptIn(ExperimentalKotlinGradlePluginApi::class)
-    compilerOptions {
-        freeCompilerArgs = listOf("-opt-in=eu.vendeli.rethis.annotations.ReThisInternal")
-    }
+repositories {
+    mavenCentral()
+}
 
-    val jvmTargetVer = 11
-    jvm {
-        withJava()
-        compilations.all {
-            compileTaskProvider.configure {
-                compilerOptions {
-                    jvmTarget = JvmTarget.fromTarget("$jvmTargetVer")
-                    freeCompilerArgs = listOf("-Xjsr305=strict", "-opt-in=eu.vendeli.rethis.annotations.ReThisInternal")
-                }
-            }
-        }
-    }
-    jvmToolchain(jvmTargetVer)
-
-    mingwX64()
-
-    linuxX64()
-    linuxArm64()
-
-    macosX64()
-    macosArm64()
-
-    watchosX64()
-    watchosArm32()
-    watchosArm64()
-    watchosSimulatorArm64()
-
-    iosX64()
-    iosArm64()
-    iosSimulatorArm64()
-
-    tvosX64()
-    tvosArm64()
-    tvosSimulatorArm64()
-
+configureKotlin {
     sourceSets {
         commonMain {
             dependencies {
@@ -87,54 +47,6 @@ kotlin {
             }
         }
     }
-    jvmToolchain(jvmTargetVer)
-}
-
-repositories {
-    mavenCentral()
-}
-
-mavenPublishing {
-    coordinates("eu.vendeli", project.name, project.version.toString())
-    publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL, true)
-    val javaDoc = if (providers.gradleProperty("signing.keyId").isPresent) {
-        signAllPublications()
-
-        JavadocJar.Dokka("dokkaHtml")
-    } else JavadocJar.Empty()
-
-    configure(KotlinMultiplatform(javaDoc, true))
-
-    pom {
-        name = project.name
-        description = project.description
-        inceptionYear = "2024"
-        url = "https://github.com/vendelieu/re.this"
-
-        licenses {
-            license {
-                name = "Apache 2.0"
-                url = "https://www.apache.org/licenses/LICENSE-2.0"
-            }
-        }
-        developers {
-            developer {
-                id = "Vendelieu"
-                name = "Vendelieu"
-                email = "vendelieu@gmail.com"
-                url = "https://vendeli.eu"
-            }
-        }
-        scm {
-            connection = "scm:git:github.com/vendelieu/re.this.git"
-            developerConnection = "scm:git:ssh://github.com/vendelieu/re.this.git"
-            url = "https://github.com/vendelieu/re.this.git"
-        }
-        issueManagement {
-            system = "Github"
-            url = "https://github.com/vendelieu/re.this/issues"
-        }
-    }
 }
 
 buildscript {
@@ -150,6 +62,7 @@ val HOST_NAME: String = when {
     OS_NAME.startsWith("mac") -> "macos"
     else -> error("Unknown os name `$OS_NAME`")
 }
+
 fun isAvailableForPublication(publication: Publication): Boolean {
     val name = publication.name
     if (name == "maven") return true
@@ -162,7 +75,7 @@ fun isAvailableForPublication(publication: Publication): Boolean {
         "js",
         "wasmJs",
         "metadata",
-        "kotlinMultiplatform"
+        "kotlinMultiplatform",
     )
     result = result || name in jvmAndCommon
     result = result || (HOST_NAME == "linux" && (name == "linuxX64" || name == "linuxArm64"))
@@ -183,7 +96,7 @@ fun isAvailableForPublication(publication: Publication): Boolean {
         "tvosSimulatorArm64",
 
         "macosX64",
-        "macosArm64"
+        "macosArm64",
     )
 
     result = result || (HOST_NAME == "macos" && name in macPublications)
@@ -194,9 +107,6 @@ fun isAvailableForPublication(publication: Publication): Boolean {
 
 tasks {
     withType<Test> { useJUnitPlatform() }
-    withType<AbstractPublishToMaven>().configureEach {
-        onlyIf { isAvailableForPublication(publication) }
-    }
     dokkaHtml.configure {
         outputDirectory = layout.buildDirectory.asFile.orNull?.resolve("dokka")
         dokkaSourceSets {
