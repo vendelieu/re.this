@@ -6,12 +6,12 @@ import org.jetbrains.dokka.base.DokkaBaseConfiguration
 import java.time.LocalDate
 
 plugins {
-    id("publish")
     alias(libs.plugins.deteKT)
     alias(libs.plugins.dokka)
     alias(libs.plugins.ktlinter)
     alias(libs.plugins.kotlin.binvalid)
     alias(libs.plugins.kover)
+    id("publish")
 }
 
 group = "eu.vendeli.re.this"
