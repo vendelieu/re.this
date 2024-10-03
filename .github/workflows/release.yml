@@ -42,17 +42,14 @@ jobs:
         run: echo "version=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
         shell: bash
 
-      - name: Prepare to publish
-        run: |
-          echo '${{secrets.GPG_KEY_CONTENTS}}' | base64 -d > publish_key.gpg
-          gpg --quiet --batch --yes --decrypt --passphrase="${{secrets.SECRET_PASSPHRASE}}" \
-          --output /home/runner/work/secret.gpg publish_key.gpg
-
       - name: Publish with Gradle
         env:
           ORG_GRADLE_PROJECT_mavenCentralUsername: ${{secrets.SONATYPE_USERNAME}}
           ORG_GRADLE_PROJECT_mavenCentralPassword: ${{secrets.SONATYPE_PASSWORD}}
-        run: ./gradlew publishAllPublicationsToMavenCentralRepository -Psigning.secretKeyRingFile=/home/runner/work/secret.gpg -Psigning.keyId=${{secrets.SIGNING_KEYID}} -Psigning.password=${{secrets.SIGNING_PASSWORD}} -PlibVersion=${{ steps.vars.outputs.version }} --no-parallel
+          ORG_GRADLE_PROJECT_signingInMemoryKey: ${{secrets.GPG_KEY_CONTENT}}
+          ORG_GRADLE_PROJECT_signingInMemoryKeyId: ${{secrets.GPG_KEY_ID}}
+          ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{secrets.GPG_KEY_PWD}}
+        run: ./gradlew publishAllPublicationsToMavenCentralRepository -PlibVersion=${{ steps.vars.outputs.version }} --no-parallel
 
       - name: Publish documentation
         uses: JamesIves/github-pages-deploy-action@releases/v4
