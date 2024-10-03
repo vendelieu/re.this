@@ -68,7 +68,7 @@ jobs:
             ${{ runner.os }}-gradle-
 
       - name: Build artifact
-        run: ./gradlew koverXmlReport
+        run: ./gradlew koverXmlReport -PjvmVer=17
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v4

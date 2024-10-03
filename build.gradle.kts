@@ -4,8 +4,6 @@ import com.vanniktech.maven.publish.JavadocJar
 import com.vanniktech.maven.publish.KotlinMultiplatform
 import com.vanniktech.maven.publish.SonatypeHost
 import kotlinx.validation.ExperimentalBCVApi
-import org.gradle.internal.impldep.org.apache.commons.lang.SystemUtils.OS_NAME
-import org.gradle.internal.impldep.org.eclipse.jgit.transport.SshConstants.HOST_NAME
 import org.jetbrains.dokka.base.DokkaBase
 import org.jetbrains.dokka.base.DokkaBaseConfiguration
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
@@ -32,7 +30,8 @@ kotlin {
         freeCompilerArgs = listOf("-opt-in=eu.vendeli.rethis.annotations.ReThisInternal")
     }
 
-    val jvmTargetVer = 11
+    val jvmVer = providers.gradleProperty("jvmVer").orNull?.toIntOrNull()
+    val jvmTargetVer = jvmVer ?: 11
     jvm {
         withJava()
         compilations.all {
