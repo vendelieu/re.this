@@ -7,11 +7,12 @@ plugins {
 }
 
 val releaseMode: Boolean = System.getenv("release") != null
+val ver = System.getenv("libVersion") ?: "dev"
 
 apply(plugin = "org.jetbrains.kotlin.multiplatform")
 
 mavenPublishing {
-    coordinates("eu.vendeli", project.name, project.version.toString())
+    coordinates("eu.vendeli", project.name, ver)
     publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL, false)
     val javaDoc = if (releaseMode) {
         signAllPublications()
