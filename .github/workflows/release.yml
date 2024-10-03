@@ -86,7 +86,7 @@ jobs:
       - name: Extract changelog for version
         id: changelog
         run: |
-          ./parse_changelog.sh ${{ needs.version.outputs.version }} > release_notes.md
+          ./parse_changelog.sh ${{ needs.release.outputs.version }} > release_notes.md
         shell: bash
 
       - name: Create release
