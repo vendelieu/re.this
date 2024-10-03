@@ -4,7 +4,7 @@
 
 # Re.This
 
-[![Maven Central](https://img.shields.io/maven-central/v/eu.vendeli/re.this?style=flat&label=Maven&logo=apache-maven)](https://search.maven.org/artifact/eu.vendeli/re.this)\
+[![Maven Central](https://img.shields.io/maven-central/v/eu.vendeli/re.this?style=flat&label=Maven&logo=apache-maven)](https://search.maven.org/artifact/eu.vendeli/re.this) [![CodeQL](https://github.com/vendelieu/re.this/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/vendelieu/re.this/actions/workflows/github-code-scanning/codeql)\
 [![KDocs](https://img.shields.io/static/v1?label=Dokka&message=KDocs&color=blue&logo=kotlin)](https://vendelieu.github.io/re.this/)
 [![codecov](https://codecov.io/gh/vendelieu/re.this/graph/badge.svg?token=F8SY97KR17)](https://codecov.io/gh/vendelieu/re.this)
 
@@ -89,7 +89,6 @@ client.transaction {
 ```
 
 transaction functionality also takes into account fail-state cases and gracefully completes transactions.
-
 
 (yes, if you have also thought about mixing pipelines and transactions, we have taken such a case into account ;) )
 
