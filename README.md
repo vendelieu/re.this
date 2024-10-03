@@ -51,32 +51,69 @@ client.set("testKey", "testValue")
 client.get("testKey") // == testValue
 ```
 
+#### Subscription
+
+Using pub/sub in the library is quite easy, call the `subscribe`/... function,
+and the library will take care of the processing.
+
+```kotlin
+client.subscribe("testChannel") { client, message ->
+    println(message)
+}
+```
+
+To manage the lifecycle of subscriptions, you can use the `client.subscriptions` parameter.
+
+#### Pipelining
+
+Pipelining can also be easily achieved with an appropriate scope function:
+
+```kotlin
+client.pipeline {
+    set("key", "value")
+    get("key")
+}
+```
+
+Executing the scope returns the result of the pipelines so the result will not go missing anywhere :)
+
+#### Transactions
+
+As you might have realized for transactions there is also a similar DSL that can help in your development.
+
+```kotlin
+client.transaction {
+    set("key", "value")
+    get("key")
+}
+```
+
+transaction functionality also takes into account fail-state cases and gracefully completes transactions.
+
+
+(yes, if you have also thought about mixing pipelines and transactions, we have taken such a case into account ;) )
+
+#### More out-of-the-box stuff/commands.
+
 Also you can execute Redis commands using the execute method:
 
 ```kotlin
-val result = client.execute("SET", "key", "value")
+val result = client.execute(listOf("SET", "key", "value"))
 ```
 
 # Targets
 
 Re.This supports the following targets:
 
-* jvm
-* iosArm64
-* iosSimulatorArm64
-* iosX64
-* linuxArm64
-* linuxX64
-* macosArm64
-* macosX64
-* mingwX64
-* tvosArm64
-* tvosSimulatorArm64
-* tvosX64
-* watchosArm32
-* watchosArm64
-* watchosSimulatorArm64
-* watchosX64
+* JVM
+* Linux (linuxArm64, linuxX64)
+* Windows (mingwX64)
+* IOS (iosArm64, iosSimulatorArm64, iosX64)
+* MacOS (macosArm64, macosX64)
+* TvOS (tvosArm64, tvosSimulatorArm64, tvosX64)
+* WatchOS (watchosArm32, watchosArm64, watchosSimulatorArm64, watchosX64)
+
+There are plans to add nodejs support.
 
 # Compatibility
 
