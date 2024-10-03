@@ -12,7 +12,7 @@ apply(plugin = "org.jetbrains.kotlin.multiplatform")
 
 mavenPublishing {
     coordinates("eu.vendeli", project.name, project.version.toString())
-    publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL, true)
+    publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL, false)
     val javaDoc = if (releaseMode) {
         signAllPublications()
 
