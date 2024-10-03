@@ -55,56 +55,6 @@ buildscript {
     }
 }
 
-val OS_NAME = System.getProperty("os.name").lowercase()
-val HOST_NAME: String = when {
-    OS_NAME.startsWith("linux") -> "linux"
-    OS_NAME.startsWith("windows") -> "windows"
-    OS_NAME.startsWith("mac") -> "macos"
-    else -> error("Unknown os name `$OS_NAME`")
-}
-
-fun isAvailableForPublication(publication: Publication): Boolean {
-    val name = publication.name
-    if (name == "maven") return true
-
-    var result = false
-    val jvmAndCommon = setOf(
-        "jvm",
-        "androidRelease",
-        "androidDebug",
-        "js",
-        "wasmJs",
-        "metadata",
-        "kotlinMultiplatform",
-    )
-    result = result || name in jvmAndCommon
-    result = result || (HOST_NAME == "linux" && (name == "linuxX64" || name == "linuxArm64"))
-    result = result || (HOST_NAME == "windows" && name == "mingwX64")
-    val macPublications = setOf(
-        "iosX64",
-        "iosArm64",
-        "iosSimulatorArm64",
-
-        "watchosX64",
-        "watchosArm32",
-        "watchosArm64",
-        "watchosSimulatorArm64",
-        "watchosDeviceArm64",
-
-        "tvosX64",
-        "tvosArm64",
-        "tvosSimulatorArm64",
-
-        "macosX64",
-        "macosArm64",
-    )
-
-    result = result || (HOST_NAME == "macos" && name in macPublications)
-
-    return result
-}
-
-
 tasks {
     withType<Test> { useJUnitPlatform() }
     dokkaHtml.configure {
