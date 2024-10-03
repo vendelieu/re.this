@@ -13,7 +13,7 @@ abstract class ReThisTestCtx(
     protected val targetDb = 1L
     protected val timestamp: Instant get() = Clock.System.now()
 
-    private val redis = RedisContainer(
+    protected val redis = RedisContainer(
         DockerImageName.parse(if (!withJsonModule) "redis:7.4.0" else "redislabs/rejson"),
     ).apply {
         start()
