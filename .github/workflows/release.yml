@@ -91,7 +91,7 @@ jobs:
       - name: Create release
         uses: taiki-e/create-gh-release-action@v1
         with:
-          title: ${{ steps.vars.outputs.version }}
+          title: ${{ needs.release.outputs.version }}
           changelog: release_notes.md
           branch: master
           token: ${{ secrets.ACCESS_TOKEN }}
