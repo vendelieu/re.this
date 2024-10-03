@@ -16,7 +16,7 @@ kover = "0.8.3"
 
 kotest = "5.9.1"
 logback = "1.5.8"
-tcontainer-redis = "2.2.2"
+tcontainer-redis = "1.7.0"
 
 [libraries]
 kotlinx-io-core = { module = "org.jetbrains.kotlinx:kotlinx-io-core", version.ref = "io" }

@@ -30,8 +30,7 @@ kotlin {
         freeCompilerArgs = listOf("-opt-in=eu.vendeli.rethis.annotations.ReThisInternal")
     }
 
-    val jvmVer = providers.gradleProperty("jvmVer").orNull?.toIntOrNull()
-    val jvmTargetVer = jvmVer ?: 11
+    val jvmTargetVer = 11
     jvm {
         withJava()
         compilations.all {
