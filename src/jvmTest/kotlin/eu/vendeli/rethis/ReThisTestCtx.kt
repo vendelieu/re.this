@@ -14,7 +14,8 @@ abstract class ReThisTestCtx(
     protected val timestamp: Instant get() = Clock.System.now()
 
     private val redis = RedisContainer(
-        DockerImageName.parse(if (!withJsonModule) "redis:7.4.0" else "redislabs/rejson")).apply {
+        DockerImageName.parse(if (!withJsonModule) "redis:7.4.0" else "redislabs/rejson"),
+    ).apply {
         start()
     }
     private val connAddr = InetSocketAddress(redis.host, redis.firstMappedPort)
