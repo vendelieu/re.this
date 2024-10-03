@@ -16,7 +16,7 @@ jobs:
       version: ${{ steps.vars.outputs.version }}
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest, macOS-latest]
+        os: [ ubuntu-latest, windows-latest, macOS-latest ]
     steps:
       - uses: actions/checkout@v4
 
@@ -86,8 +86,7 @@ jobs:
       - name: Extract changelog for version
         id: changelog
         run: |
-          ./parse_changelog.sh ${{ needs.release.outputs.version }} > release_notes.md
-        shell: bash
+          bash ./parse_changelog.sh ${{ needs.release.outputs.version }} > release_notes.md
 
       - name: Create release
         uses: taiki-e/create-gh-release-action@v1
