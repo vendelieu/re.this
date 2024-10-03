@@ -59,7 +59,7 @@ jobs:
         uses: JamesIves/github-pages-deploy-action@releases/v4
         with:
           BRANCH: gh-pages
-          FOLDER: re.this/build/dokka
+          FOLDER: build/dokka
 
   finalize:
     name: Finalize

@@ -3,8 +3,6 @@
 import kotlinx.validation.ExperimentalBCVApi
 import org.jetbrains.dokka.base.DokkaBase
 import org.jetbrains.dokka.base.DokkaBaseConfiguration
-import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import java.time.LocalDate
 
 plugins {
@@ -17,7 +15,7 @@ plugins {
 }
 
 group = "eu.vendeli.re.this"
-description = "Lightweight, coroutine-based Redis client for Kotlin Multiplatform"
+description = "Kotlin Multiplatform Redis Client: coroutine-based, DSL-powered, and easy to use."
 version = providers.gradleProperty("libVersion").getOrElse("dev")
 
 repositories {
