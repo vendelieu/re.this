@@ -24,7 +24,7 @@ mavenPublishing {
 
     pom {
         name = project.name
-        description = project.description
+        description = "Kotlin Multiplatform Redis Client: coroutine-based, DSL-powered, and easy to use."
         inceptionYear = "2024"
         url = "https://github.com/vendelieu/re.this"
 

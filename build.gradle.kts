@@ -15,7 +15,6 @@ plugins {
 }
 
 group = "eu.vendeli.re.this"
-description = "Kotlin Multiplatform Redis Client: coroutine-based, DSL-powered, and easy to use."
 version = System.getenv("libVersion") ?: "dev"
 
 repositories {
