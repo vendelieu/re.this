@@ -72,7 +72,7 @@ fun AbstractPublishToMaven.isAllowed(targets: NamedDomainObjectCollection<Kotlin
     val publicationName: String? = publication?.name
 
     return when {
-        publicationName == "kotlinMultiplatform" -> EnvParams.metadataOnly
+        publicationName == "kotlinMultiplatform" -> !EnvParams.releaseMode || EnvParams.metadataOnly
 
         EnvParams.metadataOnly -> false
 
@@ -87,9 +87,5 @@ fun AbstractPublishToMaven.isAllowed(targets: NamedDomainObjectCollection<Kotlin
             checkNotNull(target) { "Target not found for publication $this" }
             target.isCompilationAllowed()
         }
-    }.also {
-        println("----------")
-        println("$publicationName - $it")
-        println("----------")
     }
 }

@@ -14,9 +14,7 @@ class ClientConnectionTest : ReThisTestCtx() {
         client.ping()
 
         client.isDisconnected shouldBe false
-
         client.disconnect()
-
         client.isDisconnected shouldBe true
     }
 
