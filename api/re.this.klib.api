@@ -1,11 +1,11 @@
 // Klib ABI Dump
-// Targets: [iosArm64, iosSimulatorArm64, iosX64, linuxArm64, linuxX64, macosArm64, macosX64, mingwX64, tvosArm64, tvosSimulatorArm64, tvosX64, watchosArm32, watchosArm64, watchosSimulatorArm64, watchosX64]
+// Targets: [iosArm64, iosSimulatorArm64, iosX64, linuxArm64, linuxX64, macosArm64, macosX64, mingwX64, tvosArm64, tvosSimulatorArm64, tvosX64, watchosArm32, watchosArm64, watchosDeviceArm64, watchosSimulatorArm64, watchosX64]
 // Rendering settings:
 // - Signature version: 2
 // - Show manifest properties: true
 // - Show declarations: true
 
-// Library unique name: <eu.vendeli.rethis:re.this>
+// Library unique name: <eu.vendeli.re.this:re.this>
 open annotation class eu.vendeli.rethis.annotations/ReThisInternal : kotlin/Annotation { // eu.vendeli.rethis.annotations/ReThisInternal|null[0]
     constructor <init>() // eu.vendeli.rethis.annotations/ReThisInternal.<init>|<init>(){}[0]
 }
@@ -76,12 +76,6 @@ abstract interface <#A: kotlin/Any?, #B: kotlin/Any?> eu.vendeli.rethis.types.co
         abstract fun <get-arg>(): kotlin/Pair<#A, #B> // eu.vendeli.rethis.types.core/PairArgument.arg.<get-arg>|<get-arg>(){}[0]
 }
 
-abstract interface eu.vendeli.rethis.types.core/SubscriptionManager { // eu.vendeli.rethis.types.core/SubscriptionManager|null[0]
-    abstract fun onMessage(kotlin/String, kotlin/String) // eu.vendeli.rethis.types.core/SubscriptionManager.onMessage|onMessage(kotlin.String;kotlin.String){}[0]
-    abstract fun onSubscription(kotlin/String, kotlin/String) // eu.vendeli.rethis.types.core/SubscriptionManager.onSubscription|onSubscription(kotlin.String;kotlin.String){}[0]
-    abstract fun onUnsubscribe(kotlin/String, kotlin/Long) // eu.vendeli.rethis.types.core/SubscriptionManager.onUnsubscribe|onUnsubscribe(kotlin.String;kotlin.Long){}[0]
-}
-
 final class <#A: kotlin/Any?> eu.vendeli.rethis.types.common/ScanResult { // eu.vendeli.rethis.types.common/ScanResult|null[0]
     constructor <init>(kotlin/String, kotlin.collections/List<#A>) // eu.vendeli.rethis.types.common/ScanResult.<init>|<init>(kotlin.String;kotlin.collections.List<1:0>){}[0]
 
@@ -144,28 +138,6 @@ final class eu.vendeli.rethis.types.common/GeoPosition { // eu.vendeli.rethis.ty
     final fun equals(kotlin/Any?): kotlin/Boolean // eu.vendeli.rethis.types.common/GeoPosition.equals|equals(kotlin.Any?){}[0]
     final fun hashCode(): kotlin/Int // eu.vendeli.rethis.types.common/GeoPosition.hashCode|hashCode(){}[0]
     final fun toString(): kotlin/String // eu.vendeli.rethis.types.common/GeoPosition.toString|toString(){}[0]
-}
-
-final class eu.vendeli.rethis.types.common/GeoSearchQuery { // eu.vendeli.rethis.types.common/GeoSearchQuery|null[0]
-    constructor <init>(kotlin/Double, kotlin/Double, kotlin/Double, eu.vendeli.rethis.types.common/GeoUnit = ...) // eu.vendeli.rethis.types.common/GeoSearchQuery.<init>|<init>(kotlin.Double;kotlin.Double;kotlin.Double;eu.vendeli.rethis.types.common.GeoUnit){}[0]
-
-    final val latitude // eu.vendeli.rethis.types.common/GeoSearchQuery.latitude|{}latitude[0]
-        final fun <get-latitude>(): kotlin/Double // eu.vendeli.rethis.types.common/GeoSearchQuery.latitude.<get-latitude>|<get-latitude>(){}[0]
-    final val longitude // eu.vendeli.rethis.types.common/GeoSearchQuery.longitude|{}longitude[0]
-        final fun <get-longitude>(): kotlin/Double // eu.vendeli.rethis.types.common/GeoSearchQuery.longitude.<get-longitude>|<get-longitude>(){}[0]
-    final val radius // eu.vendeli.rethis.types.common/GeoSearchQuery.radius|{}radius[0]
-        final fun <get-radius>(): kotlin/Double // eu.vendeli.rethis.types.common/GeoSearchQuery.radius.<get-radius>|<get-radius>(){}[0]
-    final val unit // eu.vendeli.rethis.types.common/GeoSearchQuery.unit|{}unit[0]
-        final fun <get-unit>(): eu.vendeli.rethis.types.common/GeoUnit // eu.vendeli.rethis.types.common/GeoSearchQuery.unit.<get-unit>|<get-unit>(){}[0]
-
-    final fun component1(): kotlin/Double // eu.vendeli.rethis.types.common/GeoSearchQuery.component1|component1(){}[0]
-    final fun component2(): kotlin/Double // eu.vendeli.rethis.types.common/GeoSearchQuery.component2|component2(){}[0]
-    final fun component3(): kotlin/Double // eu.vendeli.rethis.types.common/GeoSearchQuery.component3|component3(){}[0]
-    final fun component4(): eu.vendeli.rethis.types.common/GeoUnit // eu.vendeli.rethis.types.common/GeoSearchQuery.component4|component4(){}[0]
-    final fun copy(kotlin/Double = ..., kotlin/Double = ..., kotlin/Double = ..., eu.vendeli.rethis.types.common/GeoUnit = ...): eu.vendeli.rethis.types.common/GeoSearchQuery // eu.vendeli.rethis.types.common/GeoSearchQuery.copy|copy(kotlin.Double;kotlin.Double;kotlin.Double;eu.vendeli.rethis.types.common.GeoUnit){}[0]
-    final fun equals(kotlin/Any?): kotlin/Boolean // eu.vendeli.rethis.types.common/GeoSearchQuery.equals|equals(kotlin.Any?){}[0]
-    final fun hashCode(): kotlin/Int // eu.vendeli.rethis.types.common/GeoSearchQuery.hashCode|hashCode(){}[0]
-    final fun toString(): kotlin/String // eu.vendeli.rethis.types.common/GeoSearchQuery.toString|toString(){}[0]
 }
 
 final class eu.vendeli.rethis.types.common/GeoSearchResult { // eu.vendeli.rethis.types.common/GeoSearchResult|null[0]
@@ -442,22 +414,6 @@ final class eu.vendeli.rethis.types.common/ZPopResult { // eu.vendeli.rethis.typ
     final fun equals(kotlin/Any?): kotlin/Boolean // eu.vendeli.rethis.types.common/ZPopResult.equals|equals(kotlin.Any?){}[0]
     final fun hashCode(): kotlin/Int // eu.vendeli.rethis.types.common/ZPopResult.hashCode|hashCode(){}[0]
     final fun toString(): kotlin/String // eu.vendeli.rethis.types.common/ZPopResult.toString|toString(){}[0]
-}
-
-final class eu.vendeli.rethis.types.common/ZScanResult { // eu.vendeli.rethis.types.common/ZScanResult|null[0]
-    constructor <init>(kotlin/Long, kotlin.collections/List<eu.vendeli.rethis.types.common/ZMember>) // eu.vendeli.rethis.types.common/ZScanResult.<init>|<init>(kotlin.Long;kotlin.collections.List<eu.vendeli.rethis.types.common.ZMember>){}[0]
-
-    final val cursor // eu.vendeli.rethis.types.common/ZScanResult.cursor|{}cursor[0]
-        final fun <get-cursor>(): kotlin/Long // eu.vendeli.rethis.types.common/ZScanResult.cursor.<get-cursor>|<get-cursor>(){}[0]
-    final val members // eu.vendeli.rethis.types.common/ZScanResult.members|{}members[0]
-        final fun <get-members>(): kotlin.collections/List<eu.vendeli.rethis.types.common/ZMember> // eu.vendeli.rethis.types.common/ZScanResult.members.<get-members>|<get-members>(){}[0]
-
-    final fun component1(): kotlin/Long // eu.vendeli.rethis.types.common/ZScanResult.component1|component1(){}[0]
-    final fun component2(): kotlin.collections/List<eu.vendeli.rethis.types.common/ZMember> // eu.vendeli.rethis.types.common/ZScanResult.component2|component2(){}[0]
-    final fun copy(kotlin/Long = ..., kotlin.collections/List<eu.vendeli.rethis.types.common/ZMember> = ...): eu.vendeli.rethis.types.common/ZScanResult // eu.vendeli.rethis.types.common/ZScanResult.copy|copy(kotlin.Long;kotlin.collections.List<eu.vendeli.rethis.types.common.ZMember>){}[0]
-    final fun equals(kotlin/Any?): kotlin/Boolean // eu.vendeli.rethis.types.common/ZScanResult.equals|equals(kotlin.Any?){}[0]
-    final fun hashCode(): kotlin/Int // eu.vendeli.rethis.types.common/ZScanResult.hashCode|hashCode(){}[0]
-    final fun toString(): kotlin/String // eu.vendeli.rethis.types.common/ZScanResult.toString|toString(){}[0]
 }
 
 final class eu.vendeli.rethis.types.core/AuthConfiguration { // eu.vendeli.rethis.types.core/AuthConfiguration|null[0]

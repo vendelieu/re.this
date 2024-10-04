@@ -31,7 +31,6 @@ internal class ConnectionPool(
     private suspend fun createConn(): Connection {
         logger.trace("Creating connection to $address")
         val conn = aSocket(selector)
-            .tcpNoDelay()
             .tcp()
             .connect(address)
             .connection()

@@ -383,24 +383,6 @@ public final class eu/vendeli/rethis/types/common/GeoPosition {
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class eu/vendeli/rethis/types/common/GeoSearchQuery {
-	public fun <init> (DDDLeu/vendeli/rethis/types/common/GeoUnit;)V
-	public synthetic fun <init> (DDDLeu/vendeli/rethis/types/common/GeoUnit;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public final fun component1 ()D
-	public final fun component2 ()D
-	public final fun component3 ()D
-	public final fun component4 ()Leu/vendeli/rethis/types/common/GeoUnit;
-	public final fun copy (DDDLeu/vendeli/rethis/types/common/GeoUnit;)Leu/vendeli/rethis/types/common/GeoSearchQuery;
-	public static synthetic fun copy$default (Leu/vendeli/rethis/types/common/GeoSearchQuery;DDDLeu/vendeli/rethis/types/common/GeoUnit;ILjava/lang/Object;)Leu/vendeli/rethis/types/common/GeoSearchQuery;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getLatitude ()D
-	public final fun getLongitude ()D
-	public final fun getRadius ()D
-	public final fun getUnit ()Leu/vendeli/rethis/types/common/GeoUnit;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
 public final class eu/vendeli/rethis/types/common/GeoSearchResult {
 	public fun <init> (Ljava/lang/String;Ljava/lang/Double;Leu/vendeli/rethis/types/common/GeoPosition;Ljava/lang/Long;)V
 	public final fun component1 ()Ljava/lang/String;
@@ -661,19 +643,6 @@ public final class eu/vendeli/rethis/types/common/ZPopResult {
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class eu/vendeli/rethis/types/common/ZScanResult {
-	public fun <init> (JLjava/util/List;)V
-	public final fun component1 ()J
-	public final fun component2 ()Ljava/util/List;
-	public final fun copy (JLjava/util/List;)Leu/vendeli/rethis/types/common/ZScanResult;
-	public static synthetic fun copy$default (Leu/vendeli/rethis/types/common/ZScanResult;JLjava/util/List;ILjava/lang/Object;)Leu/vendeli/rethis/types/common/ZScanResult;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getCursor ()J
-	public final fun getMembers ()Ljava/util/List;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
 public final class eu/vendeli/rethis/types/core/AuthConfiguration {
 	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
 	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
@@ -893,12 +862,6 @@ public final class eu/vendeli/rethis/types/core/RespVer$V3 : eu/vendeli/rethis/t
 
 public abstract interface class eu/vendeli/rethis/types/core/SubscriptionHandler {
 	public abstract fun onMessage (Leu/vendeli/rethis/ReThis;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-}
-
-public abstract interface class eu/vendeli/rethis/types/core/SubscriptionManager {
-	public abstract fun onMessage (Ljava/lang/String;Ljava/lang/String;)V
-	public abstract fun onSubscription (Ljava/lang/String;Ljava/lang/String;)V
-	public abstract fun onUnsubscribe (Ljava/lang/String;J)V
 }
 
 public abstract interface class eu/vendeli/rethis/types/core/TripleArgument {

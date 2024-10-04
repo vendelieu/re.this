@@ -40,6 +40,7 @@ fun Project.configureKotlin(block: KotlinMultiplatformExtension.() -> Unit) {
         watchosX64()
         watchosArm32()
         watchosArm64()
+        watchosDeviceArm64()
         watchosSimulatorArm64()
 
         iosX64()
