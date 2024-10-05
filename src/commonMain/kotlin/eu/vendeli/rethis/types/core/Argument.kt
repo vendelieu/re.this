@@ -15,6 +15,7 @@ fun Any.toArg(): Argument = when (this) {
     is Int -> toArg()
     is Double -> toArg()
     is ByteArray -> toArg()
+    is Argument -> this
     else -> toString().toArg()
 }
 

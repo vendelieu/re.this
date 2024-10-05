@@ -5,6 +5,7 @@ import eu.vendeli.rethis.ReThisTestCtx
 import eu.vendeli.rethis.commands.*
 import eu.vendeli.rethis.types.core.PlainString
 import eu.vendeli.rethis.types.core.RArray
+import eu.vendeli.rethis.types.core.toArg
 import eu.vendeli.rethis.types.coroutine.CoLocalConn
 import eu.vendeli.rethis.utils.bufferValues
 import eu.vendeli.rethis.utils.coLaunch
@@ -15,26 +16,25 @@ import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
 import io.ktor.utils.io.*
 import kotlinx.coroutines.currentCoroutineContext
-import org.testcontainers.shaded.org.checkerframework.checker.units.qual.m
 
 class TransactionCommandTest : ReThisTestCtx() {
     @Test
     suspend fun `test EXEC command with multiple queued commands`() {
         val conn = client.connectionPool.acquire()
 
-        conn.output.writeBuffer(bufferValues(listOf("MULTI"), Charsets.UTF_8))
+        conn.output.writeBuffer(bufferValues(listOf("MULTI".toArg()), Charsets.UTF_8))
         conn.output.flush()
         conn.input.readRedisMessage() shouldBe PlainString("OK")
 
-        conn.output.writeBuffer(bufferValues(listOf("SET", "test3", "testv3"), Charsets.UTF_8))
+        conn.output.writeBuffer(bufferValues(listOf("SET".toArg(), "test3".toArg(), "testv3".toArg()), Charsets.UTF_8))
         conn.output.flush()
         conn.input.readRedisMessage() shouldBe PlainString("QUEUED")
 
-        conn.output.writeBuffer(bufferValues(listOf("SET", "test4", "testv4"), Charsets.UTF_8))
+        conn.output.writeBuffer(bufferValues(listOf("SET".toArg(), "test4".toArg(), "testv4".toArg()), Charsets.UTF_8))
         conn.output.flush()
         conn.input.readRedisMessage() shouldBe PlainString("QUEUED")
 
-        conn.output.writeBuffer(bufferValues(listOf("EXEC"), Charsets.UTF_8))
+        conn.output.writeBuffer(bufferValues(listOf("EXEC".toArg()), Charsets.UTF_8))
         conn.output.flush()
         conn.input.readRedisMessage() shouldBe RArray(listOf(PlainString("OK"), PlainString("OK")))
     }
@@ -56,7 +56,7 @@ class TransactionCommandTest : ReThisTestCtx() {
                 client.multi()
                 client.set("testKey1", "testVal1")
                 client.set("testKey2", "testVal2")
-                conn.output.writeBuffer(bufferValues(listOf("get"), Charsets.UTF_8))
+                conn.output.writeBuffer(bufferValues(listOf("get".toArg()), Charsets.UTF_8))
                 conn.output.flush()
                 shouldThrow<ReThisException> { client.exec() }.message shouldBe
                     "ERR wrong number of arguments for 'get' command"

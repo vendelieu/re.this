@@ -1,6 +1,5 @@
 package eu.vendeli.rethis.utils
 
-import com.ionspin.kotlin.bignum.integer.toBigInteger
 import eu.vendeli.rethis.types.core.*
 import eu.vendeli.rethis.utils.Const.EOL
 import io.ktor.utils.io.charsets.*
@@ -9,26 +8,25 @@ import kotlinx.io.Buffer
 import kotlinx.io.Sink
 
 @Suppress("NOTHING_TO_INLINE")
-internal inline fun Buffer.writeValues(value: Any?, charset: Charset) = apply {
-    writeRedisValue(value)
+internal inline fun Buffer.writeValues(value: List<Argument>, charset: Charset) = apply {
+    writeRedisValue(value, charset)
 }
 
 @Suppress("NOTHING_TO_INLINE")
-internal inline fun bufferValues(value: Any?, charset: Charset) = Buffer().writeValues(value, charset)
+internal inline fun bufferValues(value: List<Argument>, charset: Charset) = Buffer().writeValues(value, charset)
 
 internal fun Sink.writeRedisValue(
     data: Any?,
-    forceBulk: Boolean = true,
     charset: Charset = Charsets.UTF_8,
 ): Sink = apply {
     when (data) {
-        is List<*> -> writeListValue(data, forceBulk, charset)
-        is Array<*> -> writeArrayValue(data, forceBulk, charset)
+        is List<*> -> writeListValue(data, charset)
+        is Array<*> -> writeArrayValue(data, charset)
 
         is StringArg -> writeByteArray(data.value.toByteArray(charset))
-        is LongArg -> writeByteArray(data.value.toBigInteger().toByteArray())
-        is IntArg -> writeByteArray(data.value.toBigInteger().toByteArray())
-        is DoubleArg -> writeByteArray(data.value.toString().toByteArray())
+        is LongArg -> writeByteArray(data.value.toString(10).toByteArray(charset))
+        is IntArg -> writeByteArray(data.value.toString(10).toByteArray(charset))
+        is DoubleArg -> writeByteArray(data.value.toString().toByteArray(charset))
         is BaArg -> writeByteArray(data.value)
     }
 }
@@ -71,25 +69,23 @@ internal fun <T, R : Argument> MutableList<R>.writeArg(value: T): MutableList<R>
 
 private fun <T : List<*>> Sink.writeListValue(
     value: T,
-    forceBulk: Boolean = true,
     charset: Charset = Charsets.UTF_8,
 ) {
     append(RespCode.ARRAY)
     append(value.size.toString())
     appendEOL()
 
-    for (item in value) writeRedisValue(item, forceBulk, charset)
+    for (item in value) writeRedisValue(item, charset)
 }
 
 private fun Sink.writeArrayValue(
     value: Array<*>,
-    forceBulk: Boolean = true,
     charset: Charset = Charsets.UTF_8,
 ) {
     append(RespCode.ARRAY)
     append(value.size.toString())
     appendEOL()
-    for (item in value) writeRedisValue(item, forceBulk, charset)
+    for (item in value) writeRedisValue(item, charset)
 }
 
 private fun Sink.writeByteArray(value: ByteArray) {

@@ -40,16 +40,16 @@ internal class ConnectionPool(
 
         if (client.cfg.auth != null) client.cfg.auth?.run {
             logger.debug("Authenticating to $address with $this")
-            reqBuffer.writeRedisValue(listOfNotNull("AUTH", username, password))
+            reqBuffer.writeRedisValue(listOfNotNull("AUTH".toArg(), username?.toArg(), password.toArg()))
             requests++
         }
 
         client.cfg.db?.takeIf { it > 0 }?.let {
             requests++
-            reqBuffer.writeRedisValue(listOf("SELECT", it))
+            reqBuffer.writeRedisValue(listOf("SELECT".toArg(), it.toArg()))
         }
 
-        reqBuffer.writeRedisValue(listOf("HELLO", client.protocol.literal))
+        reqBuffer.writeRedisValue(listOf("HELLO".toArg(), client.protocol.literal.toArg()))
         requests++
 
         conn.output.writeBuffer(reqBuffer)

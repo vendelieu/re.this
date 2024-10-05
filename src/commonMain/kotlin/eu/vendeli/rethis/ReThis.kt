@@ -2,7 +2,6 @@ package eu.vendeli.rethis
 
 import eu.vendeli.rethis.annotations.ReThisInternal
 import eu.vendeli.rethis.types.core.*
-import eu.vendeli.rethis.types.core.use
 import eu.vendeli.rethis.types.coroutine.CoLocalConn
 import eu.vendeli.rethis.types.coroutine.CoPipelineCtx
 import eu.vendeli.rethis.utils.Const.DEFAULT_HOST
@@ -14,7 +13,6 @@ import eu.vendeli.rethis.utils.writeRedisValue
 import io.ktor.network.sockets.*
 import io.ktor.util.logging.*
 import io.ktor.utils.io.*
-import io.ktor.utils.io.core.*
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.currentCoroutineContext
@@ -67,7 +65,7 @@ class ReThis(
                 throw e
             }
             val pipelinedPayload = Buffer().apply {
-                requests.forEach { writeRedisValue(it) }
+                requests.forEach { writeRedisValue(it, cfg.charset) }
             }
             logger.debug("Executing pipelined request")
             if (ctxConn != null) {
@@ -89,7 +87,7 @@ class ReThis(
 
     suspend fun transaction(block: suspend ReThis.() -> Unit): List<RType> = connectionPool.use { conn ->
         logger.debug("Started transaction")
-        conn.output.writeBuffer(bufferValues(listOf("MULTI"), cfg.charset))
+        conn.output.writeBuffer(bufferValues(listOf("MULTI".toArg()), cfg.charset))
         conn.output.flush()
         require(conn.input.readRedisMessage().value == "OK")
 
@@ -98,7 +96,7 @@ class ReThis(
             runCatching { block() }.getOrElse { e = it }
         }.join()
         e?.also {
-            conn.output.writeBuffer(bufferValues(listOf("DISCARD"), cfg.charset))
+            conn.output.writeBuffer(bufferValues(listOf("DISCARD".toArg()), cfg.charset))
             conn.output.flush()
             require(conn.input.readRedisMessage().value == "OK")
             logger.error("Transaction canceled", it)
@@ -106,7 +104,7 @@ class ReThis(
         }
 
         logger.debug("Transaction completed")
-        conn.output.writeBuffer(bufferValues(listOf("EXEC"), cfg.charset))
+        conn.output.writeBuffer(bufferValues(listOf("EXEC".toArg()), cfg.charset))
         conn.output.flush()
         conn.input.readRedisMessage().unwrapList()
     }
@@ -133,7 +131,7 @@ class ReThis(
     }
 
     private suspend inline fun Connection.exec(
-        payload: Any?,
+        payload: List<Argument>,
         raw: Boolean = false,
     ): RType {
         logger.trace("Executing request with such payload $payload")
