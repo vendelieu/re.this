@@ -66,14 +66,11 @@ abstract fun interface eu.vendeli.rethis.types.core/SubscriptionHandler { // eu.
     abstract suspend fun onMessage(eu.vendeli.rethis/ReThis, kotlin/String) // eu.vendeli.rethis.types.core/SubscriptionHandler.onMessage|onMessage(eu.vendeli.rethis.ReThis;kotlin.String){}[0]
 }
 
-abstract interface <#A: kotlin/Any?, #B: kotlin/Any?, #C: kotlin/Any?> eu.vendeli.rethis.types.core/TripleArgument { // eu.vendeli.rethis.types.core/TripleArgument|null[0]
-    abstract val arg // eu.vendeli.rethis.types.core/TripleArgument.arg|{}arg[0]
-        abstract fun <get-arg>(): kotlin/Triple<#A, #B, #C> // eu.vendeli.rethis.types.core/TripleArgument.arg.<get-arg>|<get-arg>(){}[0]
-}
+abstract interface eu.vendeli.rethis.types.core/Argument // eu.vendeli.rethis.types.core/Argument|null[0]
 
-abstract interface <#A: kotlin/Any?, #B: kotlin/Any?> eu.vendeli.rethis.types.core/PairArgument { // eu.vendeli.rethis.types.core/PairArgument|null[0]
-    abstract val arg // eu.vendeli.rethis.types.core/PairArgument.arg|{}arg[0]
-        abstract fun <get-arg>(): kotlin/Pair<#A, #B> // eu.vendeli.rethis.types.core/PairArgument.arg.<get-arg>|<get-arg>(){}[0]
+abstract interface eu.vendeli.rethis.types.core/VaryingArgument { // eu.vendeli.rethis.types.core/VaryingArgument|null[0]
+    abstract val data // eu.vendeli.rethis.types.core/VaryingArgument.data|{}data[0]
+        abstract fun <get-data>(): kotlin.collections/List<eu.vendeli.rethis.types.core/Argument> // eu.vendeli.rethis.types.core/VaryingArgument.data.<get-data>|<get-data>(){}[0]
 }
 
 final class <#A: kotlin/Any?> eu.vendeli.rethis.types.common/ScanResult { // eu.vendeli.rethis.types.common/ScanResult|null[0]
@@ -103,11 +100,11 @@ final class eu.vendeli.rethis.types.common/ChannelSubscription { // eu.vendeli.r
         final fun <get-handler>(): eu.vendeli.rethis.types.core/SubscriptionHandler // eu.vendeli.rethis.types.common/ChannelSubscription.handler.<get-handler>|<get-handler>(){}[0]
 }
 
-final class eu.vendeli.rethis.types.common/GeoMember : eu.vendeli.rethis.types.core/TripleArgument<kotlin/Double, kotlin/Double, kotlin/String> { // eu.vendeli.rethis.types.common/GeoMember|null[0]
+final class eu.vendeli.rethis.types.common/GeoMember : eu.vendeli.rethis.types.core/VaryingArgument { // eu.vendeli.rethis.types.common/GeoMember|null[0]
     constructor <init>(kotlin/Double, kotlin/Double, kotlin/String) // eu.vendeli.rethis.types.common/GeoMember.<init>|<init>(kotlin.Double;kotlin.Double;kotlin.String){}[0]
 
-    final val arg // eu.vendeli.rethis.types.common/GeoMember.arg|{}arg[0]
-        final fun <get-arg>(): kotlin/Triple<kotlin/Double, kotlin/Double, kotlin/String> // eu.vendeli.rethis.types.common/GeoMember.arg.<get-arg>|<get-arg>(){}[0]
+    final val data // eu.vendeli.rethis.types.common/GeoMember.data|{}data[0]
+        final fun <get-data>(): kotlin.collections/List<eu.vendeli.rethis.types.core/Argument> // eu.vendeli.rethis.types.common/GeoMember.data.<get-data>|<get-data>(){}[0]
     final val latitude // eu.vendeli.rethis.types.common/GeoMember.latitude|{}latitude[0]
         final fun <get-latitude>(): kotlin/Double // eu.vendeli.rethis.types.common/GeoMember.latitude.<get-latitude>|<get-latitude>(){}[0]
     final val longitude // eu.vendeli.rethis.types.common/GeoMember.longitude|{}longitude[0]
@@ -474,11 +471,14 @@ final class eu.vendeli.rethis.types.core/BulkString : eu.vendeli.rethis.types.co
 }
 
 final class eu.vendeli.rethis.types.core/ClientConfiguration { // eu.vendeli.rethis.types.core/ClientConfiguration|null[0]
-    constructor <init>(eu.vendeli.rethis.types.core/AuthConfiguration? = ..., kotlin/Int? = ..., kotlin/Int = ..., kotlinx.coroutines/CoroutineDispatcher = ...) // eu.vendeli.rethis.types.core/ClientConfiguration.<init>|<init>(eu.vendeli.rethis.types.core.AuthConfiguration?;kotlin.Int?;kotlin.Int;kotlinx.coroutines.CoroutineDispatcher){}[0]
+    constructor <init>(eu.vendeli.rethis.types.core/AuthConfiguration? = ..., kotlin/Int? = ..., io.ktor.utils.io.charsets/Charset = ..., kotlin/Int = ..., kotlinx.coroutines/CoroutineDispatcher = ...) // eu.vendeli.rethis.types.core/ClientConfiguration.<init>|<init>(eu.vendeli.rethis.types.core.AuthConfiguration?;kotlin.Int?;io.ktor.utils.io.charsets.Charset;kotlin.Int;kotlinx.coroutines.CoroutineDispatcher){}[0]
 
     final var auth // eu.vendeli.rethis.types.core/ClientConfiguration.auth|{}auth[0]
         final fun <get-auth>(): eu.vendeli.rethis.types.core/AuthConfiguration? // eu.vendeli.rethis.types.core/ClientConfiguration.auth.<get-auth>|<get-auth>(){}[0]
         final fun <set-auth>(eu.vendeli.rethis.types.core/AuthConfiguration?) // eu.vendeli.rethis.types.core/ClientConfiguration.auth.<set-auth>|<set-auth>(eu.vendeli.rethis.types.core.AuthConfiguration?){}[0]
+    final var charset // eu.vendeli.rethis.types.core/ClientConfiguration.charset|{}charset[0]
+        final fun <get-charset>(): io.ktor.utils.io.charsets/Charset // eu.vendeli.rethis.types.core/ClientConfiguration.charset.<get-charset>|<get-charset>(){}[0]
+        final fun <set-charset>(io.ktor.utils.io.charsets/Charset) // eu.vendeli.rethis.types.core/ClientConfiguration.charset.<set-charset>|<set-charset>(io.ktor.utils.io.charsets.Charset){}[0]
     final var db // eu.vendeli.rethis.types.core/ClientConfiguration.db|{}db[0]
         final fun <get-db>(): kotlin/Int? // eu.vendeli.rethis.types.core/ClientConfiguration.db.<get-db>|<get-db>(){}[0]
         final fun <set-db>(kotlin/Int?) // eu.vendeli.rethis.types.core/ClientConfiguration.db.<set-db>|<set-db>(kotlin.Int?){}[0]
@@ -491,9 +491,10 @@ final class eu.vendeli.rethis.types.core/ClientConfiguration { // eu.vendeli.ret
 
     final fun component1(): eu.vendeli.rethis.types.core/AuthConfiguration? // eu.vendeli.rethis.types.core/ClientConfiguration.component1|component1(){}[0]
     final fun component2(): kotlin/Int? // eu.vendeli.rethis.types.core/ClientConfiguration.component2|component2(){}[0]
-    final fun component3(): kotlin/Int // eu.vendeli.rethis.types.core/ClientConfiguration.component3|component3(){}[0]
-    final fun component4(): kotlinx.coroutines/CoroutineDispatcher // eu.vendeli.rethis.types.core/ClientConfiguration.component4|component4(){}[0]
-    final fun copy(eu.vendeli.rethis.types.core/AuthConfiguration? = ..., kotlin/Int? = ..., kotlin/Int = ..., kotlinx.coroutines/CoroutineDispatcher = ...): eu.vendeli.rethis.types.core/ClientConfiguration // eu.vendeli.rethis.types.core/ClientConfiguration.copy|copy(eu.vendeli.rethis.types.core.AuthConfiguration?;kotlin.Int?;kotlin.Int;kotlinx.coroutines.CoroutineDispatcher){}[0]
+    final fun component3(): io.ktor.utils.io.charsets/Charset // eu.vendeli.rethis.types.core/ClientConfiguration.component3|component3(){}[0]
+    final fun component4(): kotlin/Int // eu.vendeli.rethis.types.core/ClientConfiguration.component4|component4(){}[0]
+    final fun component5(): kotlinx.coroutines/CoroutineDispatcher // eu.vendeli.rethis.types.core/ClientConfiguration.component5|component5(){}[0]
+    final fun copy(eu.vendeli.rethis.types.core/AuthConfiguration? = ..., kotlin/Int? = ..., io.ktor.utils.io.charsets/Charset = ..., kotlin/Int = ..., kotlinx.coroutines/CoroutineDispatcher = ...): eu.vendeli.rethis.types.core/ClientConfiguration // eu.vendeli.rethis.types.core/ClientConfiguration.copy|copy(eu.vendeli.rethis.types.core.AuthConfiguration?;kotlin.Int?;io.ktor.utils.io.charsets.Charset;kotlin.Int;kotlinx.coroutines.CoroutineDispatcher){}[0]
     final fun equals(kotlin/Any?): kotlin/Boolean // eu.vendeli.rethis.types.core/ClientConfiguration.equals|equals(kotlin.Any?){}[0]
     final fun hashCode(): kotlin/Int // eu.vendeli.rethis.types.core/ClientConfiguration.hashCode|hashCode(){}[0]
     final fun toString(): kotlin/String // eu.vendeli.rethis.types.core/ClientConfiguration.toString|toString(){}[0]
@@ -630,11 +631,11 @@ final class eu.vendeli.rethis.types.coroutine/CoPipelineCtx : kotlin.coroutines/
     final object Key : kotlin.coroutines/CoroutineContext.Key<eu.vendeli.rethis.types.coroutine/CoPipelineCtx> // eu.vendeli.rethis.types.coroutine/CoPipelineCtx.Key|null[0]
 }
 
-final class eu.vendeli.rethis.types.options/BYBOX : eu.vendeli.rethis.types.core/TripleArgument<kotlin/Double, kotlin/Double, kotlin/String>, eu.vendeli.rethis.types.options/Shape { // eu.vendeli.rethis.types.options/BYBOX|null[0]
+final class eu.vendeli.rethis.types.options/BYBOX : eu.vendeli.rethis.types.core/VaryingArgument, eu.vendeli.rethis.types.options/Shape { // eu.vendeli.rethis.types.options/BYBOX|null[0]
     constructor <init>(kotlin/Double, kotlin/Double, eu.vendeli.rethis.types.common/GeoUnit) // eu.vendeli.rethis.types.options/BYBOX.<init>|<init>(kotlin.Double;kotlin.Double;eu.vendeli.rethis.types.common.GeoUnit){}[0]
 
-    final val arg // eu.vendeli.rethis.types.options/BYBOX.arg|{}arg[0]
-        final fun <get-arg>(): kotlin/Triple<kotlin/Double, kotlin/Double, kotlin/String> // eu.vendeli.rethis.types.options/BYBOX.arg.<get-arg>|<get-arg>(){}[0]
+    final val data // eu.vendeli.rethis.types.options/BYBOX.data|{}data[0]
+        final fun <get-data>(): kotlin.collections/List<eu.vendeli.rethis.types.core/Argument> // eu.vendeli.rethis.types.options/BYBOX.data.<get-data>|<get-data>(){}[0]
     final val height // eu.vendeli.rethis.types.options/BYBOX.height|{}height[0]
         final fun <get-height>(): kotlin/Double // eu.vendeli.rethis.types.options/BYBOX.height.<get-height>|<get-height>(){}[0]
     final val unit // eu.vendeli.rethis.types.options/BYBOX.unit|{}unit[0]
@@ -651,11 +652,11 @@ final class eu.vendeli.rethis.types.options/BYBOX : eu.vendeli.rethis.types.core
     final fun toString(): kotlin/String // eu.vendeli.rethis.types.options/BYBOX.toString|toString(){}[0]
 }
 
-final class eu.vendeli.rethis.types.options/BYRADIUS : eu.vendeli.rethis.types.core/TripleArgument<kotlin/String, kotlin/Double, kotlin/String>, eu.vendeli.rethis.types.options/Shape { // eu.vendeli.rethis.types.options/BYRADIUS|null[0]
+final class eu.vendeli.rethis.types.options/BYRADIUS : eu.vendeli.rethis.types.core/VaryingArgument, eu.vendeli.rethis.types.options/Shape { // eu.vendeli.rethis.types.options/BYRADIUS|null[0]
     constructor <init>(kotlin/Double, eu.vendeli.rethis.types.common/GeoUnit) // eu.vendeli.rethis.types.options/BYRADIUS.<init>|<init>(kotlin.Double;eu.vendeli.rethis.types.common.GeoUnit){}[0]
 
-    final val arg // eu.vendeli.rethis.types.options/BYRADIUS.arg|{}arg[0]
-        final fun <get-arg>(): kotlin/Triple<kotlin/String, kotlin/Double, kotlin/String> // eu.vendeli.rethis.types.options/BYRADIUS.arg.<get-arg>|<get-arg>(){}[0]
+    final val data // eu.vendeli.rethis.types.options/BYRADIUS.data|{}data[0]
+        final fun <get-data>(): kotlin.collections/List<eu.vendeli.rethis.types.core/Argument> // eu.vendeli.rethis.types.options/BYRADIUS.data.<get-data>|<get-data>(){}[0]
     final val radius // eu.vendeli.rethis.types.options/BYRADIUS.radius|{}radius[0]
         final fun <get-radius>(): kotlin/Double // eu.vendeli.rethis.types.options/BYRADIUS.radius.<get-radius>|<get-radius>(){}[0]
     final val unit // eu.vendeli.rethis.types.options/BYRADIUS.unit|{}unit[0]
@@ -669,11 +670,11 @@ final class eu.vendeli.rethis.types.options/BYRADIUS : eu.vendeli.rethis.types.c
     final fun toString(): kotlin/String // eu.vendeli.rethis.types.options/BYRADIUS.toString|toString(){}[0]
 }
 
-final class eu.vendeli.rethis.types.options/FROMLONLAT : eu.vendeli.rethis.types.core/TripleArgument<kotlin/String, kotlin/Double, kotlin/Double>, eu.vendeli.rethis.types.options/CenterPoint { // eu.vendeli.rethis.types.options/FROMLONLAT|null[0]
+final class eu.vendeli.rethis.types.options/FROMLONLAT : eu.vendeli.rethis.types.core/VaryingArgument, eu.vendeli.rethis.types.options/CenterPoint { // eu.vendeli.rethis.types.options/FROMLONLAT|null[0]
     constructor <init>(kotlin/Double, kotlin/Double) // eu.vendeli.rethis.types.options/FROMLONLAT.<init>|<init>(kotlin.Double;kotlin.Double){}[0]
 
-    final val arg // eu.vendeli.rethis.types.options/FROMLONLAT.arg|{}arg[0]
-        final fun <get-arg>(): kotlin/Triple<kotlin/String, kotlin/Double, kotlin/Double> // eu.vendeli.rethis.types.options/FROMLONLAT.arg.<get-arg>|<get-arg>(){}[0]
+    final val data // eu.vendeli.rethis.types.options/FROMLONLAT.data|{}data[0]
+        final fun <get-data>(): kotlin.collections/List<eu.vendeli.rethis.types.core/Argument> // eu.vendeli.rethis.types.options/FROMLONLAT.data.<get-data>|<get-data>(){}[0]
     final val latitude // eu.vendeli.rethis.types.options/FROMLONLAT.latitude|{}latitude[0]
         final fun <get-latitude>(): kotlin/Double // eu.vendeli.rethis.types.options/FROMLONLAT.latitude.<get-latitude>|<get-latitude>(){}[0]
     final val longitude // eu.vendeli.rethis.types.options/FROMLONLAT.longitude|{}longitude[0]
@@ -687,11 +688,11 @@ final class eu.vendeli.rethis.types.options/FROMLONLAT : eu.vendeli.rethis.types
     final fun toString(): kotlin/String // eu.vendeli.rethis.types.options/FROMLONLAT.toString|toString(){}[0]
 }
 
-final class eu.vendeli.rethis.types.options/FROMMEMBER : eu.vendeli.rethis.types.core/PairArgument<kotlin/String, kotlin/String>, eu.vendeli.rethis.types.options/CenterPoint { // eu.vendeli.rethis.types.options/FROMMEMBER|null[0]
+final class eu.vendeli.rethis.types.options/FROMMEMBER : eu.vendeli.rethis.types.core/VaryingArgument, eu.vendeli.rethis.types.options/CenterPoint { // eu.vendeli.rethis.types.options/FROMMEMBER|null[0]
     constructor <init>(kotlin/String) // eu.vendeli.rethis.types.options/FROMMEMBER.<init>|<init>(kotlin.String){}[0]
 
-    final val arg // eu.vendeli.rethis.types.options/FROMMEMBER.arg|{}arg[0]
-        final fun <get-arg>(): kotlin/Pair<kotlin/String, kotlin/String> // eu.vendeli.rethis.types.options/FROMMEMBER.arg.<get-arg>|<get-arg>(){}[0]
+    final val data // eu.vendeli.rethis.types.options/FROMMEMBER.data|{}data[0]
+        final fun <get-data>(): kotlin.collections/List<eu.vendeli.rethis.types.core/Argument> // eu.vendeli.rethis.types.options/FROMMEMBER.data.<get-data>|<get-data>(){}[0]
     final val member // eu.vendeli.rethis.types.options/FROMMEMBER.member|{}member[0]
         final fun <get-member>(): kotlin/String // eu.vendeli.rethis.types.options/FROMMEMBER.member.<get-member>|<get-member>(){}[0]
 
@@ -702,11 +703,11 @@ final class eu.vendeli.rethis.types.options/FROMMEMBER : eu.vendeli.rethis.types
     final fun toString(): kotlin/String // eu.vendeli.rethis.types.options/FROMMEMBER.toString|toString(){}[0]
 }
 
-final class eu.vendeli.rethis.types.options/MinMatchLen : eu.vendeli.rethis.types.core/PairArgument<kotlin/String, kotlin/Long>, eu.vendeli.rethis.types.options/LcsOptions { // eu.vendeli.rethis.types.options/MinMatchLen|null[0]
+final class eu.vendeli.rethis.types.options/MinMatchLen : eu.vendeli.rethis.types.core/VaryingArgument, eu.vendeli.rethis.types.options/LcsOptions { // eu.vendeli.rethis.types.options/MinMatchLen|null[0]
     constructor <init>(kotlin/Long) // eu.vendeli.rethis.types.options/MinMatchLen.<init>|<init>(kotlin.Long){}[0]
 
-    final val arg // eu.vendeli.rethis.types.options/MinMatchLen.arg|{}arg[0]
-        final fun <get-arg>(): kotlin/Pair<kotlin/String, kotlin/Long> // eu.vendeli.rethis.types.options/MinMatchLen.arg.<get-arg>|<get-arg>(){}[0]
+    final val data // eu.vendeli.rethis.types.options/MinMatchLen.data|{}data[0]
+        final fun <get-data>(): kotlin.collections/List<eu.vendeli.rethis.types.core/Argument> // eu.vendeli.rethis.types.options/MinMatchLen.data.<get-data>|<get-data>(){}[0]
     final val length // eu.vendeli.rethis.types.options/MinMatchLen.length|{}length[0]
         final fun <get-length>(): kotlin/Long // eu.vendeli.rethis.types.options/MinMatchLen.length.<get-length>|<get-length>(){}[0]
 
@@ -769,7 +770,7 @@ final class eu.vendeli.rethis/ReThis { // eu.vendeli.rethis/ReThis|null[0]
 
     final fun disconnect() // eu.vendeli.rethis/ReThis.disconnect|disconnect(){}[0]
     final fun reconnect() // eu.vendeli.rethis/ReThis.reconnect|reconnect(){}[0]
-    final suspend fun execute(kotlin/Any?, kotlin/Boolean = ..., kotlin/Boolean = ...): eu.vendeli.rethis.types.core/RType // eu.vendeli.rethis/ReThis.execute|execute(kotlin.Any?;kotlin.Boolean;kotlin.Boolean){}[0]
+    final suspend fun execute(kotlin.collections/List<eu.vendeli.rethis.types.core/Argument>, kotlin/Boolean = ...): eu.vendeli.rethis.types.core/RType // eu.vendeli.rethis/ReThis.execute|execute(kotlin.collections.List<eu.vendeli.rethis.types.core.Argument>;kotlin.Boolean){}[0]
     final suspend fun pipeline(kotlin.coroutines/SuspendFunction1<eu.vendeli.rethis/ReThis, kotlin/Unit>): kotlin.collections/List<eu.vendeli.rethis.types.core/RType> // eu.vendeli.rethis/ReThis.pipeline|pipeline(kotlin.coroutines.SuspendFunction1<eu.vendeli.rethis.ReThis,kotlin.Unit>){}[0]
     final suspend fun transaction(kotlin.coroutines/SuspendFunction1<eu.vendeli.rethis/ReThis, kotlin/Unit>): kotlin.collections/List<eu.vendeli.rethis.types.core/RType> // eu.vendeli.rethis/ReThis.transaction|transaction(kotlin.coroutines.SuspendFunction1<eu.vendeli.rethis.ReThis,kotlin.Unit>){}[0]
 }
@@ -781,6 +782,50 @@ final class eu.vendeli.rethis/ReThisException : kotlin/RuntimeException { // eu.
         final fun <get-cause>(): kotlin/Throwable? // eu.vendeli.rethis/ReThisException.cause.<get-cause>|<get-cause>(){}[0]
     final val message // eu.vendeli.rethis/ReThisException.message|{}message[0]
         final fun <get-message>(): kotlin/String? // eu.vendeli.rethis/ReThisException.message.<get-message>|<get-message>(){}[0]
+}
+
+final value class eu.vendeli.rethis.types.core/BaArg : eu.vendeli.rethis.types.core/Argument { // eu.vendeli.rethis.types.core/BaArg|null[0]
+    constructor <init>(kotlin/ByteArray) // eu.vendeli.rethis.types.core/BaArg.<init>|<init>(kotlin.ByteArray){}[0]
+
+    final val value // eu.vendeli.rethis.types.core/BaArg.value|{}value[0]
+        final fun <get-value>(): kotlin/ByteArray // eu.vendeli.rethis.types.core/BaArg.value.<get-value>|<get-value>(){}[0]
+
+    final fun equals(kotlin/Any?): kotlin/Boolean // eu.vendeli.rethis.types.core/BaArg.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // eu.vendeli.rethis.types.core/BaArg.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // eu.vendeli.rethis.types.core/BaArg.toString|toString(){}[0]
+}
+
+final value class eu.vendeli.rethis.types.core/DoubleArg : eu.vendeli.rethis.types.core/Argument { // eu.vendeli.rethis.types.core/DoubleArg|null[0]
+    constructor <init>(kotlin/Double) // eu.vendeli.rethis.types.core/DoubleArg.<init>|<init>(kotlin.Double){}[0]
+
+    final val value // eu.vendeli.rethis.types.core/DoubleArg.value|{}value[0]
+        final fun <get-value>(): kotlin/Double // eu.vendeli.rethis.types.core/DoubleArg.value.<get-value>|<get-value>(){}[0]
+
+    final fun equals(kotlin/Any?): kotlin/Boolean // eu.vendeli.rethis.types.core/DoubleArg.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // eu.vendeli.rethis.types.core/DoubleArg.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // eu.vendeli.rethis.types.core/DoubleArg.toString|toString(){}[0]
+}
+
+final value class eu.vendeli.rethis.types.core/IntArg : eu.vendeli.rethis.types.core/Argument { // eu.vendeli.rethis.types.core/IntArg|null[0]
+    constructor <init>(kotlin/Int) // eu.vendeli.rethis.types.core/IntArg.<init>|<init>(kotlin.Int){}[0]
+
+    final val value // eu.vendeli.rethis.types.core/IntArg.value|{}value[0]
+        final fun <get-value>(): kotlin/Int // eu.vendeli.rethis.types.core/IntArg.value.<get-value>|<get-value>(){}[0]
+
+    final fun equals(kotlin/Any?): kotlin/Boolean // eu.vendeli.rethis.types.core/IntArg.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // eu.vendeli.rethis.types.core/IntArg.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // eu.vendeli.rethis.types.core/IntArg.toString|toString(){}[0]
+}
+
+final value class eu.vendeli.rethis.types.core/LongArg : eu.vendeli.rethis.types.core/Argument { // eu.vendeli.rethis.types.core/LongArg|null[0]
+    constructor <init>(kotlin/Long) // eu.vendeli.rethis.types.core/LongArg.<init>|<init>(kotlin.Long){}[0]
+
+    final val value // eu.vendeli.rethis.types.core/LongArg.value|{}value[0]
+        final fun <get-value>(): kotlin/Long // eu.vendeli.rethis.types.core/LongArg.value.<get-value>|<get-value>(){}[0]
+
+    final fun equals(kotlin/Any?): kotlin/Boolean // eu.vendeli.rethis.types.core/LongArg.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // eu.vendeli.rethis.types.core/LongArg.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // eu.vendeli.rethis.types.core/LongArg.toString|toString(){}[0]
 }
 
 sealed class eu.vendeli.rethis.types.core/RPrimitive : eu.vendeli.rethis.types.core/RType // eu.vendeli.rethis.types.core/RPrimitive|null[0]
@@ -817,7 +862,7 @@ sealed class eu.vendeli.rethis.types.core/RType { // eu.vendeli.rethis.types.cor
 
 sealed class eu.vendeli.rethis.types.core/RespVer { // eu.vendeli.rethis.types.core/RespVer|null[0]
     final val literal // eu.vendeli.rethis.types.core/RespVer.literal|{}literal[0]
-        final fun <get-literal>(): kotlin/Short // eu.vendeli.rethis.types.core/RespVer.literal.<get-literal>|<get-literal>(){}[0]
+        final fun <get-literal>(): kotlin/Int // eu.vendeli.rethis.types.core/RespVer.literal.<get-literal>|<get-literal>(){}[0]
 
     final object V2 : eu.vendeli.rethis.types.core/RespVer { // eu.vendeli.rethis.types.core/RespVer.V2|null[0]
         final fun equals(kotlin/Any?): kotlin/Boolean // eu.vendeli.rethis.types.core/RespVer.V2.equals|equals(kotlin.Any?){}[0]
@@ -835,11 +880,11 @@ sealed class eu.vendeli.rethis.types.core/RespVer { // eu.vendeli.rethis.types.c
 sealed class eu.vendeli.rethis.types.options/CenterPoint : eu.vendeli.rethis.types.options/GeoSearchOption // eu.vendeli.rethis.types.options/CenterPoint|null[0]
 
 sealed class eu.vendeli.rethis.types.options/CopyOption { // eu.vendeli.rethis.types.options/CopyOption|null[0]
-    final class DB : eu.vendeli.rethis.types.core/PairArgument<kotlin/String, kotlin/Long>, eu.vendeli.rethis.types.options/CopyOption { // eu.vendeli.rethis.types.options/CopyOption.DB|null[0]
+    final class DB : eu.vendeli.rethis.types.core/VaryingArgument, eu.vendeli.rethis.types.options/CopyOption { // eu.vendeli.rethis.types.options/CopyOption.DB|null[0]
         constructor <init>(kotlin/Long) // eu.vendeli.rethis.types.options/CopyOption.DB.<init>|<init>(kotlin.Long){}[0]
 
-        final val arg // eu.vendeli.rethis.types.options/CopyOption.DB.arg|{}arg[0]
-            final fun <get-arg>(): kotlin/Pair<kotlin/String, kotlin/Long> // eu.vendeli.rethis.types.options/CopyOption.DB.arg.<get-arg>|<get-arg>(){}[0]
+        final val data // eu.vendeli.rethis.types.options/CopyOption.DB.data|{}data[0]
+            final fun <get-data>(): kotlin.collections/List<eu.vendeli.rethis.types.core/Argument> // eu.vendeli.rethis.types.options/CopyOption.DB.data.<get-data>|<get-data>(){}[0]
         final val destination // eu.vendeli.rethis.types.options/CopyOption.DB.destination|{}destination[0]
             final fun <get-destination>(): kotlin/Long // eu.vendeli.rethis.types.options/CopyOption.DB.destination.<get-destination>|<get-destination>(){}[0]
 
@@ -898,32 +943,32 @@ sealed class eu.vendeli.rethis.types.options/GeoAddOption { // eu.vendeli.rethis
 sealed class eu.vendeli.rethis.types.options/GeoSearchOption // eu.vendeli.rethis.types.options/GeoSearchOption|null[0]
 
 sealed class eu.vendeli.rethis.types.options/GetExOption { // eu.vendeli.rethis.types.options/GetExOption|null[0]
-    final class EX : eu.vendeli.rethis.types.core/PairArgument<kotlin/String, kotlin/Long>, eu.vendeli.rethis.types.options/GetExOption { // eu.vendeli.rethis.types.options/GetExOption.EX|null[0]
+    final class EX : eu.vendeli.rethis.types.core/VaryingArgument, eu.vendeli.rethis.types.options/GetExOption { // eu.vendeli.rethis.types.options/GetExOption.EX|null[0]
         constructor <init>(kotlin.time/Duration) // eu.vendeli.rethis.types.options/GetExOption.EX.<init>|<init>(kotlin.time.Duration){}[0]
 
-        final val arg // eu.vendeli.rethis.types.options/GetExOption.EX.arg|{}arg[0]
-            final fun <get-arg>(): kotlin/Pair<kotlin/String, kotlin/Long> // eu.vendeli.rethis.types.options/GetExOption.EX.arg.<get-arg>|<get-arg>(){}[0]
+        final val data // eu.vendeli.rethis.types.options/GetExOption.EX.data|{}data[0]
+            final fun <get-data>(): kotlin.collections/List<eu.vendeli.rethis.types.core/Argument> // eu.vendeli.rethis.types.options/GetExOption.EX.data.<get-data>|<get-data>(){}[0]
     }
 
-    final class EXAT : eu.vendeli.rethis.types.core/PairArgument<kotlin/String, kotlin/Long>, eu.vendeli.rethis.types.options/GetExOption { // eu.vendeli.rethis.types.options/GetExOption.EXAT|null[0]
+    final class EXAT : eu.vendeli.rethis.types.core/VaryingArgument, eu.vendeli.rethis.types.options/GetExOption { // eu.vendeli.rethis.types.options/GetExOption.EXAT|null[0]
         constructor <init>(kotlin.time/Duration) // eu.vendeli.rethis.types.options/GetExOption.EXAT.<init>|<init>(kotlin.time.Duration){}[0]
 
-        final val arg // eu.vendeli.rethis.types.options/GetExOption.EXAT.arg|{}arg[0]
-            final fun <get-arg>(): kotlin/Pair<kotlin/String, kotlin/Long> // eu.vendeli.rethis.types.options/GetExOption.EXAT.arg.<get-arg>|<get-arg>(){}[0]
+        final val data // eu.vendeli.rethis.types.options/GetExOption.EXAT.data|{}data[0]
+            final fun <get-data>(): kotlin.collections/List<eu.vendeli.rethis.types.core/Argument> // eu.vendeli.rethis.types.options/GetExOption.EXAT.data.<get-data>|<get-data>(){}[0]
     }
 
-    final class PX : eu.vendeli.rethis.types.core/PairArgument<kotlin/String, kotlin/Long>, eu.vendeli.rethis.types.options/GetExOption { // eu.vendeli.rethis.types.options/GetExOption.PX|null[0]
+    final class PX : eu.vendeli.rethis.types.core/VaryingArgument, eu.vendeli.rethis.types.options/GetExOption { // eu.vendeli.rethis.types.options/GetExOption.PX|null[0]
         constructor <init>(kotlin.time/Duration) // eu.vendeli.rethis.types.options/GetExOption.PX.<init>|<init>(kotlin.time.Duration){}[0]
 
-        final val arg // eu.vendeli.rethis.types.options/GetExOption.PX.arg|{}arg[0]
-            final fun <get-arg>(): kotlin/Pair<kotlin/String, kotlin/Long> // eu.vendeli.rethis.types.options/GetExOption.PX.arg.<get-arg>|<get-arg>(){}[0]
+        final val data // eu.vendeli.rethis.types.options/GetExOption.PX.data|{}data[0]
+            final fun <get-data>(): kotlin.collections/List<eu.vendeli.rethis.types.core/Argument> // eu.vendeli.rethis.types.options/GetExOption.PX.data.<get-data>|<get-data>(){}[0]
     }
 
-    final class PXAT : eu.vendeli.rethis.types.core/PairArgument<kotlin/String, kotlin/Long>, eu.vendeli.rethis.types.options/GetExOption { // eu.vendeli.rethis.types.options/GetExOption.PXAT|null[0]
+    final class PXAT : eu.vendeli.rethis.types.core/VaryingArgument, eu.vendeli.rethis.types.options/GetExOption { // eu.vendeli.rethis.types.options/GetExOption.PXAT|null[0]
         constructor <init>(kotlin.time/Duration) // eu.vendeli.rethis.types.options/GetExOption.PXAT.<init>|<init>(kotlin.time.Duration){}[0]
 
-        final val arg // eu.vendeli.rethis.types.options/GetExOption.PXAT.arg|{}arg[0]
-            final fun <get-arg>(): kotlin/Pair<kotlin/String, kotlin/Long> // eu.vendeli.rethis.types.options/GetExOption.PXAT.arg.<get-arg>|<get-arg>(){}[0]
+        final val data // eu.vendeli.rethis.types.options/GetExOption.PXAT.data|{}data[0]
+            final fun <get-data>(): kotlin.collections/List<eu.vendeli.rethis.types.core/Argument> // eu.vendeli.rethis.types.options/GetExOption.PXAT.data.<get-data>|<get-data>(){}[0]
     }
 
     final object Persist : eu.vendeli.rethis.types.options/GetExOption { // eu.vendeli.rethis.types.options/GetExOption.Persist|null[0]
@@ -934,13 +979,13 @@ sealed class eu.vendeli.rethis.types.options/GetExOption { // eu.vendeli.rethis.
 }
 
 sealed class eu.vendeli.rethis.types.options/HScanOption { // eu.vendeli.rethis.types.options/HScanOption|null[0]
-    final class Count : eu.vendeli.rethis.types.core/PairArgument<kotlin/String, kotlin/Long>, eu.vendeli.rethis.types.options/HScanOption { // eu.vendeli.rethis.types.options/HScanOption.Count|null[0]
+    final class Count : eu.vendeli.rethis.types.core/VaryingArgument, eu.vendeli.rethis.types.options/HScanOption { // eu.vendeli.rethis.types.options/HScanOption.Count|null[0]
         constructor <init>(kotlin/Long) // eu.vendeli.rethis.types.options/HScanOption.Count.<init>|<init>(kotlin.Long){}[0]
 
-        final val arg // eu.vendeli.rethis.types.options/HScanOption.Count.arg|{}arg[0]
-            final fun <get-arg>(): kotlin/Pair<kotlin/String, kotlin/Long> // eu.vendeli.rethis.types.options/HScanOption.Count.arg.<get-arg>|<get-arg>(){}[0]
         final val count // eu.vendeli.rethis.types.options/HScanOption.Count.count|{}count[0]
             final fun <get-count>(): kotlin/Long // eu.vendeli.rethis.types.options/HScanOption.Count.count.<get-count>|<get-count>(){}[0]
+        final val data // eu.vendeli.rethis.types.options/HScanOption.Count.data|{}data[0]
+            final fun <get-data>(): kotlin.collections/List<eu.vendeli.rethis.types.core/Argument> // eu.vendeli.rethis.types.options/HScanOption.Count.data.<get-data>|<get-data>(){}[0]
 
         final fun component1(): kotlin/Long // eu.vendeli.rethis.types.options/HScanOption.Count.component1|component1(){}[0]
         final fun copy(kotlin/Long = ...): eu.vendeli.rethis.types.options/HScanOption.Count // eu.vendeli.rethis.types.options/HScanOption.Count.copy|copy(kotlin.Long){}[0]
@@ -949,11 +994,11 @@ sealed class eu.vendeli.rethis.types.options/HScanOption { // eu.vendeli.rethis.
         final fun toString(): kotlin/String // eu.vendeli.rethis.types.options/HScanOption.Count.toString|toString(){}[0]
     }
 
-    final class Match : eu.vendeli.rethis.types.core/PairArgument<kotlin/String, kotlin/String>, eu.vendeli.rethis.types.options/HScanOption { // eu.vendeli.rethis.types.options/HScanOption.Match|null[0]
+    final class Match : eu.vendeli.rethis.types.core/VaryingArgument, eu.vendeli.rethis.types.options/HScanOption { // eu.vendeli.rethis.types.options/HScanOption.Match|null[0]
         constructor <init>(kotlin/String) // eu.vendeli.rethis.types.options/HScanOption.Match.<init>|<init>(kotlin.String){}[0]
 
-        final val arg // eu.vendeli.rethis.types.options/HScanOption.Match.arg|{}arg[0]
-            final fun <get-arg>(): kotlin/Pair<kotlin/String, kotlin/String> // eu.vendeli.rethis.types.options/HScanOption.Match.arg.<get-arg>|<get-arg>(){}[0]
+        final val data // eu.vendeli.rethis.types.options/HScanOption.Match.data|{}data[0]
+            final fun <get-data>(): kotlin.collections/List<eu.vendeli.rethis.types.core/Argument> // eu.vendeli.rethis.types.options/HScanOption.Match.data.<get-data>|<get-data>(){}[0]
         final val pattern // eu.vendeli.rethis.types.options/HScanOption.Match.pattern|{}pattern[0]
             final fun <get-pattern>(): kotlin/String // eu.vendeli.rethis.types.options/HScanOption.Match.pattern.<get-pattern>|<get-pattern>(){}[0]
 
@@ -986,13 +1031,13 @@ sealed class eu.vendeli.rethis.types.options/LInsertPlace { // eu.vendeli.rethis
 }
 
 sealed class eu.vendeli.rethis.types.options/LPosOption { // eu.vendeli.rethis.types.options/LPosOption|null[0]
-    final class Count : eu.vendeli.rethis.types.core/PairArgument<kotlin/String, kotlin/Long>, eu.vendeli.rethis.types.options/LPosOption { // eu.vendeli.rethis.types.options/LPosOption.Count|null[0]
+    final class Count : eu.vendeli.rethis.types.core/VaryingArgument, eu.vendeli.rethis.types.options/LPosOption { // eu.vendeli.rethis.types.options/LPosOption.Count|null[0]
         constructor <init>(kotlin/Long) // eu.vendeli.rethis.types.options/LPosOption.Count.<init>|<init>(kotlin.Long){}[0]
 
-        final val arg // eu.vendeli.rethis.types.options/LPosOption.Count.arg|{}arg[0]
-            final fun <get-arg>(): kotlin/Pair<kotlin/String, kotlin/Long> // eu.vendeli.rethis.types.options/LPosOption.Count.arg.<get-arg>|<get-arg>(){}[0]
         final val count // eu.vendeli.rethis.types.options/LPosOption.Count.count|{}count[0]
             final fun <get-count>(): kotlin/Long // eu.vendeli.rethis.types.options/LPosOption.Count.count.<get-count>|<get-count>(){}[0]
+        final val data // eu.vendeli.rethis.types.options/LPosOption.Count.data|{}data[0]
+            final fun <get-data>(): kotlin.collections/List<eu.vendeli.rethis.types.core/Argument> // eu.vendeli.rethis.types.options/LPosOption.Count.data.<get-data>|<get-data>(){}[0]
 
         final fun component1(): kotlin/Long // eu.vendeli.rethis.types.options/LPosOption.Count.component1|component1(){}[0]
         final fun copy(kotlin/Long = ...): eu.vendeli.rethis.types.options/LPosOption.Count // eu.vendeli.rethis.types.options/LPosOption.Count.copy|copy(kotlin.Long){}[0]
@@ -1001,11 +1046,11 @@ sealed class eu.vendeli.rethis.types.options/LPosOption { // eu.vendeli.rethis.t
         final fun toString(): kotlin/String // eu.vendeli.rethis.types.options/LPosOption.Count.toString|toString(){}[0]
     }
 
-    final class MaxLen : eu.vendeli.rethis.types.core/PairArgument<kotlin/String, kotlin/Long>, eu.vendeli.rethis.types.options/LPosOption.CommonOption { // eu.vendeli.rethis.types.options/LPosOption.MaxLen|null[0]
+    final class MaxLen : eu.vendeli.rethis.types.core/VaryingArgument, eu.vendeli.rethis.types.options/LPosOption.CommonOption { // eu.vendeli.rethis.types.options/LPosOption.MaxLen|null[0]
         constructor <init>(kotlin/Long) // eu.vendeli.rethis.types.options/LPosOption.MaxLen.<init>|<init>(kotlin.Long){}[0]
 
-        final val arg // eu.vendeli.rethis.types.options/LPosOption.MaxLen.arg|{}arg[0]
-            final fun <get-arg>(): kotlin/Pair<kotlin/String, kotlin/Long> // eu.vendeli.rethis.types.options/LPosOption.MaxLen.arg.<get-arg>|<get-arg>(){}[0]
+        final val data // eu.vendeli.rethis.types.options/LPosOption.MaxLen.data|{}data[0]
+            final fun <get-data>(): kotlin.collections/List<eu.vendeli.rethis.types.core/Argument> // eu.vendeli.rethis.types.options/LPosOption.MaxLen.data.<get-data>|<get-data>(){}[0]
         final val maxLen // eu.vendeli.rethis.types.options/LPosOption.MaxLen.maxLen|{}maxLen[0]
             final fun <get-maxLen>(): kotlin/Long // eu.vendeli.rethis.types.options/LPosOption.MaxLen.maxLen.<get-maxLen>|<get-maxLen>(){}[0]
 
@@ -1016,11 +1061,11 @@ sealed class eu.vendeli.rethis.types.options/LPosOption { // eu.vendeli.rethis.t
         final fun toString(): kotlin/String // eu.vendeli.rethis.types.options/LPosOption.MaxLen.toString|toString(){}[0]
     }
 
-    final class Rank : eu.vendeli.rethis.types.core/PairArgument<kotlin/String, kotlin/Long>, eu.vendeli.rethis.types.options/LPosOption.CommonOption { // eu.vendeli.rethis.types.options/LPosOption.Rank|null[0]
+    final class Rank : eu.vendeli.rethis.types.core/VaryingArgument, eu.vendeli.rethis.types.options/LPosOption.CommonOption { // eu.vendeli.rethis.types.options/LPosOption.Rank|null[0]
         constructor <init>(kotlin/Long) // eu.vendeli.rethis.types.options/LPosOption.Rank.<init>|<init>(kotlin.Long){}[0]
 
-        final val arg // eu.vendeli.rethis.types.options/LPosOption.Rank.arg|{}arg[0]
-            final fun <get-arg>(): kotlin/Pair<kotlin/String, kotlin/Long> // eu.vendeli.rethis.types.options/LPosOption.Rank.arg.<get-arg>|<get-arg>(){}[0]
+        final val data // eu.vendeli.rethis.types.options/LPosOption.Rank.data|{}data[0]
+            final fun <get-data>(): kotlin.collections/List<eu.vendeli.rethis.types.core/Argument> // eu.vendeli.rethis.types.options/LPosOption.Rank.data.<get-data>|<get-data>(){}[0]
         final val rank // eu.vendeli.rethis.types.options/LPosOption.Rank.rank|{}rank[0]
             final fun <get-rank>(): kotlin/Long // eu.vendeli.rethis.types.options/LPosOption.Rank.rank.<get-rank>|<get-rank>(){}[0]
 
@@ -1051,11 +1096,11 @@ sealed class eu.vendeli.rethis.types.options/LcsMode : eu.vendeli.rethis.types.o
 sealed class eu.vendeli.rethis.types.options/LcsOptions // eu.vendeli.rethis.types.options/LcsOptions|null[0]
 
 sealed class eu.vendeli.rethis.types.options/MigrateOption { // eu.vendeli.rethis.types.options/MigrateOption|null[0]
-    final class AUTH : eu.vendeli.rethis.types.core/PairArgument<kotlin/String, kotlin/String>, eu.vendeli.rethis.types.options/MigrateOption.Authorization { // eu.vendeli.rethis.types.options/MigrateOption.AUTH|null[0]
+    final class AUTH : eu.vendeli.rethis.types.core/VaryingArgument, eu.vendeli.rethis.types.options/MigrateOption.Authorization { // eu.vendeli.rethis.types.options/MigrateOption.AUTH|null[0]
         constructor <init>(kotlin/String) // eu.vendeli.rethis.types.options/MigrateOption.AUTH.<init>|<init>(kotlin.String){}[0]
 
-        final val arg // eu.vendeli.rethis.types.options/MigrateOption.AUTH.arg|{}arg[0]
-            final fun <get-arg>(): kotlin/Pair<kotlin/String, kotlin/String> // eu.vendeli.rethis.types.options/MigrateOption.AUTH.arg.<get-arg>|<get-arg>(){}[0]
+        final val data // eu.vendeli.rethis.types.options/MigrateOption.AUTH.data|{}data[0]
+            final fun <get-data>(): kotlin.collections/List<eu.vendeli.rethis.types.core/Argument> // eu.vendeli.rethis.types.options/MigrateOption.AUTH.data.<get-data>|<get-data>(){}[0]
         final val password // eu.vendeli.rethis.types.options/MigrateOption.AUTH.password|{}password[0]
             final fun <get-password>(): kotlin/String // eu.vendeli.rethis.types.options/MigrateOption.AUTH.password.<get-password>|<get-password>(){}[0]
 
@@ -1066,11 +1111,11 @@ sealed class eu.vendeli.rethis.types.options/MigrateOption { // eu.vendeli.rethi
         final fun toString(): kotlin/String // eu.vendeli.rethis.types.options/MigrateOption.AUTH.toString|toString(){}[0]
     }
 
-    final class AUTH2 : eu.vendeli.rethis.types.core/TripleArgument<kotlin/String, kotlin/String, kotlin/String>, eu.vendeli.rethis.types.options/MigrateOption.Authorization { // eu.vendeli.rethis.types.options/MigrateOption.AUTH2|null[0]
+    final class AUTH2 : eu.vendeli.rethis.types.core/VaryingArgument, eu.vendeli.rethis.types.options/MigrateOption.Authorization { // eu.vendeli.rethis.types.options/MigrateOption.AUTH2|null[0]
         constructor <init>(kotlin/String, kotlin/String) // eu.vendeli.rethis.types.options/MigrateOption.AUTH2.<init>|<init>(kotlin.String;kotlin.String){}[0]
 
-        final val arg // eu.vendeli.rethis.types.options/MigrateOption.AUTH2.arg|{}arg[0]
-            final fun <get-arg>(): kotlin/Triple<kotlin/String, kotlin/String, kotlin/String> // eu.vendeli.rethis.types.options/MigrateOption.AUTH2.arg.<get-arg>|<get-arg>(){}[0]
+        final val data // eu.vendeli.rethis.types.options/MigrateOption.AUTH2.data|{}data[0]
+            final fun <get-data>(): kotlin.collections/List<eu.vendeli.rethis.types.core/Argument> // eu.vendeli.rethis.types.options/MigrateOption.AUTH2.data.<get-data>|<get-data>(){}[0]
         final val password // eu.vendeli.rethis.types.options/MigrateOption.AUTH2.password|{}password[0]
             final fun <get-password>(): kotlin/String // eu.vendeli.rethis.types.options/MigrateOption.AUTH2.password.<get-password>|<get-password>(){}[0]
         final val username // eu.vendeli.rethis.types.options/MigrateOption.AUTH2.username|{}username[0]
@@ -1084,11 +1129,11 @@ sealed class eu.vendeli.rethis.types.options/MigrateOption { // eu.vendeli.rethi
         final fun toString(): kotlin/String // eu.vendeli.rethis.types.options/MigrateOption.AUTH2.toString|toString(){}[0]
     }
 
-    final class KEYS : eu.vendeli.rethis.types.core/PairArgument<kotlin/String, kotlin.collections/List<kotlin/String>>, eu.vendeli.rethis.types.options/MigrateOption { // eu.vendeli.rethis.types.options/MigrateOption.KEYS|null[0]
+    final class KEYS : eu.vendeli.rethis.types.core/VaryingArgument, eu.vendeli.rethis.types.options/MigrateOption { // eu.vendeli.rethis.types.options/MigrateOption.KEYS|null[0]
         constructor <init>(kotlin/Array<out kotlin/String>...) // eu.vendeli.rethis.types.options/MigrateOption.KEYS.<init>|<init>(kotlin.Array<out|kotlin.String>...){}[0]
 
-        final val arg // eu.vendeli.rethis.types.options/MigrateOption.KEYS.arg|{}arg[0]
-            final fun <get-arg>(): kotlin/Pair<kotlin/String, kotlin.collections/List<kotlin/String>> // eu.vendeli.rethis.types.options/MigrateOption.KEYS.arg.<get-arg>|<get-arg>(){}[0]
+        final val data // eu.vendeli.rethis.types.options/MigrateOption.KEYS.data|{}data[0]
+            final fun <get-data>(): kotlin.collections/List<eu.vendeli.rethis.types.core/Argument> // eu.vendeli.rethis.types.options/MigrateOption.KEYS.data.<get-data>|<get-data>(){}[0]
     }
 
     sealed class Authorization : eu.vendeli.rethis.types.options/MigrateOption // eu.vendeli.rethis.types.options/MigrateOption.Authorization|null[0]
@@ -1109,11 +1154,11 @@ sealed class eu.vendeli.rethis.types.options/MigrateOption { // eu.vendeli.rethi
 }
 
 sealed class eu.vendeli.rethis.types.options/RestoreOption { // eu.vendeli.rethis.types.options/RestoreOption|null[0]
-    final class FREQ : eu.vendeli.rethis.types.core/PairArgument<kotlin/String, kotlin/Long>, eu.vendeli.rethis.types.options/RestoreOption { // eu.vendeli.rethis.types.options/RestoreOption.FREQ|null[0]
+    final class FREQ : eu.vendeli.rethis.types.core/VaryingArgument, eu.vendeli.rethis.types.options/RestoreOption { // eu.vendeli.rethis.types.options/RestoreOption.FREQ|null[0]
         constructor <init>(kotlin/Long) // eu.vendeli.rethis.types.options/RestoreOption.FREQ.<init>|<init>(kotlin.Long){}[0]
 
-        final val arg // eu.vendeli.rethis.types.options/RestoreOption.FREQ.arg|{}arg[0]
-            final fun <get-arg>(): kotlin/Pair<kotlin/String, kotlin/Long> // eu.vendeli.rethis.types.options/RestoreOption.FREQ.arg.<get-arg>|<get-arg>(){}[0]
+        final val data // eu.vendeli.rethis.types.options/RestoreOption.FREQ.data|{}data[0]
+            final fun <get-data>(): kotlin.collections/List<eu.vendeli.rethis.types.core/Argument> // eu.vendeli.rethis.types.options/RestoreOption.FREQ.data.<get-data>|<get-data>(){}[0]
         final val frequency // eu.vendeli.rethis.types.options/RestoreOption.FREQ.frequency|{}frequency[0]
             final fun <get-frequency>(): kotlin/Long // eu.vendeli.rethis.types.options/RestoreOption.FREQ.frequency.<get-frequency>|<get-frequency>(){}[0]
 
@@ -1124,11 +1169,11 @@ sealed class eu.vendeli.rethis.types.options/RestoreOption { // eu.vendeli.rethi
         final fun toString(): kotlin/String // eu.vendeli.rethis.types.options/RestoreOption.FREQ.toString|toString(){}[0]
     }
 
-    final class IDLETIME : eu.vendeli.rethis.types.core/PairArgument<kotlin/String, kotlin/Long>, eu.vendeli.rethis.types.options/RestoreOption { // eu.vendeli.rethis.types.options/RestoreOption.IDLETIME|null[0]
+    final class IDLETIME : eu.vendeli.rethis.types.core/VaryingArgument, eu.vendeli.rethis.types.options/RestoreOption { // eu.vendeli.rethis.types.options/RestoreOption.IDLETIME|null[0]
         constructor <init>(kotlin.time/Duration) // eu.vendeli.rethis.types.options/RestoreOption.IDLETIME.<init>|<init>(kotlin.time.Duration){}[0]
 
-        final val arg // eu.vendeli.rethis.types.options/RestoreOption.IDLETIME.arg|{}arg[0]
-            final fun <get-arg>(): kotlin/Pair<kotlin/String, kotlin/Long> // eu.vendeli.rethis.types.options/RestoreOption.IDLETIME.arg.<get-arg>|<get-arg>(){}[0]
+        final val data // eu.vendeli.rethis.types.options/RestoreOption.IDLETIME.data|{}data[0]
+            final fun <get-data>(): kotlin.collections/List<eu.vendeli.rethis.types.core/Argument> // eu.vendeli.rethis.types.options/RestoreOption.IDLETIME.data.<get-data>|<get-data>(){}[0]
         final val seconds // eu.vendeli.rethis.types.options/RestoreOption.IDLETIME.seconds|{}seconds[0]
             final fun <get-seconds>(): kotlin.time/Duration // eu.vendeli.rethis.types.options/RestoreOption.IDLETIME.seconds.<get-seconds>|<get-seconds>(){}[0]
 
@@ -1153,13 +1198,13 @@ sealed class eu.vendeli.rethis.types.options/RestoreOption { // eu.vendeli.rethi
 }
 
 sealed class eu.vendeli.rethis.types.options/SScanOption { // eu.vendeli.rethis.types.options/SScanOption|null[0]
-    final class COUNT : eu.vendeli.rethis.types.core/PairArgument<kotlin/String, kotlin/Long>, eu.vendeli.rethis.types.options/SScanOption { // eu.vendeli.rethis.types.options/SScanOption.COUNT|null[0]
+    final class COUNT : eu.vendeli.rethis.types.core/VaryingArgument, eu.vendeli.rethis.types.options/SScanOption { // eu.vendeli.rethis.types.options/SScanOption.COUNT|null[0]
         constructor <init>(kotlin/Long) // eu.vendeli.rethis.types.options/SScanOption.COUNT.<init>|<init>(kotlin.Long){}[0]
 
-        final val arg // eu.vendeli.rethis.types.options/SScanOption.COUNT.arg|{}arg[0]
-            final fun <get-arg>(): kotlin/Pair<kotlin/String, kotlin/Long> // eu.vendeli.rethis.types.options/SScanOption.COUNT.arg.<get-arg>|<get-arg>(){}[0]
         final val count // eu.vendeli.rethis.types.options/SScanOption.COUNT.count|{}count[0]
             final fun <get-count>(): kotlin/Long // eu.vendeli.rethis.types.options/SScanOption.COUNT.count.<get-count>|<get-count>(){}[0]
+        final val data // eu.vendeli.rethis.types.options/SScanOption.COUNT.data|{}data[0]
+            final fun <get-data>(): kotlin.collections/List<eu.vendeli.rethis.types.core/Argument> // eu.vendeli.rethis.types.options/SScanOption.COUNT.data.<get-data>|<get-data>(){}[0]
 
         final fun component1(): kotlin/Long // eu.vendeli.rethis.types.options/SScanOption.COUNT.component1|component1(){}[0]
         final fun copy(kotlin/Long = ...): eu.vendeli.rethis.types.options/SScanOption.COUNT // eu.vendeli.rethis.types.options/SScanOption.COUNT.copy|copy(kotlin.Long){}[0]
@@ -1168,11 +1213,11 @@ sealed class eu.vendeli.rethis.types.options/SScanOption { // eu.vendeli.rethis.
         final fun toString(): kotlin/String // eu.vendeli.rethis.types.options/SScanOption.COUNT.toString|toString(){}[0]
     }
 
-    final class MATCH : eu.vendeli.rethis.types.core/PairArgument<kotlin/String, kotlin/String>, eu.vendeli.rethis.types.options/SScanOption { // eu.vendeli.rethis.types.options/SScanOption.MATCH|null[0]
+    final class MATCH : eu.vendeli.rethis.types.core/VaryingArgument, eu.vendeli.rethis.types.options/SScanOption { // eu.vendeli.rethis.types.options/SScanOption.MATCH|null[0]
         constructor <init>(kotlin/String) // eu.vendeli.rethis.types.options/SScanOption.MATCH.<init>|<init>(kotlin.String){}[0]
 
-        final val arg // eu.vendeli.rethis.types.options/SScanOption.MATCH.arg|{}arg[0]
-            final fun <get-arg>(): kotlin/Pair<kotlin/String, kotlin/String> // eu.vendeli.rethis.types.options/SScanOption.MATCH.arg.<get-arg>|<get-arg>(){}[0]
+        final val data // eu.vendeli.rethis.types.options/SScanOption.MATCH.data|{}data[0]
+            final fun <get-data>(): kotlin.collections/List<eu.vendeli.rethis.types.core/Argument> // eu.vendeli.rethis.types.options/SScanOption.MATCH.data.<get-data>|<get-data>(){}[0]
         final val pattern // eu.vendeli.rethis.types.options/SScanOption.MATCH.pattern|{}pattern[0]
             final fun <get-pattern>(): kotlin/String // eu.vendeli.rethis.types.options/SScanOption.MATCH.pattern.<get-pattern>|<get-pattern>(){}[0]
 
@@ -1185,13 +1230,13 @@ sealed class eu.vendeli.rethis.types.options/SScanOption { // eu.vendeli.rethis.
 }
 
 sealed class eu.vendeli.rethis.types.options/ScanOption { // eu.vendeli.rethis.types.options/ScanOption|null[0]
-    final class Count : eu.vendeli.rethis.types.core/PairArgument<kotlin/String, kotlin/Long>, eu.vendeli.rethis.types.options/ScanOption { // eu.vendeli.rethis.types.options/ScanOption.Count|null[0]
+    final class Count : eu.vendeli.rethis.types.core/VaryingArgument, eu.vendeli.rethis.types.options/ScanOption { // eu.vendeli.rethis.types.options/ScanOption.Count|null[0]
         constructor <init>(kotlin/Long) // eu.vendeli.rethis.types.options/ScanOption.Count.<init>|<init>(kotlin.Long){}[0]
 
-        final val arg // eu.vendeli.rethis.types.options/ScanOption.Count.arg|{}arg[0]
-            final fun <get-arg>(): kotlin/Pair<kotlin/String, kotlin/Long> // eu.vendeli.rethis.types.options/ScanOption.Count.arg.<get-arg>|<get-arg>(){}[0]
         final val count // eu.vendeli.rethis.types.options/ScanOption.Count.count|{}count[0]
             final fun <get-count>(): kotlin/Long // eu.vendeli.rethis.types.options/ScanOption.Count.count.<get-count>|<get-count>(){}[0]
+        final val data // eu.vendeli.rethis.types.options/ScanOption.Count.data|{}data[0]
+            final fun <get-data>(): kotlin.collections/List<eu.vendeli.rethis.types.core/Argument> // eu.vendeli.rethis.types.options/ScanOption.Count.data.<get-data>|<get-data>(){}[0]
 
         final fun component1(): kotlin/Long // eu.vendeli.rethis.types.options/ScanOption.Count.component1|component1(){}[0]
         final fun copy(kotlin/Long = ...): eu.vendeli.rethis.types.options/ScanOption.Count // eu.vendeli.rethis.types.options/ScanOption.Count.copy|copy(kotlin.Long){}[0]
@@ -1200,11 +1245,11 @@ sealed class eu.vendeli.rethis.types.options/ScanOption { // eu.vendeli.rethis.t
         final fun toString(): kotlin/String // eu.vendeli.rethis.types.options/ScanOption.Count.toString|toString(){}[0]
     }
 
-    final class Match : eu.vendeli.rethis.types.core/PairArgument<kotlin/String, kotlin/String>, eu.vendeli.rethis.types.options/ScanOption { // eu.vendeli.rethis.types.options/ScanOption.Match|null[0]
+    final class Match : eu.vendeli.rethis.types.core/VaryingArgument, eu.vendeli.rethis.types.options/ScanOption { // eu.vendeli.rethis.types.options/ScanOption.Match|null[0]
         constructor <init>(kotlin/String) // eu.vendeli.rethis.types.options/ScanOption.Match.<init>|<init>(kotlin.String){}[0]
 
-        final val arg // eu.vendeli.rethis.types.options/ScanOption.Match.arg|{}arg[0]
-            final fun <get-arg>(): kotlin/Pair<kotlin/String, kotlin/String> // eu.vendeli.rethis.types.options/ScanOption.Match.arg.<get-arg>|<get-arg>(){}[0]
+        final val data // eu.vendeli.rethis.types.options/ScanOption.Match.data|{}data[0]
+            final fun <get-data>(): kotlin.collections/List<eu.vendeli.rethis.types.core/Argument> // eu.vendeli.rethis.types.options/ScanOption.Match.data.<get-data>|<get-data>(){}[0]
         final val pattern // eu.vendeli.rethis.types.options/ScanOption.Match.pattern|{}pattern[0]
             final fun <get-pattern>(): kotlin/String // eu.vendeli.rethis.types.options/ScanOption.Match.pattern.<get-pattern>|<get-pattern>(){}[0]
 
@@ -1215,11 +1260,11 @@ sealed class eu.vendeli.rethis.types.options/ScanOption { // eu.vendeli.rethis.t
         final fun toString(): kotlin/String // eu.vendeli.rethis.types.options/ScanOption.Match.toString|toString(){}[0]
     }
 
-    final class Type : eu.vendeli.rethis.types.core/PairArgument<kotlin/String, kotlin/String>, eu.vendeli.rethis.types.options/ScanOption { // eu.vendeli.rethis.types.options/ScanOption.Type|null[0]
+    final class Type : eu.vendeli.rethis.types.core/VaryingArgument, eu.vendeli.rethis.types.options/ScanOption { // eu.vendeli.rethis.types.options/ScanOption.Type|null[0]
         constructor <init>(kotlin/String) // eu.vendeli.rethis.types.options/ScanOption.Type.<init>|<init>(kotlin.String){}[0]
 
-        final val arg // eu.vendeli.rethis.types.options/ScanOption.Type.arg|{}arg[0]
-            final fun <get-arg>(): kotlin/Pair<kotlin/String, kotlin/String> // eu.vendeli.rethis.types.options/ScanOption.Type.arg.<get-arg>|<get-arg>(){}[0]
+        final val data // eu.vendeli.rethis.types.options/ScanOption.Type.data|{}data[0]
+            final fun <get-data>(): kotlin.collections/List<eu.vendeli.rethis.types.core/Argument> // eu.vendeli.rethis.types.options/ScanOption.Type.data.<get-data>|<get-data>(){}[0]
         final val type // eu.vendeli.rethis.types.options/ScanOption.Type.type|{}type[0]
             final fun <get-type>(): kotlin/String // eu.vendeli.rethis.types.options/ScanOption.Type.type.<get-type>|<get-type>(){}[0]
 
@@ -1232,32 +1277,32 @@ sealed class eu.vendeli.rethis.types.options/ScanOption { // eu.vendeli.rethis.t
 }
 
 sealed class eu.vendeli.rethis.types.options/SetExpire : eu.vendeli.rethis.types.options/SetOption { // eu.vendeli.rethis.types.options/SetExpire|null[0]
-    final class EX : eu.vendeli.rethis.types.core/PairArgument<kotlin/String, kotlin/Long>, eu.vendeli.rethis.types.options/SetExpire { // eu.vendeli.rethis.types.options/SetExpire.EX|null[0]
+    final class EX : eu.vendeli.rethis.types.core/VaryingArgument, eu.vendeli.rethis.types.options/SetExpire { // eu.vendeli.rethis.types.options/SetExpire.EX|null[0]
         constructor <init>(kotlin.time/Duration) // eu.vendeli.rethis.types.options/SetExpire.EX.<init>|<init>(kotlin.time.Duration){}[0]
 
-        final val arg // eu.vendeli.rethis.types.options/SetExpire.EX.arg|{}arg[0]
-            final fun <get-arg>(): kotlin/Pair<kotlin/String, kotlin/Long> // eu.vendeli.rethis.types.options/SetExpire.EX.arg.<get-arg>|<get-arg>(){}[0]
+        final val data // eu.vendeli.rethis.types.options/SetExpire.EX.data|{}data[0]
+            final fun <get-data>(): kotlin.collections/List<eu.vendeli.rethis.types.core/Argument> // eu.vendeli.rethis.types.options/SetExpire.EX.data.<get-data>|<get-data>(){}[0]
     }
 
-    final class EXAT : eu.vendeli.rethis.types.core/PairArgument<kotlin/String, kotlin/Long>, eu.vendeli.rethis.types.options/SetExpire { // eu.vendeli.rethis.types.options/SetExpire.EXAT|null[0]
+    final class EXAT : eu.vendeli.rethis.types.core/VaryingArgument, eu.vendeli.rethis.types.options/SetExpire { // eu.vendeli.rethis.types.options/SetExpire.EXAT|null[0]
         constructor <init>(kotlinx.datetime/Instant) // eu.vendeli.rethis.types.options/SetExpire.EXAT.<init>|<init>(kotlinx.datetime.Instant){}[0]
 
-        final val arg // eu.vendeli.rethis.types.options/SetExpire.EXAT.arg|{}arg[0]
-            final fun <get-arg>(): kotlin/Pair<kotlin/String, kotlin/Long> // eu.vendeli.rethis.types.options/SetExpire.EXAT.arg.<get-arg>|<get-arg>(){}[0]
+        final val data // eu.vendeli.rethis.types.options/SetExpire.EXAT.data|{}data[0]
+            final fun <get-data>(): kotlin.collections/List<eu.vendeli.rethis.types.core/Argument> // eu.vendeli.rethis.types.options/SetExpire.EXAT.data.<get-data>|<get-data>(){}[0]
     }
 
-    final class PX : eu.vendeli.rethis.types.core/PairArgument<kotlin/String, kotlin/Long>, eu.vendeli.rethis.types.options/SetExpire { // eu.vendeli.rethis.types.options/SetExpire.PX|null[0]
+    final class PX : eu.vendeli.rethis.types.core/VaryingArgument, eu.vendeli.rethis.types.options/SetExpire { // eu.vendeli.rethis.types.options/SetExpire.PX|null[0]
         constructor <init>(kotlin.time/Duration) // eu.vendeli.rethis.types.options/SetExpire.PX.<init>|<init>(kotlin.time.Duration){}[0]
 
-        final val arg // eu.vendeli.rethis.types.options/SetExpire.PX.arg|{}arg[0]
-            final fun <get-arg>(): kotlin/Pair<kotlin/String, kotlin/Long> // eu.vendeli.rethis.types.options/SetExpire.PX.arg.<get-arg>|<get-arg>(){}[0]
+        final val data // eu.vendeli.rethis.types.options/SetExpire.PX.data|{}data[0]
+            final fun <get-data>(): kotlin.collections/List<eu.vendeli.rethis.types.core/Argument> // eu.vendeli.rethis.types.options/SetExpire.PX.data.<get-data>|<get-data>(){}[0]
     }
 
-    final class PXAT : eu.vendeli.rethis.types.core/PairArgument<kotlin/String, kotlin/Long>, eu.vendeli.rethis.types.options/SetExpire { // eu.vendeli.rethis.types.options/SetExpire.PXAT|null[0]
+    final class PXAT : eu.vendeli.rethis.types.core/VaryingArgument, eu.vendeli.rethis.types.options/SetExpire { // eu.vendeli.rethis.types.options/SetExpire.PXAT|null[0]
         constructor <init>(kotlinx.datetime/Instant) // eu.vendeli.rethis.types.options/SetExpire.PXAT.<init>|<init>(kotlinx.datetime.Instant){}[0]
 
-        final val arg // eu.vendeli.rethis.types.options/SetExpire.PXAT.arg|{}arg[0]
-            final fun <get-arg>(): kotlin/Pair<kotlin/String, kotlin/Long> // eu.vendeli.rethis.types.options/SetExpire.PXAT.arg.<get-arg>|<get-arg>(){}[0]
+        final val data // eu.vendeli.rethis.types.options/SetExpire.PXAT.data|{}data[0]
+            final fun <get-data>(): kotlin.collections/List<eu.vendeli.rethis.types.core/Argument> // eu.vendeli.rethis.types.options/SetExpire.PXAT.data.<get-data>|<get-data>(){}[0]
     }
 
     final object KEEPTTL : eu.vendeli.rethis.types.options/SetExpire { // eu.vendeli.rethis.types.options/SetExpire.KEEPTTL|null[0]
@@ -1272,11 +1317,11 @@ sealed class eu.vendeli.rethis.types.options/SetOption // eu.vendeli.rethis.type
 sealed class eu.vendeli.rethis.types.options/Shape : eu.vendeli.rethis.types.options/GeoSearchOption // eu.vendeli.rethis.types.options/Shape|null[0]
 
 sealed class eu.vendeli.rethis.types.options/SortOption { // eu.vendeli.rethis.types.options/SortOption|null[0]
-    final class BY : eu.vendeli.rethis.types.core/PairArgument<kotlin/String, kotlin/String>, eu.vendeli.rethis.types.options/SortOption { // eu.vendeli.rethis.types.options/SortOption.BY|null[0]
+    final class BY : eu.vendeli.rethis.types.core/VaryingArgument, eu.vendeli.rethis.types.options/SortOption { // eu.vendeli.rethis.types.options/SortOption.BY|null[0]
         constructor <init>(kotlin/String) // eu.vendeli.rethis.types.options/SortOption.BY.<init>|<init>(kotlin.String){}[0]
 
-        final val arg // eu.vendeli.rethis.types.options/SortOption.BY.arg|{}arg[0]
-            final fun <get-arg>(): kotlin/Pair<kotlin/String, kotlin/String> // eu.vendeli.rethis.types.options/SortOption.BY.arg.<get-arg>|<get-arg>(){}[0]
+        final val data // eu.vendeli.rethis.types.options/SortOption.BY.data|{}data[0]
+            final fun <get-data>(): kotlin.collections/List<eu.vendeli.rethis.types.core/Argument> // eu.vendeli.rethis.types.options/SortOption.BY.data.<get-data>|<get-data>(){}[0]
         final val pattern // eu.vendeli.rethis.types.options/SortOption.BY.pattern|{}pattern[0]
             final fun <get-pattern>(): kotlin/String // eu.vendeli.rethis.types.options/SortOption.BY.pattern.<get-pattern>|<get-pattern>(){}[0]
 
@@ -1287,11 +1332,11 @@ sealed class eu.vendeli.rethis.types.options/SortOption { // eu.vendeli.rethis.t
         final fun toString(): kotlin/String // eu.vendeli.rethis.types.options/SortOption.BY.toString|toString(){}[0]
     }
 
-    final class GET : eu.vendeli.rethis.types.core/PairArgument<kotlin/String, kotlin/String>, eu.vendeli.rethis.types.options/SortOption { // eu.vendeli.rethis.types.options/SortOption.GET|null[0]
+    final class GET : eu.vendeli.rethis.types.core/VaryingArgument, eu.vendeli.rethis.types.options/SortOption { // eu.vendeli.rethis.types.options/SortOption.GET|null[0]
         constructor <init>(kotlin/String) // eu.vendeli.rethis.types.options/SortOption.GET.<init>|<init>(kotlin.String){}[0]
 
-        final val arg // eu.vendeli.rethis.types.options/SortOption.GET.arg|{}arg[0]
-            final fun <get-arg>(): kotlin/Pair<kotlin/String, kotlin/String> // eu.vendeli.rethis.types.options/SortOption.GET.arg.<get-arg>|<get-arg>(){}[0]
+        final val data // eu.vendeli.rethis.types.options/SortOption.GET.data|{}data[0]
+            final fun <get-data>(): kotlin.collections/List<eu.vendeli.rethis.types.core/Argument> // eu.vendeli.rethis.types.options/SortOption.GET.data.<get-data>|<get-data>(){}[0]
         final val pattern // eu.vendeli.rethis.types.options/SortOption.GET.pattern|{}pattern[0]
             final fun <get-pattern>(): kotlin/String // eu.vendeli.rethis.types.options/SortOption.GET.pattern.<get-pattern>|<get-pattern>(){}[0]
 
@@ -1302,13 +1347,13 @@ sealed class eu.vendeli.rethis.types.options/SortOption { // eu.vendeli.rethis.t
         final fun toString(): kotlin/String // eu.vendeli.rethis.types.options/SortOption.GET.toString|toString(){}[0]
     }
 
-    final class LIMIT : eu.vendeli.rethis.types.core/TripleArgument<kotlin/String, kotlin/Long, kotlin/Long>, eu.vendeli.rethis.types.options/SortOption { // eu.vendeli.rethis.types.options/SortOption.LIMIT|null[0]
+    final class LIMIT : eu.vendeli.rethis.types.core/VaryingArgument, eu.vendeli.rethis.types.options/SortOption { // eu.vendeli.rethis.types.options/SortOption.LIMIT|null[0]
         constructor <init>(kotlin/Long, kotlin/Long) // eu.vendeli.rethis.types.options/SortOption.LIMIT.<init>|<init>(kotlin.Long;kotlin.Long){}[0]
 
-        final val arg // eu.vendeli.rethis.types.options/SortOption.LIMIT.arg|{}arg[0]
-            final fun <get-arg>(): kotlin/Triple<kotlin/String, kotlin/Long, kotlin/Long> // eu.vendeli.rethis.types.options/SortOption.LIMIT.arg.<get-arg>|<get-arg>(){}[0]
         final val count // eu.vendeli.rethis.types.options/SortOption.LIMIT.count|{}count[0]
             final fun <get-count>(): kotlin/Long // eu.vendeli.rethis.types.options/SortOption.LIMIT.count.<get-count>|<get-count>(){}[0]
+        final val data // eu.vendeli.rethis.types.options/SortOption.LIMIT.data|{}data[0]
+            final fun <get-data>(): kotlin.collections/List<eu.vendeli.rethis.types.core/Argument> // eu.vendeli.rethis.types.options/SortOption.LIMIT.data.<get-data>|<get-data>(){}[0]
         final val offset // eu.vendeli.rethis.types.options/SortOption.LIMIT.offset|{}offset[0]
             final fun <get-offset>(): kotlin/Long // eu.vendeli.rethis.types.options/SortOption.LIMIT.offset.<get-offset>|<get-offset>(){}[0]
 
@@ -1320,11 +1365,11 @@ sealed class eu.vendeli.rethis.types.options/SortOption { // eu.vendeli.rethis.t
         final fun toString(): kotlin/String // eu.vendeli.rethis.types.options/SortOption.LIMIT.toString|toString(){}[0]
     }
 
-    final class STORE : eu.vendeli.rethis.types.core/PairArgument<kotlin/String, kotlin/String>, eu.vendeli.rethis.types.options/SortOption { // eu.vendeli.rethis.types.options/SortOption.STORE|null[0]
+    final class STORE : eu.vendeli.rethis.types.core/VaryingArgument, eu.vendeli.rethis.types.options/SortOption { // eu.vendeli.rethis.types.options/SortOption.STORE|null[0]
         constructor <init>(kotlin/String) // eu.vendeli.rethis.types.options/SortOption.STORE.<init>|<init>(kotlin.String){}[0]
 
-        final val arg // eu.vendeli.rethis.types.options/SortOption.STORE.arg|{}arg[0]
-            final fun <get-arg>(): kotlin/Pair<kotlin/String, kotlin/String> // eu.vendeli.rethis.types.options/SortOption.STORE.arg.<get-arg>|<get-arg>(){}[0]
+        final val data // eu.vendeli.rethis.types.options/SortOption.STORE.data|{}data[0]
+            final fun <get-data>(): kotlin.collections/List<eu.vendeli.rethis.types.core/Argument> // eu.vendeli.rethis.types.options/SortOption.STORE.data.<get-data>|<get-data>(){}[0]
         final val destination // eu.vendeli.rethis.types.options/SortOption.STORE.destination|{}destination[0]
             final fun <get-destination>(): kotlin/String // eu.vendeli.rethis.types.options/SortOption.STORE.destination.<get-destination>|<get-destination>(){}[0]
 
@@ -1357,11 +1402,11 @@ sealed class eu.vendeli.rethis.types.options/SortOption { // eu.vendeli.rethis.t
 }
 
 sealed class eu.vendeli.rethis.types.options/SortRoOption { // eu.vendeli.rethis.types.options/SortRoOption|null[0]
-    final class BY : eu.vendeli.rethis.types.core/PairArgument<kotlin/String, kotlin/String>, eu.vendeli.rethis.types.options/SortRoOption { // eu.vendeli.rethis.types.options/SortRoOption.BY|null[0]
+    final class BY : eu.vendeli.rethis.types.core/VaryingArgument, eu.vendeli.rethis.types.options/SortRoOption { // eu.vendeli.rethis.types.options/SortRoOption.BY|null[0]
         constructor <init>(kotlin/String) // eu.vendeli.rethis.types.options/SortRoOption.BY.<init>|<init>(kotlin.String){}[0]
 
-        final val arg // eu.vendeli.rethis.types.options/SortRoOption.BY.arg|{}arg[0]
-            final fun <get-arg>(): kotlin/Pair<kotlin/String, kotlin/String> // eu.vendeli.rethis.types.options/SortRoOption.BY.arg.<get-arg>|<get-arg>(){}[0]
+        final val data // eu.vendeli.rethis.types.options/SortRoOption.BY.data|{}data[0]
+            final fun <get-data>(): kotlin.collections/List<eu.vendeli.rethis.types.core/Argument> // eu.vendeli.rethis.types.options/SortRoOption.BY.data.<get-data>|<get-data>(){}[0]
         final val pattern // eu.vendeli.rethis.types.options/SortRoOption.BY.pattern|{}pattern[0]
             final fun <get-pattern>(): kotlin/String // eu.vendeli.rethis.types.options/SortRoOption.BY.pattern.<get-pattern>|<get-pattern>(){}[0]
 
@@ -1372,11 +1417,11 @@ sealed class eu.vendeli.rethis.types.options/SortRoOption { // eu.vendeli.rethis
         final fun toString(): kotlin/String // eu.vendeli.rethis.types.options/SortRoOption.BY.toString|toString(){}[0]
     }
 
-    final class GET : eu.vendeli.rethis.types.core/PairArgument<kotlin/String, kotlin/String>, eu.vendeli.rethis.types.options/SortRoOption { // eu.vendeli.rethis.types.options/SortRoOption.GET|null[0]
+    final class GET : eu.vendeli.rethis.types.core/VaryingArgument, eu.vendeli.rethis.types.options/SortRoOption { // eu.vendeli.rethis.types.options/SortRoOption.GET|null[0]
         constructor <init>(kotlin/String) // eu.vendeli.rethis.types.options/SortRoOption.GET.<init>|<init>(kotlin.String){}[0]
 
-        final val arg // eu.vendeli.rethis.types.options/SortRoOption.GET.arg|{}arg[0]
-            final fun <get-arg>(): kotlin/Pair<kotlin/String, kotlin/String> // eu.vendeli.rethis.types.options/SortRoOption.GET.arg.<get-arg>|<get-arg>(){}[0]
+        final val data // eu.vendeli.rethis.types.options/SortRoOption.GET.data|{}data[0]
+            final fun <get-data>(): kotlin.collections/List<eu.vendeli.rethis.types.core/Argument> // eu.vendeli.rethis.types.options/SortRoOption.GET.data.<get-data>|<get-data>(){}[0]
         final val pattern // eu.vendeli.rethis.types.options/SortRoOption.GET.pattern|{}pattern[0]
             final fun <get-pattern>(): kotlin/String // eu.vendeli.rethis.types.options/SortRoOption.GET.pattern.<get-pattern>|<get-pattern>(){}[0]
 
@@ -1387,13 +1432,13 @@ sealed class eu.vendeli.rethis.types.options/SortRoOption { // eu.vendeli.rethis
         final fun toString(): kotlin/String // eu.vendeli.rethis.types.options/SortRoOption.GET.toString|toString(){}[0]
     }
 
-    final class LIMIT : eu.vendeli.rethis.types.core/TripleArgument<kotlin/String, kotlin/Long, kotlin/Long>, eu.vendeli.rethis.types.options/SortRoOption { // eu.vendeli.rethis.types.options/SortRoOption.LIMIT|null[0]
+    final class LIMIT : eu.vendeli.rethis.types.core/VaryingArgument, eu.vendeli.rethis.types.options/SortRoOption { // eu.vendeli.rethis.types.options/SortRoOption.LIMIT|null[0]
         constructor <init>(kotlin/Long, kotlin/Long) // eu.vendeli.rethis.types.options/SortRoOption.LIMIT.<init>|<init>(kotlin.Long;kotlin.Long){}[0]
 
-        final val arg // eu.vendeli.rethis.types.options/SortRoOption.LIMIT.arg|{}arg[0]
-            final fun <get-arg>(): kotlin/Triple<kotlin/String, kotlin/Long, kotlin/Long> // eu.vendeli.rethis.types.options/SortRoOption.LIMIT.arg.<get-arg>|<get-arg>(){}[0]
         final val count // eu.vendeli.rethis.types.options/SortRoOption.LIMIT.count|{}count[0]
             final fun <get-count>(): kotlin/Long // eu.vendeli.rethis.types.options/SortRoOption.LIMIT.count.<get-count>|<get-count>(){}[0]
+        final val data // eu.vendeli.rethis.types.options/SortRoOption.LIMIT.data|{}data[0]
+            final fun <get-data>(): kotlin.collections/List<eu.vendeli.rethis.types.core/Argument> // eu.vendeli.rethis.types.options/SortRoOption.LIMIT.data.<get-data>|<get-data>(){}[0]
         final val offset // eu.vendeli.rethis.types.options/SortRoOption.LIMIT.offset|{}offset[0]
             final fun <get-offset>(): kotlin/Long // eu.vendeli.rethis.types.options/SortRoOption.LIMIT.offset.<get-offset>|<get-offset>(){}[0]
 
@@ -1537,13 +1582,13 @@ sealed class eu.vendeli.rethis.types.options/ZPopCommonOption { // eu.vendeli.re
 }
 
 sealed class eu.vendeli.rethis.types.options/ZRangeOption { // eu.vendeli.rethis.types.options/ZRangeOption|null[0]
-    final class LIMIT : eu.vendeli.rethis.types.core/TripleArgument<kotlin/String, kotlin/Long, kotlin/Long>, eu.vendeli.rethis.types.options/ZRangeOption { // eu.vendeli.rethis.types.options/ZRangeOption.LIMIT|null[0]
+    final class LIMIT : eu.vendeli.rethis.types.core/VaryingArgument, eu.vendeli.rethis.types.options/ZRangeOption { // eu.vendeli.rethis.types.options/ZRangeOption.LIMIT|null[0]
         constructor <init>(kotlin/Long, kotlin/Long) // eu.vendeli.rethis.types.options/ZRangeOption.LIMIT.<init>|<init>(kotlin.Long;kotlin.Long){}[0]
 
-        final val arg // eu.vendeli.rethis.types.options/ZRangeOption.LIMIT.arg|{}arg[0]
-            final fun <get-arg>(): kotlin/Triple<kotlin/String, kotlin/Long, kotlin/Long> // eu.vendeli.rethis.types.options/ZRangeOption.LIMIT.arg.<get-arg>|<get-arg>(){}[0]
         final val count // eu.vendeli.rethis.types.options/ZRangeOption.LIMIT.count|{}count[0]
             final fun <get-count>(): kotlin/Long // eu.vendeli.rethis.types.options/ZRangeOption.LIMIT.count.<get-count>|<get-count>(){}[0]
+        final val data // eu.vendeli.rethis.types.options/ZRangeOption.LIMIT.data|{}data[0]
+            final fun <get-data>(): kotlin.collections/List<eu.vendeli.rethis.types.core/Argument> // eu.vendeli.rethis.types.options/ZRangeOption.LIMIT.data.<get-data>|<get-data>(){}[0]
         final val offset // eu.vendeli.rethis.types.options/ZRangeOption.LIMIT.offset|{}offset[0]
             final fun <get-offset>(): kotlin/Long // eu.vendeli.rethis.types.options/ZRangeOption.LIMIT.offset.<get-offset>|<get-offset>(){}[0]
 
@@ -1609,6 +1654,7 @@ final object eu.vendeli.rethis.types.options/WITHMATCHLEN : eu.vendeli.rethis.ty
 final fun (eu.vendeli.rethis.types.core/RType).eu.vendeli.rethis.utils/isOk(): kotlin/Boolean // eu.vendeli.rethis.utils/isOk|isOk@eu.vendeli.rethis.types.core.RType(){}[0]
 final fun (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.wrappers/Hash(kotlin/String): eu.vendeli.rethis.wrappers/ReThisMap // eu.vendeli.rethis.wrappers/Hash|Hash@eu.vendeli.rethis.ReThis(kotlin.String){}[0]
 final fun (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.wrappers/Set(kotlin/String): eu.vendeli.rethis.wrappers/ReThisSet // eu.vendeli.rethis.wrappers/Set|Set@eu.vendeli.rethis.ReThis(kotlin.String){}[0]
+final fun (kotlin/Any).eu.vendeli.rethis.types.core/toArg(): eu.vendeli.rethis.types.core/Argument // eu.vendeli.rethis.types.core/toArg|toArg@kotlin.Any(){}[0]
 final suspend fun (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.commands/append(kotlin/String, kotlin/String): kotlin/Long // eu.vendeli.rethis.commands/append|append@eu.vendeli.rethis.ReThis(kotlin.String;kotlin.String){}[0]
 final suspend fun (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.commands/blMove(kotlin/String, kotlin/String, eu.vendeli.rethis.types.common/MoveDirection, eu.vendeli.rethis.types.common/MoveDirection, kotlin/Long): kotlin/String? // eu.vendeli.rethis.commands/blMove|blMove@eu.vendeli.rethis.ReThis(kotlin.String;kotlin.String;eu.vendeli.rethis.types.common.MoveDirection;eu.vendeli.rethis.types.common.MoveDirection;kotlin.Long){}[0]
 final suspend fun (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.commands/blPop(kotlin/Array<out kotlin/String>..., kotlin/Long = ...): eu.vendeli.rethis.types.common/PopResult? // eu.vendeli.rethis.commands/blPop|blPop@eu.vendeli.rethis.ReThis(kotlin.Array<out|kotlin.String>...;kotlin.Long){}[0]
@@ -1719,7 +1765,7 @@ final suspend fun (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.commands/lPush(ko
 final suspend fun (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.commands/lPushX(kotlin/String, kotlin/Array<out kotlin/String>...): kotlin/Long? // eu.vendeli.rethis.commands/lPushX|lPushX@eu.vendeli.rethis.ReThis(kotlin.String;kotlin.Array<out|kotlin.String>...){}[0]
 final suspend fun (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.commands/lRem(kotlin/String, kotlin/Long, kotlin/String): kotlin/Long? // eu.vendeli.rethis.commands/lRem|lRem@eu.vendeli.rethis.ReThis(kotlin.String;kotlin.Long;kotlin.String){}[0]
 final suspend fun (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.commands/lSet(kotlin/String, kotlin/Long, kotlin/String): kotlin/String? // eu.vendeli.rethis.commands/lSet|lSet@eu.vendeli.rethis.ReThis(kotlin.String;kotlin.Long;kotlin.String){}[0]
-final suspend fun (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.commands/lTrim(kotlin/String, kotlin/Long, kotlin/Long): kotlin/String? // eu.vendeli.rethis.commands/lTrim|lTrim@eu.vendeli.rethis.ReThis(kotlin.String;kotlin.Long;kotlin.Long){}[0]
+final suspend fun (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.commands/lTrim(kotlin/String, kotlin.ranges/IntRange): kotlin/String? // eu.vendeli.rethis.commands/lTrim|lTrim@eu.vendeli.rethis.ReThis(kotlin.String;kotlin.ranges.IntRange){}[0]
 final suspend fun (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.commands/lcs(kotlin/String, kotlin/String): kotlin/String // eu.vendeli.rethis.commands/lcs|lcs@eu.vendeli.rethis.ReThis(kotlin.String;kotlin.String){}[0]
 final suspend fun (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.commands/lcs(kotlin/String, kotlin/String, eu.vendeli.rethis.types.options/LcsMode.IDX, eu.vendeli.rethis.types.options/MinMatchLen? = ..., kotlin/Boolean = ...): eu.vendeli.rethis.types.common/LcsResult // eu.vendeli.rethis.commands/lcs|lcs@eu.vendeli.rethis.ReThis(kotlin.String;kotlin.String;eu.vendeli.rethis.types.options.LcsMode.IDX;eu.vendeli.rethis.types.options.MinMatchLen?;kotlin.Boolean){}[0]
 final suspend fun (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.commands/lcs(kotlin/String, kotlin/String, eu.vendeli.rethis.types.options/LcsMode.LEN = ...): kotlin/Long // eu.vendeli.rethis.commands/lcs|lcs@eu.vendeli.rethis.ReThis(kotlin.String;kotlin.String;eu.vendeli.rethis.types.options.LcsMode.LEN){}[0]
@@ -1757,7 +1803,7 @@ final suspend fun (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.commands/publish(
 final suspend fun (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.commands/rPop(kotlin/String): kotlin/String? // eu.vendeli.rethis.commands/rPop|rPop@eu.vendeli.rethis.ReThis(kotlin.String){}[0]
 final suspend fun (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.commands/rPop(kotlin/String, kotlin/Long): kotlin.collections/List<kotlin/String> // eu.vendeli.rethis.commands/rPop|rPop@eu.vendeli.rethis.ReThis(kotlin.String;kotlin.Long){}[0]
 final suspend fun (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.commands/rPush(kotlin/String, kotlin/Array<out kotlin/String>...): kotlin/Long? // eu.vendeli.rethis.commands/rPush|rPush@eu.vendeli.rethis.ReThis(kotlin.String;kotlin.Array<out|kotlin.String>...){}[0]
-final suspend fun (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.commands/rPushX(kotlin/String, kotlin/Array<out kotlin/Any?>...): kotlin/Long? // eu.vendeli.rethis.commands/rPushX|rPushX@eu.vendeli.rethis.ReThis(kotlin.String;kotlin.Array<out|kotlin.Any?>...){}[0]
+final suspend fun (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.commands/rPushX(kotlin/String, kotlin/Array<out kotlin/String>...): kotlin/Long? // eu.vendeli.rethis.commands/rPushX|rPushX@eu.vendeli.rethis.ReThis(kotlin.String;kotlin.Array<out|kotlin.String>...){}[0]
 final suspend fun (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.commands/randomKey(): kotlin/String? // eu.vendeli.rethis.commands/randomKey|randomKey@eu.vendeli.rethis.ReThis(){}[0]
 final suspend fun (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.commands/rename(kotlin/String, kotlin/String): kotlin/String? // eu.vendeli.rethis.commands/rename|rename@eu.vendeli.rethis.ReThis(kotlin.String;kotlin.String){}[0]
 final suspend fun (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.commands/renameNx(kotlin/String, kotlin/String): kotlin/Boolean // eu.vendeli.rethis.commands/renameNx|renameNx@eu.vendeli.rethis.ReThis(kotlin.String;kotlin.String){}[0]
