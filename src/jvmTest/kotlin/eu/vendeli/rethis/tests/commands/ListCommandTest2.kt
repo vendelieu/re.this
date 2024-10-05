@@ -4,19 +4,13 @@ import eu.vendeli.rethis.ReThisTestCtx
 import eu.vendeli.rethis.commands.*
 import eu.vendeli.rethis.types.options.LPosOption
 import io.kotest.matchers.shouldBe
-import kotlinx.coroutines.delay
 
 class ListCommandTest2 : ReThisTestCtx() {
-    @BeforeEach
-    suspend fun delayful() {
-        delay(100)
-    }
-
     @Test
     suspend fun `test LPOS command with count`() {
         client.lPush("testKey16", "testValue16")
         client.lPush("testKey16", "testValue16")
-        delay(200)
+
         client.lPos("testKey16", "testValue16", LPosOption.Count(2)) shouldBe listOf(0L, 1L)
     }
 
@@ -46,7 +40,7 @@ class ListCommandTest2 : ReThisTestCtx() {
     @Test
     suspend fun `test LTRIM command`() {
         client.lPush("testKey21", "testValue21")
-        client.lTrim("testKey21", 0, 0) shouldBe "OK"
+        client.lTrim("testKey21", 0..0) shouldBe "OK"
     }
 
     @Test

@@ -1,6 +1,7 @@
 package eu.vendeli.rethis.types.options
 
-import eu.vendeli.rethis.types.core.PairArgument
+import eu.vendeli.rethis.types.core.VaryingArgument
+import eu.vendeli.rethis.types.core.toArg
 import kotlin.time.Duration
 
 sealed class RestoreOption {
@@ -9,14 +10,14 @@ sealed class RestoreOption {
     data class IDLETIME(
         val seconds: Duration,
     ) : RestoreOption(),
-        PairArgument<String, Long> {
-        override val arg = "IDLETIME" to seconds.inWholeSeconds
+        VaryingArgument {
+        override val data = listOf("IDLETIME".toArg(), seconds.inWholeSeconds.toArg())
     }
 
     data class FREQ(
         val frequency: Long,
     ) : RestoreOption(),
-        PairArgument<String, Long> {
-        override val arg = "FREQ" to frequency
+        VaryingArgument {
+        override val data = listOf("FREQ".toArg(), frequency.toArg())
     }
 }

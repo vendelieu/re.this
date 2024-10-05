@@ -5,6 +5,7 @@ import eu.vendeli.rethis.types.common.ChannelSubscription
 import eu.vendeli.rethis.types.common.PubSubNumEntry
 import eu.vendeli.rethis.types.core.*
 import eu.vendeli.rethis.utils.registerSubscription
+import eu.vendeli.rethis.utils.writeArg
 
 suspend fun ReThis.pSubscribe(vararg subscription: ChannelSubscription) = subscription.forEach {
     pSubscribe(it.channel, it.exceptionHandler, it.handler)
@@ -27,32 +28,31 @@ suspend fun ReThis.pSubscribe(
 
 suspend fun ReThis.publish(channel: String, message: String): Long = execute(
     listOf(
-        "PUBLISH",
-        channel,
-        message,
+        "PUBLISH".toArg(),
+        channel.toArg(),
+        message.toArg(),
     ),
 ).unwrap() ?: 0
 
 suspend fun ReThis.pubSubChannels(pattern: String? = null): List<String> = execute(
-    listOfNotNull(
-        "PUBSUB",
-        "CHANNELS",
-        pattern,
-    ),
+    mutableListOf(
+        "PUBSUB".toArg(),
+        "CHANNELS".toArg(),
+    ).writeArg(pattern),
 ).unwrapList()
 
 suspend fun ReThis.pubSubNumPat(): Long = execute(
     listOf(
-        "PUBSUB",
-        "NUMPAT",
+        "PUBSUB".toArg(),
+        "NUMPAT".toArg(),
     ),
 ).unwrap() ?: 0
 
 suspend fun ReThis.pubSubNumSub(vararg channel: String): List<PubSubNumEntry> = execute(
     listOf(
-        "PUBSUB",
-        "NUMSUB",
-        *channel,
+        "PUBSUB".toArg(),
+        "NUMSUB".toArg(),
+        *channel.toArg(),
     ),
 ).unwrapList<RType>().chunked(2) {
     PubSubNumEntry(
@@ -62,18 +62,17 @@ suspend fun ReThis.pubSubNumSub(vararg channel: String): List<PubSubNumEntry> = 
 }
 
 suspend fun ReThis.pubSubShardChannels(pattern: String? = null): List<String> = execute(
-    listOfNotNull(
-        "PUBSUB",
-        "SHARDCHANNELS",
-        pattern,
-    ),
+    mutableListOf(
+        "PUBSUB".toArg(),
+        "SHARDCHANNELS".toArg(),
+    ).writeArg(pattern),
 ).unwrapList()
 
 suspend fun ReThis.pubSubShardNumSub(vararg channel: String): List<PubSubNumEntry> = execute(
     listOf(
-        "PUBSUB",
-        "SHARDNUMSUB",
-        *channel,
+        "PUBSUB".toArg(),
+        "SHARDNUMSUB".toArg(),
+        *channel.toArg(),
     ),
 ).unwrapList<RType>().chunked(2) {
     PubSubNumEntry(
@@ -84,16 +83,16 @@ suspend fun ReThis.pubSubShardNumSub(vararg channel: String): List<PubSubNumEntr
 
 suspend fun ReThis.pUnsubscribe(vararg pattern: String): RType = execute(
     listOf(
-        "PUNSUBSCRIBE",
-        *pattern,
+        "PUNSUBSCRIBE".toArg(),
+        *pattern.toArg(),
     ),
 )
 
 suspend fun ReThis.sPublish(shardChannel: String, message: String): Long? = execute(
     listOf(
-        "SPUBLISH",
-        shardChannel,
-        message,
+        "SPUBLISH".toArg(),
+        shardChannel.toArg(),
+        message.toArg(),
     ),
 ).unwrap()
 
@@ -137,14 +136,14 @@ suspend fun ReThis.subscribe(
 
 suspend fun ReThis.sUnsubscribe(vararg pattern: String): RType = execute(
     listOf(
-        "SUNSUBSCRIBE",
-        *pattern,
+        "SUNSUBSCRIBE".toArg(),
+        *pattern.toArg(),
     ),
 )
 
 suspend fun ReThis.unsubscribe(vararg pattern: String): RType = execute(
     listOf(
-        "UNSUBSCRIBE",
-        *pattern,
+        "UNSUBSCRIBE".toArg(),
+        *pattern.toArg(),
     ),
 )

@@ -3,12 +3,12 @@ package eu.vendeli.rethis.commands
 import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.types.common.*
 import eu.vendeli.rethis.types.core.*
-import eu.vendeli.rethis.types.options.BYBOX
 import eu.vendeli.rethis.types.options.CenterPoint
 import eu.vendeli.rethis.types.options.GeoAddOption
 import eu.vendeli.rethis.types.options.Shape
 import eu.vendeli.rethis.utils.cast
 import eu.vendeli.rethis.utils.safeCast
+import eu.vendeli.rethis.utils.writeArg
 import kotlinx.coroutines.delay
 
 suspend fun ReThis.geoAdd(
@@ -17,39 +17,39 @@ suspend fun ReThis.geoAdd(
     upsertMode: GeoAddOption.UpsertMode? = null,
     ch: Boolean = false,
 ): Long = execute(
-    listOfNotNull(
-        "GEOADD",
-        key,
-        upsertMode,
-        ch.takeIf { it }?.let { "CH" },
-        *member,
-    ),
+    mutableListOf(
+        "GEOADD".toArg(),
+        key.toArg(),
+    ).apply {
+        writeArg(upsertMode)
+        if (ch) writeArg("CH")
+        member.forEach { writeArg(it) }
+    },
 ).unwrap() ?: 0
 
 suspend fun ReThis.geoDist(key: String, member1: String, member2: String, unit: GeoUnit? = null): Double? =
     execute(
-        listOfNotNull(
-            "GEODIST",
-            key,
-            member1,
-            member2,
-            unit?.toString(),
-        ),
+        mutableListOf(
+            "GEODIST".toArg(),
+            key.toArg(),
+            member1.toArg(),
+            member2.toArg(),
+        ).writeArg(unit),
     ).unwrap<String?>()?.toDouble()
 
 suspend fun ReThis.geoHash(key: String, vararg members: String): List<String> = execute(
     listOf(
-        "GEOHASH",
-        key,
-        *members,
+        "GEOHASH".toArg(),
+        key.toArg(),
+        *members.toArg(),
     ),
 ).unwrapList()
 
 suspend fun ReThis.geoPos(key: String, vararg members: String): List<List<GeoPosition>?> = execute(
     listOf(
-        "GEOPOS",
-        key,
-        *members,
+        "GEOPOS".toArg(),
+        key.toArg(),
+        *members.toArg(),
     ),
 ).unwrapList<RType>().map { entry ->
     entry.safeCast<RArray>()?.value?.chunked(2) {
@@ -68,18 +68,19 @@ suspend fun ReThis.geoSearch(
     any: Boolean = false,
     sort: GeoSort? = null,
 ): List<GeoSearchResult>? = execute(
-    listOfNotNull(
-        "GEOSEARCH",
-        key,
-        center,
-        shape.let { if (it is BYBOX) "BYBOX" to it else it },
-        sort?.name,
-        count?.let { "COUNT" to it },
-        any.takeIf { it }?.let { "ANY" },
-        withCoord.takeIf { it }?.let { "WITHCOORD" },
-        withDist.takeIf { it }?.let { "WITHDIST" },
-        withHash.takeIf { it }?.let { "WITHHASH" },
-    ),
+    mutableListOf(
+        "GEOSEARCH".toArg(),
+        key.toArg(),
+    ).apply {
+        writeArg(center)
+        writeArg(shape)
+        writeArg(sort)
+        count?.let { writeArg("COUNT" to it) }
+        if (any) writeArg("ANY")
+        if (withCoord) writeArg("WITHCOORD")
+        if (withDist) writeArg("WITHDIST")
+        if (withHash) writeArg("WITHHASH")
+    },
 ).unwrapList<RType>().takeIf { it.firstOrNull() is RArray }?.map {
     val el = it.cast<RArray>()
     var member = ""
@@ -130,15 +131,16 @@ suspend fun ReThis.geoSearchStore(
     any: Boolean = false,
     storeDist: Boolean = false,
 ): Long = execute(
-    listOfNotNull(
-        "GEOSEARCHSTORE",
-        destination,
-        source,
-        center,
-        shape.let { if (it is BYBOX) "BYBOX" to it else it },
-        sort?.name,
-        count?.let { "COUNT" to it },
-        any.takeIf { it }?.let { "ANY" },
-        storeDist.takeIf { it }?.let { "STOREDIST" },
-    ),
+    mutableListOf(
+        "GEOSEARCHSTORE".toArg(),
+        destination.toArg(),
+        source.toArg(),
+    ).apply {
+        writeArg(center)
+        writeArg(shape)
+        writeArg(sort)
+        count?.let { writeArg("COUNT" to it) }
+        if (any) writeArg("ANY")
+        if (storeDist) writeArg("STOREDIST")
+    },
 ).unwrap() ?: 0

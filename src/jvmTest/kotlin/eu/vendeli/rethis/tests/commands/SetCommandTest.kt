@@ -5,7 +5,6 @@ import eu.vendeli.rethis.commands.*
 import eu.vendeli.rethis.types.common.ScanResult
 import eu.vendeli.rethis.types.options.SScanOption
 import io.kotest.matchers.shouldBe
-import kotlinx.coroutines.delay
 
 class SetCommandTest : ReThisTestCtx() {
     @Test
@@ -50,7 +49,6 @@ class SetCommandTest : ReThisTestCtx() {
         client.sAdd("testKey27", "testMember27")
         client.sAdd("testKey27", "testMember28")
         client.sAdd("testKey27", "testMember29")
-        delay(200)
 
         client.sRem("testKey27", "testMember27", "testMember28", "testMember29") shouldBe 3L
     }

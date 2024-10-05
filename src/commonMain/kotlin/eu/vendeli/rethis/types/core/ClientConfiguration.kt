@@ -1,5 +1,6 @@
 package eu.vendeli.rethis.types.core
 
+import io.ktor.utils.io.charsets.*
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
@@ -7,6 +8,7 @@ import kotlinx.coroutines.IO
 data class ClientConfiguration(
     var auth: AuthConfiguration? = null,
     var db: Int? = null,
+    var charset: Charset = Charsets.UTF_8,
     var maxConnections: Int = 50,
     var dispatcher: CoroutineDispatcher = Dispatchers.IO,
 )

@@ -1,11 +1,12 @@
 package eu.vendeli.rethis.types.common
 
-import eu.vendeli.rethis.types.core.TripleArgument
+import eu.vendeli.rethis.types.core.VaryingArgument
+import eu.vendeli.rethis.types.core.toArg
 
 data class GeoMember(
     val longitude: Double,
     val latitude: Double,
     val member: String,
-) : TripleArgument<Double, Double, String> {
-    override val arg = Triple(longitude, latitude, member)
+) : VaryingArgument {
+    override val data = listOf(longitude.toArg(), latitude.toArg(), member.toArg())
 }

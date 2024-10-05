@@ -1,6 +1,7 @@
 package eu.vendeli.rethis.types.options
 
-import eu.vendeli.rethis.types.core.PairArgument
+import eu.vendeli.rethis.types.core.VaryingArgument
+import eu.vendeli.rethis.types.core.toArg
 
 sealed class LcsOptions
 
@@ -12,8 +13,8 @@ sealed class LcsMode : LcsOptions() {
 data class MinMatchLen(
     val length: Long,
 ) : LcsOptions(),
-    PairArgument<String, Long> {
-    override val arg = "MINMATCHLEN" to length
+    VaryingArgument {
+    override val data = listOf("MINMATCHLEN".toArg(), length.toArg())
 }
 
 data object WITHMATCHLEN : LcsOptions()

@@ -29,7 +29,7 @@ internal suspend inline fun ReThis.registerSubscription(
     val handlerJob = coLaunch(CoLocalConn(connection)) {
         val conn = coroutineContext[CoLocalConn]!!.connection
         try {
-            conn.output.writeBuffer(bufferValues(listOf(regCommand, target)))
+            conn.output.writeBuffer(bufferValues(listOf(regCommand, target), cfg.charset))
             conn.output.flush()
 
             while (isActive) {
@@ -51,7 +51,7 @@ internal suspend inline fun ReThis.registerSubscription(
             logger.debug("Caught exception in $target channel handler")
             exHandler?.handle(e)
         } finally {
-            conn.output.writeBuffer(bufferValues(listOf(unRegCommand, target)))
+            conn.output.writeBuffer(bufferValues(listOf(unRegCommand, target), cfg.charset))
             conn.output.flush()
             connectionPool.release(conn)
         }

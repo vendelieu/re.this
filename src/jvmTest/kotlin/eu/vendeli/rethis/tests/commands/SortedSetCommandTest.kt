@@ -8,7 +8,6 @@ import eu.vendeli.rethis.types.common.ZMember
 import eu.vendeli.rethis.types.common.ZPopResult
 import eu.vendeli.rethis.types.options.ZPopCommonOption
 import io.kotest.matchers.shouldBe
-import kotlinx.coroutines.delay
 
 class SortedSetCommandTest : ReThisTestCtx() {
     @Test
@@ -52,7 +51,7 @@ class SortedSetCommandTest : ReThisTestCtx() {
     @Test
     suspend fun `test ZPOPMIN command`() {
         client.zAdd("testSet27", ZMember("testValue27", 1.0))
-        delay(200)
+
         client.zPopmin("testSet27") shouldBe listOf(1.0)
     }
 
@@ -96,7 +95,6 @@ class SortedSetCommandTest : ReThisTestCtx() {
             ZMember("four", 4.0),
         )
 
-        delay(200)
         client.zRangeStore("dstzset", "srczset", 2, -1) shouldBe 2L
     }
 
@@ -115,7 +113,7 @@ class SortedSetCommandTest : ReThisTestCtx() {
     @Test
     suspend fun `test ZREMRANGEBYLEX command`() {
         client.zAdd("testSet34", ZMember("testValue34", 1.0))
-        delay(200)
+
         client.zRemRangeByLex("testSet34", "-", "+") shouldBe 1L
     }
 

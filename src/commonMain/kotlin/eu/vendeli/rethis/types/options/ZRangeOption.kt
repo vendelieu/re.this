@@ -1,6 +1,7 @@
 package eu.vendeli.rethis.types.options
 
-import eu.vendeli.rethis.types.core.TripleArgument
+import eu.vendeli.rethis.types.core.VaryingArgument
+import eu.vendeli.rethis.types.core.toArg
 
 sealed class ZRangeOption {
     sealed class Type : ZRangeOption()
@@ -11,7 +12,7 @@ sealed class ZRangeOption {
         val offset: Long,
         val count: Long,
     ) : ZRangeOption(),
-        TripleArgument<String, Long, Long> {
-        override val arg = Triple("LIMIT", offset, count)
+        VaryingArgument {
+        override val data = listOf("LIMIT".toArg(), offset.toArg(), count.toArg())
     }
 }

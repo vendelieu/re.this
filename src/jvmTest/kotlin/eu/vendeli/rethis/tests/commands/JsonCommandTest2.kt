@@ -5,7 +5,6 @@ import eu.vendeli.rethis.commands.*
 import eu.vendeli.rethis.types.core.Int64
 import eu.vendeli.rethis.types.core.PlainString
 import io.kotest.matchers.shouldBe
-import kotlinx.coroutines.delay
 
 class JsonCommandTest2 : ReThisTestCtx(true) {
     @Test
@@ -62,14 +61,14 @@ class JsonCommandTest2 : ReThisTestCtx(true) {
             ".",
             "{\"a\":\"foo\", \"nested\": {\"a\": \"hello\"}, \"nested2\": {\"a\": 31}}",
         ) shouldBe "OK"
-        delay(200)
+
         client.jsonStrAppend("testKey21", "\"baz\"", "..a") shouldBe 8L
     }
 
     @Test
     suspend fun `test JSON_STRLEN command`() {
         client.jsonSet("testKey22", ".", "\"hello\"")
-        delay(200)
+
         client.jsonStrLen("testKey22", ".") shouldBe 5L
     }
 

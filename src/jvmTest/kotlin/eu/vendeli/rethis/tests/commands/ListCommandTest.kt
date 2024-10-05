@@ -7,7 +7,6 @@ import eu.vendeli.rethis.types.options.LInsertPlace
 import eu.vendeli.rethis.types.common.MoveDirection
 import eu.vendeli.rethis.ReThisTestCtx
 import io.kotest.matchers.shouldBe
-import kotlinx.coroutines.delay
 
 class ListCommandTest : ReThisTestCtx() {
     @Test
@@ -101,7 +100,7 @@ class ListCommandTest : ReThisTestCtx() {
     @Test
     suspend fun `test RPUSHX command`() {
         client.lPush("testKey25", "testValue52")
-        delay(200)
+
         client.rPushX("testKey25", "testValue25") shouldBe 2L
     }
 }

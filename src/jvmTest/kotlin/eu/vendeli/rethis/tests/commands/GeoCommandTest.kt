@@ -7,7 +7,6 @@ import eu.vendeli.rethis.types.options.BYBOX
 import eu.vendeli.rethis.types.options.BYRADIUS
 import eu.vendeli.rethis.types.options.FROMLONLAT
 import io.kotest.matchers.shouldBe
-import kotlinx.coroutines.delay
 
 class GeoCommandTest : ReThisTestCtx() {
     @Test
@@ -19,7 +18,7 @@ class GeoCommandTest : ReThisTestCtx() {
     suspend fun `test GEODIST command`() {
         client.geoAdd("testSet2", GeoMember(1.0, 1.0, "testValue2"))
         client.geoAdd("testSet2", GeoMember(2.0, 2.0, "testValue3"))
-        delay(200)
+
         client.geoDist("testSet2", "testValue2", "testValue3") shouldBe 157270.0561
     }
 

@@ -2,6 +2,7 @@ package eu.vendeli.rethis
 
 import eu.vendeli.rethis.annotations.ReThisInternal
 import eu.vendeli.rethis.types.core.*
+import eu.vendeli.rethis.types.core.use
 import eu.vendeli.rethis.types.coroutine.CoLocalConn
 import eu.vendeli.rethis.types.coroutine.CoPipelineCtx
 import eu.vendeli.rethis.utils.Const.DEFAULT_HOST
@@ -13,6 +14,7 @@ import eu.vendeli.rethis.utils.writeRedisValue
 import io.ktor.network.sockets.*
 import io.ktor.util.logging.*
 import io.ktor.utils.io.*
+import io.ktor.utils.io.core.*
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.currentCoroutineContext
@@ -46,27 +48,6 @@ class ReThis(
 
     fun disconnect() = connectionPool.disconnect()
     fun reconnect() = connectionPool.prepare()
-
-    @ReThisInternal
-    suspend fun execute(payload: Any?, forceBulk: Boolean = true, rawResponse: Boolean = false): RType {
-        val currentCoCtx = currentCoroutineContext()
-        val coLocalConn = currentCoCtx[CoLocalConn]
-        val coPipeline = currentCoCtx[CoPipelineCtx]
-        return when {
-            coPipeline != null -> {
-                coPipeline.pipelinedRequests.add(payload)
-                RType.Null
-            }
-
-            coLocalConn != null -> {
-                coLocalConn.connection.exec(payload, forceBulk, rawResponse)
-            }
-
-            else -> connectionPool.use { connection ->
-                connection.exec(payload, forceBulk, rawResponse)
-            }
-        }
-    }
 
     suspend fun pipeline(block: suspend ReThis.() -> Unit): List<RType> {
         val responses = mutableListOf<RType>()
@@ -108,7 +89,7 @@ class ReThis(
 
     suspend fun transaction(block: suspend ReThis.() -> Unit): List<RType> = connectionPool.use { conn ->
         logger.debug("Started transaction")
-        conn.output.writeBuffer(bufferValues(listOf("MULTI")))
+        conn.output.writeBuffer(bufferValues(listOf("MULTI"), cfg.charset))
         conn.output.flush()
         require(conn.input.readRedisMessage().value == "OK")
 
@@ -117,7 +98,7 @@ class ReThis(
             runCatching { block() }.getOrElse { e = it }
         }.join()
         e?.also {
-            conn.output.writeBuffer(bufferValues(listOf("DISCARD")))
+            conn.output.writeBuffer(bufferValues(listOf("DISCARD"), cfg.charset))
             conn.output.flush()
             require(conn.input.readRedisMessage().value == "OK")
             logger.error("Transaction canceled", it)
@@ -125,18 +106,38 @@ class ReThis(
         }
 
         logger.debug("Transaction completed")
-        conn.output.writeBuffer(bufferValues(listOf("EXEC")))
+        conn.output.writeBuffer(bufferValues(listOf("EXEC"), cfg.charset))
         conn.output.flush()
         conn.input.readRedisMessage().unwrapList()
     }
 
+    @ReThisInternal
+    suspend fun execute(payload: List<Argument>, rawResponse: Boolean = false): RType {
+        val currentCoCtx = currentCoroutineContext()
+        val coLocalConn = currentCoCtx[CoLocalConn]
+        val coPipeline = currentCoCtx[CoPipelineCtx]
+        return when {
+            coPipeline != null -> {
+                coPipeline.pipelinedRequests.add(payload)
+                RType.Null
+            }
+
+            coLocalConn != null -> {
+                coLocalConn.connection.exec(payload, rawResponse)
+            }
+
+            else -> connectionPool.use { connection ->
+                connection.exec(payload, rawResponse)
+            }
+        }
+    }
+
     private suspend inline fun Connection.exec(
         payload: Any?,
-        forceBulk: Boolean,
         raw: Boolean = false,
     ): RType {
-        logger.trace("Executing request with such payload $payload [forceBulk: $forceBulk]")
-        output.writeBuffer(bufferValues(payload, forceBulk))
+        logger.trace("Executing request with such payload $payload")
+        output.writeBuffer(bufferValues(payload, cfg.charset))
         output.flush()
         return input.readRedisMessage(raw)
     }

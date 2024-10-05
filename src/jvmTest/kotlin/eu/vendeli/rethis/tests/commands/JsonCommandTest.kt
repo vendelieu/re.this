@@ -3,7 +3,6 @@ package eu.vendeli.rethis.tests.commands
 import eu.vendeli.rethis.ReThisTestCtx
 import eu.vendeli.rethis.commands.*
 import io.kotest.matchers.shouldBe
-import kotlinx.coroutines.delay
 
 class JsonCommandTest : ReThisTestCtx(true) {
     @Test
@@ -39,7 +38,7 @@ class JsonCommandTest : ReThisTestCtx(true) {
     @Test
     suspend fun `test JSON_ARRTRIM command`() {
         client.jsonSet("testKey6", ".", "[1, 2, 3]")
-        delay(200)
+
         client.jsonArrTrim("testKey6", ".", 1, 1) shouldBe 1L
     }
 

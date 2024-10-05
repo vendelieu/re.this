@@ -4,7 +4,6 @@ import eu.vendeli.rethis.ReThisTestCtx
 import eu.vendeli.rethis.commands.*
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
-import kotlinx.coroutines.delay
 import kotlin.time.Duration.Companion.seconds
 
 class HashCommandTest2 : ReThisTestCtx() {
@@ -23,7 +22,7 @@ class HashCommandTest2 : ReThisTestCtx() {
     @Test
     suspend fun `test HRANDFIELD command`() {
         client.hSet("testKey19", "testField19" to "testValue19")
-        delay(200)
+
         client.hRandField("testKey19") shouldBe "testField19"
     }
 

@@ -17,6 +17,6 @@ class WaitAofCommandTest : ReThisTestCtx() {
                 1L,
                 1000L,
             )
-        } // ERR WAITAOF cannot be used when numlocal is set but appendonly is disabled.
+        }
     }
 }

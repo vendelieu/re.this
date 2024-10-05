@@ -1,8 +1,9 @@
 package eu.vendeli.rethis.types.options
 
 import eu.vendeli.rethis.types.common.GeoUnit
-import eu.vendeli.rethis.types.core.PairArgument
-import eu.vendeli.rethis.types.core.TripleArgument
+import eu.vendeli.rethis.types.core.Argument
+import eu.vendeli.rethis.types.core.VaryingArgument
+import eu.vendeli.rethis.types.core.toArg
 
 sealed class GeoSearchOption
 
@@ -10,16 +11,16 @@ sealed class CenterPoint : GeoSearchOption()
 data class FROMMEMBER(
     val member: String,
 ) : CenterPoint(),
-    PairArgument<String, String> {
-    override val arg = "FROMMEMBER" to member
+    VaryingArgument {
+    override val data: List<Argument> = listOf("FROMMEMBER".toArg(), member.toArg())
 }
 
 data class FROMLONLAT(
     val longitude: Double,
     val latitude: Double,
 ) : CenterPoint(),
-    TripleArgument<String, Double, Double> {
-    override val arg = Triple("FROMLONLAT", longitude, latitude)
+    VaryingArgument {
+    override val data = listOf("FROMLONLAT".toArg(), longitude.toArg(), latitude.toArg())
 }
 
 sealed class Shape : GeoSearchOption()
@@ -27,8 +28,8 @@ data class BYRADIUS(
     val radius: Double,
     val unit: GeoUnit,
 ) : Shape(),
-    TripleArgument<String, Double, String> {
-    override val arg = Triple("BYRADIUS", radius, unit.toString())
+    VaryingArgument {
+    override val data = listOf("BYRADIUS".toArg(), radius.toArg(), unit.toString().toArg())
 }
 
 data class BYBOX(
@@ -36,6 +37,6 @@ data class BYBOX(
     val height: Double,
     val unit: GeoUnit,
 ) : Shape(),
-    TripleArgument<Double, Double, String> {
-    override val arg = Triple(width, height, unit.toString())
+    VaryingArgument {
+    override val data = listOf("BYBOX".toArg(), width.toArg(), height.toArg(), unit.toString().toArg())
 }

@@ -1,7 +1,8 @@
 package eu.vendeli.rethis.types.options
 
-import eu.vendeli.rethis.types.core.PairArgument
-import eu.vendeli.rethis.types.core.TripleArgument
+import eu.vendeli.rethis.types.core.Argument
+import eu.vendeli.rethis.types.core.VaryingArgument
+import eu.vendeli.rethis.types.core.toArg
 
 sealed class MigrateOption {
     sealed class Strategy : MigrateOption()
@@ -12,22 +13,22 @@ sealed class MigrateOption {
     data class AUTH(
         val password: String,
     ) : Authorization(),
-        PairArgument<String, String> {
-        override val arg = "AUTH" to password
+        VaryingArgument {
+        override val data: List<Argument> = listOf("AUTH".toArg(), password.toArg())
     }
 
     data class AUTH2(
         val username: String,
         val password: String,
     ) : Authorization(),
-        TripleArgument<String, String, String> {
-        override val arg = Triple("AUTH", username, password)
+        VaryingArgument {
+        override val data: List<Argument> = listOf("AUTH".toArg(), username.toArg(), password.toArg())
     }
 
     class KEYS(
         vararg key: String,
     ) : MigrateOption(),
-        PairArgument<String, List<String>> {
-        override val arg = "KEYS" to key.toList()
+        VaryingArgument {
+        override val data: List<Argument> = listOf("KEYS".toArg(), *key.map { it.toArg() }.toTypedArray())
     }
 }

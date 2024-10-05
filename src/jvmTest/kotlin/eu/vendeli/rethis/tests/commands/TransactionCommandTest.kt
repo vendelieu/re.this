@@ -15,25 +15,26 @@ import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
 import io.ktor.utils.io.*
 import kotlinx.coroutines.currentCoroutineContext
+import org.testcontainers.shaded.org.checkerframework.checker.units.qual.m
 
 class TransactionCommandTest : ReThisTestCtx() {
     @Test
     suspend fun `test EXEC command with multiple queued commands`() {
         val conn = client.connectionPool.acquire()
 
-        conn.output.writeBuffer(bufferValues(listOf("MULTI")))
+        conn.output.writeBuffer(bufferValues(listOf("MULTI"), Charsets.UTF_8))
         conn.output.flush()
         conn.input.readRedisMessage() shouldBe PlainString("OK")
 
-        conn.output.writeBuffer(bufferValues(listOf("SET", "test3", "testv3")))
+        conn.output.writeBuffer(bufferValues(listOf("SET", "test3", "testv3"), Charsets.UTF_8))
         conn.output.flush()
         conn.input.readRedisMessage() shouldBe PlainString("QUEUED")
 
-        conn.output.writeBuffer(bufferValues(listOf("SET", "test4", "testv4")))
+        conn.output.writeBuffer(bufferValues(listOf("SET", "test4", "testv4"), Charsets.UTF_8))
         conn.output.flush()
         conn.input.readRedisMessage() shouldBe PlainString("QUEUED")
 
-        conn.output.writeBuffer(bufferValues(listOf("EXEC")))
+        conn.output.writeBuffer(bufferValues(listOf("EXEC"), Charsets.UTF_8))
         conn.output.flush()
         conn.input.readRedisMessage() shouldBe RArray(listOf(PlainString("OK"), PlainString("OK")))
     }
@@ -55,7 +56,7 @@ class TransactionCommandTest : ReThisTestCtx() {
                 client.multi()
                 client.set("testKey1", "testVal1")
                 client.set("testKey2", "testVal2")
-                conn.output.writeBuffer(bufferValues(listOf("get")))
+                conn.output.writeBuffer(bufferValues(listOf("get"), Charsets.UTF_8))
                 conn.output.flush()
                 shouldThrow<ReThisException> { client.exec() }.message shouldBe
                     "ERR wrong number of arguments for 'get' command"

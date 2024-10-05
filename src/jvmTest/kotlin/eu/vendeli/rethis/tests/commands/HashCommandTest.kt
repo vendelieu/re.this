@@ -4,16 +4,10 @@ import eu.vendeli.rethis.ReThisTestCtx
 import eu.vendeli.rethis.commands.*
 import eu.vendeli.rethis.types.common.ScanResult
 import io.kotest.matchers.shouldBe
-import kotlinx.coroutines.delay
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 
 class HashCommandTest : ReThisTestCtx() {
-    @BeforeEach
-    suspend fun delayful() {
-        delay(100)
-    }
-
     @Test
     suspend fun `test HDEL command`() {
         client.hSet("testKey1", "testField1" to "testValue1")

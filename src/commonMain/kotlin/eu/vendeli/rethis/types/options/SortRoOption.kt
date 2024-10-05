@@ -1,29 +1,30 @@
 package eu.vendeli.rethis.types.options
 
-import eu.vendeli.rethis.types.core.PairArgument
-import eu.vendeli.rethis.types.core.TripleArgument
+import eu.vendeli.rethis.types.core.Argument
+import eu.vendeli.rethis.types.core.VaryingArgument
+import eu.vendeli.rethis.types.core.toArg
 
 sealed class SortRoOption {
     data class BY(
         val pattern: String,
     ) : SortRoOption(),
-        PairArgument<String, String> {
-        override val arg = "BY" to pattern
+        VaryingArgument {
+        override val data: List<Argument> = listOf("BY".toArg(), pattern.toArg())
     }
 
     data class LIMIT(
         val offset: Long,
         val count: Long,
     ) : SortRoOption(),
-        TripleArgument<String, Long, Long> {
-        override val arg = Triple("LIMIT", offset, count)
+        VaryingArgument {
+        override val data = listOf("LIMIT".toArg(), offset.toArg(), count.toArg())
     }
 
     data class GET(
         val pattern: String,
     ) : SortRoOption(),
-        PairArgument<String, String> {
-        override val arg = "GET" to pattern
+        VaryingArgument {
+        override val data: List<Argument> = listOf("GET".toArg(), pattern.toArg())
     }
 
     sealed class Order : SortRoOption()

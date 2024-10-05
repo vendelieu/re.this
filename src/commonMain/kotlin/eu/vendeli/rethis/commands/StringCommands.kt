@@ -1,48 +1,51 @@
 package eu.vendeli.rethis.commands
 
 import eu.vendeli.rethis.ReThis
-import eu.vendeli.rethis.types.common.LcsResult
 import eu.vendeli.rethis.exception
-import eu.vendeli.rethis.types.options.*
+import eu.vendeli.rethis.types.common.LcsResult
 import eu.vendeli.rethis.types.core.*
-import eu.vendeli.rethis.types.core.unwrap
+import eu.vendeli.rethis.types.options.GetExOption
+import eu.vendeli.rethis.types.options.LcsMode
+import eu.vendeli.rethis.types.options.MinMatchLen
+import eu.vendeli.rethis.types.options.SetOption
 import eu.vendeli.rethis.utils.cast
 import eu.vendeli.rethis.utils.safeCast
+import eu.vendeli.rethis.utils.writeArg
 
 suspend fun ReThis.append(key: String, value: String): Long = execute(
     listOf(
-        "APPEND",
-        key,
-        value,
+        "APPEND".toArg(),
+        key.toArg(),
+        value.toArg(),
     ),
 ).unwrap() ?: 0
 
 suspend fun ReThis.decr(key: String): Long = execute(
     listOf(
-        "DECR",
-        key,
+        "DECR".toArg(),
+        key.toArg(),
     ),
 ).unwrap() ?: 0
 
 suspend fun ReThis.decrBy(key: String, decrement: Long): Long = execute(
     listOf(
-        "DECRBY",
-        key,
-        decrement,
+        "DECRBY".toArg(),
+        key.toArg(),
+        decrement.toArg(),
     ),
 ).unwrap() ?: 0
 
 suspend fun ReThis.get(key: String): String? = execute(
     listOf(
-        "GET",
-        key,
+        "GET".toArg(),
+        key.toArg(),
     ),
 ).unwrap()
 
 suspend fun ReThis.getDel(key: String): String? = execute(
     listOf(
-        "GETDEL",
-        key,
+        "GETDEL".toArg(),
+        key.toArg(),
     ),
 ).unwrap()
 
@@ -50,59 +53,58 @@ suspend fun ReThis.getEx(
     key: String,
     option: GetExOption,
 ): String? = execute(
-    listOf(
-        "GETEX",
-        key,
-        option,
-    ),
+    mutableListOf(
+        "GETEX".toArg(),
+        key.toArg(),
+    ).writeArg(option),
 ).unwrap()
 
 suspend fun ReThis.getRange(key: String, range: LongRange): String? = execute(
     listOf(
-        "GETRANGE",
-        key,
-        range.first,
-        range.last,
+        "GETRANGE".toArg(),
+        key.toArg(),
+        range.first.toArg(),
+        range.last.toArg(),
     ),
 ).unwrap()
 
 suspend fun ReThis.getRange(key: String, from: Long, to: Long): String? = execute(
     listOf(
-        "GETRANGE",
-        key,
-        from,
-        to,
+        "GETRANGE".toArg(),
+        key.toArg(),
+        from.toArg(),
+        to.toArg(),
     ),
 ).unwrap()
 
 suspend fun ReThis.incr(key: String): Long = execute(
     listOf(
-        "INCR",
-        key,
+        "INCR".toArg(),
+        key.toArg(),
     ),
 ).unwrap() ?: 0
 
 suspend fun ReThis.incrBy(key: String, increment: Long): Long = execute(
     listOf(
-        "INCRBY",
-        key,
-        increment,
+        "INCRBY".toArg(),
+        key.toArg(),
+        increment.toArg(),
     ),
 ).unwrap() ?: 0
 
 suspend fun ReThis.incrByFloat(key: String, increment: Double): Double? = execute(
     listOf(
-        "INCRBYFLOAT",
-        key,
-        increment,
+        "INCRBYFLOAT".toArg(),
+        key.toArg(),
+        increment.toArg(),
     ),
 ).unwrap<String>()?.toDoubleOrNull()
 
 suspend fun ReThis.lcs(key1: String, key2: String): String = execute(
     listOf(
-        "LCS",
-        key1,
-        key2,
+        "LCS".toArg(),
+        key1.toArg(),
+        key2.toArg(),
     ),
 ).unwrap() ?: ""
 
@@ -111,12 +113,11 @@ suspend fun ReThis.lcs(
     key2: String,
     mode: LcsMode.LEN = LcsMode.LEN,
 ): Long = execute(
-    listOfNotNull(
-        "LCS",
-        key1,
-        key2,
-        mode,
-    ),
+    mutableListOf(
+        "LCS".toArg(),
+        key1.toArg(),
+        key2.toArg(),
+    ).writeArg(mode),
 ).unwrap() ?: 0
 
 suspend fun ReThis.lcs(
@@ -127,21 +128,22 @@ suspend fun ReThis.lcs(
     withMatchLen: Boolean = false,
 ): LcsResult {
     val response = execute(
-        listOfNotNull(
-            "LCS",
-            key1,
-            key2,
-            mode,
-            len,
-            if (withMatchLen) WITHMATCHLEN else null,
-        ),
+        mutableListOf(
+            "LCS".toArg(),
+            key1.toArg(),
+            key2.toArg(),
+        ).apply {
+            writeArg(mode)
+            writeArg(len)
+            if (withMatchLen) writeArg("WITHMATCHLEN")
+        },
     )
 
-    val (matches, totalLength) = when (val data = response) {
-        is RArray -> Pair(data.value[1].cast<RArray>().value, data.value[3].unwrap<Long>() ?: 0L)
+    val (matches, totalLength) = when (response) {
+        is RArray -> Pair(response.value[1].cast<RArray>().value, response.value[3].unwrap<Long>() ?: 0L)
 
         is RMap -> {
-            val mapResponse = data.value.entries.associate { (key, value) ->
+            val mapResponse = response.value.entries.associate { (key, value) ->
                 key.unwrap<String>()!! to value
             }
 
@@ -178,23 +180,21 @@ private fun processMatches(matchesArr: List<Any>): List<List<LcsResult.LcsMatch>
 
 suspend fun ReThis.mget(vararg key: String): List<String?> = execute(
     listOf(
-        "MGET",
-        *key,
+        "MGET".toArg(),
+        *key.toArg(),
     ),
 ).unwrapList()
 
 suspend fun ReThis.mset(vararg kvPair: Pair<String, String>): String? = execute(
-    listOf(
-        "MSET",
-        *kvPair,
-    ),
+    mutableListOf(
+        "MSET".toArg(),
+    ).apply { kvPair.forEach { writeArg(it) } },
 ).unwrap()
 
 suspend fun ReThis.msetNx(vararg kvPair: Pair<String, String>): Boolean = execute(
-    listOf(
-        "MSETNX",
-        *kvPair,
-    ),
+    mutableListOf(
+        "MSETNX".toArg(),
+    ).apply { kvPair.forEach { writeArg(it) } },
 ).unwrap<Long>() == 1L
 
 suspend fun ReThis.set(
@@ -202,26 +202,25 @@ suspend fun ReThis.set(
     value: String,
     vararg options: SetOption,
 ): String? = execute(
-    listOf(
-        "SET",
-        key,
-        value,
-        *options,
-    ),
+    mutableListOf(
+        "SET".toArg(),
+        key.toArg(),
+        value.toArg(),
+    ).apply { options.forEach { writeArg(it) } },
 ).unwrap()
 
 suspend fun ReThis.setRange(key: String, offset: Long, value: String): Long = execute(
     listOf(
-        "SETRANGE",
-        key,
-        offset,
-        value,
+        "SETRANGE".toArg(),
+        key.toArg(),
+        offset.toArg(),
+        value.toArg(),
     ),
 ).unwrap() ?: 0
 
 suspend fun ReThis.strlen(key: String): Long = execute(
     listOf(
-        "STRLEN",
-        key,
+        "STRLEN".toArg(),
+        key.toArg(),
     ),
 ).unwrap() ?: 0

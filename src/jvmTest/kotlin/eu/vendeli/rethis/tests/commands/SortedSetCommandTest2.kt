@@ -5,13 +5,12 @@ import eu.vendeli.rethis.commands.*
 import eu.vendeli.rethis.types.common.ZMember
 import eu.vendeli.rethis.types.common.ZPopResult
 import io.kotest.matchers.shouldBe
-import kotlinx.coroutines.delay
 
 class SortedSetCommandTest2 : ReThisTestCtx() {
     @Test
     suspend fun `test BZPOPMIN command`() {
         client.zAdd("testSet5", ZMember("testValue5", 1.0))
-        delay(200)
+
         client.bzPopMin(1.0, "testSet5", "testSet6") shouldBe ZPopResult("testSet5", "testValue5", 1.0)
     }
 
@@ -23,21 +22,21 @@ class SortedSetCommandTest2 : ReThisTestCtx() {
     @Test
     suspend fun `test ZREVRANK command`() {
         client.zAdd("testSet37", ZMember("testValue37", 1.0))
-        delay(200)
+
         client.zRevrank("testSet37", "testValue37") shouldBe 0L
     }
 
     @Test
     suspend fun `test ZCARD command`() {
         client.zAdd("testSet8", ZMember("testValue8", 1.0))
-        delay(200)
+
         client.zCard("testSet8") shouldBe 1L
     }
 
     @Test
     suspend fun `test ZCOUNT command`() {
         client.zAdd("testSet9", ZMember("testValue9", 1.0))
-        delay(200)
+
         client.zCount("testSet9", 0.0, 2.0) shouldBe 1L
     }
 
@@ -45,7 +44,7 @@ class SortedSetCommandTest2 : ReThisTestCtx() {
     suspend fun `test ZDIFF command`() {
         client.zAdd("testSet10", ZMember("testValue10", 1.0))
         client.zAdd("testSet11", ZMember("testValue11", 2.0))
-        delay(200)
+
         client.zDiff("testSet10", "testSet11") shouldBe listOf("testValue10")
     }
 
@@ -53,7 +52,7 @@ class SortedSetCommandTest2 : ReThisTestCtx() {
     suspend fun `test ZDIFFSTORE command`() {
         client.zAdd("testSet12", ZMember("testValue12", 1.0))
         client.zAdd("testSet13", ZMember("testValue13", 2.0))
-        delay(200)
+
         client.zDiffStore("testSet14", "testSet12", "testSet13") shouldBe 1L
     }
 
@@ -67,7 +66,7 @@ class SortedSetCommandTest2 : ReThisTestCtx() {
     suspend fun `test ZINTER command`() {
         client.zAdd("testSet16", ZMember("testValue16", 1.0))
         client.zAdd("testSet17", ZMember("testValue16", 2.0))
-        delay(200)
+
         client.zInter("testSet16", "testSet17") shouldBe listOf("testValue16")
     }
 
@@ -75,7 +74,7 @@ class SortedSetCommandTest2 : ReThisTestCtx() {
     suspend fun `test ZINTERCARD command`() {
         client.zAdd("testSet18", ZMember("testValue18", 1.0))
         client.zAdd("testSet19", ZMember("testValue18", 2.0))
-        delay(200)
+
         client.zInterCard("testSet18", "testSet19") shouldBe 1L
     }
 
@@ -83,7 +82,7 @@ class SortedSetCommandTest2 : ReThisTestCtx() {
     suspend fun `test ZINTERSTORE command`() {
         client.zAdd("testSet20", ZMember("testValue20", 1.0))
         client.zAdd("testSet21", ZMember("testValue20", 2.0))
-        delay(200)
+
         client.zInterStore("testSet22", "testSet20", "testSet21") shouldBe 1L
     }
 }
