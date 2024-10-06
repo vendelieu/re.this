@@ -19,23 +19,35 @@ import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.io.Buffer
 
 class ReThis(
-    address: SocketAddress = InetSocketAddress(DEFAULT_HOST, DEFAULT_PORT),
+    address: Address = Host(DEFAULT_HOST, DEFAULT_PORT),
     val protocol: RespVer = RespVer.V3,
     configurator: ClientConfiguration.() -> Unit = {},
 ) {
     constructor(
-        host: String,
-        port: Int,
+        host: String = DEFAULT_HOST,
+        port: Int = DEFAULT_PORT,
         protocol: RespVer = RespVer.V3,
         configurator: ClientConfiguration.() -> Unit = {},
-    ) : this(InetSocketAddress(host, port), protocol, configurator)
+    ) : this(Host(host, port), protocol, configurator)
 
     val logger = KtorSimpleLogger("eu.vendeli.rethis.ReThis")
     internal val cfg: ClientConfiguration = ClientConfiguration().apply(configurator)
     internal val rootJob = SupervisorJob()
 
+    init {
+        if (address is Url) {
+            cfg.db = address.db
+            if (address.credentials.isNotEmpty()) {
+                cfg.auth = AuthConfiguration(
+                    password = address.credentials.last(),
+                    username = address.credentials.takeIf { it.size > 1 }?.first(),
+                )
+            }
+        }
+    }
+
     internal val subscriptionHandlers = mutableMapOf<String, Job>()
-    internal val connectionPool by lazy { ConnectionPool(this, address).also { it.prepare() } }
+    internal val connectionPool by lazy { ConnectionPool(this, address.socket).also { it.prepare() } }
 
     init {
         logger.info("Created client (RESP $protocol)")

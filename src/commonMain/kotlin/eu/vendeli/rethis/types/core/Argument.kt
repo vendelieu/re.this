@@ -8,7 +8,6 @@ interface VaryingArgument {
 
 interface Argument
 
-@Suppress("NOTHING_TO_INLINE")
 fun Any.toArg(): Argument = when (this) {
     is String -> toArg()
     is Long -> toArg()
@@ -18,6 +17,9 @@ fun Any.toArg(): Argument = when (this) {
     is Argument -> this
     else -> toString().toArg()
 }
+
+@Suppress("NOTHING_TO_INLINE")
+inline fun List<Any>.toArg(): List<Argument> = map { it.toArg() }
 
 @Suppress("NOTHING_TO_INLINE")
 internal inline fun Array<out String>.toArg(): Array<StringArg> = map { it.toArg() }.toTypedArray()

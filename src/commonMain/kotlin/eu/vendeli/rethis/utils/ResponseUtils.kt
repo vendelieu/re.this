@@ -103,7 +103,6 @@ internal suspend fun ByteReadChannel.readRedisMessage(charset: Charset, rawOnly:
     }
 }
 
-
 internal suspend fun ByteReadChannel.readCRLFLine(charset: Charset): String {
     val buffer = Buffer()
     while (true) {

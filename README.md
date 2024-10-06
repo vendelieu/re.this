@@ -32,13 +32,15 @@ There is a benchmark comparing popular library solutions:
 
 ```javascript
 main summary:
-Benchmark                   Mode  Cnt        Score         Error  Units
-JedisBenchmark.jedisGet    thrpt    5    61059.312 ±   12766.457  ops/s
-JedisBenchmark.jedisSet    thrpt    5    63010.876 ±    3385.390  ops/s
-KredsBenchmark.kredsGet    thrpt    4   827647.673 ±  216763.090  ops/s
-KredsBenchmark.kredsSet    thrpt    4   843548.354 ±  163456.680  ops/s
-RethisBenchmark.rethisGet  thrpt    5  1186328.857 ±  717051.132  ops/s
-RethisBenchmark.rethisSet  thrpt    5  1176619.151 ± 1747469.858  ops/s
+Benchmark                     Mode  Cnt        Score         Error  Units
+JedisBenchmark.jedisGet      thrpt    5    63010.453 ±    9777.678  ops/s
+JedisBenchmark.jedisSet      thrpt    5    62063.005 ±    3927.883  ops/s
+KredsBenchmark.kredsGet      thrpt    4   839368.283 ± 1920612.181  ops/s
+KredsBenchmark.kredsSet      thrpt    4   880280.335 ±  294842.124  ops/s
+LettuceBenchmark.lettuceGet  thrpt    5   620603.494 ± 2809834.262  ops/s
+LettuceBenchmark.lettuceSet  thrpt    5   385721.645 ± 1984768.266  ops/s
+RethisBenchmark.rethisGet    thrpt    5  1167826.112 ± 1585666.290  ops/s
+RethisBenchmark.rethisSet    thrpt    5  1156295.484 ± 1807467.975  ops/s
 ```
 
 # Usage
@@ -112,7 +114,7 @@ transaction functionality also takes into account fail-state cases and gracefull
 Also you can execute Redis commands using the execute method:
 
 ```kotlin
-val result = client.execute(listOf("SET".toArg(), "key".toArg(), "value".toArg()))
+val result = client.execute(listOf("SET", "key", "value").toArg())
 ```
 
 # Documentation

@@ -1,5 +1,9 @@
 # Re.this Changelog
 
+## 0.1.5
+
+* Added option to pass redis url address.
+
 ## 0.1.4
 
 * Use stricter typing in arguments.
