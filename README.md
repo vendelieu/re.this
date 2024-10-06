@@ -26,6 +26,19 @@ dependencies {
 }
 ```
 
+# Comparison
+
+```toml
+main summary:
+Benchmark                   Mode  Cnt        Score         Error  Units
+JedisBenchmark.jedisGet    thrpt    5    61059.312 ±   12766.457  ops/s
+JedisBenchmark.jedisSet    thrpt    5    63010.876 ±    3385.390  ops/s
+KredsBenchmark.kredsGet    thrpt    4   827647.673 ±  216763.090  ops/s
+KredsBenchmark.kredsSet    thrpt    4   843548.354 ±  163456.680  ops/s
+RethisBenchmark.rethisGet  thrpt    5  1186328.857 ±  717051.132  ops/s
+RethisBenchmark.rethisSet  thrpt    5  1176619.151 ± 1747469.858  ops/s
+```
+
 # Usage
 
 ### Connecting to Redis
@@ -97,7 +110,7 @@ transaction functionality also takes into account fail-state cases and gracefull
 Also you can execute Redis commands using the execute method:
 
 ```kotlin
-val result = client.execute(listOf("SET", "key", "value"))
+val result = client.execute(listOf("SET".toArg(), "key".toArg(), "value".toArg()))
 ```
 
 # Documentation

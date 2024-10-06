@@ -71,12 +71,12 @@ class ReThis(
             if (ctxConn != null) {
                 ctxConn!!.output.writeBuffer(pipelinedPayload)
                 ctxConn!!.output.flush()
-                requests.forEach { _ -> responses.add(ctxConn!!.input.readRedisMessage()) }
+                requests.forEach { _ -> responses.add(ctxConn!!.input.readRedisMessage(cfg.charset)) }
             } else {
                 connectionPool.use { connection ->
                     connection.output.writeBuffer(pipelinedPayload)
                     connection.output.flush()
-                    requests.forEach { _ -> responses.add(connection.input.readRedisMessage()) }
+                    requests.forEach { _ -> responses.add(connection.input.readRedisMessage(cfg.charset)) }
                 }
             }
             requests.clear()
@@ -89,7 +89,7 @@ class ReThis(
         logger.debug("Started transaction")
         conn.output.writeBuffer(bufferValues(listOf("MULTI".toArg()), cfg.charset))
         conn.output.flush()
-        require(conn.input.readRedisMessage().value == "OK")
+        require(conn.input.readRedisMessage(cfg.charset).value == "OK")
 
         var e: Throwable? = null
         coLaunch(currentCoroutineContext() + CoLocalConn(conn)) {
@@ -98,7 +98,7 @@ class ReThis(
         e?.also {
             conn.output.writeBuffer(bufferValues(listOf("DISCARD".toArg()), cfg.charset))
             conn.output.flush()
-            require(conn.input.readRedisMessage().value == "OK")
+            require(conn.input.readRedisMessage(cfg.charset).value == "OK")
             logger.error("Transaction canceled", it)
             return@use emptyList()
         }
@@ -106,7 +106,7 @@ class ReThis(
         logger.debug("Transaction completed")
         conn.output.writeBuffer(bufferValues(listOf("EXEC".toArg()), cfg.charset))
         conn.output.flush()
-        conn.input.readRedisMessage().unwrapList()
+        conn.input.readRedisMessage(cfg.charset).unwrapList()
     }
 
     @ReThisInternal
@@ -137,6 +137,6 @@ class ReThis(
         logger.trace("Executing request with such payload $payload")
         output.writeBuffer(bufferValues(payload, cfg.charset))
         output.flush()
-        return input.readRedisMessage(raw)
+        return input.readRedisMessage(cfg.charset, raw)
     }
 }

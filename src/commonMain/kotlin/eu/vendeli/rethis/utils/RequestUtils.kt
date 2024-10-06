@@ -24,8 +24,8 @@ internal fun Sink.writeRedisValue(
         is Array<*> -> writeArrayValue(data, charset)
 
         is StringArg -> writeByteArray(data.value.toByteArray(charset))
-        is LongArg -> writeByteArray(data.value.toString(10).toByteArray(charset))
-        is IntArg -> writeByteArray(data.value.toString(10).toByteArray(charset))
+        is LongArg -> writeByteArray(data.value.toString().toByteArray(charset))
+        is IntArg -> writeByteArray(data.value.toString().toByteArray(charset))
         is DoubleArg -> writeByteArray(data.value.toString().toByteArray(charset))
         is BaArg -> writeByteArray(data.value)
     }

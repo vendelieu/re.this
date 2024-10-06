@@ -17,7 +17,7 @@ import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
 internal class ConnectionPool(
-    private val client: ReThis,
+    internal val client: ReThis,
     private val address: SocketAddress,
 ) {
     internal val logger = KtorSimpleLogger("eu.vendeli.rethis.ConnectionPool")
@@ -55,7 +55,7 @@ internal class ConnectionPool(
         conn.output.writeBuffer(reqBuffer)
         conn.output.flush()
         repeat(requests) {
-            logger.trace("Connection establishment response: " + conn.input.readRedisMessage())
+            logger.trace("Connection establishment response: " + conn.input.readRedisMessage(client.cfg.charset))
         }
 
         return conn

@@ -3,21 +3,14 @@ package eu.vendeli.rethis.utils
 import com.ionspin.kotlin.bignum.integer.BigInteger
 import eu.vendeli.rethis.exception
 import eu.vendeli.rethis.types.core.*
-import eu.vendeli.rethis.utils.Const.DEFAULT_REDIS_BUFFER_SIZE
-import eu.vendeli.rethis.utils.Const.DEFAULT_REDIS_POOL_CAPACITY
 import io.ktor.utils.io.*
-import io.ktor.utils.io.pool.*
-import kotlinx.io.readByteArray
+import io.ktor.utils.io.charsets.*
+import io.ktor.utils.io.core.*
+import kotlinx.io.Buffer
 
-internal object RedisByteArrayPool : DefaultPool<ByteArray>(DEFAULT_REDIS_POOL_CAPACITY) {
-    override fun produceInstance(): ByteArray = ByteArray(DEFAULT_REDIS_BUFFER_SIZE)
-
-    override fun clearInstance(instance: ByteArray): ByteArray = instance.apply { fill(0) }
-}
-
-internal suspend fun ByteReadChannel.readRedisMessage(rawOnly: Boolean = false): RType {
+internal suspend fun ByteReadChannel.readRedisMessage(charset: Charset, rawOnly: Boolean = false): RType {
     val type = RespCode.fromCode(readByte()) // Read the type byte (e.g., +, -, :, $, *)
-    val line = readCRLFLine() // Read until CRLF for simple types
+    val line = readCRLFLine(charset)
 
     if (rawOnly) line.toIntOrNull()?.let {
         return RType.Raw(readByteArray(it))
@@ -31,17 +24,17 @@ internal suspend fun ByteReadChannel.readRedisMessage(rawOnly: Boolean = false):
         RespCode.INTEGER -> Int64(line.toLongOrNull() ?: exception { "Invalid number format: $line" })
 
         RespCode.BULK -> {
-            val size = line.toInt() // Parse the size from the bulk string header ($<size>)
+            val size = line.toLong() // Parse the size from the bulk string header ($<size>)
             if (size < 0) return RType.Null // Handle null bulk string (`$-1`)
-            val content = readRemaining(size.toLong()).readByteArray() // Read the specified size of bytes
+            val content = readRemaining(size).readText(charset) // Read the specified size of bytes
             readShort() // Skip CRLF after the bulk string
-            BulkString(content.decodeToString())
+            BulkString(content)
         }
 
         RespCode.ARRAY -> {
             val arraySize = line.toInt()
             if (arraySize < 0) return RType.Null // Handle null array (`*-1`)
-            val elements = List(arraySize) { readRedisMessage() } // Recursively read each array element
+            val elements = List(arraySize) { readRedisMessage(charset, rawOnly) } // Recursively read each array element
             RArray(elements)
         }
 
@@ -62,21 +55,21 @@ internal suspend fun ByteReadChannel.readRedisMessage(rawOnly: Boolean = false):
         }
 
         RespCode.BULK_ERROR -> {
-            val size = line.toInt() // Parse the size from the bulk error header
+            val size = line.toLong() // Parse the size from the bulk error header
             if (size < 0) exception { "Invalid bulk error size: $size" }
-            val content = readRemaining(size.toLong()).readByteArray() // Read the error content
+            val content = readRemaining(size) // Read the error content
             readShort() // Skip CRLF after the bulk error
-            RType.Error(content.decodeToString())
+            RType.Error(content.readText(charset))
         }
 
         RespCode.VERBATIM_STRING -> {
-            val size = line.toInt()
+            val size = line.toLong()
             if (size < 0) return RType.Null // Handle null verbatim string
-            val content = readRemaining(size.toLong()).readByteArray()
+            val content = readRemaining(size).readText(charset)
             readShort() // Skip CRLF
-            val encoding = content.decodeToString(0, 3) // First 3 bytes are encoding
-            val data = content.decodeToString(4, size - 4) // Skip encoding and colon (:)
-            VerbatimString(encoding, data)
+            val encoding = content.subSequence(0, 3) // First 3 bytes are encoding
+            val data = content.subSequence(4, size.toInt() - 4) // Skip encoding and colon (:)
+            VerbatimString(encoding.toString(), data.toString())
         }
 
         RespCode.MAP -> {
@@ -84,8 +77,8 @@ internal suspend fun ByteReadChannel.readRedisMessage(rawOnly: Boolean = false):
             if (mapSize < 0) return RType.Null // Handle null map
             val resultMap = mutableMapOf<RPrimitive, RType>()
             repeat(mapSize) {
-                val key = readRedisMessage() as RPrimitive
-                val value = readRedisMessage()
+                val key = readRedisMessage(charset, rawOnly) as RPrimitive
+                val value = readRedisMessage(charset, rawOnly)
                 resultMap[key] = value
             }
             RMap(resultMap)
@@ -96,7 +89,7 @@ internal suspend fun ByteReadChannel.readRedisMessage(rawOnly: Boolean = false):
             if (setSize < 0) return RType.Null // Handle null set
             val resultSet = mutableSetOf<RPrimitive>()
             repeat(setSize) {
-                resultSet.add(readRedisMessage() as RPrimitive)
+                resultSet.add(readRedisMessage(charset, rawOnly) as RPrimitive)
             }
             RSet(resultSet)
         }
@@ -104,43 +97,23 @@ internal suspend fun ByteReadChannel.readRedisMessage(rawOnly: Boolean = false):
         RespCode.PUSH -> {
             val pushSize = line.toInt()
             if (pushSize < 0) return RType.Null // Handle null push message
-            val elements = List(pushSize) { readRedisMessage() as RPrimitive }
+            val elements = List(pushSize) { readRedisMessage(charset, rawOnly) as RPrimitive }
             Push(elements)
         }
     }
 }
 
-internal suspend fun ByteReadChannel.readCRLFLine(): String {
-    val result = StringBuilder()
-    var lastByte: Byte
-    var secondLastByte: Byte = 0
-    var bytesRead = 0
 
-    RedisByteArrayPool.useInstance { buffer ->
-        while (true) {
-            lastByte = readByte()
-            if (secondLastByte == '\r'.code.toByte() && lastByte == '\n'.code.toByte()) {
-                break // End of line found
-            }
-            if (bytesRead < buffer.size) {
-                buffer[bytesRead] = lastByte // Store byte in buffer
-                bytesRead++
-            } else {
-                // Resize buffer dynamically instead of throwing an exception
-                result.append(buffer.decodeToString(0, bytesRead))
-                bytesRead = 0
-            }
-            secondLastByte = lastByte
+internal suspend fun ByteReadChannel.readCRLFLine(charset: Charset): String {
+    val buffer = Buffer()
+    while (true) {
+        val byte = readByte()
+        buffer.writeByte(byte)
+        if (byte == '\n'.code.toByte() && buffer.size > 1 && buffer[buffer.size - 2] == '\r'.code.toByte()) {
+            break // End of line found
         }
-
-        // Skip the last CR byte
-        bytesRead-- // Exclude the CR
-
-        // Convert the buffer to a string
-        result.append(buffer.decodeToString(0, bytesRead))
     }
-
-    return result.toString()
+    return buffer.readText(charset, (buffer.size - 2).toInt())
 }
 
 internal inline fun <reified L, reified R> RType.unwrapRespIndMap(): Map<L, R?>? =

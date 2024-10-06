@@ -24,19 +24,19 @@ class TransactionCommandTest : ReThisTestCtx() {
 
         conn.output.writeBuffer(bufferValues(listOf("MULTI".toArg()), Charsets.UTF_8))
         conn.output.flush()
-        conn.input.readRedisMessage() shouldBe PlainString("OK")
+        conn.input.readRedisMessage(Charsets.UTF_8) shouldBe PlainString("OK")
 
         conn.output.writeBuffer(bufferValues(listOf("SET".toArg(), "test3".toArg(), "testv3".toArg()), Charsets.UTF_8))
         conn.output.flush()
-        conn.input.readRedisMessage() shouldBe PlainString("QUEUED")
+        conn.input.readRedisMessage(Charsets.UTF_8) shouldBe PlainString("QUEUED")
 
         conn.output.writeBuffer(bufferValues(listOf("SET".toArg(), "test4".toArg(), "testv4".toArg()), Charsets.UTF_8))
         conn.output.flush()
-        conn.input.readRedisMessage() shouldBe PlainString("QUEUED")
+        conn.input.readRedisMessage(Charsets.UTF_8) shouldBe PlainString("QUEUED")
 
         conn.output.writeBuffer(bufferValues(listOf("EXEC".toArg()), Charsets.UTF_8))
         conn.output.flush()
-        conn.input.readRedisMessage() shouldBe RArray(listOf(PlainString("OK"), PlainString("OK")))
+        conn.input.readRedisMessage(Charsets.UTF_8) shouldBe RArray(listOf(PlainString("OK"), PlainString("OK")))
     }
 
     @Test

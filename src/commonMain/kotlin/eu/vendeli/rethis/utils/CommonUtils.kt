@@ -34,7 +34,7 @@ internal suspend inline fun ReThis.registerSubscription(
 
             while (isActive) {
                 conn.input.awaitContent()
-                val msg = conn.input.readRedisMessage()
+                val msg = conn.input.readRedisMessage(cfg.charset)
                 val input = if (msg is Push) msg.value else msg.safeCast<RArray>()?.value
                 logger.debug("Handling event in $target channel subscription")
 
