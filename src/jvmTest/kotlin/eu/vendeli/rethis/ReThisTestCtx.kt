@@ -18,7 +18,6 @@ abstract class ReThisTestCtx(
     ).apply {
         start()
     }
-    private val connAddr = InetSocketAddress(redis.host, redis.firstMappedPort)
 
-    protected val client = ReThis(connAddr)
+    protected val client = ReThis(redis.host, redis.firstMappedPort)
 }
