@@ -33,8 +33,12 @@ class ReThis(
     val logger = KtorSimpleLogger("eu.vendeli.rethis.ReThis")
     internal val cfg: ClientConfiguration = ClientConfiguration().apply(configurator)
     internal val rootJob = SupervisorJob()
+    internal val subscriptionHandlers = mutableMapOf<String, Job>()
+    internal val connectionPool by lazy { ConnectionPool(this, address.socket).also { it.prepare() } }
 
     init {
+        logger.info("Created client (RESP $protocol)")
+
         if (address is Url) {
             cfg.db = address.db
             if (address.credentials.isNotEmpty()) {
@@ -44,13 +48,6 @@ class ReThis(
                 )
             }
         }
-    }
-
-    internal val subscriptionHandlers = mutableMapOf<String, Job>()
-    internal val connectionPool by lazy { ConnectionPool(this, address.socket).also { it.prepare() } }
-
-    init {
-        logger.info("Created client (RESP $protocol)")
     }
 
     val subscriptions: Map<String, Job> get() = subscriptionHandlers
