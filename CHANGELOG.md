@@ -1,5 +1,14 @@
 # Re.this Changelog
 
+## 0.1.4
+
+* Use stricter typing in arguments.
+* Removed unnecessary option constructs and moved to `VaryingArgument`.
+* Removed unnecessary different type write operations since
+  the [protocol states](https://redis.io/docs/latest/develop/reference/protocol-spec/#resp-protocol-description)
+  that it always array of bulk strings.
+* Supported setting charset for incoming and outgoing messages.
+
 ## 0.1.3
 
 * Publish missing meta package

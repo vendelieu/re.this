@@ -26,7 +26,9 @@ dependencies {
 }
 ```
 
-# Comparison
+# Benchmark
+
+There is a benchmark comparing popular library solutions:
 
 ```toml
 main summary:
