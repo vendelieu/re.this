@@ -30,7 +30,7 @@ dependencies {
 
 There is a benchmark comparing popular library solutions:
 
-```toml
+```javascript
 main summary:
 Benchmark                   Mode  Cnt        Score         Error  Units
 JedisBenchmark.jedisGet    thrpt    5    61059.312 ±   12766.457  ops/s
