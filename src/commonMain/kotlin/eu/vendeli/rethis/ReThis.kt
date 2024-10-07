@@ -30,7 +30,7 @@ class ReThis(
         configurator: ClientConfiguration.() -> Unit = {},
     ) : this(Host(host, port), protocol, configurator)
 
-    val logger = KtorSimpleLogger("eu.vendeli.rethis.ReThis")
+    internal val logger = KtorSimpleLogger("eu.vendeli.rethis.ReThis")
     internal val cfg: ClientConfiguration = ClientConfiguration().apply(configurator)
     internal val rootJob = SupervisorJob()
     internal val subscriptionHandlers = mutableMapOf<String, Job>()
