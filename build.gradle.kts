@@ -28,6 +28,7 @@ configureKotlin {
                 implementation(libs.ktor.network)
                 implementation(libs.kotlinx.io.core)
 
+                api(libs.ktor.network.tls)
                 api(libs.bignum)
                 api(libs.coroutines.core)
                 api(libs.kotlinx.datetime)
@@ -47,7 +48,7 @@ configureKotlin {
                 }
                 implementation("commons-io:commons-io:2.14.0")
                 implementation("org.apache.commons:commons-compress:1.26.0")
-                implementation("com.fasterxml.woodstox:woodstox-core:6.4.0")
+                implementation("com.fasterxml.woodstox:woodstox-core:6.5.0")
             }
         }
     }

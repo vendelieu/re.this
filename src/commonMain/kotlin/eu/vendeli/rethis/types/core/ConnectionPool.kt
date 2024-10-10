@@ -6,6 +6,7 @@ import eu.vendeli.rethis.utils.readRedisMessage
 import eu.vendeli.rethis.utils.writeRedisValue
 import io.ktor.network.selector.*
 import io.ktor.network.sockets.*
+import io.ktor.network.tls.*
 import io.ktor.util.logging.*
 import io.ktor.utils.io.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -33,6 +34,11 @@ internal class ConnectionPool(
         val conn = aSocket(selector)
             .tcp()
             .connect(address)
+            .let { socket ->
+                client.cfg.tlsConfig?.let {
+                    socket.tls(selector.coroutineContext, it)
+                } ?: socket
+            }
             .connection()
 
         val reqBuffer = Buffer()
