@@ -117,11 +117,12 @@ Also you can execute Redis commands using the execute method:
 val result = client.execute(listOf("SET", "key", "value").toArg())
 ```
 
-# Documentation
+# Resources/Documentation
 
 You can learn more about the library through the following resources:
 
 * [KDocs API Reference](https://vendelieu.github.io/re.this/)
+* [Github Discussion](https://github.com/vendelieu/re.this/discussions)
 
 # Targets
 
