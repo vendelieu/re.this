@@ -369,12 +369,13 @@ $dokka.location:eu.vendeli.rethis.types.core/BulkString///PointingToDeclaration/
 $dokka.location:eu.vendeli.rethis.types.core/BulkString/BulkString/#kotlin.String/PointingToDeclaration/re.this/eu.vendeli.rethis.types.core/-bulk-string/-bulk-string.html
 $dokka.location:eu.vendeli.rethis.types.core/BulkString/value/#/PointingToDeclaration/re.this/eu.vendeli.rethis.types.core/-bulk-string/value.html
 $dokka.location:eu.vendeli.rethis.types.core/ClientConfiguration///PointingToDeclaration/re.this/eu.vendeli.rethis.types.core/-client-configuration/index.html
-$dokka.location:eu.vendeli.rethis.types.core/ClientConfiguration/ClientConfiguration/#eu.vendeli.rethis.types.core.AuthConfiguration?#kotlin.Int?#io.ktor.utils.io.charsets.Charset#kotlin.Int#kotlinx.coroutines.CoroutineDispatcher/PointingToDeclaration/re.this/eu.vendeli.rethis.types.core/-client-configuration/-client-configuration.html
+$dokka.location:eu.vendeli.rethis.types.core/ClientConfiguration/ClientConfiguration/#eu.vendeli.rethis.types.core.AuthConfiguration?#kotlin.Int?#io.ktor.utils.io.charsets.Charset#kotlin.Int#io.ktor.network.tls.TLSConfig?#kotlinx.coroutines.CoroutineDispatcher/PointingToDeclaration/re.this/eu.vendeli.rethis.types.core/-client-configuration/-client-configuration.html
 $dokka.location:eu.vendeli.rethis.types.core/ClientConfiguration/auth/#/PointingToDeclaration/re.this/eu.vendeli.rethis.types.core/-client-configuration/auth.html
 $dokka.location:eu.vendeli.rethis.types.core/ClientConfiguration/charset/#/PointingToDeclaration/re.this/eu.vendeli.rethis.types.core/-client-configuration/charset.html
 $dokka.location:eu.vendeli.rethis.types.core/ClientConfiguration/db/#/PointingToDeclaration/re.this/eu.vendeli.rethis.types.core/-client-configuration/db.html
 $dokka.location:eu.vendeli.rethis.types.core/ClientConfiguration/dispatcher/#/PointingToDeclaration/re.this/eu.vendeli.rethis.types.core/-client-configuration/dispatcher.html
 $dokka.location:eu.vendeli.rethis.types.core/ClientConfiguration/maxConnections/#/PointingToDeclaration/re.this/eu.vendeli.rethis.types.core/-client-configuration/max-connections.html
+$dokka.location:eu.vendeli.rethis.types.core/ClientConfiguration/tlsConfig/#/PointingToDeclaration/re.this/eu.vendeli.rethis.types.core/-client-configuration/tls-config.html
 $dokka.location:eu.vendeli.rethis.types.core/DoubleArg///PointingToDeclaration/re.this/eu.vendeli.rethis.types.core/-double-arg/index.html
 $dokka.location:eu.vendeli.rethis.types.core/DoubleArg/DoubleArg/#kotlin.Double/PointingToDeclaration/re.this/eu.vendeli.rethis.types.core/-double-arg/-double-arg.html
 $dokka.location:eu.vendeli.rethis.types.core/DoubleArg/value/#/PointingToDeclaration/re.this/eu.vendeli.rethis.types.core/-double-arg/value.html
@@ -725,7 +726,6 @@ $dokka.location:eu.vendeli.rethis/ReThis/ReThis/#kotlin.String#kotlin.Int#eu.ven
 $dokka.location:eu.vendeli.rethis/ReThis/disconnect/#/PointingToDeclaration/re.this/eu.vendeli.rethis/-re-this/disconnect.html
 $dokka.location:eu.vendeli.rethis/ReThis/execute/#kotlin.collections.List[eu.vendeli.rethis.types.core.Argument]#kotlin.Boolean/PointingToDeclaration/re.this/eu.vendeli.rethis/-re-this/execute.html
 $dokka.location:eu.vendeli.rethis/ReThis/isDisconnected/#/PointingToDeclaration/re.this/eu.vendeli.rethis/-re-this/is-disconnected.html
-$dokka.location:eu.vendeli.rethis/ReThis/logger/#/PointingToDeclaration/re.this/eu.vendeli.rethis/-re-this/logger.html
 $dokka.location:eu.vendeli.rethis/ReThis/pipeline/#kotlin.coroutines.SuspendFunction1[eu.vendeli.rethis.ReThis,kotlin.Unit]/PointingToDeclaration/re.this/eu.vendeli.rethis/-re-this/pipeline.html
 $dokka.location:eu.vendeli.rethis/ReThis/protocol/#/PointingToDeclaration/re.this/eu.vendeli.rethis/-re-this/protocol.html
 $dokka.location:eu.vendeli.rethis/ReThis/reconnect/#/PointingToDeclaration/re.this/eu.vendeli.rethis/-re-this/reconnect.html
