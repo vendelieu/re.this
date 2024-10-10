@@ -1,5 +1,9 @@
 # Re.this Changelog
 
+## 0.1.6
+
+* Added tls connection support
+
 ## 0.1.5
 
 * Added option to pass redis url address.
