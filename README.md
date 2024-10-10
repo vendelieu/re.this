@@ -130,6 +130,7 @@ Re.This supports the following targets:
 * JVM
 * Linux (linuxArm64, linuxX64)
 * Windows (mingwX64)
+* Android (androidNativeArm32, androidNativeArm64, androidNativeX64, androidNativeX86)
 * IOS (iosArm64, iosSimulatorArm64, iosX64)
 * MacOS (macosArm64, macosX64)
 * TvOS (tvosArm64, tvosSimulatorArm64, tvosX64)

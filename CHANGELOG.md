@@ -1,5 +1,9 @@
 # Re.this Changelog
 
+## 0.1.7
+
+* Supported android targets (androidNativeArm32, androidNativeArm64, androidNativeX64, androidNativeX86).
+
 ## 0.1.6
 
 * Added tls connection support

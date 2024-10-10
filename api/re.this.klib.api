@@ -1,5 +1,5 @@
 // Klib ABI Dump
-// Targets: [iosArm64, iosSimulatorArm64, iosX64, linuxArm64, linuxX64, macosArm64, macosX64, mingwX64, tvosArm64, tvosSimulatorArm64, tvosX64, watchosArm32, watchosArm64, watchosSimulatorArm64, watchosX64]
+// Targets: [androidNativeArm32, androidNativeArm64, androidNativeX64, androidNativeX86, iosArm64, iosSimulatorArm64, iosX64, linuxArm64, linuxX64, macosArm64, macosX64, mingwX64, tvosArm64, tvosSimulatorArm64, tvosX64, watchosArm32, watchosArm64, watchosSimulatorArm64, watchosX64]
 // Rendering settings:
 // - Signature version: 2
 // - Show manifest properties: true
@@ -471,7 +471,7 @@ final class eu.vendeli.rethis.types.core/BulkString : eu.vendeli.rethis.types.co
 }
 
 final class eu.vendeli.rethis.types.core/ClientConfiguration { // eu.vendeli.rethis.types.core/ClientConfiguration|null[0]
-    constructor <init>(eu.vendeli.rethis.types.core/AuthConfiguration? = ..., kotlin/Int? = ..., io.ktor.utils.io.charsets/Charset = ..., kotlin/Int = ..., kotlinx.coroutines/CoroutineDispatcher = ...) // eu.vendeli.rethis.types.core/ClientConfiguration.<init>|<init>(eu.vendeli.rethis.types.core.AuthConfiguration?;kotlin.Int?;io.ktor.utils.io.charsets.Charset;kotlin.Int;kotlinx.coroutines.CoroutineDispatcher){}[0]
+    constructor <init>(eu.vendeli.rethis.types.core/AuthConfiguration? = ..., kotlin/Int? = ..., io.ktor.utils.io.charsets/Charset = ..., kotlin/Int = ..., io.ktor.network.tls/TLSConfig? = ..., kotlinx.coroutines/CoroutineDispatcher = ...) // eu.vendeli.rethis.types.core/ClientConfiguration.<init>|<init>(eu.vendeli.rethis.types.core.AuthConfiguration?;kotlin.Int?;io.ktor.utils.io.charsets.Charset;kotlin.Int;io.ktor.network.tls.TLSConfig?;kotlinx.coroutines.CoroutineDispatcher){}[0]
 
     final var auth // eu.vendeli.rethis.types.core/ClientConfiguration.auth|{}auth[0]
         final fun <get-auth>(): eu.vendeli.rethis.types.core/AuthConfiguration? // eu.vendeli.rethis.types.core/ClientConfiguration.auth.<get-auth>|<get-auth>(){}[0]
@@ -488,13 +488,17 @@ final class eu.vendeli.rethis.types.core/ClientConfiguration { // eu.vendeli.ret
     final var maxConnections // eu.vendeli.rethis.types.core/ClientConfiguration.maxConnections|{}maxConnections[0]
         final fun <get-maxConnections>(): kotlin/Int // eu.vendeli.rethis.types.core/ClientConfiguration.maxConnections.<get-maxConnections>|<get-maxConnections>(){}[0]
         final fun <set-maxConnections>(kotlin/Int) // eu.vendeli.rethis.types.core/ClientConfiguration.maxConnections.<set-maxConnections>|<set-maxConnections>(kotlin.Int){}[0]
+    final var tlsConfig // eu.vendeli.rethis.types.core/ClientConfiguration.tlsConfig|{}tlsConfig[0]
+        final fun <get-tlsConfig>(): io.ktor.network.tls/TLSConfig? // eu.vendeli.rethis.types.core/ClientConfiguration.tlsConfig.<get-tlsConfig>|<get-tlsConfig>(){}[0]
+        final fun <set-tlsConfig>(io.ktor.network.tls/TLSConfig?) // eu.vendeli.rethis.types.core/ClientConfiguration.tlsConfig.<set-tlsConfig>|<set-tlsConfig>(io.ktor.network.tls.TLSConfig?){}[0]
 
     final fun component1(): eu.vendeli.rethis.types.core/AuthConfiguration? // eu.vendeli.rethis.types.core/ClientConfiguration.component1|component1(){}[0]
     final fun component2(): kotlin/Int? // eu.vendeli.rethis.types.core/ClientConfiguration.component2|component2(){}[0]
     final fun component3(): io.ktor.utils.io.charsets/Charset // eu.vendeli.rethis.types.core/ClientConfiguration.component3|component3(){}[0]
     final fun component4(): kotlin/Int // eu.vendeli.rethis.types.core/ClientConfiguration.component4|component4(){}[0]
-    final fun component5(): kotlinx.coroutines/CoroutineDispatcher // eu.vendeli.rethis.types.core/ClientConfiguration.component5|component5(){}[0]
-    final fun copy(eu.vendeli.rethis.types.core/AuthConfiguration? = ..., kotlin/Int? = ..., io.ktor.utils.io.charsets/Charset = ..., kotlin/Int = ..., kotlinx.coroutines/CoroutineDispatcher = ...): eu.vendeli.rethis.types.core/ClientConfiguration // eu.vendeli.rethis.types.core/ClientConfiguration.copy|copy(eu.vendeli.rethis.types.core.AuthConfiguration?;kotlin.Int?;io.ktor.utils.io.charsets.Charset;kotlin.Int;kotlinx.coroutines.CoroutineDispatcher){}[0]
+    final fun component5(): io.ktor.network.tls/TLSConfig? // eu.vendeli.rethis.types.core/ClientConfiguration.component5|component5(){}[0]
+    final fun component6(): kotlinx.coroutines/CoroutineDispatcher // eu.vendeli.rethis.types.core/ClientConfiguration.component6|component6(){}[0]
+    final fun copy(eu.vendeli.rethis.types.core/AuthConfiguration? = ..., kotlin/Int? = ..., io.ktor.utils.io.charsets/Charset = ..., kotlin/Int = ..., io.ktor.network.tls/TLSConfig? = ..., kotlinx.coroutines/CoroutineDispatcher = ...): eu.vendeli.rethis.types.core/ClientConfiguration // eu.vendeli.rethis.types.core/ClientConfiguration.copy|copy(eu.vendeli.rethis.types.core.AuthConfiguration?;kotlin.Int?;io.ktor.utils.io.charsets.Charset;kotlin.Int;io.ktor.network.tls.TLSConfig?;kotlinx.coroutines.CoroutineDispatcher){}[0]
     final fun equals(kotlin/Any?): kotlin/Boolean // eu.vendeli.rethis.types.core/ClientConfiguration.equals|equals(kotlin.Any?){}[0]
     final fun hashCode(): kotlin/Int // eu.vendeli.rethis.types.core/ClientConfiguration.hashCode|hashCode(){}[0]
     final fun toString(): kotlin/String // eu.vendeli.rethis.types.core/ClientConfiguration.toString|toString(){}[0]
@@ -511,6 +515,10 @@ final class eu.vendeli.rethis.types.core/F64 : eu.vendeli.rethis.types.core/RPri
     final fun equals(kotlin/Any?): kotlin/Boolean // eu.vendeli.rethis.types.core/F64.equals|equals(kotlin.Any?){}[0]
     final fun hashCode(): kotlin/Int // eu.vendeli.rethis.types.core/F64.hashCode|hashCode(){}[0]
     final fun toString(): kotlin/String // eu.vendeli.rethis.types.core/F64.toString|toString(){}[0]
+}
+
+final class eu.vendeli.rethis.types.core/Host : eu.vendeli.rethis.types.core/Address { // eu.vendeli.rethis.types.core/Host|null[0]
+    constructor <init>(kotlin/String, kotlin/Int) // eu.vendeli.rethis.types.core/Host.<init>|<init>(kotlin.String;kotlin.Int){}[0]
 }
 
 final class eu.vendeli.rethis.types.core/Int64 : eu.vendeli.rethis.types.core/RPrimitive { // eu.vendeli.rethis.types.core/Int64|null[0]
@@ -589,6 +597,14 @@ final class eu.vendeli.rethis.types.core/RSet : eu.vendeli.rethis.types.core/RTy
     final fun equals(kotlin/Any?): kotlin/Boolean // eu.vendeli.rethis.types.core/RSet.equals|equals(kotlin.Any?){}[0]
     final fun hashCode(): kotlin/Int // eu.vendeli.rethis.types.core/RSet.hashCode|hashCode(){}[0]
     final fun toString(): kotlin/String // eu.vendeli.rethis.types.core/RSet.toString|toString(){}[0]
+}
+
+final class eu.vendeli.rethis.types.core/UnixSocket : eu.vendeli.rethis.types.core/Address { // eu.vendeli.rethis.types.core/UnixSocket|null[0]
+    constructor <init>(kotlin/String) // eu.vendeli.rethis.types.core/UnixSocket.<init>|<init>(kotlin.String){}[0]
+}
+
+final class eu.vendeli.rethis.types.core/Url : eu.vendeli.rethis.types.core/Address { // eu.vendeli.rethis.types.core/Url|null[0]
+    constructor <init>(kotlin/String) // eu.vendeli.rethis.types.core/Url.<init>|<init>(kotlin.String){}[0]
 }
 
 final class eu.vendeli.rethis.types.core/VerbatimString : eu.vendeli.rethis.types.core/RPrimitive { // eu.vendeli.rethis.types.core/VerbatimString|null[0]
@@ -756,13 +772,11 @@ final class eu.vendeli.rethis.wrappers/ReThisSet : kotlin.collections/AbstractMu
 }
 
 final class eu.vendeli.rethis/ReThis { // eu.vendeli.rethis/ReThis|null[0]
-    constructor <init>(io.ktor.network.sockets/SocketAddress = ..., eu.vendeli.rethis.types.core/RespVer = ..., kotlin/Function1<eu.vendeli.rethis.types.core/ClientConfiguration, kotlin/Unit> = ...) // eu.vendeli.rethis/ReThis.<init>|<init>(io.ktor.network.sockets.SocketAddress;eu.vendeli.rethis.types.core.RespVer;kotlin.Function1<eu.vendeli.rethis.types.core.ClientConfiguration,kotlin.Unit>){}[0]
-    constructor <init>(kotlin/String, kotlin/Int, eu.vendeli.rethis.types.core/RespVer = ..., kotlin/Function1<eu.vendeli.rethis.types.core/ClientConfiguration, kotlin/Unit> = ...) // eu.vendeli.rethis/ReThis.<init>|<init>(kotlin.String;kotlin.Int;eu.vendeli.rethis.types.core.RespVer;kotlin.Function1<eu.vendeli.rethis.types.core.ClientConfiguration,kotlin.Unit>){}[0]
+    constructor <init>(eu.vendeli.rethis.types.core/Address = ..., eu.vendeli.rethis.types.core/RespVer = ..., kotlin/Function1<eu.vendeli.rethis.types.core/ClientConfiguration, kotlin/Unit> = ...) // eu.vendeli.rethis/ReThis.<init>|<init>(eu.vendeli.rethis.types.core.Address;eu.vendeli.rethis.types.core.RespVer;kotlin.Function1<eu.vendeli.rethis.types.core.ClientConfiguration,kotlin.Unit>){}[0]
+    constructor <init>(kotlin/String = ..., kotlin/Int = ..., eu.vendeli.rethis.types.core/RespVer = ..., kotlin/Function1<eu.vendeli.rethis.types.core/ClientConfiguration, kotlin/Unit> = ...) // eu.vendeli.rethis/ReThis.<init>|<init>(kotlin.String;kotlin.Int;eu.vendeli.rethis.types.core.RespVer;kotlin.Function1<eu.vendeli.rethis.types.core.ClientConfiguration,kotlin.Unit>){}[0]
 
     final val isDisconnected // eu.vendeli.rethis/ReThis.isDisconnected|{}isDisconnected[0]
         final fun <get-isDisconnected>(): kotlin/Boolean // eu.vendeli.rethis/ReThis.isDisconnected.<get-isDisconnected>|<get-isDisconnected>(){}[0]
-    final val logger // eu.vendeli.rethis/ReThis.logger|{}logger[0]
-        final fun <get-logger>(): io.ktor.util.logging/Logger // eu.vendeli.rethis/ReThis.logger.<get-logger>|<get-logger>(){}[0]
     final val protocol // eu.vendeli.rethis/ReThis.protocol|{}protocol[0]
         final fun <get-protocol>(): eu.vendeli.rethis.types.core/RespVer // eu.vendeli.rethis/ReThis.protocol.<get-protocol>|<get-protocol>(){}[0]
     final val subscriptions // eu.vendeli.rethis/ReThis.subscriptions|{}subscriptions[0]
@@ -827,6 +841,8 @@ final value class eu.vendeli.rethis.types.core/LongArg : eu.vendeli.rethis.types
     final fun hashCode(): kotlin/Int // eu.vendeli.rethis.types.core/LongArg.hashCode|hashCode(){}[0]
     final fun toString(): kotlin/String // eu.vendeli.rethis.types.core/LongArg.toString|toString(){}[0]
 }
+
+sealed class eu.vendeli.rethis.types.core/Address // eu.vendeli.rethis.types.core/Address|null[0]
 
 sealed class eu.vendeli.rethis.types.core/RPrimitive : eu.vendeli.rethis.types.core/RType // eu.vendeli.rethis.types.core/RPrimitive|null[0]
 
@@ -1655,6 +1671,7 @@ final fun (eu.vendeli.rethis.types.core/RType).eu.vendeli.rethis.utils/isOk(): k
 final fun (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.wrappers/Hash(kotlin/String): eu.vendeli.rethis.wrappers/ReThisMap // eu.vendeli.rethis.wrappers/Hash|Hash@eu.vendeli.rethis.ReThis(kotlin.String){}[0]
 final fun (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.wrappers/Set(kotlin/String): eu.vendeli.rethis.wrappers/ReThisSet // eu.vendeli.rethis.wrappers/Set|Set@eu.vendeli.rethis.ReThis(kotlin.String){}[0]
 final fun (kotlin/Any).eu.vendeli.rethis.types.core/toArg(): eu.vendeli.rethis.types.core/Argument // eu.vendeli.rethis.types.core/toArg|toArg@kotlin.Any(){}[0]
+final inline fun (kotlin.collections/List<kotlin/Any>).eu.vendeli.rethis.types.core/toArg(): kotlin.collections/List<eu.vendeli.rethis.types.core/Argument> // eu.vendeli.rethis.types.core/toArg|toArg@kotlin.collections.List<kotlin.Any>(){}[0]
 final suspend fun (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.commands/append(kotlin/String, kotlin/String): kotlin/Long // eu.vendeli.rethis.commands/append|append@eu.vendeli.rethis.ReThis(kotlin.String;kotlin.String){}[0]
 final suspend fun (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.commands/blMove(kotlin/String, kotlin/String, eu.vendeli.rethis.types.common/MoveDirection, eu.vendeli.rethis.types.common/MoveDirection, kotlin/Long): kotlin/String? // eu.vendeli.rethis.commands/blMove|blMove@eu.vendeli.rethis.ReThis(kotlin.String;kotlin.String;eu.vendeli.rethis.types.common.MoveDirection;eu.vendeli.rethis.types.common.MoveDirection;kotlin.Long){}[0]
 final suspend fun (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.commands/blPop(kotlin/Array<out kotlin/String>..., kotlin/Long = ...): eu.vendeli.rethis.types.common/PopResult? // eu.vendeli.rethis.commands/blPop|blPop@eu.vendeli.rethis.ReThis(kotlin.Array<out|kotlin.String>...;kotlin.Long){}[0]

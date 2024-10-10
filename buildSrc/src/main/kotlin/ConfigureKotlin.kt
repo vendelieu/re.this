@@ -50,6 +50,11 @@ fun Project.configureKotlin(block: KotlinMultiplatformExtension.() -> Unit) {
         tvosArm64()
         tvosSimulatorArm64()
 
+        androidNativeX64()
+        androidNativeX86()
+        androidNativeArm32()
+        androidNativeArm64()
+
         targets.configureEach { disableCompilationsIfNeeded() }
 
         block()
