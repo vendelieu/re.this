@@ -4,5 +4,7 @@
     ":disableDependencyDashboard",
     ":automergeMinor"
   ],
-  "baseBranches": ["dev"]
+  "baseBranches": ["dev"],
+  "branchConcurrentLimit": 5,
+  "prHourlyLimit": 10
 }
