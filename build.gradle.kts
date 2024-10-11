@@ -23,33 +23,29 @@ repositories {
 
 configureKotlin {
     sourceSets {
-        commonMain {
-            dependencies {
-                implementation(libs.ktor.network)
-                implementation(libs.kotlinx.io.core)
+        commonMain.dependencies {
+            implementation(libs.ktor.network)
+            implementation(libs.kotlinx.io.core)
 
-                api(libs.ktor.network.tls)
-                api(libs.bignum)
-                api(libs.coroutines.core)
-                api(libs.kotlinx.datetime)
-            }
+            api(libs.ktor.network.tls)
+            api(libs.bignum)
+            api(libs.coroutines.core)
+            api(libs.kotlinx.datetime)
         }
 
-        jvmTest {
-            dependencies {
-                implementation(libs.kotlin.reflect)
-                implementation(libs.test.kotest.junit5)
-                implementation(libs.test.kotest.assertions)
-                implementation(libs.logback)
-                implementation("com.redis:testcontainers-redis:1.7.0") {
-                    exclude("commons-io", "commons-io")
-                    exclude("org.apache.commons", "commons-compress")
-                    exclude("com.fasterxml.woodstox", "woodstox-core")
-                }
-                implementation("commons-io:commons-io:2.17.0")
-                implementation("org.apache.commons:commons-compress:1.27.1")
-                implementation("com.fasterxml.woodstox:woodstox-core:7.0.0")
+        jvmTest.dependencies {
+            implementation(libs.kotlin.reflect)
+            implementation(libs.test.kotest.junit5)
+            implementation(libs.test.kotest.assertions)
+            implementation(libs.logback)
+            implementation("com.redis:testcontainers-redis:1.7.0") {
+                exclude("commons-io", "commons-io")
+                exclude("org.apache.commons", "commons-compress")
+                exclude("com.fasterxml.woodstox", "woodstox-core")
             }
+            implementation("commons-io:commons-io:2.17.0")
+            implementation("org.apache.commons:commons-compress:1.27.1")
+            implementation("com.fasterxml.woodstox:woodstox-core:7.0.0")
         }
     }
 }
