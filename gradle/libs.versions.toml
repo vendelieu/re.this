@@ -4,7 +4,7 @@ ktor = "3.0.0"
 kotlin = "2.0.21"
 coroutines = "1.8.1"
 io = "0.5.4"
-datetime = "0.6.0"
+datetime = "0.6.1"
 bignum = "0.3.10"
 
 dokka = "1.9.20"
