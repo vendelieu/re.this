@@ -5,6 +5,20 @@
     ":automergeMinor"
   ],
   "baseBranches": ["dev"],
-  "branchConcurrentLimit": 5,
-  "prHourlyLimit": 10
+  "branchConcurrentLimit": 10,
+  "prHourlyLimit": 20,
+  "automergeType": "branch",
+  "packageRules": [
+    {
+      "matchPackagePatterns": [
+        "*"
+      ],
+      "matchUpdateTypes": [
+        "minor",
+        "patch"
+      ],
+      "groupName": "all non-major dependencies",
+      "groupSlug": "all-minor-patch"
+    }
+  ]
 }
