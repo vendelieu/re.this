@@ -1,21 +1,21 @@
 [versions]
 ktor = "3.0.0"
 
-kotlin = "2.0.20"
-coroutines = "1.8.1"
+kotlin = "2.0.21"
+coroutines = "1.9.0"
 io = "0.5.4"
-datetime = "0.6.0"
+datetime = "0.6.1"
 bignum = "0.3.10"
 
 dokka = "1.9.20"
 kotlinter = "4.4.1"
-deteKT = "1.23.6"
+deteKT = "1.23.7"
 publisher = "0.29.0"
 binvalid = "0.16.3"
 kover = "0.8.3"
 
 kotest = "5.9.1"
-logback = "1.5.8"
+logback = "1.5.9"
 
 [libraries]
 kotlinx-io-core = { module = "org.jetbrains.kotlinx:kotlinx-io-core", version.ref = "io" }
