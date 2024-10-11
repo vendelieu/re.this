@@ -51,9 +51,7 @@ configureKotlin {
 }
 
 buildscript {
-    dependencies {
-        classpath(libs.dokka.base)
-    }
+    dependencies.classpath(libs.dokka.base)
 }
 
 tasks {
@@ -70,10 +68,8 @@ tasks {
     }
 }
 
-apiValidation {
-    @OptIn(ExperimentalBCVApi::class)
-    klib.enabled = true
-}
+@OptIn(ExperimentalBCVApi::class)
+apiValidation.klib.enabled = true
 
 detekt {
     buildUponDefaultConfig = true
