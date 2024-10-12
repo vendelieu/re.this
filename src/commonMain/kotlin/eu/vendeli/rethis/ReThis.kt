@@ -13,7 +13,6 @@ import eu.vendeli.rethis.utils.writeRedisValue
 import io.ktor.network.sockets.*
 import io.ktor.util.logging.*
 import io.ktor.utils.io.*
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.io.Buffer
@@ -33,7 +32,6 @@ class ReThis(
     internal val logger = KtorSimpleLogger("eu.vendeli.rethis.ReThis")
     internal val cfg: ClientConfiguration = ClientConfiguration().apply(configurator)
     internal val rootJob = SupervisorJob()
-    internal val subscriptionHandlers = mutableMapOf<String, Job>()
     internal val connectionPool by lazy { ConnectionPool(this, address.socket).also { it.prepare() } }
 
     init {
@@ -50,7 +48,7 @@ class ReThis(
         }
     }
 
-    val subscriptions: Map<String, Job> get() = subscriptionHandlers
+    val subscriptions = ActiveSubscriptions()
     val isDisconnected: Boolean get() = connectionPool.isEmpty
 
     fun disconnect() = connectionPool.disconnect()

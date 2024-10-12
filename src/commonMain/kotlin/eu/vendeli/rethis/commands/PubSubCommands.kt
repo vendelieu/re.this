@@ -8,20 +8,18 @@ import eu.vendeli.rethis.utils.registerSubscription
 import eu.vendeli.rethis.utils.writeArg
 
 suspend fun ReThis.pSubscribe(vararg subscription: ChannelSubscription) = subscription.forEach {
-    pSubscribe(it.channel, it.exceptionHandler, it.handler)
+    pSubscribe(it.channel, it.handler)
 }
 
 suspend fun ReThis.pSubscribe(
     pattern: String,
-    exceptionHandler: ReThisExceptionHandler? = null,
     handler: SubscriptionHandler,
 ) {
     registerSubscription(
         regCommand = "PSUBSCRIBE",
         unRegCommand = "PUNSUBSCRIBE",
-        exHandler = exceptionHandler,
         target = pattern,
-        messageMarker = "message",
+        messageMarker = "pmessage",
         handler = handler,
     )
 }
@@ -81,12 +79,16 @@ suspend fun ReThis.pubSubShardNumSub(vararg channel: String): List<PubSubNumEntr
     )
 }
 
-suspend fun ReThis.pUnsubscribe(vararg pattern: String): RType = execute(
-    listOf(
-        "PUNSUBSCRIBE".toArg(),
-        *pattern.toArg(),
-    ),
-)
+suspend fun ReThis.pUnsubscribe(vararg pattern: String): RType {
+    require(pattern.isNotEmpty())
+    pattern.forEach { subscriptions.unsubscribe(it) }
+    return execute(
+        listOf(
+            "PUNSUBSCRIBE".toArg(),
+            *pattern.toArg(),
+        ),
+    )
+}
 
 suspend fun ReThis.sPublish(shardChannel: String, message: String): Long? = execute(
     listOf(
@@ -97,18 +99,16 @@ suspend fun ReThis.sPublish(shardChannel: String, message: String): Long? = exec
 ).unwrap()
 
 suspend fun ReThis.sSubscribe(vararg subscription: ChannelSubscription) = subscription.forEach {
-    sSubscribe(it.channel, it.exceptionHandler, it.handler)
+    sSubscribe(it.channel, it.handler)
 }
 
 suspend fun ReThis.sSubscribe(
     shardChannel: String,
-    exceptionHandler: ReThisExceptionHandler? = null,
     handler: SubscriptionHandler,
 ) {
     registerSubscription(
         regCommand = "SSUBSCRIBE",
         unRegCommand = "SUNSUBSCRIBE",
-        exHandler = exceptionHandler,
         target = shardChannel,
         messageMarker = "smessage",
         handler = handler,
@@ -116,34 +116,40 @@ suspend fun ReThis.sSubscribe(
 }
 
 suspend fun ReThis.subscribe(vararg subscription: ChannelSubscription) = subscription.forEach {
-    subscribe(it.channel, it.exceptionHandler, it.handler)
+    subscribe(it.channel, it.handler)
 }
 
 suspend fun ReThis.subscribe(
     channel: String,
-    exceptionHandler: ReThisExceptionHandler? = null,
     handler: SubscriptionHandler,
 ) {
     registerSubscription(
         regCommand = "SUBSCRIBE",
         unRegCommand = "UNSUBSCRIBE",
-        exHandler = exceptionHandler,
         target = channel,
         messageMarker = "message",
         handler = handler,
     )
 }
 
-suspend fun ReThis.sUnsubscribe(vararg pattern: String): RType = execute(
-    listOf(
-        "SUNSUBSCRIBE".toArg(),
-        *pattern.toArg(),
-    ),
-)
+suspend fun ReThis.sUnsubscribe(vararg pattern: String): RType {
+    require(pattern.isNotEmpty())
+    pattern.forEach { subscriptions.unsubscribe(it) }
+    return execute(
+        listOf(
+            "SUNSUBSCRIBE".toArg(),
+            *pattern.toArg(),
+        ),
+    )
+}
 
-suspend fun ReThis.unsubscribe(vararg pattern: String): RType = execute(
-    listOf(
-        "UNSUBSCRIBE".toArg(),
-        *pattern.toArg(),
-    ),
-)
+suspend fun ReThis.unsubscribe(vararg pattern: String): RType {
+    require(pattern.isNotEmpty())
+    pattern.forEach { subscriptions.unsubscribe(it) }
+    return execute(
+        listOf(
+            "UNSUBSCRIBE".toArg(),
+            *pattern.toArg(),
+        ),
+    )
+}

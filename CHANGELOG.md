@@ -1,5 +1,9 @@
 # Re.this Changelog
 
+## 0.1.8
+
+* Improved pub/sub flow, added common event handler.
+
 ## 0.1.7
 
 * Supported android targets (androidNativeArm32, androidNativeArm64, androidNativeX64, androidNativeX86).

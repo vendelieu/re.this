@@ -1,21 +1,25 @@
 package eu.vendeli.rethis.tests.commands
 
+import eu.vendeli.rethis.ReThisException
 import eu.vendeli.rethis.ReThisTestCtx
 import eu.vendeli.rethis.commands.*
+import eu.vendeli.rethis.exception
 import eu.vendeli.rethis.types.common.PubSubNumEntry
 import eu.vendeli.rethis.types.core.BulkString
 import eu.vendeli.rethis.types.core.Int64
 import eu.vendeli.rethis.types.core.Push
+import eu.vendeli.rethis.types.core.SubscriptionEventHandler
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
-import kotlinx.coroutines.cancelAndJoin
+import io.kotest.matchers.throwable.shouldHaveMessage
+import io.kotest.matchers.types.shouldBeTypeOf
+import io.kotest.matchers.types.shouldNotBeTypeOf
 import kotlinx.coroutines.delay
 
 class PubSubCommandTest : ReThisTestCtx() {
-    private suspend fun clearSubs() {
-        client.subscriptions.entries.forEach {
-            it.value.cancelAndJoin()
-        }
+    @BeforeEach
+    suspend fun clearSubs() {
+        client.subscriptions.unsubscribeAll()
     }
 
     @Test
@@ -23,7 +27,6 @@ class PubSubCommandTest : ReThisTestCtx() {
         client.subscribe("testChannel") { _, _ -> println("test") }
         delay(100)
         client.publish("testChannel", "testMessage") shouldBe 1L
-        clearSubs()
     }
 
     @Test
@@ -31,7 +34,6 @@ class PubSubCommandTest : ReThisTestCtx() {
         client.subscribe("testChannel2") { _, _ -> println("test") }
         delay(100)
         client.pubSubChannels() shouldBe listOf("testChannel2")
-        clearSubs()
     }
 
     @Test
@@ -39,7 +41,6 @@ class PubSubCommandTest : ReThisTestCtx() {
         client.pSubscribe("testP*") { _, _ -> println("test") }
         delay(100)
         client.pubSubNumPat() shouldBe 1L
-        clearSubs()
     }
 
     @Test
@@ -100,7 +101,7 @@ class PubSubCommandTest : ReThisTestCtx() {
         client.pSubscribe("testPattern") { _, m ->
             println(m)
         }
-        client.subscriptions["testPattern"].shouldNotBeNull()
+        client.subscriptions.isActive("testPattern") shouldBe true
     }
 
     @Test
@@ -108,7 +109,7 @@ class PubSubCommandTest : ReThisTestCtx() {
         client.sSubscribe("testShardChannel") { _, m ->
             println(m)
         }
-        client.subscriptions["testShardChannel"].shouldNotBeNull()
+        client.subscriptions.isActive("testShardChannel") shouldBe true
     }
 
     @Test
@@ -116,6 +117,63 @@ class PubSubCommandTest : ReThisTestCtx() {
         client.subscribe("testChannel") { _, m ->
             println(m)
         }
-        client.subscriptions["testChannel"].shouldNotBeNull()
+        client.subscriptions.isActive("testChannel") shouldBe true
+    }
+
+    @Test
+    suspend fun `test unsubscription command`() {
+        client.subscribe("testChannel") { _, m ->
+            println(m)
+        }
+        client.subscriptions.isActive("testChannel") shouldBe true
+
+        client.subscriptions.unsubscribe("testChannel") shouldBe true
+        client.subscriptions.isActive("testChannel") shouldBe false
+        client.subscriptions.size shouldBe 0
+    }
+
+    @Test
+    suspend fun `test subscription evenHandler`() {
+        var onSub = 0
+        var onUnsub = 0
+        var caughtEx: Exception? = null
+
+        client.subscriptions.setEventHandler(
+            object : SubscriptionEventHandler {
+                override suspend fun onSubscribe(id: String, subscribedChannels: Long) {
+                    println("-- id $id count: $subscribedChannels")
+                    onSub++
+                }
+
+                override suspend fun onUnsubscribe(id: String, subscribedChannels: Long) {
+                    println("!-- id $id count: $subscribedChannels")
+                    onUnsub++
+                }
+
+                override suspend fun onException(id: String, ex: Exception) {
+                    caughtEx = ex
+                }
+
+            },
+        )
+        client.subscribe("testChannel") { _, m ->
+            println("-----------$m")
+        }
+        client.subscriptions.isActive("testChannel") shouldBe true
+
+        client.pSubscribe("testCh*"){ _, m ->
+            exception { "test" }
+        }
+        client.subscriptions.isActive("testCh*") shouldBe true
+
+        client.unsubscribe("testChannel")
+        client.subscriptions.isActive("testChannel") shouldBe false
+        client.publish("testChannel", "test")
+
+        delay(100)
+
+        onSub shouldBe 2
+        onUnsub shouldBe 0
+        caughtEx.shouldNotBeNull().shouldBeTypeOf<ReThisException>().shouldHaveMessage("test")
     }
 }
