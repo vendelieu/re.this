@@ -1,6 +1,6 @@
 # Re.this Changelog
 
-## 0.1.8 [Unreleased]
+## 0.1.8
 
 * Improved pub/sub flow, added common event handler.
 
