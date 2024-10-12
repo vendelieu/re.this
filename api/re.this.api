@@ -8,7 +8,7 @@ public final class eu/vendeli/rethis/ReThis {
 	public final fun execute (Ljava/util/List;ZLkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static synthetic fun execute$default (Leu/vendeli/rethis/ReThis;Ljava/util/List;ZLkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
 	public final fun getProtocol ()Leu/vendeli/rethis/types/core/RespVer;
-	public final fun getSubscriptions ()Ljava/util/Map;
+	public final fun getSubscriptions ()Leu/vendeli/rethis/types/core/ActiveSubscriptions;
 	public final fun isDisconnected ()Z
 	public final fun pipeline (Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public final fun reconnect ()V
@@ -190,9 +190,8 @@ public final class eu/vendeli/rethis/commands/ListCommandsKt {
 }
 
 public final class eu/vendeli/rethis/commands/PubSubCommandsKt {
-	public static final fun pSubscribe (Leu/vendeli/rethis/ReThis;Ljava/lang/String;Leu/vendeli/rethis/types/core/ReThisExceptionHandler;Leu/vendeli/rethis/types/core/SubscriptionHandler;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static final fun pSubscribe (Leu/vendeli/rethis/ReThis;Ljava/lang/String;Leu/vendeli/rethis/types/core/SubscriptionHandler;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static final fun pSubscribe (Leu/vendeli/rethis/ReThis;[Leu/vendeli/rethis/types/common/ChannelSubscription;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public static synthetic fun pSubscribe$default (Leu/vendeli/rethis/ReThis;Ljava/lang/String;Leu/vendeli/rethis/types/core/ReThisExceptionHandler;Leu/vendeli/rethis/types/core/SubscriptionHandler;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
 	public static final fun pUnsubscribe (Leu/vendeli/rethis/ReThis;[Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static final fun pubSubChannels (Leu/vendeli/rethis/ReThis;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static synthetic fun pubSubChannels$default (Leu/vendeli/rethis/ReThis;Ljava/lang/String;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
@@ -203,13 +202,11 @@ public final class eu/vendeli/rethis/commands/PubSubCommandsKt {
 	public static final fun pubSubShardNumSub (Leu/vendeli/rethis/ReThis;[Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static final fun publish (Leu/vendeli/rethis/ReThis;Ljava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static final fun sPublish (Leu/vendeli/rethis/ReThis;Ljava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public static final fun sSubscribe (Leu/vendeli/rethis/ReThis;Ljava/lang/String;Leu/vendeli/rethis/types/core/ReThisExceptionHandler;Leu/vendeli/rethis/types/core/SubscriptionHandler;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static final fun sSubscribe (Leu/vendeli/rethis/ReThis;Ljava/lang/String;Leu/vendeli/rethis/types/core/SubscriptionHandler;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static final fun sSubscribe (Leu/vendeli/rethis/ReThis;[Leu/vendeli/rethis/types/common/ChannelSubscription;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public static synthetic fun sSubscribe$default (Leu/vendeli/rethis/ReThis;Ljava/lang/String;Leu/vendeli/rethis/types/core/ReThisExceptionHandler;Leu/vendeli/rethis/types/core/SubscriptionHandler;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
 	public static final fun sUnsubscribe (Leu/vendeli/rethis/ReThis;[Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public static final fun subscribe (Leu/vendeli/rethis/ReThis;Ljava/lang/String;Leu/vendeli/rethis/types/core/ReThisExceptionHandler;Leu/vendeli/rethis/types/core/SubscriptionHandler;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static final fun subscribe (Leu/vendeli/rethis/ReThis;Ljava/lang/String;Leu/vendeli/rethis/types/core/SubscriptionHandler;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static final fun subscribe (Leu/vendeli/rethis/ReThis;[Leu/vendeli/rethis/types/common/ChannelSubscription;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public static synthetic fun subscribe$default (Leu/vendeli/rethis/ReThis;Ljava/lang/String;Leu/vendeli/rethis/types/core/ReThisExceptionHandler;Leu/vendeli/rethis/types/core/SubscriptionHandler;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
 	public static final fun unsubscribe (Leu/vendeli/rethis/ReThis;[Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
@@ -346,10 +343,8 @@ public final class eu/vendeli/rethis/commands/TransactionCommandsKt {
 }
 
 public final class eu/vendeli/rethis/types/common/ChannelSubscription {
-	public fun <init> (Ljava/lang/String;Leu/vendeli/rethis/types/core/ReThisExceptionHandler;Leu/vendeli/rethis/types/core/SubscriptionHandler;)V
-	public synthetic fun <init> (Ljava/lang/String;Leu/vendeli/rethis/types/core/ReThisExceptionHandler;Leu/vendeli/rethis/types/core/SubscriptionHandler;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Ljava/lang/String;Leu/vendeli/rethis/types/core/SubscriptionHandler;)V
 	public final fun getChannel ()Ljava/lang/String;
-	public final fun getExceptionHandler ()Leu/vendeli/rethis/types/core/ReThisExceptionHandler;
 	public final fun getHandler ()Leu/vendeli/rethis/types/core/SubscriptionHandler;
 }
 
@@ -642,6 +637,15 @@ public final class eu/vendeli/rethis/types/common/ZPopResult {
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class eu/vendeli/rethis/types/core/ActiveSubscriptions {
+	public fun <init> ()V
+	public final fun getSize ()I
+	public final fun isActive (Ljava/lang/String;)Z
+	public final fun setEventHandler (Leu/vendeli/rethis/types/core/SubscriptionEventHandler;)V
+	public final fun unsubscribe (Ljava/lang/String;)Z
+	public final fun unsubscribeAll ()Z
+}
+
 public abstract class eu/vendeli/rethis/types/core/Address {
 }
 
@@ -910,10 +914,6 @@ public final class eu/vendeli/rethis/types/core/RType$Raw : eu/vendeli/rethis/ty
 	public fun getValue ()[B
 }
 
-public abstract interface class eu/vendeli/rethis/types/core/ReThisExceptionHandler {
-	public abstract fun handle (Ljava/lang/Exception;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-}
-
 public abstract class eu/vendeli/rethis/types/core/RespVer {
 	public synthetic fun <init> (ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun getLiteral ()I
@@ -931,6 +931,12 @@ public final class eu/vendeli/rethis/types/core/RespVer$V3 : eu/vendeli/rethis/t
 	public fun equals (Ljava/lang/Object;)Z
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
+}
+
+public abstract interface class eu/vendeli/rethis/types/core/SubscriptionEventHandler {
+	public abstract fun onException (Ljava/lang/String;Ljava/lang/Exception;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun onSubscribe (Ljava/lang/String;JLkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun onUnsubscribe (Ljava/lang/String;JLkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
 public abstract interface class eu/vendeli/rethis/types/core/SubscriptionHandler {

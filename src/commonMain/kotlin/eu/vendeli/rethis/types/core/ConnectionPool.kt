@@ -81,9 +81,7 @@ internal class ConnectionPool(
     @OptIn(ExperimentalCoroutinesApi::class)
     fun disconnect() = runBlocking {
         logger.debug("Disconnecting from Redis")
-        while (!connections.isEmpty) {
-            connections.receive().socket.close()
-        }
+        while (!connections.isEmpty) { connections.receive().socket.close() }
     }
 }
 

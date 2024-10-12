@@ -7,7 +7,8 @@ package eu.vendeli.rethis.annotations
  */
 @RequiresOptIn(
     level = RequiresOptIn.Level.WARNING,
-    message = "This API is internal in ReThis. It could be removed or changed without notice.",
+    message = "This API is internal in ReThis. " +
+        "It could be removed or changed without notice. Use may break internal logic, use with caution.",
 )
 @MustBeDocumented
 @Target(
