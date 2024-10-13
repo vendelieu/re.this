@@ -42,6 +42,7 @@ LettuceBenchmark.lettuceSet  thrpt    5   385721.645 ± 1984768.266  ops/s
 RethisBenchmark.rethisGet    thrpt    5  1167826.112 ± 1585666.290  ops/s
 RethisBenchmark.rethisSet    thrpt    5  1156295.484 ± 1807467.975  ops/s
 ```
+*not sorted by result, more is better*
 
 # Usage
 
