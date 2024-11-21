@@ -1,7 +1,7 @@
 plugins {
     kotlin("jvm")
     kotlin("plugin.allopen") version "2.0.21"
-    id("org.jetbrains.kotlinx.benchmark") version "0.4.12"
+    id("org.jetbrains.kotlinx.benchmark") version "0.4.13"
 }
 
 repositories {
@@ -9,7 +9,7 @@ repositories {
 }
 
 dependencies {
-    implementation("org.jetbrains.kotlinx:kotlinx-benchmark-runtime:0.4.12")
+    implementation("org.jetbrains.kotlinx:kotlinx-benchmark-runtime:0.4.13")
     implementation(project(":"))
     implementation("redis.clients:jedis:5.2.0")
     implementation("io.lettuce:lettuce-core:6.5.0.RELEASE")
