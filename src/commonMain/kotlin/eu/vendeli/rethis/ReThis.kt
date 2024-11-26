@@ -76,9 +76,9 @@ class ReThis(
             }
             logger.debug("Executing pipelined request")
             if (ctxConn != null) {
-                ctxConn!!.output.writeBuffer(pipelinedPayload)
-                ctxConn!!.output.flush()
-                requests.forEach { _ -> responses.add(ctxConn!!.input.readRedisMessage(cfg.charset)) }
+                ctxConn.output.writeBuffer(pipelinedPayload)
+                ctxConn.output.flush()
+                requests.forEach { _ -> responses.add(ctxConn.input.readRedisMessage(cfg.charset)) }
             } else {
                 connectionPool.use { connection ->
                     connection.output.writeBuffer(pipelinedPayload)
