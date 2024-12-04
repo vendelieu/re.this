@@ -56,9 +56,9 @@ class ReThis(
 
     suspend fun pipeline(block: suspend ReThis.() -> Unit): List<RType> {
         val responses = mutableListOf<RType>()
-        val isCoroutinePipelined = currentCoroutineContext()[CoPipelineCtx] != null
+        val pipelineCtx = currentCoroutineContext()[CoPipelineCtx]
         var ctxConn: Connection? = null
-        if (!isCoroutinePipelined) {
+        if (pipelineCtx == null) {
             val requests = mutableListOf<Any?>()
             logger.info("Pipeline started")
             try {
@@ -87,33 +87,43 @@ class ReThis(
                 }
             }
             requests.clear()
+        } else {
+            block()
         }
         logger.info("Pipeline finished")
         return responses
     }
 
-    suspend fun transaction(block: suspend ReThis.() -> Unit): List<RType> = connectionPool.use { conn ->
-        logger.debug("Started transaction")
-        conn.output.writeBuffer(bufferValues(listOf("MULTI".toArg()), cfg.charset))
-        conn.output.flush()
-        require(conn.input.readRedisMessage(cfg.charset).value == "OK")
-
-        var e: Throwable? = null
-        coLaunch(currentCoroutineContext() + CoLocalConn(conn)) {
-            runCatching { block() }.getOrElse { e = it }
-        }.join()
-        e?.also {
-            conn.output.writeBuffer(bufferValues(listOf("DISCARD".toArg()), cfg.charset))
-            conn.output.flush()
-            require(conn.input.readRedisMessage(cfg.charset).value == "OK")
-            logger.error("Transaction canceled", it)
-            return@use emptyList()
+    suspend fun transaction(block: suspend ReThis.() -> Unit): List<RType> {
+        val coLocalCon = currentCoroutineContext()[CoLocalConn]
+        if (coLocalCon != null) {
+            block()
+            return emptyList()
         }
 
-        logger.debug("Transaction completed")
-        conn.output.writeBuffer(bufferValues(listOf("EXEC".toArg()), cfg.charset))
-        conn.output.flush()
-        conn.input.readRedisMessage(cfg.charset).unwrapList()
+        return connectionPool.use { conn ->
+            logger.debug("Started transaction")
+            conn.output.writeBuffer(bufferValues(listOf("MULTI".toArg()), cfg.charset))
+            conn.output.flush()
+            require(conn.input.readRedisMessage(cfg.charset).value == "OK")
+
+            var e: Throwable? = null
+            coLaunch(currentCoroutineContext() + CoLocalConn(conn)) {
+                runCatching { block() }.getOrElse { e = it }
+            }.join()
+            e?.also {
+                conn.output.writeBuffer(bufferValues(listOf("DISCARD".toArg()), cfg.charset))
+                conn.output.flush()
+                require(conn.input.readRedisMessage(cfg.charset).value == "OK")
+                logger.error("Transaction canceled", it)
+                return@use emptyList()
+            }
+
+            logger.debug("Transaction completed")
+            conn.output.writeBuffer(bufferValues(listOf("EXEC".toArg()), cfg.charset))
+            conn.output.flush()
+            conn.input.readRedisMessage(cfg.charset).unwrapList()
+        }
     }
 
     @ReThisInternal
