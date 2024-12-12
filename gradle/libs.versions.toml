@@ -12,7 +12,7 @@ kotlinter = "4.5.0"
 deteKT = "1.23.7"
 publisher = "0.30.0"
 binvalid = "0.16.3"
-kover = "0.8.3"
+kover = "0.9.0"
 
 kotest = "5.9.1"
 logback = "1.5.12"
