@@ -92,13 +92,13 @@ suspend fun ReThis.incrBy(key: String, increment: Long): Long = execute<Long>(
     ),
 ) ?: 0
 
-suspend fun ReThis.incrByFloat(key: String, increment: Double): Double? = execute<Double>(
+suspend fun ReThis.incrByFloat(key: String, increment: Double): Double? = execute<String>(
     listOf(
         "INCRBYFLOAT".toArg(),
         key.toArg(),
         increment.toArg(),
     ),
-)
+)?.toDouble()
 
 suspend fun ReThis.lcs(key1: String, key2: String): String? = execute<String>(
     listOf(

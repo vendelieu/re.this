@@ -106,14 +106,14 @@ suspend fun ReThis.hIncrBy(key: String, field: String, increment: Long): Long = 
     ),
 ) ?: 0
 
-suspend fun ReThis.hIncrByFloat(key: String, field: String, increment: Double): Double? = execute<Double>(
+suspend fun ReThis.hIncrByFloat(key: String, field: String, increment: Double): Double? = execute<String>(
     listOf(
         "HINCRBYFLOAT".toArg(),
         key.toArg(),
         field.toArg(),
         increment.toArg(),
     ),
-)
+)?.toDouble()
 
 suspend fun ReThis.hKeys(key: String): List<String> = execute(
     listOf(

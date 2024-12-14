@@ -52,7 +52,7 @@ class SortedSetCommandTest : ReThisTestCtx() {
     suspend fun `test ZPOPMIN command`() {
         client.zAdd("testSet27", ZMember("testValue27", 1.0))
 
-        client.zPopmin("testSet27") shouldBe listOf(1.0)
+        client.zPopmin("testSet27") shouldBe listOf("testValue27", 1.0)
     }
 
     @Test
