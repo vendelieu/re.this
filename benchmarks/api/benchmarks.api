@@ -1,0 +1,32 @@
+public class eu/vendeli/rethis/benchmarks/JedisBenchmark {
+	public fun <init> ()V
+	public fun jedisGet (Lorg/openjdk/jmh/infra/Blackhole;)V
+	public fun jedisSet (Lorg/openjdk/jmh/infra/Blackhole;)V
+	public fun setup ()V
+	public fun tearDown ()V
+}
+
+public class eu/vendeli/rethis/benchmarks/KredsBenchmark {
+	public fun <init> ()V
+	public fun kredsGet (Lorg/openjdk/jmh/infra/Blackhole;)V
+	public fun kredsSet (Lorg/openjdk/jmh/infra/Blackhole;)V
+	public fun setup ()V
+	public fun tearDown ()V
+}
+
+public class eu/vendeli/rethis/benchmarks/LettuceBenchmark {
+	public fun <init> ()V
+	public fun lettuceGet (Lorg/openjdk/jmh/infra/Blackhole;)V
+	public fun lettuceSet (Lorg/openjdk/jmh/infra/Blackhole;)V
+	public fun setup ()V
+	public fun tearDown ()V
+}
+
+public class eu/vendeli/rethis/benchmarks/RethisBenchmark {
+	public fun <init> ()V
+	public fun rethisGet (Lorg/openjdk/jmh/infra/Blackhole;)V
+	public fun rethisSet (Lorg/openjdk/jmh/infra/Blackhole;)V
+	public fun setup ()V
+	public fun tearDown ()V
+}
+
