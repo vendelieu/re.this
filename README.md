@@ -8,6 +8,9 @@
 [![KDocs](https://img.shields.io/static/v1?label=Dokka&message=KDocs&color=blue&logo=kotlin)](https://vendelieu.github.io/re.this/)
 [![codecov](https://codecov.io/gh/vendelieu/re.this/graph/badge.svg?token=F8SY97KR17)](https://codecov.io/gh/vendelieu/re.this)
 
+[![Validate Gradle Wrapper](https://github.com/vendelieu/re.this/actions/workflows/gradle-wrapper-validation.yml/badge.svg)](https://github.com/vendelieu/re.this/actions/workflows/gradle-wrapper-validation.yml)
+[![CodeQL](https://github.com/vendelieu/re.this/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/vendelieu/re.this/actions/workflows/github-code-scanning/codeql)
+
 # Overview
 
 Re.This is a coroutine-based, multiplatform Redis client written in Kotlin.
@@ -28,7 +31,7 @@ dependencies {
 
 # Benchmark
 
-There is a benchmark comparing popular library solutions:
+There is a benchmark comparing popular library solutions (more is better):
 
 ```javascript
 main summary:
@@ -42,7 +45,6 @@ LettuceBenchmark.lettuceSet  thrpt    5   385721.645 ± 1984768.266  ops/s
 RethisBenchmark.rethisGet    thrpt    5  1167826.112 ± 1585666.290  ops/s
 RethisBenchmark.rethisSet    thrpt    5  1156295.484 ± 1807467.975  ops/s
 ```
-*not sorted by result, more is better*
 
 # Usage
 
