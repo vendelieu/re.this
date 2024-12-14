@@ -8,7 +8,6 @@ import eu.vendeli.rethis.types.options.FunctionRestoreOption
 import eu.vendeli.rethis.utils.safeCast
 import eu.vendeli.rethis.utils.unwrapRespIndMap
 import eu.vendeli.rethis.utils.writeArg
-import kotlinx.io.Buffer
 
 suspend fun ReThis.eval(script: String, numKeys: Long, vararg keys: String): RType = execute(
     listOf("EVAL".toArg(), script.toArg(), numKeys.toArg(), *keys.toArg()),
@@ -38,7 +37,7 @@ suspend fun ReThis.functionDelete(name: String): String? = execute<String>(
     listOf("FUNCTION".toArg(), "DELETE".toArg(), name.toArg()),
 )
 
-suspend fun ReThis.functionDump(): Buffer? = execute(
+suspend fun ReThis.functionDump(): ByteArray? = execute(
     listOf("FUNCTION".toArg(), "DUMP".toArg()),
     rawResponse = true,
 ).safeCast<RType.Raw>()?.value

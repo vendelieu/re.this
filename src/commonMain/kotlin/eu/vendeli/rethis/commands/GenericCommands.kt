@@ -9,7 +9,6 @@ import eu.vendeli.rethis.types.options.*
 import eu.vendeli.rethis.utils.safeCast
 import eu.vendeli.rethis.utils.writeArg
 import kotlinx.datetime.Instant
-import kotlinx.io.Buffer
 import kotlin.Long
 import kotlin.time.Duration
 
@@ -28,7 +27,7 @@ suspend fun ReThis.del(vararg key: String): Long = execute<Long>(
     ),
 ) ?: 0
 
-suspend fun ReThis.dump(key: String): Buffer? = execute(
+suspend fun ReThis.dump(key: String): ByteArray? = execute(
     listOf(
         "DUMP".toArg(),
         key.toArg(),

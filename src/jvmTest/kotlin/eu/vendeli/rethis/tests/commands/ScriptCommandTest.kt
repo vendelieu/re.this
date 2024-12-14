@@ -1,19 +1,16 @@
 package eu.vendeli.rethis.tests.commands
 
-import eu.vendeli.rethis.ReThisException
 import eu.vendeli.rethis.ReThisTestCtx
 import eu.vendeli.rethis.commands.*
 import eu.vendeli.rethis.types.core.BulkString
 import eu.vendeli.rethis.types.core.RArray
 import eu.vendeli.rethis.utils.coLaunch
 import io.kotest.assertions.throwables.shouldNotThrowAny
-import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
 import io.ktor.utils.io.*
 import kotlinx.coroutines.delay
-import kotlinx.io.readByteArray
 
 class ScriptCommandTest : ReThisTestCtx() {
     @Test
@@ -76,7 +73,7 @@ class ScriptCommandTest : ReThisTestCtx() {
         client
             .functionDump()
             .shouldNotBeNull()
-            .readText()
+            .toString(Charsets.UTF_8)
             .shouldContain("mylib4")
     }
 
@@ -126,7 +123,7 @@ class ScriptCommandTest : ReThisTestCtx() {
         val dump = client.functionDump().shouldNotBeNull()
         client.functionFlush()
         delay(100)
-        shouldThrow<ReThisException> { client.functionRestore(dump.readByteArray()) }
+        client.functionRestore(dump) shouldBe "OK"
     }
 
     @Test

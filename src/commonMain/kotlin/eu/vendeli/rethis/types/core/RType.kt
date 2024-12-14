@@ -3,7 +3,6 @@ package eu.vendeli.rethis.types.core
 import com.ionspin.kotlin.bignum.integer.BigInteger
 import eu.vendeli.rethis.ReThisException
 import io.ktor.util.logging.*
-import kotlinx.io.Buffer
 
 private val logger = KtorSimpleLogger("eu.vendeli.rethis.InputParser")
 
@@ -18,7 +17,7 @@ sealed class RType {
     }
 
     class Raw internal constructor(
-        override val value: Buffer,
+        override val value: ByteArray,
     ) : RType()
 }
 

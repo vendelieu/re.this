@@ -19,7 +19,7 @@ internal suspend fun ByteReadChannel.readRedisMessage(charset: Charset, rawOnly:
     val type = RespCode.fromCode(readByte()) // Read the type byte (e.g., +, -, :, $, *)
     val line = readLine2Buffer()
 
-    if (rawOnly) return RType.Raw(readLine2Buffer())
+    if (rawOnly) return RType.Raw(readByteArray(line.readDecimalLong().toInt()))
 
     return when (type) {
         RespCode.SIMPLE_STRING -> PlainString(line.readText(charset)) // Return SimpleString type
