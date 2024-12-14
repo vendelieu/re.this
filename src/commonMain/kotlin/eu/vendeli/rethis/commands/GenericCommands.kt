@@ -167,7 +167,7 @@ suspend fun ReThis.pExpireAt(
 suspend fun ReThis.pExpireAt(
     key: String,
     unixStamp: Instant,
-    option: UpdateStrategyOption? = null
+    option: UpdateStrategyOption? = null,
 ): Boolean = execute<Long>(
     mutableListOf(
         "PEXPIRE".toArg(),
@@ -246,7 +246,7 @@ suspend fun ReThis.sort(
     vararg option: SortOption,
 ): List<String> = execute<String>(
     mutableListOf("SORT".toArg(), key.toArg()).apply { option.forEach { writeArg(it) } },
-    isCollectionResponse = true
+    isCollectionResponse = true,
 ) ?: emptyList()
 
 suspend fun ReThis.sort(
@@ -310,7 +310,7 @@ suspend fun ReThis.waitAof(numLocal: Long, numReplicas: Long, timeout: Long): Wa
         numReplicas.toArg(),
         timeout.toArg(),
     ),
-    isCollectionResponse = true
+    isCollectionResponse = true,
 )?.let {
     WaitAofResult(
         fsyncedRedises = it.first(),
