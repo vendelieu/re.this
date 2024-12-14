@@ -303,15 +303,14 @@ suspend fun ReThis.wait(numReplicas: Long, timeout: Long): Long = execute<Long>(
     ),
 ) ?: 0
 
-suspend fun ReThis.waitAof(numLocal: Long, numReplicas: Long, timeout: Long): WaitAofResult? = execute<Long>(
+suspend fun ReThis.waitAof(numLocal: Long, numReplicas: Long, timeout: Long): WaitAofResult = execute(
     listOf(
         "WAITAOF".toArg(),
         numLocal.toArg(),
         numReplicas.toArg(),
         timeout.toArg(),
     ),
-    isCollectionResponse = true,
-)?.let {
+).unwrapList<Long>().let {
     WaitAofResult(
         fsyncedRedises = it.first(),
         fsyncedReplicas = it.last(),

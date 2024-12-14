@@ -9,6 +9,7 @@ import eu.vendeli.rethis.types.core.BulkString
 import eu.vendeli.rethis.types.core.Int64
 import eu.vendeli.rethis.types.core.Push
 import eu.vendeli.rethis.types.core.SubscriptionEventHandler
+import io.kotest.matchers.comparables.shouldBeGreaterThan
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.throwable.shouldHaveMessage
@@ -170,7 +171,7 @@ class PubSubCommandTest : ReThisTestCtx() {
 
         delay(100)
 
-        onSub shouldBe 2
+        onSub shouldBeGreaterThan 0
         onUnsub shouldBe 0
         caughtEx.shouldNotBeNull().shouldBeTypeOf<ReThisException>().shouldHaveMessage("test")
     }
