@@ -111,6 +111,7 @@ $dokka.location:eu.vendeli.rethis.commands//lPos/eu.vendeli.rethis.ReThis#kotlin
 $dokka.location:eu.vendeli.rethis.commands//lPos/eu.vendeli.rethis.ReThis#kotlin.String#kotlin.String#kotlin.Array[eu.vendeli.rethis.types.options.LPosOption.CommonOption]/PointingToDeclaration/re.this/eu.vendeli.rethis.commands/l-pos.html
 $dokka.location:eu.vendeli.rethis.commands//lPush/eu.vendeli.rethis.ReThis#kotlin.String#kotlin.Array[kotlin.String]/PointingToDeclaration/re.this/eu.vendeli.rethis.commands/l-push.html
 $dokka.location:eu.vendeli.rethis.commands//lPushX/eu.vendeli.rethis.ReThis#kotlin.String#kotlin.Array[kotlin.String]/PointingToDeclaration/re.this/eu.vendeli.rethis.commands/l-push-x.html
+$dokka.location:eu.vendeli.rethis.commands//lRange/eu.vendeli.rethis.ReThis#kotlin.String#kotlin.Long#kotlin.Long/PointingToDeclaration/re.this/eu.vendeli.rethis.commands/l-range.html
 $dokka.location:eu.vendeli.rethis.commands//lRem/eu.vendeli.rethis.ReThis#kotlin.String#kotlin.Long#kotlin.String/PointingToDeclaration/re.this/eu.vendeli.rethis.commands/l-rem.html
 $dokka.location:eu.vendeli.rethis.commands//lSet/eu.vendeli.rethis.ReThis#kotlin.String#kotlin.Long#kotlin.String/PointingToDeclaration/re.this/eu.vendeli.rethis.commands/l-set.html
 $dokka.location:eu.vendeli.rethis.commands//lTrim/eu.vendeli.rethis.ReThis#kotlin.String#kotlin.ranges.IntRange/PointingToDeclaration/re.this/eu.vendeli.rethis.commands/l-trim.html
