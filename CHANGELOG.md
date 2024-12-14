@@ -1,5 +1,9 @@
 # Re.this Changelog
 
+## 0.1.9
+
+* Improved redis response parsing.
+
 ## 0.1.8
 
 * Improved pub/sub flow, added common event handler.
