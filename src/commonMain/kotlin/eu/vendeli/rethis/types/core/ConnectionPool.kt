@@ -29,7 +29,7 @@ internal class ConnectionPool(
     private val connections = Channel<Connection>(client.cfg.maxConnections)
     private val selector = SelectorManager(client.cfg.dispatcher + client.rootJob)
 
-    private suspend fun createConn(): Connection {
+    internal suspend fun createConn(): Connection {
         logger.trace("Creating connection to $address")
         val conn = aSocket(selector)
             .tcp()
