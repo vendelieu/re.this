@@ -38,12 +38,12 @@ main summary:
 Benchmark                     Mode  Cnt        Score         Error  Units
 JedisBenchmark.jedisGet      thrpt    5    63010.453 ±    9777.678  ops/s
 JedisBenchmark.jedisSet      thrpt    5    62063.005 ±    3927.883  ops/s
-KredsBenchmark.kredsGet      thrpt    4   839368.283 ± 1920612.181  ops/s
-KredsBenchmark.kredsSet      thrpt    4   880280.335 ±  294842.124  ops/s
-LettuceBenchmark.lettuceGet  thrpt    5   620603.494 ± 2809834.262  ops/s
-LettuceBenchmark.lettuceSet  thrpt    5   385721.645 ± 1984768.266  ops/s
-RethisBenchmark.rethisGet    thrpt    5  1167826.112 ± 1585666.290  ops/s
-RethisBenchmark.rethisSet    thrpt    5  1156295.484 ± 1807467.975  ops/s
+KredsBenchmark.kredsGet      thrpt    4   953107.876 ±  474436.565  ops/s
+KredsBenchmark.kredsSet      thrpt    4   860740.621 ±  219859.604  ops/s
+LettuceBenchmark.lettuceGet  thrpt    5   590292.775 ± 3079960.658  ops/s
+LettuceBenchmark.lettuceSet  thrpt    5   686790.196 ± 2646041.580  ops/s
+RethisBenchmark.rethisGet    thrpt    5  1494973.261 ±  680369.613  ops/s
+RethisBenchmark.rethisSet    thrpt    5  1558386.548 ± 1374920.575  ops/s
 ```
 
 # Usage
