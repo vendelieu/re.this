@@ -55,7 +55,7 @@ suspend fun ReThis.geoPos(key: String, vararg members: String): List<List<GeoPos
     ),
 ).unwrapList<RType>().map { entry ->
     entry.safeCast<RArray>()?.value?.chunked(2) {
-        GeoPosition(it.first().unwrap<Double>()!!, it.last().unwrap()!!)
+        GeoPosition(it.first().unwrap()!!, it.last().unwrap()!!)
     }
 }
 

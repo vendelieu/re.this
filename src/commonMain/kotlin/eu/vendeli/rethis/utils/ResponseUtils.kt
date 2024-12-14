@@ -13,7 +13,7 @@ import io.ktor.utils.io.charsets.*
 import io.ktor.utils.io.core.*
 import kotlinx.io.Buffer
 import kotlinx.io.readDecimalLong
-import kotlinx.io.readDouble
+import kotlinx.io.readString
 
 internal suspend fun ByteReadChannel.readRedisMessage(charset: Charset, rawOnly: Boolean = false): RType {
     val type = RespCode.fromCode(readByte()) // Read the type byte (e.g., +, -, :, $, *)
@@ -52,7 +52,7 @@ internal suspend fun ByteReadChannel.readRedisMessage(charset: Charset, rawOnly:
             else -> exception { "Invalid boolean format: $line" }
         }
 
-        RespCode.DOUBLE -> F64(line.readDouble())
+        RespCode.DOUBLE -> F64(line.readString().toDouble())
 
         RespCode.BIG_NUMBER -> try {
             BigNumber(BigInteger.parseString(line.readText(charset)))
@@ -134,7 +134,7 @@ internal suspend fun <T> ByteReadChannel.processRedisSimpleResponse(
             else -> exception { "Invalid boolean format: $line" }
         }
 
-        RespCode.DOUBLE -> line.readDouble()
+        RespCode.DOUBLE -> line.readString().toDouble()
 
         RespCode.BIG_NUMBER -> try {
             BigInteger.parseString(line.readText(charset))
