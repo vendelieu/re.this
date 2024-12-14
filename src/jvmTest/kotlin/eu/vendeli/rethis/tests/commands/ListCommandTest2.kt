@@ -3,6 +3,7 @@ package eu.vendeli.rethis.tests.commands
 import eu.vendeli.rethis.ReThisTestCtx
 import eu.vendeli.rethis.commands.*
 import eu.vendeli.rethis.types.options.LPosOption
+import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
 
 class ListCommandTest2 : ReThisTestCtx() {
@@ -29,6 +30,12 @@ class ListCommandTest2 : ReThisTestCtx() {
     suspend fun `test LREM command`() {
         client.lPush("testKey19", "testValue19")
         client.lRem("testKey19", 1, "testValue19") shouldBe 1L
+    }
+
+    @Test
+    suspend fun `test LRANGE command`() {
+        client.lPush("testKey00", "testValue00")
+        client.lRange("testKey00", 0, -1) shouldHaveSize 1
     }
 
     @Test
