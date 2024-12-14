@@ -254,6 +254,6 @@ private suspend fun ByteReadChannel.readLine2Buffer(): Buffer {
 }
 
 internal inline fun <reified L, reified R> RType.unwrapRespIndMap(): Map<L, R?>? =
-    safeCast<RArray>()?.value?.chunked(2)?.associate {
+    if (this is RArray) cast<RArray>().value.chunked(2).associate {
         it.first().unwrap<L>()!! to it.last().unwrap<R>()
-    } ?: unwrapMap<L, R>()
+    } else unwrapMap<L, R>()
