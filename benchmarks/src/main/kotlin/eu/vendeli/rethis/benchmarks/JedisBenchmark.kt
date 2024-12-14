@@ -26,7 +26,6 @@ class JedisBenchmark {
 
     @Benchmark
     fun jedisSet(bh: Blackhole) {
-
         bh.consume(jedis.set("key", "value"))
     }
 

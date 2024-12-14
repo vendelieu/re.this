@@ -38,8 +38,7 @@ internal class ConnectionPool(
                 client.cfg.tlsConfig?.let {
                     socket.tls(selector.coroutineContext, it)
                 } ?: socket
-            }
-            .connection()
+            }.connection()
 
         val reqBuffer = Buffer()
         var requests = 0
@@ -81,7 +80,9 @@ internal class ConnectionPool(
     @OptIn(ExperimentalCoroutinesApi::class)
     fun disconnect() = runBlocking {
         logger.debug("Disconnecting from Redis")
-        while (!connections.isEmpty) { connections.receive().socket.close() }
+        while (!connections.isEmpty) {
+            connections.receive().socket.close()
+        }
     }
 }
 

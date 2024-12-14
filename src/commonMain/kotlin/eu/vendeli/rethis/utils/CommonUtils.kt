@@ -53,7 +53,7 @@ internal suspend inline fun ReThis.registerSubscription(
                     }
 
                     inputType.isEqTo(unRegCommand) -> {
-                        val targetCh = input?.getOrNull(1)?.unwrap<String>()?: target
+                        val targetCh = input?.getOrNull(1)?.unwrap<String>() ?: target
                         val subscribers = input?.lastOrNull()?.unwrap<Long>() ?: 0L
                         subscriptions.eventHandler?.onUnsubscribe(targetCh, subscribers)
                         subscriptions.unsubscribe(targetCh)

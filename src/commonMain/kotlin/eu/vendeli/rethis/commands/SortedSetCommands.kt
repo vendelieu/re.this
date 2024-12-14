@@ -67,7 +67,7 @@ suspend fun ReThis.zAdd(
     updateType: UpdateStrategyOption? = null,
     ch: Boolean = false,
     vararg members: ZMember,
-): Long = execute(
+): Long = execute<Long>(
     mutableListOf(
         "ZADD".toArg(),
         key.toArg(),
@@ -76,7 +76,7 @@ suspend fun ReThis.zAdd(
         if (ch) writeArg("CH")
         members.forEach { writeArg(it.score to it.member) }
     },
-).unwrap() ?: 0
+) ?: 0
 
 suspend fun ReThis.zAdd(
     key: String,
@@ -85,7 +85,7 @@ suspend fun ReThis.zAdd(
     comparisonRule: UpdateStrategyOption.ComparisonRule? = null,
     ch: Boolean = false,
     incr: Boolean = false,
-): Long = execute(
+): Long = execute<Long>(
     mutableListOf(
         "ZADD".toArg(),
         key.toArg(),
@@ -96,23 +96,23 @@ suspend fun ReThis.zAdd(
         if (incr) writeArg("INCR")
         members.forEach { writeArg(it.score to it.member) }
     },
-).unwrap() ?: 0
+) ?: 0
 
-suspend fun ReThis.zCard(key: String): Long = execute(
+suspend fun ReThis.zCard(key: String): Long = execute<Long>(
     listOf(
         "ZCARD".toArg(),
         key.toArg(),
     ),
-).unwrap() ?: 0
+) ?: 0
 
-suspend fun ReThis.zCount(key: String, min: Double, max: Double): Long = execute(
+suspend fun ReThis.zCount(key: String, min: Double, max: Double): Long = execute<Long>(
     listOf(
         "ZCOUNT".toArg(),
         key.toArg(),
         min.toArg(),
         max.toArg(),
     ),
-).unwrap() ?: 0
+) ?: 0
 
 suspend fun ReThis.zDiff(vararg keys: String, withScores: Boolean = false): List<String> = execute(
     mutableListOf(
@@ -122,9 +122,10 @@ suspend fun ReThis.zDiff(vararg keys: String, withScores: Boolean = false): List
         writeArg(keys)
         if (withScores) writeArg("WITHSCORES")
     },
-).unwrapList()
+    isCollectionResponse = true,
+) ?: emptyList()
 
-suspend fun ReThis.zDiffStore(destination: String, vararg keys: String): Long = execute(
+suspend fun ReThis.zDiffStore(destination: String, vararg keys: String): Long = execute<Long>(
     mutableListOf(
         "ZDIFFSTORE".toArg(),
         destination.toArg(),
@@ -132,16 +133,16 @@ suspend fun ReThis.zDiffStore(destination: String, vararg keys: String): Long = 
         writeArg(keys.size)
         writeArg(keys)
     },
-).unwrap() ?: 0
+) ?: 0
 
-suspend fun ReThis.zIncrby(key: String, member: String, increment: Double): Double = execute(
+suspend fun ReThis.zIncrby(key: String, member: String, increment: Double): Double = execute<Double>(
     listOf(
         "ZINCRBY".toArg(),
         key.toArg(),
         increment.toArg(),
         member.toArg(),
     ),
-).unwrap() ?: 0.0
+) ?: 0.0
 
 suspend fun ReThis.zInter(
     vararg keys: String,
@@ -158,9 +159,10 @@ suspend fun ReThis.zInter(
         aggregate?.let { writeArg("AGGREGATE" to it) }
         if (withScores) writeArg("WITHSCORES")
     },
-).unwrapList()
+    isCollectionResponse = true,
+) ?: emptyList()
 
-suspend fun ReThis.zInterCard(vararg keys: String, limit: Long? = null): Long = execute(
+suspend fun ReThis.zInterCard(vararg keys: String, limit: Long? = null): Long = execute<Long>(
     mutableListOf(
         "ZINTERCARD".toArg(),
         keys.size.toArg(),
@@ -168,14 +170,14 @@ suspend fun ReThis.zInterCard(vararg keys: String, limit: Long? = null): Long = 
     ).apply {
         limit?.let { writeArg("LIMIT" to it) }
     },
-).unwrap() ?: 0
+) ?: 0
 
 suspend fun ReThis.zInterStore(
     destination: String,
     vararg keys: String,
     weights: List<Long>? = null,
     aggregate: ZAggregate? = null,
-): Long = execute(
+): Long = execute<Long>(
     mutableListOf(
         "ZINTERSTORE".toArg(),
         destination.toArg(),
@@ -185,16 +187,16 @@ suspend fun ReThis.zInterStore(
         writeArg(weights)
         writeArg(aggregate)
     },
-).unwrap() ?: 0
+) ?: 0
 
-suspend fun ReThis.zLexCount(key: String, min: String, max: String): Long = execute(
+suspend fun ReThis.zLexCount(key: String, min: String, max: String): Long = execute<Long>(
     listOf(
         "ZLEXCOUNT".toArg(),
         key.toArg(),
         min.toArg(),
         max.toArg(),
     ),
-).unwrap() ?: 0
+) ?: 0
 
 suspend fun ReThis.zMpop(
     modifier: ZPopCommonOption,
@@ -230,12 +232,13 @@ suspend fun ReThis.zPopmax(key: String, count: Long? = null): List<MPopResult> =
     MPopResult(name = item.first().unwrap<String>()!!, poppedElements = item.last().unwrapSet<String>().toList())
 }
 
-suspend fun ReThis.zPopmin(key: String): List<Double> = execute(
+suspend fun ReThis.zPopmin(key: String): List<Double> = execute<Double>(
     listOfNotNull(
         "ZPOPMIN".toArg(),
         key.toArg(),
     ),
-).unwrapList<Double>()
+    isCollectionResponse = true,
+) ?: emptyList()
 
 suspend fun ReThis.zPopmin(key: String, count: Long): List<List<ZMember>> = execute(
     listOfNotNull(
@@ -249,23 +252,24 @@ suspend fun ReThis.zPopmin(key: String, count: Long): List<List<ZMember>> = exec
     }
 }
 
-suspend fun ReThis.zRandmember(key: String): String? = execute(
+suspend fun ReThis.zRandmember(key: String): String? = execute<String>(
     listOf(
         "ZRANDMEMBER".toArg(),
         key.toArg(),
     ),
-).unwrap()
+)
 
 suspend fun ReThis.zRandmember(
     key: String,
     count: Long,
-): List<String> = execute(
+): List<String> = execute<String>(
     listOfNotNull(
         "ZRANDMEMBER".toArg(),
         key.toArg(),
         count.toArg(),
     ),
-).unwrapList()
+    isCollectionResponse = true,
+) ?: emptyList()
 
 suspend fun ReThis.zRandmember(
     key: String,
@@ -305,7 +309,8 @@ suspend fun ReThis.zRange(
         writeArg(limit)
         if (withScores) writeArg("WITHSCORES")
     },
-).unwrapList()
+    isCollectionResponse = true,
+) ?: emptyList()
 
 suspend fun ReThis.zRangeStore(
     destination: String,
@@ -316,7 +321,7 @@ suspend fun ReThis.zRangeStore(
     rev: Boolean = false,
     offset: Long? = null,
     count: Long? = null,
-): Long = execute(
+): Long = execute<Long>(
     mutableListOf(
         "ZRANGESTORE".toArg(),
         destination.toArg(),
@@ -331,7 +336,7 @@ suspend fun ReThis.zRangeStore(
             writeArg(offset to count)
         }
     },
-).unwrap() ?: 0
+) ?: 0
 
 suspend fun ReThis.zRank(key: String, member: String): Long? = execute(
     listOf(
@@ -341,40 +346,40 @@ suspend fun ReThis.zRank(key: String, member: String): Long? = execute(
     ),
 ).unwrap<Long?>()
 
-suspend fun ReThis.zRem(key: String, vararg members: String): Long = execute(
+suspend fun ReThis.zRem(key: String, vararg members: String): Long = execute<Long>(
     listOf(
         "ZREM".toArg(),
         key.toArg(),
         *members.toArg(),
     ),
-).unwrap() ?: 0
+) ?: 0
 
-suspend fun ReThis.zRemRangeByLex(key: String, min: String, max: String): Long = execute(
+suspend fun ReThis.zRemRangeByLex(key: String, min: String, max: String): Long = execute<Long>(
     listOf(
         "ZREMRANGEBYLEX".toArg(),
         key.toArg(),
         min.toArg(),
         max.toArg(),
     ),
-).unwrap() ?: 0
+) ?: 0
 
-suspend fun ReThis.zRemRangeByRank(key: String, start: Long, stop: Long): Long = execute(
+suspend fun ReThis.zRemRangeByRank(key: String, start: Long, stop: Long): Long = execute<Long>(
     listOf(
         "ZREMRANGEBYRANK".toArg(),
         key.toArg(),
         start.toArg(),
         stop.toArg(),
     ),
-).unwrap() ?: 0
+) ?: 0
 
-suspend fun ReThis.zRemRangeByScore(key: String, min: Double, max: Double): Long = execute(
+suspend fun ReThis.zRemRangeByScore(key: String, min: Double, max: Double): Long = execute<Long>(
     listOf(
         "ZREMRANGEBYSCORE".toArg(),
         key.toArg(),
         min.toArg(),
         max.toArg(),
     ),
-).unwrap() ?: 0
+) ?: 0
 
 suspend fun ReThis.zRevrank(key: String, member: String): Long? = execute(
     listOf(
@@ -432,14 +437,15 @@ suspend fun ReThis.zUnion(
         aggregate?.let { writeArg("AGGREGATE" to it) }
         if (withScores) writeArg("WITHSCORES")
     },
-).unwrapList()
+    isCollectionResponse = true,
+) ?: emptyList()
 
 suspend fun ReThis.zUnionStore(
     destination: String,
     vararg keys: String,
     weights: List<Long>? = null,
     aggregate: ZAggregate? = null,
-): Long = execute(
+): Long = execute<Long>(
     mutableListOf(
         "ZUNIONSTORE".toArg(),
         destination.toArg(),
@@ -449,4 +455,4 @@ suspend fun ReThis.zUnionStore(
         writeArg(weights)
         writeArg(aggregate)
     },
-).unwrap() ?: 0
+) ?: 0

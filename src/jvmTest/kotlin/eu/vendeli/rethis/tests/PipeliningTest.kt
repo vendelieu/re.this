@@ -59,4 +59,39 @@ class PipeliningTest : ReThisTestCtx() {
                 last() shouldBe BulkString("value2")
             }
     }
+
+    @Test
+    suspend fun `nested pipeline test`() {
+        client
+            .pipeline {
+                set("test1", "testv1")
+                get("test1")
+
+                pipeline {
+                    set("test2", "value2")
+                    get("test2")
+                }
+            }.run {
+                this shouldHaveSize 4
+                first() shouldBe PlainString("OK")
+                get(1) shouldBe BulkString("testv1")
+                get(2) shouldBe PlainString("OK")
+                last() shouldBe BulkString("value2")
+            }
+    }
+
+    @Test
+    suspend fun `nested transaction test`() {
+        client
+            .transaction {
+                set("test1", "testv1")
+                client.transaction {
+                    get("test1")
+                }
+            }.run {
+                this shouldHaveSize 2
+                first() shouldBe PlainString("OK")
+                last() shouldBe BulkString("testv1")
+            }
+    }
 }

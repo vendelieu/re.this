@@ -9,6 +9,7 @@ import io.kotest.assertions.throwables.shouldNotThrowAny
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
+import io.ktor.utils.io.*
 import kotlinx.coroutines.delay
 
 class ScriptCommandTest : ReThisTestCtx() {
@@ -72,7 +73,7 @@ class ScriptCommandTest : ReThisTestCtx() {
         client
             .functionDump()
             .shouldNotBeNull()
-            .decodeToString()
+            .toString(Charsets.UTF_8)
             .shouldContain("mylib4")
     }
 

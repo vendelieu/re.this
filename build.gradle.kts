@@ -17,9 +17,7 @@ plugins {
 group = "eu.vendeli.re.this"
 version = System.getenv("libVersion") ?: "dev"
 
-repositories {
-    mavenCentral()
-}
+repositories { mavenCentral() }
 
 configureKotlin {
     sourceSets {
@@ -43,16 +41,14 @@ configureKotlin {
                 exclude("org.apache.commons", "commons-compress")
                 exclude("com.fasterxml.woodstox", "woodstox-core")
             }
-            implementation("commons-io:commons-io:2.17.0")
+            implementation("commons-io:commons-io:2.18.0")
             implementation("org.apache.commons:commons-compress:1.27.1")
-            implementation("com.fasterxml.woodstox:woodstox-core:7.0.0")
+            implementation("com.fasterxml.woodstox:woodstox-core:7.1.0")
         }
     }
 }
 
-buildscript {
-    dependencies.classpath(libs.dokka.base)
-}
+buildscript { dependencies.classpath(libs.dokka.base) }
 
 tasks {
     withType<Test> { useJUnitPlatform() }
@@ -63,6 +59,7 @@ tasks {
         }
         pluginConfiguration<DokkaBase, DokkaBaseConfiguration> {
             customAssets = listOf(rootDir.resolve("assets/logo-icon.svg"))
+            homepageLink = "https://github.com/vendelieu/re.this"
             footerMessage = "© ${LocalDate.now().year} Vendelieu"
         }
     }

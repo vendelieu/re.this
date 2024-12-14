@@ -13,7 +13,7 @@ class DumpCommandTest : ReThisTestCtx() {
         client
             .dump("testKey")
             .shouldNotBeNull()
-            .decodeToString()
+            .toString(Charsets.UTF_8)
             .shouldContain("testVal")
     }
 }

@@ -25,8 +25,8 @@ class Url(
     private val urlMatch = redisRegex.find(url)
 
     override val socket = InetSocketAddress(
-        urlMatch?.groups?.get(3)?.value ?: DEFAULT_HOST,
-        urlMatch
+        hostname = urlMatch?.groups?.get(3)?.value ?: DEFAULT_HOST,
+        port = urlMatch
             ?.groups
             ?.get(4)
             ?.value

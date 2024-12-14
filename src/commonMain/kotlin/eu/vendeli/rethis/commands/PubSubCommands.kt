@@ -6,6 +6,7 @@ import eu.vendeli.rethis.types.common.PubSubNumEntry
 import eu.vendeli.rethis.types.core.*
 import eu.vendeli.rethis.utils.registerSubscription
 import eu.vendeli.rethis.utils.writeArg
+import kotlin.Long
 
 suspend fun ReThis.pSubscribe(vararg subscription: ChannelSubscription) = subscription.forEach {
     pSubscribe(it.channel, it.handler)
@@ -24,27 +25,28 @@ suspend fun ReThis.pSubscribe(
     )
 }
 
-suspend fun ReThis.publish(channel: String, message: String): Long = execute(
+suspend fun ReThis.publish(channel: String, message: String): Long = execute<Long>(
     listOf(
         "PUBLISH".toArg(),
         channel.toArg(),
         message.toArg(),
     ),
-).unwrap() ?: 0
+) ?: 0
 
 suspend fun ReThis.pubSubChannels(pattern: String? = null): List<String> = execute(
     mutableListOf(
         "PUBSUB".toArg(),
         "CHANNELS".toArg(),
     ).writeArg(pattern),
-).unwrapList()
+    isCollectionResponse = true,
+) ?: emptyList()
 
-suspend fun ReThis.pubSubNumPat(): Long = execute(
+suspend fun ReThis.pubSubNumPat(): Long = execute<Long>(
     listOf(
         "PUBSUB".toArg(),
         "NUMPAT".toArg(),
     ),
-).unwrap() ?: 0
+) ?: 0
 
 suspend fun ReThis.pubSubNumSub(vararg channel: String): List<PubSubNumEntry> = execute(
     listOf(
@@ -64,7 +66,8 @@ suspend fun ReThis.pubSubShardChannels(pattern: String? = null): List<String> = 
         "PUBSUB".toArg(),
         "SHARDCHANNELS".toArg(),
     ).writeArg(pattern),
-).unwrapList()
+    isCollectionResponse = true,
+) ?: emptyList()
 
 suspend fun ReThis.pubSubShardNumSub(vararg channel: String): List<PubSubNumEntry> = execute(
     listOf(
@@ -90,13 +93,13 @@ suspend fun ReThis.pUnsubscribe(vararg pattern: String): RType {
     )
 }
 
-suspend fun ReThis.sPublish(shardChannel: String, message: String): Long? = execute(
+suspend fun ReThis.sPublish(shardChannel: String, message: String): Long? = execute<Long>(
     listOf(
         "SPUBLISH".toArg(),
         shardChannel.toArg(),
         message.toArg(),
     ),
-).unwrap()
+)
 
 suspend fun ReThis.sSubscribe(vararg subscription: ChannelSubscription) = subscription.forEach {
     sSubscribe(it.channel, it.handler)

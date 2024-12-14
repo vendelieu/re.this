@@ -7,6 +7,10 @@ internal object Const {
     const val DEFAULT_PORT = 6379
 
     val EOL = "\r\n".toByteArray()
-    const val DEFAULT_REDIS_BUFFER_SIZE = 4096
-    const val DEFAULT_REDIS_POOL_CAPACITY = 1024
+
+    val TRUE_BYTE = 't'.code.toByte()
+    val FALSE_BYTE = 'f'.code.toByte()
+
+    val NEWLINE_BYTE = '\n'.code.toByte()
+    val CARRIAGE_RETURN_BYTE = '\r'.code.toByte()
 }

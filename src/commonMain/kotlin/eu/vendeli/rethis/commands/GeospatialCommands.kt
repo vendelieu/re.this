@@ -10,13 +10,14 @@ import eu.vendeli.rethis.utils.cast
 import eu.vendeli.rethis.utils.safeCast
 import eu.vendeli.rethis.utils.writeArg
 import kotlinx.coroutines.delay
+import kotlin.Long
 
 suspend fun ReThis.geoAdd(
     key: String,
     vararg member: GeoMember,
     upsertMode: GeoAddOption.UpsertMode? = null,
     ch: Boolean = false,
-): Long = execute(
+): Long = execute<Long>(
     mutableListOf(
         "GEOADD".toArg(),
         key.toArg(),
@@ -25,7 +26,7 @@ suspend fun ReThis.geoAdd(
         if (ch) writeArg("CH")
         member.forEach { writeArg(it) }
     },
-).unwrap() ?: 0
+) ?: 0
 
 suspend fun ReThis.geoDist(key: String, member1: String, member2: String, unit: GeoUnit? = null): Double? =
     execute(
@@ -37,13 +38,14 @@ suspend fun ReThis.geoDist(key: String, member1: String, member2: String, unit: 
         ).writeArg(unit),
     ).unwrap<String?>()?.toDouble()
 
-suspend fun ReThis.geoHash(key: String, vararg members: String): List<String> = execute(
+suspend fun ReThis.geoHash(key: String, vararg members: String): List<String> = execute<String>(
     listOf(
         "GEOHASH".toArg(),
         key.toArg(),
         *members.toArg(),
     ),
-).unwrapList()
+    isCollectionResponse = true,
+) ?: emptyList()
 
 suspend fun ReThis.geoPos(key: String, vararg members: String): List<List<GeoPosition>?> = execute(
     listOf(
@@ -53,7 +55,7 @@ suspend fun ReThis.geoPos(key: String, vararg members: String): List<List<GeoPos
     ),
 ).unwrapList<RType>().map { entry ->
     entry.safeCast<RArray>()?.value?.chunked(2) {
-        GeoPosition(it.first().unwrap<Double>()!!, it.last().unwrap()!!)
+        GeoPosition(it.first().unwrap()!!, it.last().unwrap()!!)
     }
 }
 
@@ -130,7 +132,7 @@ suspend fun ReThis.geoSearchStore(
     count: Long? = null,
     any: Boolean = false,
     storeDist: Boolean = false,
-): Long = execute(
+): Long = execute<Long>(
     mutableListOf(
         "GEOSEARCHSTORE".toArg(),
         destination.toArg(),
@@ -143,4 +145,4 @@ suspend fun ReThis.geoSearchStore(
         if (any) writeArg("ANY")
         if (storeDist) writeArg("STOREDIST")
     },
-).unwrap() ?: 0
+) ?: 0
