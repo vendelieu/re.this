@@ -5,7 +5,6 @@ import eu.vendeli.rethis.types.common.MPopResult
 import eu.vendeli.rethis.types.common.MoveDirection
 import eu.vendeli.rethis.types.common.PopResult
 import eu.vendeli.rethis.types.core.*
-import eu.vendeli.rethis.types.core.unwrap
 import eu.vendeli.rethis.types.options.LInsertPlace
 import eu.vendeli.rethis.types.options.LPosOption
 import eu.vendeli.rethis.utils.cast
@@ -17,7 +16,7 @@ suspend fun ReThis.blMove(
     moveFrom: MoveDirection,
     moveTo: MoveDirection,
     timeout: Long,
-): String? = execute(
+): String? = execute<String>(
     listOf(
         "BLMOVE".toArg(),
         source.toArg(),
@@ -26,7 +25,7 @@ suspend fun ReThis.blMove(
         moveTo.toArg(),
         timeout.toArg(),
     ),
-).unwrap()
+)
 
 suspend fun ReThis.blmPop(
     timeout: Long,
@@ -70,16 +69,16 @@ suspend fun ReThis.brPop(
 suspend fun ReThis.lIndex(
     key: String,
     index: Long,
-): String? = execute(
+): String? = execute<String>(
     listOf("LINDEX".toArg(), key.toArg(), index.toArg()),
-).unwrap()
+)
 
 suspend fun ReThis.lInsert(
     key: String,
     place: LInsertPlace,
     pivot: String,
     element: String,
-): Long? = execute(
+): Long? = execute<Long>(
     listOf(
         "LINSERT".toArg(),
         key.toArg(),
@@ -87,20 +86,20 @@ suspend fun ReThis.lInsert(
         pivot.toArg(),
         element.toArg(),
     ),
-).unwrap()
+)
 
 suspend fun ReThis.lLen(
     key: String,
-): Long = execute(
+): Long = execute<Long>(
     listOf("LLEN".toArg(), key.toArg()),
-).unwrap() ?: 0
+) ?: 0
 
 suspend fun ReThis.lMove(
     source: String,
     destination: String,
     moveFrom: MoveDirection,
     moveTo: MoveDirection,
-): String? = execute(
+): String? = execute<String>(
     listOf(
         "LMOVE".toArg(),
         source.toArg(),
@@ -108,7 +107,7 @@ suspend fun ReThis.lMove(
         moveFrom.toArg(),
         moveTo.toArg(),
     ),
-).unwrap()
+)
 
 suspend fun ReThis.lmPop(
     direction: MoveDirection,
@@ -129,19 +128,20 @@ suspend fun ReThis.lmPop(
 
 suspend fun ReThis.lPop(
     key: String,
-): String? = execute(
+): String? = execute<String>(
     listOf("LPOP".toArg(), key.toArg()),
-).unwrap()
+)
 
 suspend fun ReThis.lPop(
     key: String,
     count: Long,
 ): List<String> = execute(
     listOf("LPOP".toArg(), key.toArg(), count.toArg()),
-).unwrapList<String>()
+    isCollectionResponse = true,
+) ?: emptyList()
 
 suspend fun ReThis.lPos(key: String, element: String, vararg option: LPosOption.CommonOption): Long? =
-    execute(mutableListOf("LPOS".toArg(), key.toArg(), element.toArg()).writeArg(option)).unwrap()
+    execute<Long>(mutableListOf("LPOS".toArg(), key.toArg(), element.toArg()).writeArg(option))
 
 suspend fun ReThis.lPos(
     key: String,
@@ -153,31 +153,37 @@ suspend fun ReThis.lPos(
         writeArg(count)
         writeArg(option)
     },
-).unwrapList()
+    isCollectionResponse = true,
+) ?: emptyList()
 
 suspend fun ReThis.lPush(key: String, vararg elements: String): Long? =
-    execute(listOf("LPUSH".toArg(), key.toArg(), *elements.toArg())).unwrap()
+    execute<Long>(listOf("LPUSH".toArg(), key.toArg(), *elements.toArg()))
 
 suspend fun ReThis.lPushX(key: String, vararg elements: String): Long? =
-    execute(listOf("LPUSHX".toArg(), key.toArg(), *elements.toArg())).unwrap()
+    execute<Long>(listOf("LPUSHX".toArg(), key.toArg(), *elements.toArg()))
 
 suspend fun ReThis.lRem(key: String, count: Long, element: String): Long? =
-    execute(listOf("LREM".toArg(), key.toArg(), count.toArg(), element.toArg())).unwrap()
+    execute<Long>(listOf("LREM".toArg(), key.toArg(), count.toArg(), element.toArg()))
+
+suspend fun ReThis.lRange(key: String, start: Long, stop: Long): List<String> = execute(
+    listOf("LRANGE".toArg(), key.toArg(), start.toArg(), stop.toArg()),
+    isCollectionResponse = true,
+) ?: emptyList()
 
 suspend fun ReThis.lSet(key: String, index: Long, element: String): String? =
-    execute(listOf("LSET".toArg(), key.toArg(), index.toArg(), element.toArg())).unwrap<String>()
+    execute<String>(listOf("LSET".toArg(), key.toArg(), index.toArg(), element.toArg()))
 
 suspend fun ReThis.lTrim(key: String, range: IntRange): String? =
-    execute(listOf("LTRIM".toArg(), key.toArg(), range.first.toArg(), range.last.toArg())).unwrap<String>()
+    execute<String>(listOf("LTRIM".toArg(), key.toArg(), range.first.toArg(), range.last.toArg()))
 
 suspend fun ReThis.rPop(key: String): String? =
-    execute(listOf("RPOP".toArg(), key.toArg())).unwrap()
+    execute<String>(listOf("RPOP".toArg(), key.toArg()))
 
 suspend fun ReThis.rPop(key: String, count: Long): List<String> =
-    execute(listOf("RPOP".toArg(), key.toArg(), count.toArg())).unwrapList()
+    execute(listOf("RPOP".toArg(), key.toArg(), count.toArg()), isCollectionResponse = true) ?: emptyList()
 
 suspend fun ReThis.rPush(key: String, vararg elements: String): Long? =
-    execute(listOf("RPUSH".toArg(), key.toArg(), *elements.toArg())).unwrap()
+    execute<Long>(listOf("RPUSH".toArg(), key.toArg(), *elements.toArg()))
 
 suspend fun ReThis.rPushX(key: String, vararg elements: String): Long? =
-    execute(listOf("RPUSHX".toArg(), key.toArg(), *elements.toArg())).unwrap()
+    execute<Long>(listOf("RPUSHX".toArg(), key.toArg(), *elements.toArg()))

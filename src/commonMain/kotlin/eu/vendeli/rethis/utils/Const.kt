@@ -7,4 +7,10 @@ internal object Const {
     const val DEFAULT_PORT = 6379
 
     val EOL = "\r\n".toByteArray()
+
+    val TRUE_BYTE = 't'.code.toByte()
+    val FALSE_BYTE = 'f'.code.toByte()
+
+    val NEWLINE_BYTE = '\n'.code.toByte()
+    val CARRIAGE_RETURN_BYTE = '\r'.code.toByte()
 }

@@ -9,7 +9,9 @@ import io.kotest.assertions.throwables.shouldNotThrowAny
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
+import io.ktor.utils.io.readText
 import kotlinx.coroutines.delay
+import kotlinx.io.readByteArray
 
 class ScriptCommandTest : ReThisTestCtx() {
     @Test
@@ -72,7 +74,7 @@ class ScriptCommandTest : ReThisTestCtx() {
         client
             .functionDump()
             .shouldNotBeNull()
-            .decodeToString()
+            .readText()
             .shouldContain("mylib4")
     }
 
@@ -122,7 +124,7 @@ class ScriptCommandTest : ReThisTestCtx() {
         val dump = client.functionDump().shouldNotBeNull()
         client.functionFlush()
         delay(100)
-        client.functionRestore(dump) shouldBe "OK"
+        client.functionRestore(dump.readByteArray()) shouldBe "OK"
     }
 
     @Test

@@ -5,6 +5,7 @@ import eu.vendeli.rethis.commands.set
 import eu.vendeli.rethis.ReThisTestCtx
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.string.shouldContain
+import io.ktor.utils.io.readText
 
 class DumpCommandTest : ReThisTestCtx() {
     @Test
@@ -13,7 +14,7 @@ class DumpCommandTest : ReThisTestCtx() {
         client
             .dump("testKey")
             .shouldNotBeNull()
-            .decodeToString()
+            .readText()
             .shouldContain("testVal")
     }
 }

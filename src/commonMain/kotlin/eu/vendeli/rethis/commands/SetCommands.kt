@@ -8,109 +8,115 @@ import eu.vendeli.rethis.types.core.unwrap
 import eu.vendeli.rethis.types.options.SScanOption
 import eu.vendeli.rethis.utils.safeCast
 import eu.vendeli.rethis.utils.writeArg
+import kotlin.Long
 
-suspend fun ReThis.sAdd(key: String, vararg members: String): Long = execute(
+suspend fun ReThis.sAdd(key: String, vararg members: String): Long = execute<Long>(
     listOf(
         "SADD".toArg(),
         key.toArg(),
         *members.toArg(),
     ),
-).unwrap() ?: 0
+) ?: 0
 
-suspend fun ReThis.sCard(key: String): Long = execute(
+suspend fun ReThis.sCard(key: String): Long = execute<Long>(
     listOf(
         "SCARD".toArg(),
         key.toArg(),
     ),
-).unwrap() ?: 0
+) ?: 0
 
-suspend fun ReThis.sDiff(vararg keys: String): Set<String> = execute(
+suspend fun ReThis.sDiff(vararg keys: String): Set<String> = execute<String>(
     listOf(
         "SDIFF".toArg(),
         *keys.toArg(),
     ),
-).unwrapSet<String>()
+    isCollectionResponse = true,
+)?.toSet() ?: emptySet()
 
-suspend fun ReThis.sDiffStore(destination: String, vararg keys: String): Long = execute(
+suspend fun ReThis.sDiffStore(destination: String, vararg keys: String): Long = execute<Long>(
     listOf(
         "SDIFFSTORE".toArg(),
         destination.toArg(),
         *keys.toArg(),
     ),
-).unwrap() ?: 0
+) ?: 0
 
-suspend fun ReThis.sInter(vararg keys: String): Set<String> = execute(
+suspend fun ReThis.sInter(vararg keys: String): Set<String> = execute<String>(
     listOf(
         "SINTER".toArg(),
         *keys.toArg(),
     ),
-).unwrapSet<String>()
+    isCollectionResponse = true,
+)?.toSet() ?: emptySet()
 
-suspend fun ReThis.sInterStore(destination: String, vararg keys: String): Long = execute(
+suspend fun ReThis.sInterStore(destination: String, vararg keys: String): Long = execute<Long>(
     listOf(
         "SINTERSTORE".toArg(),
         destination.toArg(),
         *keys.toArg(),
     ),
-).unwrap() ?: 0
+) ?: 0
 
-suspend fun ReThis.sIsMember(key: String, member: String): Boolean = execute(
+suspend fun ReThis.sIsMember(key: String, member: String): Boolean = execute<Long>(
     listOf(
         "SISMEMBER".toArg(),
         key.toArg(),
         member.toArg(),
     ),
-).unwrap<Long>() == 1L
+) == 1L
 
-suspend fun ReThis.sMembers(key: String): Set<String> = execute(
+suspend fun ReThis.sMembers(key: String): Set<String> = execute<String>(
     listOf(
         "SMEMBERS".toArg(),
         key.toArg(),
     ),
-).unwrapSet<String>()
+    isCollectionResponse = true,
+)?.toSet() ?: emptySet()
 
-suspend fun ReThis.sMove(source: String, destination: String, member: String): Boolean = execute(
+suspend fun ReThis.sMove(source: String, destination: String, member: String): Boolean = execute<Long>(
     listOf(
         "SMOVE".toArg(),
         source.toArg(),
         destination.toArg(),
         member.toArg(),
     ),
-).unwrap<Long>() == 1L
+) == 1L
 
 suspend fun ReThis.sPop(
     key: String,
-): String? = execute(
+): String? = execute<String>(
     listOf("SPOP".toArg(), key.toArg()),
-).unwrap()
+)
 
 suspend fun ReThis.sPop(
     key: String,
     count: Long,
-): Set<String> = execute(
+): Set<String> = execute<String>(
     listOf("SPOP".toArg(), key.toArg(), count.toArg()),
-).unwrapSet<String>()
+    isCollectionResponse = true,
+)?.toSet() ?: emptySet()
 
 suspend fun ReThis.sRandMember(
     key: String,
-): String? = execute(
+): String? = execute<String>(
     listOf("SRANDMEMBER".toArg(), key.toArg()),
-).unwrap()
+)
 
 suspend fun ReThis.sRandMember(
     key: String,
     count: Long,
 ): List<String> = execute(
     listOf("SRANDMEMBER".toArg(), key.toArg(), count.toArg()),
-).unwrapList<String>()
+    isCollectionResponse = true,
+) ?: emptyList()
 
-suspend fun ReThis.sRem(key: String, vararg members: String): Long = execute(
+suspend fun ReThis.sRem(key: String, vararg members: String): Long = execute<Long>(
     listOf(
         "SREM".toArg(),
         key.toArg(),
         *members.toArg(),
     ),
-).unwrap() ?: 0
+) ?: 0
 
 suspend fun ReThis.sScan(
     key: String,
@@ -128,22 +134,23 @@ suspend fun ReThis.sScan(
     return ScanResult(cursor = newCursor, keys = members)
 }
 
-suspend fun ReThis.sUnion(vararg keys: String): Set<String> = execute(
+suspend fun ReThis.sUnion(vararg keys: String): Set<String> = execute<String>(
     listOf(
         "SUNION".toArg(),
         *keys.toArg(),
     ),
-).unwrapSet<String>()
+    isCollectionResponse = true,
+)?.toSet() ?: emptySet()
 
-suspend fun ReThis.sUnionStore(destination: String, vararg keys: String): Long = execute(
+suspend fun ReThis.sUnionStore(destination: String, vararg keys: String): Long = execute<Long>(
     listOf(
         "SUNIONSTORE".toArg(),
         destination.toArg(),
         *keys.toArg(),
     ),
-).unwrap() ?: 0
+) ?: 0
 
-suspend fun ReThis.sInterCard(vararg keys: String, limit: Long? = null): Long = execute(
+suspend fun ReThis.sInterCard(vararg keys: String, limit: Long? = null): Long = execute<Long>(
     mutableListOf(
         "SINTERCARD".toArg(),
         keys.size.toArg(),
@@ -151,12 +158,13 @@ suspend fun ReThis.sInterCard(vararg keys: String, limit: Long? = null): Long = 
     ).apply {
         limit?.let { writeArg("LIMIT" to it) }
     },
-).unwrap() ?: 0
+) ?: 0
 
-suspend fun ReThis.sMisMember(key: String, vararg members: String): List<Boolean> = execute(
+suspend fun ReThis.sMisMember(key: String, vararg members: String): List<Boolean> = execute<Long>(
     listOf(
         "SMISMEMBER".toArg(),
         key.toArg(),
         *members.toArg(),
     ),
-).unwrapList<Long>().map { it == 1L }
+    isCollectionResponse = true,
+)?.map { it == 1L } ?: emptyList()

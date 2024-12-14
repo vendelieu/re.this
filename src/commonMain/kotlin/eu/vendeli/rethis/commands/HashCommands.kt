@@ -13,23 +13,24 @@ import eu.vendeli.rethis.utils.safeCast
 import eu.vendeli.rethis.utils.unwrapRespIndMap
 import eu.vendeli.rethis.utils.writeArg
 import kotlinx.datetime.Instant
+import kotlin.Long
 import kotlin.time.Duration
 
-suspend fun ReThis.hDel(key: String, vararg field: String): Long = execute(
+suspend fun ReThis.hDel(key: String, vararg field: String): Long = execute<Long>(
     listOf(
         "HDEL".toArg(),
         key.toArg(),
         *field.toArg(),
     ),
-).unwrap() ?: 0
+) ?: 0
 
-suspend fun ReThis.hExists(key: String, field: String): Boolean = execute(
+suspend fun ReThis.hExists(key: String, field: String): Boolean = execute<Long>(
     listOf(
         "HEXISTS".toArg(),
         key.toArg(),
         field.toArg(),
     ),
-).unwrap<Long>() == 1L
+) == 1L
 
 suspend fun ReThis.hExpire(
     key: String,
@@ -81,13 +82,13 @@ suspend fun ReThis.hExpireTime(
     },
 ).unwrapList()
 
-suspend fun ReThis.hGet(key: String, field: String): String? = execute(
+suspend fun ReThis.hGet(key: String, field: String): String? = execute<String>(
     listOf(
         "HGET".toArg(),
         key.toArg(),
         field.toArg(),
     ),
-).unwrap()
+)
 
 suspend fun ReThis.hGetAll(key: String): Map<String, String?>? = execute(
     listOf(
@@ -96,37 +97,38 @@ suspend fun ReThis.hGetAll(key: String): Map<String, String?>? = execute(
     ),
 ).unwrapRespIndMap()
 
-suspend fun ReThis.hIncrBy(key: String, field: String, increment: Long): Long = execute(
+suspend fun ReThis.hIncrBy(key: String, field: String, increment: Long): Long = execute<Long>(
     listOf(
         "HINCRBY".toArg(),
         key.toArg(),
         field.toArg(),
         increment.toArg(),
     ),
-).unwrap() ?: 0
+) ?: 0
 
-suspend fun ReThis.hIncrByFloat(key: String, field: String, increment: Double): Double? = execute(
+suspend fun ReThis.hIncrByFloat(key: String, field: String, increment: Double): Double? = execute<Double>(
     listOf(
         "HINCRBYFLOAT".toArg(),
         key.toArg(),
         field.toArg(),
         increment.toArg(),
     ),
-).unwrap<String>()?.toDoubleOrNull()
+)
 
 suspend fun ReThis.hKeys(key: String): List<String> = execute(
     listOf(
         "HKEYS".toArg(),
         key.toArg(),
     ),
-).unwrapList<String>()
+    isCollectionResponse = true,
+) ?: emptyList()
 
-suspend fun ReThis.hLen(key: String): Long = execute(
+suspend fun ReThis.hLen(key: String): Long = execute<Long>(
     listOf(
         "HLEN".toArg(),
         key.toArg(),
     ),
-).unwrap() ?: 0
+) ?: 0
 
 suspend fun ReThis.hMGet(key: String, vararg field: String): List<String> = execute(
     listOf(
@@ -136,12 +138,12 @@ suspend fun ReThis.hMGet(key: String, vararg field: String): List<String> = exec
     ),
 ).unwrapList()
 
-suspend fun ReThis.hMSet(key: String, vararg fieldValue: Pair<String, String>): String? = execute(
+suspend fun ReThis.hMSet(key: String, vararg fieldValue: Pair<String, String>): String? = execute<String>(
     mutableListOf(
         "HMSET".toArg(),
         key.toArg(),
     ).writeArg(fieldValue),
-).unwrap()
+)
 
 suspend fun ReThis.hPersist(
     key: String,
@@ -155,7 +157,8 @@ suspend fun ReThis.hPersist(
         writeArg(field.size)
         writeArg(field)
     },
-).unwrapList()
+    isCollectionResponse = true,
+) ?: emptyList()
 
 suspend fun ReThis.hPExpire(
     key: String,
@@ -173,7 +176,8 @@ suspend fun ReThis.hPExpire(
         writeArg(field.size)
         writeArg(field)
     },
-).unwrapList()
+    isCollectionResponse = true,
+) ?: emptyList()
 
 suspend fun ReThis.hPExpireAt(
     key: String,
@@ -191,7 +195,8 @@ suspend fun ReThis.hPExpireAt(
         writeArg(field.size)
         writeArg(field)
     },
-).unwrapList()
+    isCollectionResponse = true,
+) ?: emptyList()
 
 suspend fun ReThis.hPExpireTime(
     key: String,
@@ -205,7 +210,8 @@ suspend fun ReThis.hPExpireTime(
         writeArg(field.size)
         writeArg(field)
     },
-).unwrapList<Long>()
+    isCollectionResponse = true,
+) ?: emptyList()
 
 suspend fun ReThis.hPTTL(
     key: String,
@@ -219,22 +225,23 @@ suspend fun ReThis.hPTTL(
         writeArg(field.size)
         writeArg(field)
     },
-).unwrapList<Long>()
+    isCollectionResponse = true,
+) ?: emptyList()
 
 suspend fun ReThis.hRandField(
     key: String,
-): String? = execute(
+): String? = execute<String>(
     listOf(
         "HRANDFIELD".toArg(),
         key.toArg(),
     ),
-).unwrap()
+)
 
 suspend fun ReThis.hRandField(
     key: String,
     count: Long,
     withValues: Boolean = false,
-): String? = execute(
+): String? = execute<String>(
     mutableListOf(
         "HRANDFIELD".toArg(),
         key.toArg(),
@@ -242,7 +249,7 @@ suspend fun ReThis.hRandField(
     ).apply {
         if (withValues) writeArg("WITHVALUES")
     },
-).unwrap()
+)
 
 suspend fun ReThis.hScan(
     key: String,
@@ -260,27 +267,27 @@ suspend fun ReThis.hScan(
     return ScanResult(cursor = newCursor, keys = keys)
 }
 
-suspend fun ReThis.hSet(key: String, vararg fieldValue: Pair<String, String>): Long? = execute(
+suspend fun ReThis.hSet(key: String, vararg fieldValue: Pair<String, String>): Long? = execute<Long>(
     mutableListOf(
         "HSET".toArg(),
         key.toArg(),
     ).writeArg(fieldValue),
-).unwrap()
+)
 
-suspend fun ReThis.hSetNx(key: String, pair: Pair<String, String>): Long? = execute(
+suspend fun ReThis.hSetNx(key: String, pair: Pair<String, String>): Long? = execute<Long>(
     mutableListOf(
         "HSETNX".toArg(),
         key.toArg(),
     ).writeArg(pair),
-).unwrap()
+)
 
-suspend fun ReThis.hStrlen(key: String, field: String): Long = execute(
+suspend fun ReThis.hStrlen(key: String, field: String): Long = execute<Long>(
     listOf(
         "HSTRLEN".toArg(),
         key.toArg(),
         field.toArg(),
     ),
-).unwrap() ?: 0
+) ?: 0
 
 suspend fun ReThis.hTTL(
     key: String,
@@ -294,11 +301,13 @@ suspend fun ReThis.hTTL(
         writeArg(field.size)
         writeArg(field)
     },
-).unwrapList<Long>()
+    isCollectionResponse = true,
+) ?: emptyList()
 
 suspend fun ReThis.hVals(key: String): List<String> = execute(
     listOf(
         "HVALS".toArg(),
         key.toArg(),
     ),
-).unwrapList<String>()
+    isCollectionResponse = true,
+) ?: emptyList()
