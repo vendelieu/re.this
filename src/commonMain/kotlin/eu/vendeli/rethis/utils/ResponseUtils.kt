@@ -233,7 +233,6 @@ internal suspend fun <K : Any, V : Any> ByteReadChannel.processRedisMapResponse(
  */
 private suspend fun ByteReadChannel.readLine2Buffer(): Buffer {
     val buffer = Buffer()
-    var prevByte: Byte? = null
     while (true) {
         val byte = readByte()
 
@@ -248,7 +247,6 @@ private suspend fun ByteReadChannel.readLine2Buffer(): Buffer {
             }
         }
         buffer.writeByte(byte)
-        prevByte = byte
     }
     return buffer
 }
