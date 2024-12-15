@@ -2,10 +2,13 @@ package eu.vendeli.rethis.utils
 
 import eu.vendeli.rethis.types.core.*
 import eu.vendeli.rethis.utils.Const.EOL
+import io.ktor.network.sockets.Connection
 import io.ktor.utils.io.charsets.*
 import io.ktor.utils.io.core.*
+import io.ktor.utils.io.writeBuffer
 import kotlinx.io.Buffer
 import kotlinx.io.Sink
+import kotlinx.io.Source
 
 @Suppress("NOTHING_TO_INLINE")
 internal inline fun Buffer.writeValues(value: List<Argument>, charset: Charset) = apply {
@@ -14,6 +17,12 @@ internal inline fun Buffer.writeValues(value: List<Argument>, charset: Charset) 
 
 @Suppress("NOTHING_TO_INLINE")
 internal inline fun bufferValues(value: List<Argument>, charset: Charset) = Buffer().writeValues(value, charset)
+
+internal suspend inline fun Connection.sendRequest(source: Source) {
+    output.writeBuffer(source)
+    output.flush()
+}
+
 
 internal fun Sink.writeRedisValue(
     data: Any?,

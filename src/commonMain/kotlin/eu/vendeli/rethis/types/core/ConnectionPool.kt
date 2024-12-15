@@ -1,17 +1,15 @@
 package eu.vendeli.rethis.types.core
 
 import eu.vendeli.rethis.ReThis
-import eu.vendeli.rethis.utils.coLaunch
-import eu.vendeli.rethis.utils.readRedisMessage
-import eu.vendeli.rethis.utils.writeRedisValue
+import eu.vendeli.rethis.utils.*
 import io.ktor.network.selector.*
 import io.ktor.network.sockets.*
 import io.ktor.network.tls.*
 import io.ktor.util.logging.*
 import io.ktor.utils.io.*
-import kotlinx.coroutines.ExperimentalCoroutinesApi
+import io.ktor.utils.io.core.*
+import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.runBlocking
 import kotlinx.io.Buffer
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
@@ -26,8 +24,9 @@ internal class ConnectionPool(
     @OptIn(ExperimentalCoroutinesApi::class)
     internal val isEmpty: Boolean get() = connections.isEmpty
 
-    private val connections = Channel<Connection>(client.cfg.maxConnections)
-    private val selector = SelectorManager(client.cfg.dispatcher + client.rootJob)
+    private val job = SupervisorJob(client.rootJob)
+    private val connections = Channel<Connection>(client.cfg.poolConfiguration.maxConnections)
+    private val selector = SelectorManager(client.cfg.poolConfiguration.dispatcher + job)
 
     internal suspend fun createConn(): Connection {
         logger.trace("Creating connection to $address")
@@ -57,8 +56,7 @@ internal class ConnectionPool(
         reqBuffer.writeRedisValue(listOf("HELLO".toArg(), client.protocol.literal.toArg()))
         requests++
 
-        conn.output.writeBuffer(reqBuffer)
-        conn.output.flush()
+        conn.sendRequest(reqBuffer)
         repeat(requests) {
             logger.trace("Connection establishment response: " + conn.input.readRedisMessage(client.cfg.charset))
         }
@@ -66,16 +64,40 @@ internal class ConnectionPool(
         return conn
     }
 
-    fun prepare() = runBlocking {
+    @OptIn(InternalAPI::class)
+    private suspend fun reset(conn: Connection) {
+        conn.input.takeIf { it.availableForRead > 0 }?.also {
+            logger.warn("Discarding ${it.availableForRead} bytes from input stream")
+        }?.discard()
+
+        conn.output.takeIf { it.writeBuffer.size > 0 }?.writeBuffer?.also {
+            logger.warn("Discarding ${it.size} bytes from output stream")
+        }?.flush()
+    }
+
+    @Suppress("OPT_IN_USAGE")
+    fun prepare() = GlobalScope.launch {
         logger.info("Filling ConnectionPool with connections")
-        repeat(client.cfg.maxConnections) {
+        repeat(client.cfg.poolConfiguration.minConnections) {
             client.coLaunch { connections.trySend(createConn()) }
         }
     }
 
-    suspend fun acquire(): Connection = connections.receive()
+    suspend fun acquire(): Connection {
+        val conn = connections.tryReceive().getOrNull() ?: createConn()
 
-    suspend fun release(connection: Connection) = connections.send(connection)
+        if (conn.input.isClosedForRead) {
+            conn.socket.close()
+            return acquire()
+        }
+
+        return conn
+    }
+
+    suspend fun release(connection: Connection) {
+        reset(connection)
+        connections.send(connection)
+    }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     fun disconnect() = runBlocking {

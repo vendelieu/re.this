@@ -10,7 +10,8 @@ internal suspend inline fun ReThis.coLaunch(
     noinline block: suspend CoroutineScope.() -> Unit,
 ): Job = coroutineScope {
     launch(
-        (context ?: currentCoroutineContext()) + CoroutineName("ReThis") + Job(rootJob) + cfg.dispatcher,
+        (context ?: currentCoroutineContext())
+            + CoroutineName("ReThis") + Job(rootJob) + cfg.poolConfiguration.dispatcher,
         start,
         block,
     )

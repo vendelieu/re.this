@@ -1,5 +1,6 @@
 package eu.vendeli.rethis
 
+import eu.vendeli.rethis.annotations.ReThisDSL
 import eu.vendeli.rethis.annotations.ReThisInternal
 import eu.vendeli.rethis.types.core.*
 import eu.vendeli.rethis.types.coroutine.CoLocalConn
@@ -15,6 +16,7 @@ import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.io.Buffer
 import kotlin.jvm.JvmName
 
+@ReThisDSL
 class ReThis(
     address: Address = Host(DEFAULT_HOST, DEFAULT_PORT),
     val protocol: RespVer = RespVer.V3,
@@ -74,18 +76,17 @@ class ReThis(
             }
             logger.debug("Executing pipelined request")
             if (ctxConn != null) {
-                ctxConn.output.writeBuffer(pipelinedPayload)
-                ctxConn.output.flush()
+                ctxConn.sendRequest(pipelinedPayload)
                 requests.forEach { _ -> responses.add(ctxConn.input.readRedisMessage(cfg.charset)) }
             } else {
                 connectionPool.use { connection ->
-                    connection.output.writeBuffer(pipelinedPayload)
-                    connection.output.flush()
+                    connection.sendRequest(pipelinedPayload)
                     requests.forEach { _ -> responses.add(connection.input.readRedisMessage(cfg.charset)) }
                 }
             }
             requests.clear()
         } else {
+            logger.warn("Nested pipeline detected")
             block()
         }
         logger.info("Pipeline finished")
@@ -95,14 +96,14 @@ class ReThis(
     suspend fun transaction(block: suspend ReThis.() -> Unit): List<RType> {
         val coLocalCon = currentCoroutineContext()[CoLocalConn]
         if (coLocalCon != null) {
+            logger.warn("Nested transaction detected")
             block()
             return emptyList()
         }
 
         return connectionPool.use { conn ->
             logger.debug("Started transaction")
-            conn.output.writeBuffer(bufferValues(listOf("MULTI".toArg()), cfg.charset))
-            conn.output.flush()
+            conn.sendRequest(listOf("MULTI".toArg()))
             require(conn.input.readRedisMessage(cfg.charset).value == "OK")
 
             var e: Throwable? = null
@@ -110,16 +111,14 @@ class ReThis(
                 runCatching { block() }.getOrElse { e = it }
             }.join()
             e?.also {
-                conn.output.writeBuffer(bufferValues(listOf("DISCARD".toArg()), cfg.charset))
-                conn.output.flush()
+                conn.sendRequest(listOf("DISCARD".toArg()))
                 require(conn.input.readRedisMessage(cfg.charset).value == "OK")
                 logger.error("Transaction canceled", it)
                 return@use emptyList()
             }
 
             logger.debug("Transaction completed")
-            conn.output.writeBuffer(bufferValues(listOf("EXEC".toArg()), cfg.charset))
-            conn.output.flush()
+            conn.sendRequest(listOf("EXEC".toArg()))
             conn.input.readRedisMessage(cfg.charset).unwrapList()
         }
     }
