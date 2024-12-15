@@ -32,7 +32,6 @@ data class AuthConfiguration(
 
 @ConfigurationDSL
 data class PoolConfiguration(
-    var minConnections: Int = 5,
-    var maxConnections: Int = 50,
+    var poolSize: Int = 50,
     var dispatcher: CoroutineDispatcher = Dispatchers.IO,
 )

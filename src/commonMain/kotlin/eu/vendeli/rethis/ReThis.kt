@@ -125,39 +125,30 @@ class ReThis(
 
     @ReThisInternal
     suspend fun execute(payload: List<Argument>, rawResponse: Boolean = false): RType =
-        handleRequest(payload) {
-            readRedisMessage(cfg.charset, rawResponse)
-        } ?: RType.Null
+        handleRequest(payload)?.input?.readRedisMessage(cfg.charset, rawResponse) ?: RType.Null
 
     @ReThisInternal
     @JvmName("executeSimple")
     internal suspend inline fun <reified T> execute(
         payload: List<Argument>,
-    ): T? = handleRequest(payload) {
-        processRedisSimpleResponse(cfg.charset)
-    }
+    ): T? = handleRequest(payload)?.input?.processRedisSimpleResponse(cfg.charset)
 
     @ReThisInternal
     @JvmName("executeList")
     internal suspend inline fun <reified T> execute(
         payload: List<Argument>,
         isCollectionResponse: Boolean = false,
-    ): List<T>? = handleRequest(payload) {
-        processRedisListResponse(cfg.charset)
-    }
+    ): List<T>? = handleRequest(payload)?.input?.processRedisListResponse(cfg.charset)
 
     @ReThisInternal
     @JvmName("executeMap")
     internal suspend inline fun <reified K : Any, reified V> execute(
         payload: List<Argument>,
-    ): Map<K, V?>? = handleRequest(payload) {
-        processRedisMapResponse(cfg.charset)
-    }
+    ): Map<K, V?>? = handleRequest(payload)?.input?.processRedisMapResponse(cfg.charset)
 
-    private suspend fun <T> handleRequest(
+    private suspend fun handleRequest(
         payload: List<Argument>,
-        responseHandle: suspend ByteReadChannel.() -> T,
-    ): T? {
+    ): Connection? {
         val currentCoCtx = currentCoroutineContext()
         val coLocalConn = currentCoCtx[CoLocalConn]
         val coPipeline = currentCoCtx[CoPipelineCtx]
@@ -168,14 +159,11 @@ class ReThis(
             }
 
             coLocalConn != null -> {
-                coLocalConn.connection
-                    .sendRequest(payload)
-                    .input
-                    .responseHandle()
+                coLocalConn.connection.sendRequest(payload)
             }
 
             else -> connectionPool.use { connection ->
-                connection.sendRequest(payload).input.responseHandle()
+                connection.sendRequest(payload)
             }
         }
     }

@@ -25,7 +25,7 @@ internal class ConnectionPool(
     internal val isEmpty: Boolean get() = connections.isEmpty
 
     private val job = SupervisorJob(client.rootJob)
-    private val connections = Channel<Connection>(client.cfg.poolConfiguration.maxConnections)
+    private val connections = Channel<Connection>(client.cfg.poolConfiguration.poolSize)
     private val selector = SelectorManager(client.cfg.poolConfiguration.dispatcher + job)
 
     internal suspend fun createConn(): Connection {
@@ -78,24 +78,14 @@ internal class ConnectionPool(
     @Suppress("OPT_IN_USAGE")
     fun prepare() = GlobalScope.launch {
         logger.info("Filling ConnectionPool with connections")
-        repeat(client.cfg.poolConfiguration.minConnections) {
+        repeat(client.cfg.poolConfiguration.poolSize) {
             client.coLaunch { connections.trySend(createConn()) }
         }
     }
 
-    suspend fun acquire(): Connection {
-        val conn = connections.tryReceive().getOrNull() ?: createConn()
-
-        if (conn.input.isClosedForRead) {
-            conn.socket.close()
-            return acquire()
-        }
-
-        return conn
-    }
+    suspend fun acquire(): Connection = connections.receive()
 
     suspend fun release(connection: Connection) {
-        reset(connection)
         connections.send(connection)
     }
 
