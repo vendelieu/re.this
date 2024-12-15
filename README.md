@@ -31,7 +31,9 @@ dependencies {
 
 # Benchmark
 
-There is a benchmark comparing popular library solutions (more is better):
+There is
+a [benchmark](https://github.com/vendelieu/re.this/tree/master/benchmarks/src/main/kotlin/eu/vendeli/rethis/benchmarks)
+comparing popular library solutions (more is better):
 
 ```javascript
 main summary:
@@ -42,8 +44,8 @@ KredsBenchmark.kredsGet      thrpt    4   953107.876 ±  474436.565  ops/s
 KredsBenchmark.kredsSet      thrpt    4   860740.621 ±  219859.604  ops/s
 LettuceBenchmark.lettuceGet  thrpt    5   590292.775 ± 3079960.658  ops/s
 LettuceBenchmark.lettuceSet  thrpt    5   686790.196 ± 2646041.580  ops/s
-RethisBenchmark.rethisGet    thrpt    5  1494973.261 ±  680369.613  ops/s
-RethisBenchmark.rethisSet    thrpt    5  1558386.548 ± 1374920.575  ops/s
+RethisBenchmark.rethisGet    thrpt    5  1376783.555 ±  680369.613  ops/s
+RethisBenchmark.rethisSet    thrpt    5  1487596.743 ±  487192.094  ops/s
 ```
 
 # Usage

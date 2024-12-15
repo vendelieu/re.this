@@ -1,13 +1,14 @@
 package eu.vendeli.rethis.types.core
 
 import eu.vendeli.rethis.ReThis
-import eu.vendeli.rethis.utils.*
+import eu.vendeli.rethis.utils.coLaunch
+import eu.vendeli.rethis.utils.readRedisMessage
+import eu.vendeli.rethis.utils.sendRequest
+import eu.vendeli.rethis.utils.writeRedisValue
 import io.ktor.network.selector.*
 import io.ktor.network.sockets.*
 import io.ktor.network.tls.*
 import io.ktor.util.logging.*
-import io.ktor.utils.io.*
-import io.ktor.utils.io.core.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
 import kotlinx.io.Buffer
@@ -62,17 +63,6 @@ internal class ConnectionPool(
         }
 
         return conn
-    }
-
-    @OptIn(InternalAPI::class)
-    private suspend fun reset(conn: Connection) {
-        conn.input.takeIf { it.availableForRead > 0 }?.also {
-            logger.warn("Discarding ${it.availableForRead} bytes from input stream")
-        }?.discard()
-
-        conn.output.takeIf { it.writeBuffer.size > 0 }?.writeBuffer?.also {
-            logger.warn("Discarding ${it.size} bytes from output stream")
-        }?.flush()
     }
 
     @Suppress("OPT_IN_USAGE")
