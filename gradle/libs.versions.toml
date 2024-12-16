@@ -7,7 +7,7 @@ io = "0.6.0"
 datetime = "0.6.1"
 bignum = "0.3.10"
 
-dokka = "1.9.20"
+dokka = "2.0.0"
 kotlinter = "5.0.1"
 deteKT = "1.23.7"
 publisher = "0.30.0"
