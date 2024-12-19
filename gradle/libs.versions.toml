@@ -2,7 +2,7 @@
 ktor = "3.0.3"
 
 kotlin = "2.1.0"
-coroutines = "1.9.0"
+coroutines = "1.10.0"
 io = "0.6.0"
 datetime = "0.6.1"
 bignum = "0.3.10"
@@ -11,7 +11,7 @@ dokka = "2.0.0"
 kotlinter = "5.0.1"
 deteKT = "1.23.7"
 publisher = "0.30.0"
-binvalid = "0.16.3"
+binvalid = "0.17.0"
 kover = "0.9.0"
 
 kotest = "5.9.1"
