@@ -13,7 +13,11 @@ import io.kotest.matchers.shouldBe
 class PipeliningTest : ReThisTestCtx() {
     @Test
     suspend fun `pipelining test`() {
-        val v2Client = ReThis(redis.host, redis.firstMappedPort, protocol = RespVer.V2) { maxConnections = 1 }
+        val v2Client = ReThis(redis.host, redis.firstMappedPort, protocol = RespVer.V2) {
+            pool {
+                poolSize = 1
+            }
+        }
         v2Client
             .pipeline {
                 set("test1", "testv1")
