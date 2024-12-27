@@ -7,20 +7,20 @@ import eu.vendeli.rethis.ReThisTestCtx
 import io.kotest.matchers.longs.shouldBeInRange
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
-import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
 import kotlinx.datetime.Clock
 import kotlin.time.Duration.Companion.days
 
 class TTLCommandTest : ReThisTestCtx() {
     @Test
-    fun `test TTL command`(): Unit = runTest {
+    fun `test TTL command`(): Unit = runBlocking {
         client.set("testKey", "testVal").shouldNotBeNull()
         client.ttl("testKey") shouldBe -1L
     }
 
     @Test
-    fun `test TTL command with ttl positive`(): Unit = runTest {
+    fun `test TTL command with ttl positive`(): Unit = runBlocking {
         val time = Clock.System.now().plus(1.days)
         client.set("testKey", "testVal", SetExpire.EXAT(time)).shouldNotBeNull()
         client
@@ -31,7 +31,7 @@ class TTLCommandTest : ReThisTestCtx() {
     }
 
     @Test
-    fun `test TTL command with non-existent key`(): Unit = runTest {
+    fun `test TTL command with non-existent key`(): Unit = runBlocking {
         client.ttl("nonExistentKey") shouldBe -2L
     }
 }

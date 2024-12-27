@@ -5,14 +5,14 @@ import eu.vendeli.rethis.commands.set
 import eu.vendeli.rethis.types.options.UpdateStrategyOption
 import eu.vendeli.rethis.ReThisTestCtx
 import io.kotest.matchers.shouldBe
-import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
 import kotlinx.datetime.Clock
 import kotlin.time.Duration.Companion.seconds
 
 class ExpireAtCommandTest : ReThisTestCtx() {
     @Test
-    fun `test EXPIREAT command without options`(): Unit = runTest {
+    fun `test EXPIREAT command without options`(): Unit = runBlocking {
         client.set("testKey", "testVal")
 
         val unixStamp = Clock.System.now().plus(10.seconds)
@@ -21,7 +21,7 @@ class ExpireAtCommandTest : ReThisTestCtx() {
     }
 
     @Test
-    fun `test EXPIREAT command with EXPIRE option`(): Unit = runTest {
+    fun `test EXPIREAT command with EXPIRE option`(): Unit = runBlocking {
         client.set("testKey", "testVal")
 
         val unixStamp = Clock.System.now().plus(10.seconds)

@@ -11,22 +11,22 @@ import io.kotest.matchers.ints.shouldBeGreaterThan
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
-import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
 
 class ConnectionCommandsTest : ReThisTestCtx() {
     @Test
-    fun `test HELLO command with default parameters`() = runTest {
+    fun `test HELLO command with default parameters`(): Unit = runBlocking {
         client.hello().shouldNotBeNull().size shouldBeGreaterThan 1
     }
 
     @Test
-    fun `test HELLO command with proto parameter`() = runTest {
+    fun `test HELLO command with proto parameter`(): Unit = runBlocking {
         client.hello(proto = 2).shouldNotBeNull()["proto"] shouldBe Int64(2)
     }
 
     @Test
-    fun `test HELLO command with username and password parameters`() = runTest {
+    fun `test HELLO command with username and password parameters`(): Unit = runBlocking {
         shouldThrow<ReThisException> {
             client.hello(
                 username = "test",
@@ -36,31 +36,31 @@ class ConnectionCommandsTest : ReThisTestCtx() {
     }
 
     @Test
-    fun `test HELLO command with name parameter`() = runTest {
+    fun `test HELLO command with name parameter`(): Unit = runBlocking {
         client.hello(name = "test").shouldNotBeNull().size shouldBeGreaterThan 1
     }
 
     @Test
-    fun `test PING command with default message`() = runTest {
+    fun `test PING command with default message`(): Unit = runBlocking {
         val response = client.ping()
         response shouldBe "PONG"
     }
 
     @Test
-    fun `test PING command with custom message`() = runTest {
+    fun `test PING command with custom message`(): Unit = runBlocking {
         val message = "Hello, Redis!"
         val response = client.ping(message)
         response shouldBe message
     }
 
     @Test
-    fun `test SELECT command with valid database index`() = runTest {
+    fun `test SELECT command with valid database index`(): Unit = runBlocking {
         val response = client.select(0)
         response shouldBe "OK"
     }
 
     @Test
-    fun `test SELECT command with invalid database index`() = runTest {
+    fun `test SELECT command with invalid database index`(): Unit = runBlocking {
         shouldThrow<ReThisException> {
             client.select(100)
         }

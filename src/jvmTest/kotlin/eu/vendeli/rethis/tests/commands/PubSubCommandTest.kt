@@ -15,7 +15,7 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.throwable.shouldHaveMessage
 import io.kotest.matchers.types.shouldBeTypeOf
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
@@ -26,43 +26,43 @@ class PubSubCommandTest : ReThisTestCtx() {
     }
 
     @Test
-    fun `test PUBLISH command`(): Unit = runTest {
+    fun `test PUBLISH command`(): Unit = runBlocking {
         client.subscribe("testChannel") { _, _ -> println("test") }
         delay(100)
         client.publish("testChannel", "testMessage") shouldBe 1L
     }
 
     @Test
-    fun `test PUBSUB CHANNELS command`(): Unit = runTest {
+    fun `test PUBSUB CHANNELS command`(): Unit = runBlocking {
         client.subscribe("testChannel2") { _, _ -> println("test") }
         delay(100)
         client.pubSubChannels() shouldBe listOf("testChannel2")
     }
 
     @Test
-    fun `test PUBSUB NUMPAT command`(): Unit = runTest {
+    fun `test PUBSUB NUMPAT command`(): Unit = runBlocking {
         client.pSubscribe("testP*") { _, _ -> println("test") }
         delay(100)
         client.pubSubNumPat() shouldBe 1L
     }
 
     @Test
-    fun `test PUBSUB NUMSUB command`(): Unit = runTest {
+    fun `test PUBSUB NUMSUB command`(): Unit = runBlocking {
         client.pubSubNumSub("testChannel") shouldBe listOf(PubSubNumEntry("testChannel", 0))
     }
 
     @Test
-    fun `test PUBSUB SHARDCHANNELS command`(): Unit = runTest {
+    fun `test PUBSUB SHARDCHANNELS command`(): Unit = runBlocking {
         client.pubSubShardChannels() shouldBe emptyList()
     }
 
     @Test
-    fun `test PUBSUB SHARDNUMSUB command`(): Unit = runTest {
+    fun `test PUBSUB SHARDNUMSUB command`(): Unit = runBlocking {
         client.pubSubShardNumSub("testChannel") shouldBe listOf(PubSubNumEntry("testChannel", 0))
     }
 
     @Test
-    fun `test PUNSUBSCRIBE command`(): Unit = runTest {
+    fun `test PUNSUBSCRIBE command`(): Unit = runBlocking {
         client.pUnsubscribe("testPattern") shouldBe Push(
             listOf(
                 BulkString("punsubscribe"),
@@ -73,12 +73,12 @@ class PubSubCommandTest : ReThisTestCtx() {
     }
 
     @Test
-    fun `test SPUBLISH command`(): Unit = runTest {
+    fun `test SPUBLISH command`(): Unit = runBlocking {
         client.sPublish("testShardChannel", "testMessage") shouldBe 0L
     }
 
     @Test
-    fun `test SUNSUBSCRIBE command`(): Unit = runTest {
+    fun `test SUNSUBSCRIBE command`(): Unit = runBlocking {
         client.sUnsubscribe("testPattern") shouldBe Push(
             listOf(
                 BulkString("sunsubscribe"),
@@ -89,7 +89,7 @@ class PubSubCommandTest : ReThisTestCtx() {
     }
 
     @Test
-    fun `test UNSUBSCRIBE command`(): Unit = runTest {
+    fun `test UNSUBSCRIBE command`(): Unit = runBlocking {
         client.unsubscribe("testPattern") shouldBe Push(
             listOf(
                 BulkString("unsubscribe"),
@@ -100,7 +100,7 @@ class PubSubCommandTest : ReThisTestCtx() {
     }
 
     @Test
-    fun `test PSUBSCRIBE command`(): Unit = runTest {
+    fun `test PSUBSCRIBE command`(): Unit = runBlocking {
         client.pSubscribe("testPattern") { _, m ->
             println(m)
         }
@@ -108,7 +108,7 @@ class PubSubCommandTest : ReThisTestCtx() {
     }
 
     @Test
-    fun `test SSUBSCRIBE command`(): Unit = runTest {
+    fun `test SSUBSCRIBE command`(): Unit = runBlocking {
         client.sSubscribe("testShardChannel") { _, m ->
             println(m)
         }
@@ -116,7 +116,7 @@ class PubSubCommandTest : ReThisTestCtx() {
     }
 
     @Test
-    fun `test SUBSCRIBE command`(): Unit = runTest {
+    fun `test SUBSCRIBE command`(): Unit = runBlocking {
         client.subscribe("testChannel") { _, m ->
             println(m)
         }
@@ -124,7 +124,7 @@ class PubSubCommandTest : ReThisTestCtx() {
     }
 
     @Test
-    fun `test unsubscription command`(): Unit = runTest {
+    fun `test unsubscription command`(): Unit = runBlocking {
         client.subscribe("testChannel") { _, m ->
             println(m)
         }
@@ -136,7 +136,7 @@ class PubSubCommandTest : ReThisTestCtx() {
     }
 
     @Test
-    fun `test subscription evenHandler`(): Unit = runTest {
+    fun `test subscription evenHandler`(): Unit = runBlocking {
         var onSub = 0
         var onUnsub = 0
         var caughtEx: Exception? = null

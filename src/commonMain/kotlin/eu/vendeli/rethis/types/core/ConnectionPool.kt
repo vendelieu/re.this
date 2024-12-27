@@ -27,7 +27,7 @@ internal class ConnectionPool(
 
     private val job = SupervisorJob(client.rootJob)
     private val connections = Channel<Connection>(client.cfg.poolConfiguration.poolSize)
-    private val selector = SelectorManager(client.cfg.poolConfiguration.dispatcher + job)
+    private val selector = SelectorManager(client.cfg.poolConfiguration.dispatcher + job + CoroutineName("ReThis Pool"))
 
     internal suspend fun createConn(): Connection {
         logger.trace("Creating connection to $address")

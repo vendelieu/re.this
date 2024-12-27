@@ -1,17 +1,14 @@
 @file:Suppress("PropertyName")
 
 import kotlinx.validation.ExperimentalBCVApi
-import org.jetbrains.dokka.base.DokkaBase
-import org.jetbrains.dokka.base.DokkaBaseConfiguration
-import java.time.LocalDate
 
 plugins {
     alias(libs.plugins.deteKT)
-    alias(libs.plugins.dokka)
     alias(libs.plugins.ktlinter)
     alias(libs.plugins.kotlin.binvalid)
     alias(libs.plugins.kover)
-    id("publish")
+    dokka
+    publish
 }
 
 group = "eu.vendeli.re.this"
@@ -33,7 +30,6 @@ configureKotlin {
 
         jvmTest.dependencies {
             implementation(libs.kotlin.reflect)
-            implementation(libs.test.kotest.junit5)
             implementation(libs.test.kotest.assertions)
             implementation(libs.logback)
             implementation("com.redis:testcontainers-redis:1.7.0") {
@@ -44,25 +40,16 @@ configureKotlin {
             implementation("commons-io:commons-io:2.18.0")
             implementation("org.apache.commons:commons-compress:1.27.1")
             implementation("com.fasterxml.woodstox:woodstox-core:7.1.0")
+
+            implementation(libs.kotlin.junit)
+            implementation(libs.junit.api)
+            runtimeOnly(libs.junit.engine)
         }
     }
 }
 
-buildscript { dependencies.classpath(libs.dokka.base) }
-
 tasks {
     withType<Test> { useJUnitPlatform() }
-    dokkaHtml.configure {
-        outputDirectory = layout.buildDirectory.asFile.orNull?.resolve("dokka")
-        dokkaSourceSets {
-            collectionSchema.elements.forEach { _ -> moduleName = "re.this" }
-        }
-        pluginConfiguration<DokkaBase, DokkaBaseConfiguration> {
-            customAssets = listOf(rootDir.resolve("assets/logo-icon.svg"))
-            homepageLink = "https://github.com/vendelieu/re.this"
-            footerMessage = "© ${LocalDate.now().year} Vendelieu"
-        }
-    }
 }
 
 @OptIn(ExperimentalBCVApi::class)
