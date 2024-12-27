@@ -2,7 +2,7 @@
 ktor = "3.0.3"
 
 kotlin = "2.1.0"
-coroutines = "1.10.0"
+coroutines = "1.10.1"
 io = "0.6.0"
 datetime = "0.6.1"
 bignum = "0.3.10"
@@ -15,7 +15,6 @@ binvalid = "0.17.0"
 kover = "0.9.0"
 
 kotest = "5.9.1"
-junit = "5.11.4"
 logback = "1.5.14"
 
 [libraries]
@@ -32,10 +31,8 @@ publisher = { module = "com.vanniktech:gradle-maven-publish-plugin", version.ref
 
 # testing
 kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin" }
-kotlin-junit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
+test-kotest-junit5 = { module = "io.kotest:kotest-runner-junit5", version.ref = "kotest" }
 test-kotest-assertions = { module = "io.kotest:kotest-assertions-core", version.ref = "kotest" }
-junit-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit" }
-junit-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junit" }
 logback = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
 
 [plugins]

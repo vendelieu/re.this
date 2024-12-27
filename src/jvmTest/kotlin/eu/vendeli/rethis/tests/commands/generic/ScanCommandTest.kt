@@ -8,12 +8,10 @@ import eu.vendeli.rethis.ReThisTestCtx
 import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
-import kotlinx.coroutines.runBlocking
-import org.junit.jupiter.api.Test
 
 class ScanCommandTest : ReThisTestCtx() {
     @Test
-    fun `test SCAN command without options`(): Unit = runBlocking {
+    suspend fun `test SCAN command without options`() {
         client.set("testKey", "testVal").shouldNotBeNull()
         client.scan(0L).apply {
             cursor shouldBe "0"
@@ -22,19 +20,19 @@ class ScanCommandTest : ReThisTestCtx() {
     }
 
     @Test
-    fun `test SCAN command with MATCH option`(): Unit = runBlocking {
+    suspend fun `test SCAN command with MATCH option`() {
         client.set("testKey", "testVal").shouldNotBeNull()
         client.scan(0L, ScanOption.Match("testKey*")) shouldBe ScanResult("0", listOf("testKey"))
     }
 
     @Test
-    fun `test SCAN command with COUNT option`(): Unit = runBlocking {
+    suspend fun `test SCAN command with COUNT option`() {
         client.set("testKey", "testVal").shouldNotBeNull()
         client.scan(0L, ScanOption.Count(10L)) shouldBe ScanResult("0", listOf("testKey"))
     }
 
     @Test
-    fun `test SCAN command with TYPE option`(): Unit = runBlocking {
+    suspend fun `test SCAN command with TYPE option`() {
         client.set("testKey", "testVal").shouldNotBeNull()
         client.scan(0L, ScanOption.Type("string")) shouldBe ScanResult("0", listOf("testKey"))
     }

@@ -7,61 +7,59 @@ import eu.vendeli.rethis.types.options.LcsMode
 import eu.vendeli.rethis.types.options.MinMatchLen
 import io.kotest.matchers.booleans.shouldBeTrue
 import io.kotest.matchers.shouldBe
-import kotlinx.coroutines.runBlocking
-import org.junit.jupiter.api.Test
 
 class StringCommandTest : ReThisTestCtx() {
     @Test
-    fun `test MGET command`(): Unit = runBlocking {
+    suspend fun `test MGET command`() {
         client.set("testKey1", "testValue1")
         client.set("testKey2", "testValue2")
         client.mget("testKey1", "testKey2") shouldBe listOf("testValue1", "testValue2")
     }
 
     @Test
-    fun `test MSET command`(): Unit = runBlocking {
+    suspend fun `test MSET command`() {
         client.mset("testKey3" to "testValue3", "testKey4" to "testValue4") shouldBe "OK"
     }
 
     @Test
-    fun `test MSETNX command`(): Unit = runBlocking {
+    suspend fun `test MSETNX command`() {
         client.msetNx("testKey5" to "testValue5", "testKey6" to "testValue6").shouldBeTrue()
     }
 
     @Test
-    fun `test SET command`(): Unit = runBlocking {
+    suspend fun `test SET command`() {
         client.set("testKey7", "testValue7") shouldBe "OK"
     }
 
     @Test
-    fun `test SETRANGE command`(): Unit = runBlocking {
+    suspend fun `test SETRANGE command`() {
         client.set("testKey8", "testValue8")
         client.setRange("testKey8", 5, "newValue8") shouldBe 14L
     }
 
     @Test
-    fun `test STRLEN command`(): Unit = runBlocking {
+    suspend fun `test STRLEN command`() {
         val value = "testValue9"
         client.set("testKey9", value)
         client.strlen("testKey9") shouldBe value.length
     }
 
     @Test
-    fun `test LCS command`(): Unit = runBlocking {
+    suspend fun `test LCS command`() {
         client.set("testKey20", "abcdef")
         client.set("testKey21", "zbcdfg")
         client.lcs("testKey20", "testKey21") shouldBe "bcdf"
     }
 
     @Test
-    fun `test LCS command with LEN mode`(): Unit = runBlocking {
+    suspend fun `test LCS command with LEN mode`() {
         client.set("testKey22", "abcdef")
         client.set("testKey23", "zbcdfg")
         client.lcs("testKey22", "testKey23", LcsMode.LEN) shouldBe 4L
     }
 
     @Test
-    fun `test LCS command with MATCHLEN mode`(): Unit = runBlocking {
+    suspend fun `test LCS command with MATCHLEN mode`() {
         client.set("testKey24", "abcdef")
         client.set("testKey25", "zbcdfg")
 
@@ -72,7 +70,7 @@ class StringCommandTest : ReThisTestCtx() {
     }
 
     @Test
-    fun `test LCS command with MATCHLEN mode and withMatchLen parameter`(): Unit = runBlocking {
+    suspend fun `test LCS command with MATCHLEN mode and withMatchLen parameter`() {
         client.set("testKey26", "abcdef")
         client.set("testKey27", "zbcdfg")
 

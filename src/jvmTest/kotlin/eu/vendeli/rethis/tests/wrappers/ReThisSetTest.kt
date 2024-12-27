@@ -3,7 +3,6 @@ package eu.vendeli.rethis.tests.wrappers
 import eu.vendeli.rethis.wrappers.Set
 import eu.vendeli.rethis.ReThisTestCtx
 import io.kotest.matchers.shouldBe
-import org.junit.jupiter.api.Test
 
 class ReThisSetTest : ReThisTestCtx() {
     @Test

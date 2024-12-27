@@ -9,12 +9,10 @@ import eu.vendeli.rethis.types.core.PlainString
 import eu.vendeli.rethis.types.core.RespVer
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
-import kotlinx.coroutines.runBlocking
-import org.junit.jupiter.api.Test
 
 class PipeliningTest : ReThisTestCtx() {
     @Test
-    fun `pipelining test`(): Unit = runBlocking {
+    suspend fun `pipelining test`() {
         val v2Client = ReThis(redis.host, redis.firstMappedPort, protocol = RespVer.V2) {
             pool {
                 poolSize = 1
@@ -32,7 +30,7 @@ class PipeliningTest : ReThisTestCtx() {
     }
 
     @Test
-    fun `pipelining + transaction test`(): Unit = runBlocking {
+    suspend fun `pipelining + transaction test`() {
         client
             .transaction {
                 client.pipeline {
@@ -47,7 +45,7 @@ class PipeliningTest : ReThisTestCtx() {
     }
 
     @Test
-    fun `transaction + pipeline test`(): Unit = runBlocking {
+    suspend fun `transaction + pipeline test`() {
         client
             .pipeline {
                 client.transaction {
@@ -67,7 +65,7 @@ class PipeliningTest : ReThisTestCtx() {
     }
 
     @Test
-    fun `nested pipeline test`(): Unit = runBlocking {
+    suspend fun `nested pipeline test`() {
         client
             .pipeline {
                 set("test1", "testv1")
@@ -87,7 +85,7 @@ class PipeliningTest : ReThisTestCtx() {
     }
 
     @Test
-    fun `nested transaction test`(): Unit = runBlocking {
+    suspend fun `nested transaction test`() {
         client
             .transaction {
                 set("test1", "testv1")

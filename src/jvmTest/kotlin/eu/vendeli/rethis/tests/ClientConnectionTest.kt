@@ -2,15 +2,15 @@ package eu.vendeli.rethis.tests
 
 import eu.vendeli.rethis.ReThisTestCtx
 import eu.vendeli.rethis.commands.ping
+import io.kotest.core.spec.IsolationMode
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.runBlocking
-import org.junit.jupiter.api.Test
 
 class ClientConnectionTest : ReThisTestCtx() {
+    override fun isolationMode(): IsolationMode = IsolationMode.InstancePerLeaf
 
     @Test
-    fun `client disconnect test`(): Unit = runBlocking {
+    suspend fun `client disconnect test`() {
         client.ping()
 
         client.isDisconnected shouldBe false
@@ -19,7 +19,7 @@ class ClientConnectionTest : ReThisTestCtx() {
     }
 
     @Test
-    fun `client reconnect test`(): Unit = runBlocking {
+    suspend fun `client reconnect test`() {
         client.ping()
 
         client.isDisconnected shouldBe false
