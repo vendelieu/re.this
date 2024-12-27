@@ -3,24 +3,22 @@ package eu.vendeli.rethis.tests.commands
 import eu.vendeli.rethis.ReThisTestCtx
 import eu.vendeli.rethis.commands.*
 import io.kotest.matchers.shouldBe
-import kotlinx.coroutines.runBlocking
-import org.junit.jupiter.api.Test
 
 class SetCommandTest2 : ReThisTestCtx() {
     @Test
-    fun `test SADD command with multiple members`(): Unit = runBlocking {
+    suspend fun `test SADD command with multiple members`() {
         client.sAdd("testKey2", "testMember2", "testMember3", "testMember4") shouldBe 3L
     }
 
     @Test
-    fun `test SCARD command`(): Unit = runBlocking {
+    suspend fun `test SCARD command`() {
         client.sAdd("testKey5", "testMember5")
 
         client.sCard("testKey5") shouldBe 1L
     }
 
     @Test
-    fun `test SDIFF command`(): Unit = runBlocking {
+    suspend fun `test SDIFF command`() {
         client.sAdd("testKey6", "testMember6", "testMember7")
         client.sAdd("testKey7", "testMember7")
 
@@ -28,7 +26,7 @@ class SetCommandTest2 : ReThisTestCtx() {
     }
 
     @Test
-    fun `test SDIFFSTORE command`(): Unit = runBlocking {
+    suspend fun `test SDIFFSTORE command`() {
         client.sAdd("testKey8", "testMember8")
         client.sAdd("testKey9", "testMember9")
 
@@ -36,7 +34,7 @@ class SetCommandTest2 : ReThisTestCtx() {
     }
 
     @Test
-    fun `test SINTER command`(): Unit = runBlocking {
+    suspend fun `test SINTER command`() {
         client.sAdd("testKey11", "testMember11")
         client.sAdd("testKey11", "testMember12")
         client.sAdd("testKey12", "testMember12")
@@ -45,7 +43,7 @@ class SetCommandTest2 : ReThisTestCtx() {
     }
 
     @Test
-    fun `test SINTERSTORE command`(): Unit = runBlocking {
+    suspend fun `test SINTERSTORE command`() {
         client.sAdd("testKey13", "testMember13")
         client.sAdd("testKey13", "testMember14")
         client.sAdd("testKey14", "testMember14")
@@ -54,21 +52,21 @@ class SetCommandTest2 : ReThisTestCtx() {
     }
 
     @Test
-    fun `test SISMEMBER command`(): Unit = runBlocking {
+    suspend fun `test SISMEMBER command`() {
         client.sAdd("testKey16", "testMember16")
 
         client.sIsMember("testKey16", "testMember16") shouldBe true
     }
 
     @Test
-    fun `test SMEMBERS command`(): Unit = runBlocking {
+    suspend fun `test SMEMBERS command`() {
         client.sAdd("testKey17", "testMember17")
 
         client.sMembers("testKey17") shouldBe listOf("testMember17")
     }
 
     @Test
-    fun `test SMOVE command`(): Unit = runBlocking {
+    suspend fun `test SMOVE command`() {
         client.sAdd("testKey18", "testMember18")
         client.sMove("testKey18", "testKey19", "testMember18") shouldBe true
     }

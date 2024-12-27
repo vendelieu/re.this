@@ -7,12 +7,10 @@ import eu.vendeli.rethis.ReThisTestCtx
 import io.kotest.matchers.longs.shouldBeInRange
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
-import kotlinx.coroutines.runBlocking
-import org.junit.jupiter.api.Test
 
 class ExpireTimeCommandTest : ReThisTestCtx() {
     @Test
-    fun `test EXPIRETIME command`(): Unit = runBlocking {
+    suspend fun `test EXPIRETIME command`() {
         client.set("testKey", "testVal")
 
         val expireTime = timestamp.epochSeconds + 10L
@@ -27,7 +25,7 @@ class ExpireTimeCommandTest : ReThisTestCtx() {
     }
 
     @Test
-    fun `test EXPIRETIME command with non-existent key`(): Unit = runBlocking {
+    suspend fun `test EXPIRETIME command with non-existent key`() {
         client.expireTime("nonExistentKey") shouldBe -2L
     }
 }

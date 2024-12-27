@@ -5,49 +5,47 @@ import eu.vendeli.rethis.commands.*
 import eu.vendeli.rethis.types.common.ScanResult
 import eu.vendeli.rethis.types.options.SScanOption
 import io.kotest.matchers.shouldBe
-import kotlinx.coroutines.runBlocking
-import org.junit.jupiter.api.Test
 
 class SetCommandTest : ReThisTestCtx() {
     @Test
-    fun `test SADD command with single member`(): Unit = runBlocking {
+    suspend fun `test SADD command with single member`() {
         client.sAdd("testKey1", "testMember1") shouldBe 1L
     }
 
     @Test
-    fun `test SPOP command without count`(): Unit = runBlocking {
+    suspend fun `test SPOP command without count`() {
         client.sAdd("testKey20", "testMember20")
         client.sPop("testKey20") shouldBe "testMember20"
     }
 
     @Test
-    fun `test SPOP command with count`(): Unit = runBlocking {
+    suspend fun `test SPOP command with count`() {
         client.sAdd("testKey21", "testMember21")
         client.sAdd("testKey21", "testMember22")
         client.sPop("testKey21", 2) shouldBe listOf("testMember21", "testMember22")
     }
 
     @Test
-    fun `test SRANDMEMBER command without count`(): Unit = runBlocking {
+    suspend fun `test SRANDMEMBER command without count`() {
         client.sAdd("testKey23", "testMember23")
         client.sRandMember("testKey23") shouldBe "testMember23"
     }
 
     @Test
-    fun `test SRANDMEMBER command with count`(): Unit = runBlocking {
+    suspend fun `test SRANDMEMBER command with count`() {
         client.sAdd("testKey24", "testMember24")
         client.sAdd("testKey24", "testMember25")
         client.sRandMember("testKey24", 2) shouldBe listOf("testMember24", "testMember25")
     }
 
     @Test
-    fun `test SREM command with single member`(): Unit = runBlocking {
+    suspend fun `test SREM command with single member`() {
         client.sAdd("testKey26", "testMember26")
         client.sRem("testKey26", "testMember26") shouldBe 1L
     }
 
     @Test
-    fun `test SREM command with multiple members`(): Unit = runBlocking {
+    suspend fun `test SREM command with multiple members`() {
         client.sAdd("testKey27", "testMember27")
         client.sAdd("testKey27", "testMember28")
         client.sAdd("testKey27", "testMember29")
@@ -56,13 +54,13 @@ class SetCommandTest : ReThisTestCtx() {
     }
 
     @Test
-    fun `test SSCAN command`(): Unit = runBlocking {
+    suspend fun `test SSCAN command`() {
         client.sAdd("testKey30", "testMember30")
         client.sScan("testKey30", 0, SScanOption.MATCH("*")) shouldBe ScanResult("0", listOf("testMember30"))
     }
 
     @Test
-    fun `test SUNION command`(): Unit = runBlocking {
+    suspend fun `test SUNION command`() {
         client.sAdd("testKey31", "testMember31")
         client.sAdd("testKey32", "testMember32")
 
@@ -70,7 +68,7 @@ class SetCommandTest : ReThisTestCtx() {
     }
 
     @Test
-    fun `test SUNIONSTORE command`(): Unit = runBlocking {
+    suspend fun `test SUNIONSTORE command`() {
         client.sAdd("testKey33", "testMember33")
         client.sAdd("testKey34", "testMember34")
 
@@ -78,7 +76,7 @@ class SetCommandTest : ReThisTestCtx() {
     }
 
     @Test
-    fun `test SINTERCARD command`(): Unit = runBlocking {
+    suspend fun `test SINTERCARD command`() {
         client.sAdd("testSet35", "testValue1", "testValue2")
         client.sAdd("testSet36", "testValue2", "testValue3")
 
@@ -86,7 +84,7 @@ class SetCommandTest : ReThisTestCtx() {
     }
 
     @Test
-    fun `test SMISMEMBER command`(): Unit = runBlocking {
+    suspend fun `test SMISMEMBER command`() {
         client.sAdd("testSet37", "testValue1", "testValue2")
 
         client.sMisMember("testSet37", "testValue1", "testValue2", "testValue3") shouldBe listOf(true, true, false)

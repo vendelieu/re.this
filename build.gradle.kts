@@ -30,6 +30,7 @@ configureKotlin {
 
         jvmTest.dependencies {
             implementation(libs.kotlin.reflect)
+            implementation(libs.test.kotest.junit5)
             implementation(libs.test.kotest.assertions)
             implementation(libs.logback)
             implementation("com.redis:testcontainers-redis:1.7.0") {
@@ -40,10 +41,6 @@ configureKotlin {
             implementation("commons-io:commons-io:2.18.0")
             implementation("org.apache.commons:commons-compress:1.27.1")
             implementation("com.fasterxml.woodstox:woodstox-core:7.1.0")
-
-            implementation(libs.kotlin.junit)
-            implementation(libs.junit.api)
-            runtimeOnly(libs.junit.engine)
         }
     }
 }
