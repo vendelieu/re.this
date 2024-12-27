@@ -5,10 +5,12 @@ import eu.vendeli.rethis.commands.wait
 import eu.vendeli.rethis.ReThisTestCtx
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
+import kotlinx.coroutines.test.runTest
+import org.junit.jupiter.api.Test
 
 class WaitCommandTest : ReThisTestCtx() {
     @Test
-    suspend fun `test WAIT command`() {
+    fun `test WAIT command`(): Unit = runTest {
         client.set("testKey", "testVal").shouldNotBeNull()
         client.wait(1L, 1000L) shouldBe 0L
     }

@@ -6,11 +6,13 @@ import eu.vendeli.rethis.commands.set
 import eu.vendeli.rethis.ReThisTestCtx
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
+import kotlinx.coroutines.test.runTest
+import org.junit.jupiter.api.Test
 import io.kotest.matchers.throwable.shouldHaveMessage
 
 class ObjectFreqCommandTest : ReThisTestCtx() {
     @Test
-    suspend fun `test OBJECT FREQ command`() {
+    fun `test OBJECT FREQ command`(): Unit = runTest {
         client.set("testKey", "testVal")
 
         shouldThrow<ReThisException> {
@@ -22,7 +24,7 @@ class ObjectFreqCommandTest : ReThisTestCtx() {
     }
 
     @Test
-    suspend fun `test OBJECT FREQ command with non-existent key`() {
+    fun `test OBJECT FREQ command with non-existent key`(): Unit = runTest {
         client.objectFreq("nonExistentKey") shouldBe null
     }
 }

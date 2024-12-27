@@ -3,22 +3,24 @@ package eu.vendeli.rethis.tests.commands
 import eu.vendeli.rethis.ReThisTestCtx
 import eu.vendeli.rethis.commands.*
 import io.kotest.matchers.shouldBe
+import kotlinx.coroutines.test.runTest
+import org.junit.jupiter.api.Test
 
 class SetCommandTest2 : ReThisTestCtx() {
     @Test
-    suspend fun `test SADD command with multiple members`() {
+    fun `test SADD command with multiple members`(): Unit = runTest {
         client.sAdd("testKey2", "testMember2", "testMember3", "testMember4") shouldBe 3L
     }
 
     @Test
-    suspend fun `test SCARD command`() {
+    fun `test SCARD command`(): Unit = runTest {
         client.sAdd("testKey5", "testMember5")
 
         client.sCard("testKey5") shouldBe 1L
     }
 
     @Test
-    suspend fun `test SDIFF command`() {
+    fun `test SDIFF command`(): Unit = runTest {
         client.sAdd("testKey6", "testMember6", "testMember7")
         client.sAdd("testKey7", "testMember7")
 
@@ -26,7 +28,7 @@ class SetCommandTest2 : ReThisTestCtx() {
     }
 
     @Test
-    suspend fun `test SDIFFSTORE command`() {
+    fun `test SDIFFSTORE command`(): Unit = runTest {
         client.sAdd("testKey8", "testMember8")
         client.sAdd("testKey9", "testMember9")
 
@@ -34,7 +36,7 @@ class SetCommandTest2 : ReThisTestCtx() {
     }
 
     @Test
-    suspend fun `test SINTER command`() {
+    fun `test SINTER command`(): Unit = runTest {
         client.sAdd("testKey11", "testMember11")
         client.sAdd("testKey11", "testMember12")
         client.sAdd("testKey12", "testMember12")
@@ -43,7 +45,7 @@ class SetCommandTest2 : ReThisTestCtx() {
     }
 
     @Test
-    suspend fun `test SINTERSTORE command`() {
+    fun `test SINTERSTORE command`(): Unit = runTest {
         client.sAdd("testKey13", "testMember13")
         client.sAdd("testKey13", "testMember14")
         client.sAdd("testKey14", "testMember14")
@@ -52,21 +54,21 @@ class SetCommandTest2 : ReThisTestCtx() {
     }
 
     @Test
-    suspend fun `test SISMEMBER command`() {
+    fun `test SISMEMBER command`(): Unit = runTest {
         client.sAdd("testKey16", "testMember16")
 
         client.sIsMember("testKey16", "testMember16") shouldBe true
     }
 
     @Test
-    suspend fun `test SMEMBERS command`() {
+    fun `test SMEMBERS command`(): Unit = runTest {
         client.sAdd("testKey17", "testMember17")
 
         client.sMembers("testKey17") shouldBe listOf("testMember17")
     }
 
     @Test
-    suspend fun `test SMOVE command`() {
+    fun `test SMOVE command`(): Unit = runTest {
         client.sAdd("testKey18", "testMember18")
         client.sMove("testKey18", "testKey19", "testMember18") shouldBe true
     }

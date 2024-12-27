@@ -15,51 +15,54 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.throwable.shouldHaveMessage
 import io.kotest.matchers.types.shouldBeTypeOf
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.test.runTest
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 
 class PubSubCommandTest : ReThisTestCtx() {
     @BeforeEach
-    suspend fun clearSubs() {
+    fun clearSubs() {
         client.subscriptions.unsubscribeAll()
     }
 
     @Test
-    suspend fun `test PUBLISH command`() {
+    fun `test PUBLISH command`(): Unit = runTest {
         client.subscribe("testChannel") { _, _ -> println("test") }
         delay(100)
         client.publish("testChannel", "testMessage") shouldBe 1L
     }
 
     @Test
-    suspend fun `test PUBSUB CHANNELS command`() {
+    fun `test PUBSUB CHANNELS command`(): Unit = runTest {
         client.subscribe("testChannel2") { _, _ -> println("test") }
         delay(100)
         client.pubSubChannels() shouldBe listOf("testChannel2")
     }
 
     @Test
-    suspend fun `test PUBSUB NUMPAT command`() {
+    fun `test PUBSUB NUMPAT command`(): Unit = runTest {
         client.pSubscribe("testP*") { _, _ -> println("test") }
         delay(100)
         client.pubSubNumPat() shouldBe 1L
     }
 
     @Test
-    suspend fun `test PUBSUB NUMSUB command`() {
+    fun `test PUBSUB NUMSUB command`(): Unit = runTest {
         client.pubSubNumSub("testChannel") shouldBe listOf(PubSubNumEntry("testChannel", 0))
     }
 
     @Test
-    suspend fun `test PUBSUB SHARDCHANNELS command`() {
+    fun `test PUBSUB SHARDCHANNELS command`(): Unit = runTest {
         client.pubSubShardChannels() shouldBe emptyList()
     }
 
     @Test
-    suspend fun `test PUBSUB SHARDNUMSUB command`() {
+    fun `test PUBSUB SHARDNUMSUB command`(): Unit = runTest {
         client.pubSubShardNumSub("testChannel") shouldBe listOf(PubSubNumEntry("testChannel", 0))
     }
 
     @Test
-    suspend fun `test PUNSUBSCRIBE command`() {
+    fun `test PUNSUBSCRIBE command`(): Unit = runTest {
         client.pUnsubscribe("testPattern") shouldBe Push(
             listOf(
                 BulkString("punsubscribe"),
@@ -70,12 +73,12 @@ class PubSubCommandTest : ReThisTestCtx() {
     }
 
     @Test
-    suspend fun `test SPUBLISH command`() {
+    fun `test SPUBLISH command`(): Unit = runTest {
         client.sPublish("testShardChannel", "testMessage") shouldBe 0L
     }
 
     @Test
-    suspend fun `test SUNSUBSCRIBE command`() {
+    fun `test SUNSUBSCRIBE command`(): Unit = runTest {
         client.sUnsubscribe("testPattern") shouldBe Push(
             listOf(
                 BulkString("sunsubscribe"),
@@ -86,7 +89,7 @@ class PubSubCommandTest : ReThisTestCtx() {
     }
 
     @Test
-    suspend fun `test UNSUBSCRIBE command`() {
+    fun `test UNSUBSCRIBE command`(): Unit = runTest {
         client.unsubscribe("testPattern") shouldBe Push(
             listOf(
                 BulkString("unsubscribe"),
@@ -97,7 +100,7 @@ class PubSubCommandTest : ReThisTestCtx() {
     }
 
     @Test
-    suspend fun `test PSUBSCRIBE command`() {
+    fun `test PSUBSCRIBE command`(): Unit = runTest {
         client.pSubscribe("testPattern") { _, m ->
             println(m)
         }
@@ -105,7 +108,7 @@ class PubSubCommandTest : ReThisTestCtx() {
     }
 
     @Test
-    suspend fun `test SSUBSCRIBE command`() {
+    fun `test SSUBSCRIBE command`(): Unit = runTest {
         client.sSubscribe("testShardChannel") { _, m ->
             println(m)
         }
@@ -113,7 +116,7 @@ class PubSubCommandTest : ReThisTestCtx() {
     }
 
     @Test
-    suspend fun `test SUBSCRIBE command`() {
+    fun `test SUBSCRIBE command`(): Unit = runTest {
         client.subscribe("testChannel") { _, m ->
             println(m)
         }
@@ -121,7 +124,7 @@ class PubSubCommandTest : ReThisTestCtx() {
     }
 
     @Test
-    suspend fun `test unsubscription command`() {
+    fun `test unsubscription command`(): Unit = runTest {
         client.subscribe("testChannel") { _, m ->
             println(m)
         }
@@ -133,7 +136,7 @@ class PubSubCommandTest : ReThisTestCtx() {
     }
 
     @Test
-    suspend fun `test subscription evenHandler`() {
+    fun `test subscription evenHandler`(): Unit = runTest {
         var onSub = 0
         var onUnsub = 0
         var caughtEx: Exception? = null

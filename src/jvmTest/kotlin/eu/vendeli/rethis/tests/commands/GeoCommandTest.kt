@@ -7,15 +7,17 @@ import eu.vendeli.rethis.types.options.BYBOX
 import eu.vendeli.rethis.types.options.BYRADIUS
 import eu.vendeli.rethis.types.options.FROMLONLAT
 import io.kotest.matchers.shouldBe
+import kotlinx.coroutines.test.runTest
+import org.junit.jupiter.api.Test
 
 class GeoCommandTest : ReThisTestCtx() {
     @Test
-    suspend fun `test GEOADD command`() {
+    fun `test GEOADD command`(): Unit = runTest {
         client.geoAdd("testSet1", GeoMember(1.2, 1.3, "testValue1")) shouldBe 1L
     }
 
     @Test
-    suspend fun `test GEODIST command`() {
+    fun `test GEODIST command`(): Unit = runTest {
         client.geoAdd("testSet2", GeoMember(1.0, 1.0, "testValue2"))
         client.geoAdd("testSet2", GeoMember(2.0, 2.0, "testValue3"))
 
@@ -23,13 +25,13 @@ class GeoCommandTest : ReThisTestCtx() {
     }
 
     @Test
-    suspend fun `test GEOHASH command`() {
+    fun `test GEOHASH command`(): Unit = runTest {
         client.geoAdd("testSet3", GeoMember(1.0, 1.0, "testValue4"))
         client.geoHash("testSet3", "testValue4") shouldBe listOf("s00twy01mt0")
     }
 
     @Test
-    suspend fun `test GEOPOS command`() {
+    fun `test GEOPOS command`(): Unit = runTest {
         client.geoAdd("testSet4", GeoMember(1.0, 1.0, "testValue5"))
         client.geoPos("testSet4", "testValue5") shouldBe listOf(
             listOf(
@@ -42,7 +44,7 @@ class GeoCommandTest : ReThisTestCtx() {
     }
 
     @Test
-    suspend fun `test GEOSEARCH command`() {
+    fun `test GEOSEARCH command`(): Unit = runTest {
         client.geoAdd("testSet5", GeoMember(13.361389, 38.115556, "testValue6"))
         client.geoAdd("testSet5", GeoMember(12.758489, 38.788135, "testValue7"))
         client.geoSearch(
@@ -70,7 +72,7 @@ class GeoCommandTest : ReThisTestCtx() {
     }
 
     @Test
-    suspend fun `test GEOSEARCHSTORE command`() {
+    fun `test GEOSEARCHSTORE command`(): Unit = runTest {
         client.geoAdd("testSet6", GeoMember(13.361389, 38.115556, "testValue8"))
         client.geoAdd("testSet6", GeoMember(12.758489, 38.788135, "testValue9"))
         client.geoSearchStore(

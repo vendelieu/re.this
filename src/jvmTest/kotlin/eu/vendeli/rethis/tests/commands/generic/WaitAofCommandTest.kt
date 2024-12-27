@@ -6,10 +6,12 @@ import eu.vendeli.rethis.commands.waitAof
 import eu.vendeli.rethis.ReThisTestCtx
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.nulls.shouldNotBeNull
+import kotlinx.coroutines.test.runTest
+import org.junit.jupiter.api.Test
 
 class WaitAofCommandTest : ReThisTestCtx() {
     @Test
-    suspend fun `test WAITAOF command`() {
+    fun `test WAITAOF command`(): Unit = runTest {
         client.set("testKey", "testVal").shouldNotBeNull()
         shouldThrow<ReThisException> {
             client.waitAof(

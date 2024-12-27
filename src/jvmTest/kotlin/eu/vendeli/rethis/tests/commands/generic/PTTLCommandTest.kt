@@ -7,19 +7,21 @@ import eu.vendeli.rethis.ReThisTestCtx
 import io.kotest.matchers.longs.shouldBeInRange
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
+import kotlinx.coroutines.test.runTest
+import org.junit.jupiter.api.Test
 import kotlinx.datetime.Clock
 import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.seconds
 
 class PTTLCommandTest : ReThisTestCtx() {
     @Test
-    suspend fun `test PTTL command`() {
+    fun `test PTTL command`(): Unit = runTest {
         client.set("testKey", "testVal").shouldNotBeNull()
         client.pTTL("testKey") shouldBe -1L
     }
 
     @Test
-    suspend fun `test TTL command with ttl positive`() {
+    fun `test TTL command with ttl positive`(): Unit = runTest {
         val time = Clock.System.now().plus(1.days)
         client.set("testKey", "testVal", SetExpire.EXAT(time)).shouldNotBeNull()
         client
@@ -31,7 +33,7 @@ class PTTLCommandTest : ReThisTestCtx() {
     }
 
     @Test
-    suspend fun `test TTL command with non-existent key`() {
+    fun `test TTL command with non-existent key`(): Unit = runTest {
         client.pTTL("nonExistentKey") shouldBe -2L
     }
 }

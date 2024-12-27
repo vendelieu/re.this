@@ -5,10 +5,12 @@ import eu.vendeli.rethis.commands.set
 import eu.vendeli.rethis.ReThisTestCtx
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.string.shouldContain
+import kotlinx.coroutines.test.runTest
+import org.junit.jupiter.api.Test
 
 class DumpCommandTest : ReThisTestCtx() {
     @Test
-    suspend fun `test DUMP command`() {
+    fun `test DUMP command`(): Unit = runTest {
         client.set("testKey", "testVal").shouldNotBeNull()
         client
             .dump("testKey")

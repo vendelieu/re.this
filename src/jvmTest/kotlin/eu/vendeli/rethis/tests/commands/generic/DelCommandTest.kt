@@ -5,16 +5,18 @@ import eu.vendeli.rethis.commands.set
 import eu.vendeli.rethis.ReThisTestCtx
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
+import kotlinx.coroutines.test.runTest
+import org.junit.jupiter.api.Test
 
 class DelCommandTest : ReThisTestCtx() {
     @Test
-    suspend fun `test DEL command with single key`() {
+    fun `test DEL command with single key`(): Unit = runTest {
         client.set("testKey", "testVal").shouldNotBeNull()
         client.del("testKey") shouldBe 1L
     }
 
     @Test
-    suspend fun `test DEL command with multiple keys`() {
+    fun `test DEL command with multiple keys`(): Unit = runTest {
         client.set("testKey1", "testVal1").shouldNotBeNull()
         client.set("testKey2", "testVal2").shouldNotBeNull()
         client.del("testKey1", "testKey2") shouldBe 2L

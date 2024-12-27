@@ -9,7 +9,7 @@ import org.testcontainers.utility.DockerImageName
 
 abstract class ReThisTestCtx(
     withJsonModule: Boolean = false,
-) : AnnotationSpec() {
+) {
     protected val targetDb = 1L
     protected val timestamp: Instant get() = Clock.System.now()
 

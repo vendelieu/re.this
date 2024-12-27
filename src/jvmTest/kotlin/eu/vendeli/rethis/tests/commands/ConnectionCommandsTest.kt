@@ -12,6 +12,7 @@ import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
 import kotlinx.coroutines.test.runTest
+import org.junit.jupiter.api.Test
 
 class ConnectionCommandsTest : ReThisTestCtx() {
     @Test

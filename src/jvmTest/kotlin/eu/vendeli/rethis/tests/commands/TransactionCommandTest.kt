@@ -16,10 +16,12 @@ import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
 import io.ktor.utils.io.*
 import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.test.runTest
+import org.junit.jupiter.api.Test
 
 class TransactionCommandTest : ReThisTestCtx() {
     @Test
-    suspend fun `test EXEC command with multiple queued commands`() {
+    fun `test EXEC command with multiple queued commands`(): Unit = runTest {
         val conn = client.connectionPool.acquire()
 
         conn.output.writeBuffer(bufferValues(listOf("MULTI".toArg()), Charsets.UTF_8))
@@ -40,7 +42,7 @@ class TransactionCommandTest : ReThisTestCtx() {
     }
 
     @Test
-    suspend fun `test transaction util`() {
+    fun `test transaction util`(): Unit = runTest {
         client.transaction {
             client.set("testKey1", "testVal1")
             client.set("testKey2", "testVal2")
@@ -49,7 +51,7 @@ class TransactionCommandTest : ReThisTestCtx() {
     }
 
     @Test
-    suspend fun `test EXEC command with queued commands that fail`() {
+    fun `test EXEC command with queued commands that fail`(): Unit = runTest {
         val conn = client.connectionPool.acquire()
         client
             .coLaunch(currentCoroutineContext() + CoLocalConn(conn)) {
@@ -65,7 +67,7 @@ class TransactionCommandTest : ReThisTestCtx() {
     }
 
     @Test
-    suspend fun `test transaction with queued commands that fail`() {
+    fun `test transaction with queued commands that fail`(): Unit = runTest {
         client.transaction {
             set("testKey1", "testVal1")
             set("testKey2", "testVal2")
@@ -75,7 +77,7 @@ class TransactionCommandTest : ReThisTestCtx() {
     }
 
     @Test
-    suspend fun `test WATCH command with multiple keys`() {
+    fun `test WATCH command with multiple keys`(): Unit = runTest {
         val conn = client.connectionPool.acquire()
         client
             .coLaunch(currentCoroutineContext() + CoLocalConn(conn)) {
@@ -90,7 +92,7 @@ class TransactionCommandTest : ReThisTestCtx() {
     }
 
     @Test
-    suspend fun `test UNWATCH command after WATCH command`() {
+    fun `test UNWATCH command after WATCH command`(): Unit = runTest {
         shouldNotThrowAny {
             client.watch("testKey1", "testKey2")
             client.unwatch()

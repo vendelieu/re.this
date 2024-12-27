@@ -4,10 +4,12 @@ import eu.vendeli.rethis.commands.randomKey
 import eu.vendeli.rethis.commands.set
 import eu.vendeli.rethis.ReThisTestCtx
 import io.kotest.matchers.nulls.shouldNotBeNull
+import kotlinx.coroutines.test.runTest
+import org.junit.jupiter.api.Test
 
 class RandomKeyCommandTest : ReThisTestCtx() {
     @Test
-    suspend fun `test RANDOMKEY command`() {
+    fun `test RANDOMKEY command`(): Unit = runTest {
         client.set("testKey", "testVal").shouldNotBeNull()
         client.randomKey().shouldNotBeNull()
     }

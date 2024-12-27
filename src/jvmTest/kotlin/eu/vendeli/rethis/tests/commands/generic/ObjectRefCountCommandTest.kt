@@ -5,11 +5,13 @@ import eu.vendeli.rethis.commands.set
 import eu.vendeli.rethis.ReThisTestCtx
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
+import kotlinx.coroutines.test.runTest
+import org.junit.jupiter.api.Test
 import io.ktor.utils.io.*
 
 class ObjectRefCountCommandTest : ReThisTestCtx() {
     @Test
-    suspend fun `test OBJECT REFCOUNT command`() {
+    fun `test OBJECT REFCOUNT command`(): Unit = runTest {
         client.set("testKey", "testVal").shouldNotBeNull()
         client.objectRefCount("testKey") shouldBe 1L
     }
