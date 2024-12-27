@@ -8,6 +8,7 @@ import eu.vendeli.rethis.types.coroutine.CoLocalConn
 import io.ktor.utils.io.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
 
 fun RType.isOk() = unwrap<String>() == "OK"
 
@@ -32,7 +33,7 @@ internal suspend inline fun ReThis.registerSubscription(
     handler: SubscriptionHandler,
 ) {
     val connection = connectionPool.acquire()
-    val handlerJob = coLaunch(CoLocalConn(connection)) {
+    val handlerJob = rethisCoScope.launch(CoLocalConn(connection)) {
         val conn = coroutineContext[CoLocalConn]!!.connection
         try {
             conn.output.writeBuffer(bufferValues(listOf(regCommand.toArg(), target.toArg()), cfg.charset))

@@ -1,7 +1,6 @@
 package eu.vendeli.rethis.types.core
 
 import eu.vendeli.rethis.ReThis
-import eu.vendeli.rethis.utils.coLaunch
 import eu.vendeli.rethis.utils.readRedisMessage
 import eu.vendeli.rethis.utils.sendRequest
 import eu.vendeli.rethis.utils.writeRedisValue
@@ -69,7 +68,7 @@ internal class ConnectionPool(
     fun prepare() = GlobalScope.launch {
         logger.info("Filling ConnectionPool with connections")
         repeat(client.cfg.poolConfiguration.poolSize) {
-            client.coLaunch { connections.trySend(createConn()) }
+            client.rethisCoScope.launch { connections.trySend(createConn()) }
         }
     }
 

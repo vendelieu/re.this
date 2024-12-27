@@ -15,11 +15,10 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.throwable.shouldHaveMessage
 import io.kotest.matchers.types.shouldBeTypeOf
 import kotlinx.coroutines.delay
-import org.junit.jupiter.api.BeforeEach
 
 class PubSubCommandTest : ReThisTestCtx() {
     @BeforeEach
-    suspend fun clearSubs() {
+    fun clearSubs() {
         client.subscriptions.unsubscribeAll()
     }
 

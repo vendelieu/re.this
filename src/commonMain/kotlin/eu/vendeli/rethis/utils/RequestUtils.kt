@@ -23,7 +23,6 @@ internal suspend inline fun Connection.sendRequest(source: Source) {
     output.flush()
 }
 
-
 internal fun Sink.writeRedisValue(
     data: Any?,
     charset: Charset = Charsets.UTF_8,

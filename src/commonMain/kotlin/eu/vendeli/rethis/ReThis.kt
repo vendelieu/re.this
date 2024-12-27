@@ -12,8 +12,10 @@ import io.ktor.network.sockets.*
 import io.ktor.util.logging.*
 import io.ktor.utils.io.*
 import kotlinx.coroutines.CoroutineName
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.launch
 import kotlinx.io.Buffer
 import kotlin.jvm.JvmName
 
@@ -33,7 +35,7 @@ class ReThis(
     internal val logger = KtorSimpleLogger("eu.vendeli.rethis.ReThis")
     internal val cfg: ClientConfiguration = ClientConfiguration().apply(configurator)
     internal val rootJob = SupervisorJob()
-    internal val rethisCoScope = rootJob + CoroutineName("ReThis")
+    internal val rethisCoScope = CoroutineScope(rootJob + cfg.poolConfiguration.dispatcher + CoroutineName("ReThis"))
     internal val connectionPool by lazy { ConnectionPool(this, address.socket).also { it.prepare() } }
 
     init {
@@ -64,10 +66,11 @@ class ReThis(
             val requests = mutableListOf<Any?>()
             logger.info("Pipeline started")
             try {
-                coLaunch(currentCoroutineContext() + CoPipelineCtx(requests)) {
-                    block()
-                    coroutineContext[CoLocalConn]?.also { ctxConn = it.connection }
-                }.join()
+                rethisCoScope
+                    .launch(currentCoroutineContext() + CoPipelineCtx(requests)) {
+                        block()
+                        coroutineContext[CoLocalConn]?.also { ctxConn = it.connection }
+                    }.join()
             } catch (e: Throwable) {
                 logger.error("Pipeline removed")
                 requests.clear()
@@ -109,9 +112,10 @@ class ReThis(
             require(conn.input.readRedisMessage(cfg.charset).value == "OK")
 
             var e: Throwable? = null
-            coLaunch(currentCoroutineContext() + CoLocalConn(conn)) {
-                runCatching { block() }.getOrElse { e = it }
-            }.join()
+            rethisCoScope
+                .launch(currentCoroutineContext() + CoLocalConn(conn)) {
+                    runCatching { block() }.getOrElse { e = it }
+                }.join()
             e?.also {
                 conn.sendRequest(listOf("DISCARD".toArg()))
                 require(conn.input.readRedisMessage(cfg.charset).value == "OK")
@@ -129,20 +133,17 @@ class ReThis(
     suspend fun execute(payload: List<Argument>, rawResponse: Boolean = false): RType =
         handleRequest(payload)?.input?.readRedisMessage(cfg.charset, rawResponse) ?: RType.Null
 
-    @ReThisInternal
     @JvmName("executeSimple")
     internal suspend inline fun <reified T> execute(
         payload: List<Argument>,
     ): T? = handleRequest(payload)?.input?.processRedisSimpleResponse(cfg.charset)
 
-    @ReThisInternal
     @JvmName("executeList")
     internal suspend inline fun <reified T> execute(
         payload: List<Argument>,
         isCollectionResponse: Boolean = false,
     ): List<T>? = handleRequest(payload)?.input?.processRedisListResponse(cfg.charset)
 
-    @ReThisInternal
     @JvmName("executeMap")
     internal suspend inline fun <reified K : Any, reified V> execute(
         payload: List<Argument>,
