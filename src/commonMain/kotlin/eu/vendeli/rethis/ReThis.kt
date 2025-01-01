@@ -67,7 +67,7 @@ class ReThis(
             logger.info("Pipeline started")
             try {
                 rethisCoScope
-                    .launch(currentCoroutineContext() + CoPipelineCtx(requests)) {
+                    .launch(CoPipelineCtx(requests)) {
                         block()
                         coroutineContext[CoLocalConn]?.also { ctxConn = it.connection }
                     }.join()
@@ -113,7 +113,7 @@ class ReThis(
 
             var e: Throwable? = null
             rethisCoScope
-                .launch(currentCoroutineContext() + CoLocalConn(conn)) {
+                .launch(CoLocalConn(conn)) {
                     runCatching { block() }.getOrElse { e = it }
                 }.join()
             e?.also {
