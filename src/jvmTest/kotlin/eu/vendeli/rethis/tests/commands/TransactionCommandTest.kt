@@ -53,7 +53,7 @@ class TransactionCommandTest : ReThisTestCtx() {
         val conn = client.connectionPool.acquire()
         client
             .rethisCoScope
-            .launch(currentCoroutineContext() + CoLocalConn(conn)) {
+            .launch(CoLocalConn(conn)) {
                 client.multi()
                 client.set("testKey1", "testVal1")
                 client.set("testKey2", "testVal2")
@@ -80,7 +80,7 @@ class TransactionCommandTest : ReThisTestCtx() {
         val conn = client.connectionPool.acquire()
         client
             .rethisCoScope
-            .launch(currentCoroutineContext() + CoLocalConn(conn)) {
+            .launch(CoLocalConn(conn)) {
                 client.watch("testKey1", "testKey2")
                 client.set("testKey1", "testVal1")
                 client.set("testKey2", "testVal2")
