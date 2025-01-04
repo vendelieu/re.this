@@ -9,6 +9,7 @@ import io.ktor.utils.io.writeBuffer
 import kotlinx.io.Buffer
 import kotlinx.io.Sink
 import kotlinx.io.Source
+import kotlin.jvm.JvmName
 
 @Suppress("NOTHING_TO_INLINE")
 internal inline fun Buffer.writeValues(value: List<Argument>, charset: Charset) = apply {
@@ -47,8 +48,17 @@ internal inline fun <T, R : Argument> MutableList<R>.writeArg(value: List<T>): M
     return this
 }
 
+@JvmName("writeArgArray")
 @Suppress("NOTHING_TO_INLINE")
 internal inline fun <T, R : Argument> MutableList<R>.writeArg(vararg value: T): MutableList<R> {
+    if (isEmpty()) return this
+
+    value.forEach { writeArg(it) }
+    return this
+}
+
+@Suppress("NOTHING_TO_INLINE")
+internal inline fun <T, R : Argument> MutableList<R>.writeArg(value: Array<T>): MutableList<R> {
     if (isEmpty()) return this
 
     value.forEach { writeArg(it) }

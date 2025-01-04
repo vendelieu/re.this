@@ -6,9 +6,11 @@ import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.types.core.*
 import eu.vendeli.rethis.types.coroutine.CoLocalConn
 import io.ktor.utils.io.*
+import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import kotlin.coroutines.CoroutineContext
 
 fun RType.isOk() = unwrap<String>() == "OK"
 
@@ -24,6 +26,9 @@ private inline fun String?.isEqTo(other: String) = if (this != null) {
 } else {
     false
 }
+
+internal suspend inline fun <reified T : CoroutineContext.Element> takeFromCoCtx(element: CoroutineContext.Key<T>): T? =
+    currentCoroutineContext()[element]
 
 internal suspend inline fun ReThis.registerSubscription(
     regCommand: String,

@@ -64,8 +64,7 @@ internal class ConnectionPool(
         return conn
     }
 
-    @Suppress("OPT_IN_USAGE")
-    fun prepare() = GlobalScope.launch {
+    fun prepare() = client.rethisCoScope.launch {
         logger.info("Filling ConnectionPool with connections")
         repeat(client.cfg.poolConfiguration.poolSize) {
             client.rethisCoScope.launch { connections.trySend(createConn()) }

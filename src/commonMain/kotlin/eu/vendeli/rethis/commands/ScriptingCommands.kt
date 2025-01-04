@@ -87,9 +87,9 @@ suspend fun ReThis.scriptFlush(): String? = execute<String>(
     listOf("SCRIPT".toArg(), "FLUSH".toArg()),
 )
 
-suspend fun ReThis.scriptKill(): String? = execute<String>(
+suspend fun ReThis.scriptKill(): Boolean = execute<String>(
     listOf("SCRIPT".toArg(), "KILL".toArg()),
-)
+) == "OK"
 
 suspend fun ReThis.scriptLoad(script: String): String? = execute<String>(
     listOf("SCRIPT".toArg(), "LOAD".toArg(), script.toArg()),

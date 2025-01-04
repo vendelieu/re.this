@@ -11,11 +11,7 @@ import eu.vendeli.rethis.utils.Const.DEFAULT_PORT
 import io.ktor.network.sockets.*
 import io.ktor.util.logging.*
 import io.ktor.utils.io.*
-import kotlinx.coroutines.CoroutineName
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.currentCoroutineContext
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import kotlinx.io.Buffer
 import kotlin.jvm.JvmName
 
@@ -58,9 +54,9 @@ class ReThis(
     fun disconnect() = connectionPool.disconnect()
     fun reconnect() = connectionPool.prepare()
 
-    suspend fun pipeline(block: suspend ReThis.() -> Unit): List<RType> {
+    suspend fun pipeline(block: suspend ReThis.() -> Unit): List<RType> = rethisCoScope.async pipeline@{
         val responses = mutableListOf<RType>()
-        val pipelineCtx = currentCoroutineContext()[CoPipelineCtx]
+        val pipelineCtx = takeFromCoCtx(CoPipelineCtx)
         var ctxConn: Connection? = null
         if (pipelineCtx == null) {
             val requests = mutableListOf<Any?>()
@@ -80,6 +76,7 @@ class ReThis(
                 requests.forEach { writeRedisValue(it, cfg.charset) }
             }
             logger.debug("Executing pipelined request")
+            logger.trace("Executing request with such payload $requests")
             if (ctxConn != null) {
                 ctxConn.sendRequest(pipelinedPayload)
                 requests.forEach { _ -> responses.add(ctxConn.input.readRedisMessage(cfg.charset)) }
@@ -93,20 +90,22 @@ class ReThis(
         } else {
             logger.warn("Nested pipeline detected")
             block()
+            return@pipeline emptyList()
         }
         logger.info("Pipeline finished")
-        return responses
-    }
+        logger.trace("Such responses returned $responses")
+        return@pipeline responses
+    }.await()
 
-    suspend fun transaction(block: suspend ReThis.() -> Unit): List<RType> {
-        val coLocalCon = currentCoroutineContext()[CoLocalConn]
+    suspend fun transaction(block: suspend ReThis.() -> Unit): List<RType> = rethisCoScope.async transaction@{
+        val coLocalCon = takeFromCoCtx(CoLocalConn)
         if (coLocalCon != null) {
             logger.warn("Nested transaction detected")
             block()
-            return emptyList()
+            return@transaction emptyList<RType>()
         }
 
-        return connectionPool.use { conn ->
+        return@transaction connectionPool.use { conn ->
             logger.debug("Started transaction")
             conn.sendRequest(listOf("MULTI".toArg()))
             require(conn.input.readRedisMessage(cfg.charset).value == "OK")
@@ -127,7 +126,7 @@ class ReThis(
             conn.sendRequest(listOf("EXEC".toArg()))
             conn.input.readRedisMessage(cfg.charset).unwrapList()
         }
-    }
+    }.await()
 
     @ReThisInternal
     suspend fun execute(payload: List<Argument>, rawResponse: Boolean = false): RType =
