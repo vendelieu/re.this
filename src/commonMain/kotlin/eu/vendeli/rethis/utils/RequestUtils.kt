@@ -48,7 +48,7 @@ internal inline fun <T, R : Argument> MutableList<R>.writeArg(value: List<T>): M
 }
 
 @Suppress("NOTHING_TO_INLINE")
-internal inline fun <T, R : Argument> MutableList<R>.writeArg(value: Array<T>): MutableList<R> {
+internal inline fun <T, R : Argument> MutableList<R>.writeArg(vararg value: T): MutableList<R> {
     if (isEmpty()) return this
 
     value.forEach { writeArg(it) }

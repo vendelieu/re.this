@@ -1,22 +1,29 @@
 package eu.vendeli.rethis.types.options
 
-sealed class TrimmingStrategy : XAddOption()
+import eu.vendeli.rethis.types.core.Argument
+import eu.vendeli.rethis.types.core.VaryingArgument
+import eu.vendeli.rethis.types.core.toArg
+
+sealed class XOption {
+    class Limit(count: Long) : XOption(), VaryingArgument {
+        override val data: List<Argument> = listOf("LIMIT".toArg(), count.toArg())
+    }
+}
+
+sealed class TrimmingStrategy : XOption()
 data object MAXLEN : TrimmingStrategy()
 data object MINID : TrimmingStrategy()
 
-sealed class Exactement : XAddOption()
+sealed class Exactement : XOption()
 data object Equal : Exactement()
-data object AlmostEqual : Exactement()
+data object Approximate : Exactement()
 
-sealed class XAddOption {
-    data object NOMKSTREAM : XAddOption()
-
-    sealed class ID : XAddOption()
-    class Id(
-        val id: String,
-    ) : ID() {
-        override fun toString(): String = id
+sealed class XId : XOption() {
+    class Id(id: String) : XId(), VaryingArgument {
+        override val data: List<Argument> = listOf(id.toArg())
     }
 
-    data object Asterisk : ID()
+    data object LastEntry : XId(), VaryingArgument {
+        override val data: List<Argument> = listOf("$".toArg())
+    }
 }

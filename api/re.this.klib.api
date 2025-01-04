@@ -740,6 +740,13 @@ final class eu.vendeli.rethis.types.options/MinMatchLen : eu.vendeli.rethis.type
         final fun <get-data>(): kotlin.collections/List<eu.vendeli.rethis.types.core/Argument> // eu.vendeli.rethis.types.options/MinMatchLen.data.<get-data>|<get-data>(){}[0]
 }
 
+final class eu.vendeli.rethis.types.options/XPendingOption : eu.vendeli.rethis.types.core/VaryingArgument { // eu.vendeli.rethis.types.options/XPendingOption|null[0]
+    constructor <init>(kotlin/String, kotlin/String, kotlin/Long, kotlin/String? = ..., kotlin/Long? = ...) // eu.vendeli.rethis.types.options/XPendingOption.<init>|<init>(kotlin.String;kotlin.String;kotlin.Long;kotlin.String?;kotlin.Long?){}[0]
+
+    final val data // eu.vendeli.rethis.types.options/XPendingOption.data|{}data[0]
+        final fun <get-data>(): kotlin.collections/List<eu.vendeli.rethis.types.core/Argument> // eu.vendeli.rethis.types.options/XPendingOption.data.<get-data>|<get-data>(){}[0]
+}
+
 final class eu.vendeli.rethis.wrappers/ReThisMap : kotlin.collections/AbstractMutableMap<kotlin/String, kotlin/String> { // eu.vendeli.rethis.wrappers/ReThisMap|null[0]
     constructor <init>(eu.vendeli.rethis/ReThis, kotlin/String) // eu.vendeli.rethis.wrappers/ReThisMap.<init>|<init>(eu.vendeli.rethis.ReThis;kotlin.String){}[0]
 
@@ -967,7 +974,7 @@ sealed class eu.vendeli.rethis.types.options/CopyOption { // eu.vendeli.rethis.t
     }
 }
 
-sealed class eu.vendeli.rethis.types.options/Exactement : eu.vendeli.rethis.types.options/XAddOption // eu.vendeli.rethis.types.options/Exactement|null[0]
+sealed class eu.vendeli.rethis.types.options/Exactement : eu.vendeli.rethis.types.options/XOption // eu.vendeli.rethis.types.options/Exactement|null[0]
 
 sealed class eu.vendeli.rethis.types.options/FunctionRestoreOption { // eu.vendeli.rethis.types.options/FunctionRestoreOption|null[0]
     final object APPEND : eu.vendeli.rethis.types.options/FunctionRestoreOption { // eu.vendeli.rethis.types.options/FunctionRestoreOption.APPEND|null[0]
@@ -1363,7 +1370,7 @@ sealed class eu.vendeli.rethis.types.options/SortRoOption { // eu.vendeli.rethis
     }
 }
 
-sealed class eu.vendeli.rethis.types.options/TrimmingStrategy : eu.vendeli.rethis.types.options/XAddOption // eu.vendeli.rethis.types.options/TrimmingStrategy|null[0]
+sealed class eu.vendeli.rethis.types.options/TrimmingStrategy : eu.vendeli.rethis.types.options/XOption // eu.vendeli.rethis.types.options/TrimmingStrategy|null[0]
 
 sealed class eu.vendeli.rethis.types.options/UpdateStrategyOption { // eu.vendeli.rethis.types.options/UpdateStrategyOption|null[0]
     sealed class ComparisonRule : eu.vendeli.rethis.types.options/UpdateStrategyOption // eu.vendeli.rethis.types.options/UpdateStrategyOption.ComparisonRule|null[0]
@@ -1410,18 +1417,26 @@ sealed class eu.vendeli.rethis.types.options/UpsertMode : eu.vendeli.rethis.type
 }
 
 sealed class eu.vendeli.rethis.types.options/XAddOption { // eu.vendeli.rethis.types.options/XAddOption|null[0]
-    final class Id : eu.vendeli.rethis.types.options/XAddOption.ID { // eu.vendeli.rethis.types.options/XAddOption.Id|null[0]
+    final class Id : eu.vendeli.rethis.types.core/VaryingArgument, eu.vendeli.rethis.types.options/XAddOption.Identifier { // eu.vendeli.rethis.types.options/XAddOption.Id|null[0]
         constructor <init>(kotlin/String) // eu.vendeli.rethis.types.options/XAddOption.Id.<init>|<init>(kotlin.String){}[0]
 
-        final val id // eu.vendeli.rethis.types.options/XAddOption.Id.id|{}id[0]
-            final fun <get-id>(): kotlin/String // eu.vendeli.rethis.types.options/XAddOption.Id.id.<get-id>|<get-id>(){}[0]
-
-        final fun toString(): kotlin/String // eu.vendeli.rethis.types.options/XAddOption.Id.toString|toString(){}[0]
+        final val data // eu.vendeli.rethis.types.options/XAddOption.Id.data|{}data[0]
+            final fun <get-data>(): kotlin.collections/List<eu.vendeli.rethis.types.core/Argument> // eu.vendeli.rethis.types.options/XAddOption.Id.data.<get-data>|<get-data>(){}[0]
     }
 
-    sealed class ID : eu.vendeli.rethis.types.options/XAddOption // eu.vendeli.rethis.types.options/XAddOption.ID|null[0]
+    final class Trim : eu.vendeli.rethis.types.core/VaryingArgument, eu.vendeli.rethis.types.options/XAddOption { // eu.vendeli.rethis.types.options/XAddOption.Trim|null[0]
+        constructor <init>(eu.vendeli.rethis.types.options/TrimmingStrategy, kotlin/Long, eu.vendeli.rethis.types.options/Exactement? = ..., eu.vendeli.rethis.types.options/XOption.Limit? = ...) // eu.vendeli.rethis.types.options/XAddOption.Trim.<init>|<init>(eu.vendeli.rethis.types.options.TrimmingStrategy;kotlin.Long;eu.vendeli.rethis.types.options.Exactement?;eu.vendeli.rethis.types.options.XOption.Limit?){}[0]
 
-    final object Asterisk : eu.vendeli.rethis.types.options/XAddOption.ID { // eu.vendeli.rethis.types.options/XAddOption.Asterisk|null[0]
+        final val data // eu.vendeli.rethis.types.options/XAddOption.Trim.data|{}data[0]
+            final fun <get-data>(): kotlin.collections/List<eu.vendeli.rethis.types.core/Argument> // eu.vendeli.rethis.types.options/XAddOption.Trim.data.<get-data>|<get-data>(){}[0]
+    }
+
+    sealed class Identifier : eu.vendeli.rethis.types.options/XAddOption // eu.vendeli.rethis.types.options/XAddOption.Identifier|null[0]
+
+    final object Asterisk : eu.vendeli.rethis.types.core/VaryingArgument, eu.vendeli.rethis.types.options/XAddOption.Identifier { // eu.vendeli.rethis.types.options/XAddOption.Asterisk|null[0]
+        final val data // eu.vendeli.rethis.types.options/XAddOption.Asterisk.data|{}data[0]
+            final fun <get-data>(): kotlin.collections/List<eu.vendeli.rethis.types.core/Argument> // eu.vendeli.rethis.types.options/XAddOption.Asterisk.data.<get-data>|<get-data>(){}[0]
+
         final fun equals(kotlin/Any?): kotlin/Boolean // eu.vendeli.rethis.types.options/XAddOption.Asterisk.equals|equals(kotlin.Any?){}[0]
         final fun hashCode(): kotlin/Int // eu.vendeli.rethis.types.options/XAddOption.Asterisk.hashCode|hashCode(){}[0]
         final fun toString(): kotlin/String // eu.vendeli.rethis.types.options/XAddOption.Asterisk.toString|toString(){}[0]
@@ -1431,6 +1446,63 @@ sealed class eu.vendeli.rethis.types.options/XAddOption { // eu.vendeli.rethis.t
         final fun equals(kotlin/Any?): kotlin/Boolean // eu.vendeli.rethis.types.options/XAddOption.NOMKSTREAM.equals|equals(kotlin.Any?){}[0]
         final fun hashCode(): kotlin/Int // eu.vendeli.rethis.types.options/XAddOption.NOMKSTREAM.hashCode|hashCode(){}[0]
         final fun toString(): kotlin/String // eu.vendeli.rethis.types.options/XAddOption.NOMKSTREAM.toString|toString(){}[0]
+    }
+}
+
+sealed class eu.vendeli.rethis.types.options/XClaimOption { // eu.vendeli.rethis.types.options/XClaimOption|null[0]
+    final class Idle : eu.vendeli.rethis.types.core/VaryingArgument, eu.vendeli.rethis.types.options/XClaimOption { // eu.vendeli.rethis.types.options/XClaimOption.Idle|null[0]
+        constructor <init>(kotlin/Long) // eu.vendeli.rethis.types.options/XClaimOption.Idle.<init>|<init>(kotlin.Long){}[0]
+
+        final val data // eu.vendeli.rethis.types.options/XClaimOption.Idle.data|{}data[0]
+            final fun <get-data>(): kotlin.collections/List<eu.vendeli.rethis.types.core/Argument> // eu.vendeli.rethis.types.options/XClaimOption.Idle.data.<get-data>|<get-data>(){}[0]
+    }
+
+    final class LastId : eu.vendeli.rethis.types.core/VaryingArgument, eu.vendeli.rethis.types.options/XClaimOption { // eu.vendeli.rethis.types.options/XClaimOption.LastId|null[0]
+        constructor <init>(kotlin/String) // eu.vendeli.rethis.types.options/XClaimOption.LastId.<init>|<init>(kotlin.String){}[0]
+
+        final val data // eu.vendeli.rethis.types.options/XClaimOption.LastId.data|{}data[0]
+            final fun <get-data>(): kotlin.collections/List<eu.vendeli.rethis.types.core/Argument> // eu.vendeli.rethis.types.options/XClaimOption.LastId.data.<get-data>|<get-data>(){}[0]
+    }
+
+    final class RetryCount : eu.vendeli.rethis.types.core/VaryingArgument, eu.vendeli.rethis.types.options/XClaimOption { // eu.vendeli.rethis.types.options/XClaimOption.RetryCount|null[0]
+        constructor <init>(kotlin/Long) // eu.vendeli.rethis.types.options/XClaimOption.RetryCount.<init>|<init>(kotlin.Long){}[0]
+
+        final val data // eu.vendeli.rethis.types.options/XClaimOption.RetryCount.data|{}data[0]
+            final fun <get-data>(): kotlin.collections/List<eu.vendeli.rethis.types.core/Argument> // eu.vendeli.rethis.types.options/XClaimOption.RetryCount.data.<get-data>|<get-data>(){}[0]
+    }
+
+    final class Time : eu.vendeli.rethis.types.core/VaryingArgument, eu.vendeli.rethis.types.options/XClaimOption { // eu.vendeli.rethis.types.options/XClaimOption.Time|null[0]
+        constructor <init>(kotlin/Long) // eu.vendeli.rethis.types.options/XClaimOption.Time.<init>|<init>(kotlin.Long){}[0]
+
+        final val data // eu.vendeli.rethis.types.options/XClaimOption.Time.data|{}data[0]
+            final fun <get-data>(): kotlin.collections/List<eu.vendeli.rethis.types.core/Argument> // eu.vendeli.rethis.types.options/XClaimOption.Time.data.<get-data>|<get-data>(){}[0]
+    }
+}
+
+sealed class eu.vendeli.rethis.types.options/XId : eu.vendeli.rethis.types.options/XOption { // eu.vendeli.rethis.types.options/XId|null[0]
+    final class Id : eu.vendeli.rethis.types.core/VaryingArgument, eu.vendeli.rethis.types.options/XId { // eu.vendeli.rethis.types.options/XId.Id|null[0]
+        constructor <init>(kotlin/String) // eu.vendeli.rethis.types.options/XId.Id.<init>|<init>(kotlin.String){}[0]
+
+        final val data // eu.vendeli.rethis.types.options/XId.Id.data|{}data[0]
+            final fun <get-data>(): kotlin.collections/List<eu.vendeli.rethis.types.core/Argument> // eu.vendeli.rethis.types.options/XId.Id.data.<get-data>|<get-data>(){}[0]
+    }
+
+    final object LastEntry : eu.vendeli.rethis.types.core/VaryingArgument, eu.vendeli.rethis.types.options/XId { // eu.vendeli.rethis.types.options/XId.LastEntry|null[0]
+        final val data // eu.vendeli.rethis.types.options/XId.LastEntry.data|{}data[0]
+            final fun <get-data>(): kotlin.collections/List<eu.vendeli.rethis.types.core/Argument> // eu.vendeli.rethis.types.options/XId.LastEntry.data.<get-data>|<get-data>(){}[0]
+
+        final fun equals(kotlin/Any?): kotlin/Boolean // eu.vendeli.rethis.types.options/XId.LastEntry.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // eu.vendeli.rethis.types.options/XId.LastEntry.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // eu.vendeli.rethis.types.options/XId.LastEntry.toString|toString(){}[0]
+    }
+}
+
+sealed class eu.vendeli.rethis.types.options/XOption { // eu.vendeli.rethis.types.options/XOption|null[0]
+    final class Limit : eu.vendeli.rethis.types.core/VaryingArgument, eu.vendeli.rethis.types.options/XOption { // eu.vendeli.rethis.types.options/XOption.Limit|null[0]
+        constructor <init>(kotlin/Long) // eu.vendeli.rethis.types.options/XOption.Limit.<init>|<init>(kotlin.Long){}[0]
+
+        final val data // eu.vendeli.rethis.types.options/XOption.Limit.data|{}data[0]
+            final fun <get-data>(): kotlin.collections/List<eu.vendeli.rethis.types.core/Argument> // eu.vendeli.rethis.types.options/XOption.Limit.data.<get-data>|<get-data>(){}[0]
     }
 }
 
@@ -1471,10 +1543,10 @@ sealed class eu.vendeli.rethis.types.options/ZRangeOption { // eu.vendeli.rethis
     }
 }
 
-final object eu.vendeli.rethis.types.options/AlmostEqual : eu.vendeli.rethis.types.options/Exactement { // eu.vendeli.rethis.types.options/AlmostEqual|null[0]
-    final fun equals(kotlin/Any?): kotlin/Boolean // eu.vendeli.rethis.types.options/AlmostEqual.equals|equals(kotlin.Any?){}[0]
-    final fun hashCode(): kotlin/Int // eu.vendeli.rethis.types.options/AlmostEqual.hashCode|hashCode(){}[0]
-    final fun toString(): kotlin/String // eu.vendeli.rethis.types.options/AlmostEqual.toString|toString(){}[0]
+final object eu.vendeli.rethis.types.options/Approximate : eu.vendeli.rethis.types.options/Exactement { // eu.vendeli.rethis.types.options/Approximate|null[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // eu.vendeli.rethis.types.options/Approximate.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // eu.vendeli.rethis.types.options/Approximate.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // eu.vendeli.rethis.types.options/Approximate.toString|toString(){}[0]
 }
 
 final object eu.vendeli.rethis.types.options/Equal : eu.vendeli.rethis.types.options/Exactement { // eu.vendeli.rethis.types.options/Equal|null[0]
@@ -1515,7 +1587,7 @@ final inline fun (kotlin.collections/List<kotlin/Any>).eu.vendeli.rethis.types.c
 final suspend fun (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.commands/append(kotlin/String, kotlin/String): kotlin/Long // eu.vendeli.rethis.commands/append|append@eu.vendeli.rethis.ReThis(kotlin.String;kotlin.String){}[0]
 final suspend fun (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.commands/bitCount(kotlin/String, eu.vendeli.rethis.types.options/BitcountOption.Range? = ..., eu.vendeli.rethis.types.options/BitmapDataType? = ...): kotlin/Long // eu.vendeli.rethis.commands/bitCount|bitCount@eu.vendeli.rethis.ReThis(kotlin.String;eu.vendeli.rethis.types.options.BitcountOption.Range?;eu.vendeli.rethis.types.options.BitmapDataType?){}[0]
 final suspend fun (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.commands/bitOp(eu.vendeli.rethis.types.options/BitOpOption.OperationType, kotlin/String, kotlin/Array<out kotlin/String>...): kotlin/Long // eu.vendeli.rethis.commands/bitOp|bitOp@eu.vendeli.rethis.ReThis(eu.vendeli.rethis.types.options.BitOpOption.OperationType;kotlin.String;kotlin.Array<out|kotlin.String>...){}[0]
-final suspend fun (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.commands/bitPos(kotlin/String, kotlin/Long, kotlin/Long? = ..., kotlin/Long? = ..., eu.vendeli.rethis.types.options/BitOpOption.OperationType): kotlin/Long // eu.vendeli.rethis.commands/bitPos|bitPos@eu.vendeli.rethis.ReThis(kotlin.String;kotlin.Long;kotlin.Long?;kotlin.Long?;eu.vendeli.rethis.types.options.BitOpOption.OperationType){}[0]
+final suspend fun (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.commands/bitPos(kotlin/String, kotlin/Long, kotlin/Long? = ..., kotlin/Long? = ..., eu.vendeli.rethis.types.options/BitOpOption.OperationType? = ...): kotlin/Long // eu.vendeli.rethis.commands/bitPos|bitPos@eu.vendeli.rethis.ReThis(kotlin.String;kotlin.Long;kotlin.Long?;kotlin.Long?;eu.vendeli.rethis.types.options.BitOpOption.OperationType?){}[0]
 final suspend fun (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.commands/bitfield(kotlin/String, kotlin/Array<out eu.vendeli.rethis.types.options/BitfieldOption>...): kotlin.collections/List<kotlin/Long>? // eu.vendeli.rethis.commands/bitfield|bitfield@eu.vendeli.rethis.ReThis(kotlin.String;kotlin.Array<out|eu.vendeli.rethis.types.options.BitfieldOption>...){}[0]
 final suspend fun (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.commands/bitfieldRO(kotlin/String, kotlin/Array<out eu.vendeli.rethis.types.options/BitfieldOption.GET>...): kotlin.collections/List<kotlin/Long> // eu.vendeli.rethis.commands/bitfieldRO|bitfieldRO@eu.vendeli.rethis.ReThis(kotlin.String;kotlin.Array<out|eu.vendeli.rethis.types.options.BitfieldOption.GET>...){}[0]
 final suspend fun (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.commands/blMove(kotlin/String, kotlin/String, eu.vendeli.rethis.types.common/MoveDirection, eu.vendeli.rethis.types.common/MoveDirection, kotlin/Long): kotlin/String? // eu.vendeli.rethis.commands/blMove|blMove@eu.vendeli.rethis.ReThis(kotlin.String;kotlin.String;eu.vendeli.rethis.types.common.MoveDirection;eu.vendeli.rethis.types.common.MoveDirection;kotlin.Long){}[0]
@@ -1720,6 +1792,27 @@ final suspend fun (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.commands/unwatch(
 final suspend fun (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.commands/wait(kotlin/Long, kotlin/Long): kotlin/Long // eu.vendeli.rethis.commands/wait|wait@eu.vendeli.rethis.ReThis(kotlin.Long;kotlin.Long){}[0]
 final suspend fun (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.commands/waitAof(kotlin/Long, kotlin/Long, kotlin/Long): eu.vendeli.rethis.types.common/WaitAofResult // eu.vendeli.rethis.commands/waitAof|waitAof@eu.vendeli.rethis.ReThis(kotlin.Long;kotlin.Long;kotlin.Long){}[0]
 final suspend fun (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.commands/watch(kotlin/Array<out kotlin/String>...): kotlin/String? // eu.vendeli.rethis.commands/watch|watch@eu.vendeli.rethis.ReThis(kotlin.Array<out|kotlin.String>...){}[0]
+final suspend fun (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.commands/xAck(kotlin/String, kotlin/String, kotlin/Array<out kotlin/String>...): kotlin/Long? // eu.vendeli.rethis.commands/xAck|xAck@eu.vendeli.rethis.ReThis(kotlin.String;kotlin.String;kotlin.Array<out|kotlin.String>...){}[0]
+final suspend fun (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.commands/xAdd(kotlin/String, eu.vendeli.rethis.types.options/XAddOption.NOMKSTREAM? = ..., eu.vendeli.rethis.types.options/XAddOption.Trim? = ..., eu.vendeli.rethis.types.options/XAddOption.Identifier, kotlin/Array<out kotlin/Pair<kotlin/String, kotlin/String>>...): kotlin/String? // eu.vendeli.rethis.commands/xAdd|xAdd@eu.vendeli.rethis.ReThis(kotlin.String;eu.vendeli.rethis.types.options.XAddOption.NOMKSTREAM?;eu.vendeli.rethis.types.options.XAddOption.Trim?;eu.vendeli.rethis.types.options.XAddOption.Identifier;kotlin.Array<out|kotlin.Pair<kotlin.String,kotlin.String>>...){}[0]
+final suspend fun (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.commands/xAutoClaim(kotlin/String, kotlin/String, kotlin/String, kotlin/Long, kotlin/String, kotlin/Long? = ..., kotlin/Boolean = ...): kotlin.collections/List<eu.vendeli.rethis.types.core/RType> // eu.vendeli.rethis.commands/xAutoClaim|xAutoClaim@eu.vendeli.rethis.ReThis(kotlin.String;kotlin.String;kotlin.String;kotlin.Long;kotlin.String;kotlin.Long?;kotlin.Boolean){}[0]
+final suspend fun (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.commands/xClaim(kotlin/String, kotlin/String, kotlin/String, kotlin/Long, kotlin/Array<out kotlin/String>..., eu.vendeli.rethis.types.options/XClaimOption.Idle? = ..., eu.vendeli.rethis.types.options/XClaimOption.Time? = ..., eu.vendeli.rethis.types.options/XClaimOption.RetryCount? = ..., kotlin/Boolean = ..., kotlin/Boolean = ..., eu.vendeli.rethis.types.options/XClaimOption.LastId? = ...): kotlin.collections/List<eu.vendeli.rethis.types.core/RType> // eu.vendeli.rethis.commands/xClaim|xClaim@eu.vendeli.rethis.ReThis(kotlin.String;kotlin.String;kotlin.String;kotlin.Long;kotlin.Array<out|kotlin.String>...;eu.vendeli.rethis.types.options.XClaimOption.Idle?;eu.vendeli.rethis.types.options.XClaimOption.Time?;eu.vendeli.rethis.types.options.XClaimOption.RetryCount?;kotlin.Boolean;kotlin.Boolean;eu.vendeli.rethis.types.options.XClaimOption.LastId?){}[0]
+final suspend fun (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.commands/xDel(kotlin/String, kotlin/Array<out kotlin/String>...): kotlin/Long? // eu.vendeli.rethis.commands/xDel|xDel@eu.vendeli.rethis.ReThis(kotlin.String;kotlin.Array<out|kotlin.String>...){}[0]
+final suspend fun (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.commands/xGroupCreate(kotlin/String, kotlin/String, eu.vendeli.rethis.types.options/XId, kotlin/Boolean = ..., kotlin/Long? = ...): kotlin/Boolean // eu.vendeli.rethis.commands/xGroupCreate|xGroupCreate@eu.vendeli.rethis.ReThis(kotlin.String;kotlin.String;eu.vendeli.rethis.types.options.XId;kotlin.Boolean;kotlin.Long?){}[0]
+final suspend fun (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.commands/xGroupCreateConsumer(kotlin/String, kotlin/String, kotlin/String): kotlin/Long? // eu.vendeli.rethis.commands/xGroupCreateConsumer|xGroupCreateConsumer@eu.vendeli.rethis.ReThis(kotlin.String;kotlin.String;kotlin.String){}[0]
+final suspend fun (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.commands/xGroupDelConsumer(kotlin/String, kotlin/String, kotlin/String): kotlin/Long? // eu.vendeli.rethis.commands/xGroupDelConsumer|xGroupDelConsumer@eu.vendeli.rethis.ReThis(kotlin.String;kotlin.String;kotlin.String){}[0]
+final suspend fun (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.commands/xGroupDestroy(kotlin/String, kotlin/String): kotlin/Long? // eu.vendeli.rethis.commands/xGroupDestroy|xGroupDestroy@eu.vendeli.rethis.ReThis(kotlin.String;kotlin.String){}[0]
+final suspend fun (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.commands/xGroupSetId(kotlin/String, kotlin/String, eu.vendeli.rethis.types.options/XId, kotlin/Long? = ...): kotlin/Boolean // eu.vendeli.rethis.commands/xGroupSetId|xGroupSetId@eu.vendeli.rethis.ReThis(kotlin.String;kotlin.String;eu.vendeli.rethis.types.options.XId;kotlin.Long?){}[0]
+final suspend fun (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.commands/xInfoConsumers(kotlin/String, kotlin/String): kotlin.collections/List<eu.vendeli.rethis.types.core/RType> // eu.vendeli.rethis.commands/xInfoConsumers|xInfoConsumers@eu.vendeli.rethis.ReThis(kotlin.String;kotlin.String){}[0]
+final suspend fun (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.commands/xInfoGroups(kotlin/String): kotlin.collections/List<eu.vendeli.rethis.types.core/RType> // eu.vendeli.rethis.commands/xInfoGroups|xInfoGroups@eu.vendeli.rethis.ReThis(kotlin.String){}[0]
+final suspend fun (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.commands/xInfoStream(kotlin/String, kotlin/Boolean = ..., eu.vendeli.rethis.types.options/XOption.Limit? = ...): kotlin.collections/Map<kotlin/String, eu.vendeli.rethis.types.core/RType?> // eu.vendeli.rethis.commands/xInfoStream|xInfoStream@eu.vendeli.rethis.ReThis(kotlin.String;kotlin.Boolean;eu.vendeli.rethis.types.options.XOption.Limit?){}[0]
+final suspend fun (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.commands/xLen(kotlin/String): kotlin/Long? // eu.vendeli.rethis.commands/xLen|xLen@eu.vendeli.rethis.ReThis(kotlin.String){}[0]
+final suspend fun (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.commands/xPending(kotlin/String, kotlin/String, eu.vendeli.rethis.types.options/XPendingOption? = ...): kotlin.collections/List<eu.vendeli.rethis.types.core/RType> // eu.vendeli.rethis.commands/xPending|xPending@eu.vendeli.rethis.ReThis(kotlin.String;kotlin.String;eu.vendeli.rethis.types.options.XPendingOption?){}[0]
+final suspend fun (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.commands/xRange(kotlin/String, kotlin/String, kotlin/String, eu.vendeli.rethis.types.options/XOption.Limit? = ...): kotlin.collections/List<eu.vendeli.rethis.types.core/RType> // eu.vendeli.rethis.commands/xRange|xRange@eu.vendeli.rethis.ReThis(kotlin.String;kotlin.String;kotlin.String;eu.vendeli.rethis.types.options.XOption.Limit?){}[0]
+final suspend fun (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.commands/xRead(kotlin.collections/List<kotlin/String>, kotlin.collections/List<kotlin/String>, eu.vendeli.rethis.types.options/XOption.Limit? = ..., kotlin/Long? = ...): kotlin.collections/Map<kotlin/String, eu.vendeli.rethis.types.core/RType?>? // eu.vendeli.rethis.commands/xRead|xRead@eu.vendeli.rethis.ReThis(kotlin.collections.List<kotlin.String>;kotlin.collections.List<kotlin.String>;eu.vendeli.rethis.types.options.XOption.Limit?;kotlin.Long?){}[0]
+final suspend fun (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.commands/xReadGroup(kotlin/String, kotlin/String, eu.vendeli.rethis.types.options/XOption.Limit? = ..., kotlin/Long? = ..., kotlin/Boolean = ..., kotlin.collections/List<kotlin/String>, kotlin.collections/List<kotlin/String>): kotlin.collections/Map<kotlin/String, eu.vendeli.rethis.types.core/RType?>? // eu.vendeli.rethis.commands/xReadGroup|xReadGroup@eu.vendeli.rethis.ReThis(kotlin.String;kotlin.String;eu.vendeli.rethis.types.options.XOption.Limit?;kotlin.Long?;kotlin.Boolean;kotlin.collections.List<kotlin.String>;kotlin.collections.List<kotlin.String>){}[0]
+final suspend fun (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.commands/xRevRange(kotlin/String, kotlin/String, kotlin/String, eu.vendeli.rethis.types.options/XOption.Limit? = ...): kotlin.collections/List<eu.vendeli.rethis.types.core/RType> // eu.vendeli.rethis.commands/xRevRange|xRevRange@eu.vendeli.rethis.ReThis(kotlin.String;kotlin.String;kotlin.String;eu.vendeli.rethis.types.options.XOption.Limit?){}[0]
+final suspend fun (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.commands/xSetId(kotlin/String, kotlin/String, kotlin/Long? = ..., kotlin/String? = ...): kotlin/Boolean // eu.vendeli.rethis.commands/xSetId|xSetId@eu.vendeli.rethis.ReThis(kotlin.String;kotlin.String;kotlin.Long?;kotlin.String?){}[0]
+final suspend fun (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.commands/xTrim(kotlin/String, kotlin/Long, eu.vendeli.rethis.types.options/TrimmingStrategy, eu.vendeli.rethis.types.options/Exactement? = ..., eu.vendeli.rethis.types.options/XOption.Limit? = ...): kotlin/Long? // eu.vendeli.rethis.commands/xTrim|xTrim@eu.vendeli.rethis.ReThis(kotlin.String;kotlin.Long;eu.vendeli.rethis.types.options.TrimmingStrategy;eu.vendeli.rethis.types.options.Exactement?;eu.vendeli.rethis.types.options.XOption.Limit?){}[0]
 final suspend fun (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.commands/zAdd(kotlin/String, eu.vendeli.rethis.types.options/UpdateStrategyOption? = ..., kotlin/Boolean = ..., kotlin/Array<out eu.vendeli.rethis.types.common/ZMember>...): kotlin/Long // eu.vendeli.rethis.commands/zAdd|zAdd@eu.vendeli.rethis.ReThis(kotlin.String;eu.vendeli.rethis.types.options.UpdateStrategyOption?;kotlin.Boolean;kotlin.Array<out|eu.vendeli.rethis.types.common.ZMember>...){}[0]
 final suspend fun (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.commands/zAdd(kotlin/String, kotlin/Array<out eu.vendeli.rethis.types.common/ZMember>..., eu.vendeli.rethis.types.options/UpdateStrategyOption.ExistenceRule? = ..., eu.vendeli.rethis.types.options/UpdateStrategyOption.ComparisonRule? = ..., kotlin/Boolean = ..., kotlin/Boolean = ...): kotlin/Long // eu.vendeli.rethis.commands/zAdd|zAdd@eu.vendeli.rethis.ReThis(kotlin.String;kotlin.Array<out|eu.vendeli.rethis.types.common.ZMember>...;eu.vendeli.rethis.types.options.UpdateStrategyOption.ExistenceRule?;eu.vendeli.rethis.types.options.UpdateStrategyOption.ComparisonRule?;kotlin.Boolean;kotlin.Boolean){}[0]
 final suspend fun (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.commands/zCard(kotlin/String): kotlin/Long // eu.vendeli.rethis.commands/zCard|zCard@eu.vendeli.rethis.ReThis(kotlin.String){}[0]

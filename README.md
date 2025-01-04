@@ -62,7 +62,7 @@ val client = ReThis("localhost", 6379) // or just ReThis() if you're using defau
 
 Re.This supports a comprehensive set of Redis commands, including:
 
-* Data structures: Strings, Hash, Lists, Sets, Sorted Sets, Geospatial indexes
+* Data structures: Strings, Hash, Lists, Sets, Sorted Sets, Geospatial indexes, Streams, Bitmaps
 * Advanced features: Blocking commands, Pipelining, Publish/Subscribe, Connection handling commands
 * Additional features: RedisJSON support, Scripting support, Functions, Transactions
 
