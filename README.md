@@ -9,7 +9,6 @@
 [![codecov](https://codecov.io/gh/vendelieu/re.this/graph/badge.svg?token=F8SY97KR17)](https://codecov.io/gh/vendelieu/re.this)
 
 [![Validate Gradle Wrapper](https://github.com/vendelieu/re.this/actions/workflows/gradle-wrapper-validation.yml/badge.svg)](https://github.com/vendelieu/re.this/actions/workflows/gradle-wrapper-validation.yml)
-[![CodeQL](https://github.com/vendelieu/re.this/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/vendelieu/re.this/actions/workflows/github-code-scanning/codeql)
 
 # Overview
 
