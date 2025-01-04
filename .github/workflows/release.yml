@@ -68,13 +68,6 @@ jobs:
           ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{secrets.GPG_KEY_PWD}}
         run: ./gradlew publishAllPublicationsToMavenCentralRepository --no-parallel
 
-      - name: Publish documentation
-        if: ${{ matrix.os == 'ubuntu-latest' }}
-        uses: JamesIves/github-pages-deploy-action@releases/v4
-        with:
-          BRANCH: gh-pages
-          FOLDER: build/dokka
-
   finalize:
     name: Finalize
     runs-on: ubuntu-latest

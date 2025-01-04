@@ -18,7 +18,7 @@ mavenPublishing {
     val javaDoc = if (releaseMode) {
         signAllPublications()
 
-        JavadocJar.Dokka("dokkaGenerate")
+        JavadocJar.Empty()
     } else JavadocJar.Empty()
 
     configure(KotlinMultiplatform(javaDoc, true))
