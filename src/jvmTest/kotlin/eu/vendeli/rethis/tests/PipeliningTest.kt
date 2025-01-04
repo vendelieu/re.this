@@ -13,7 +13,11 @@ import io.kotest.matchers.shouldBe
 class PipeliningTest : ReThisTestCtx() {
     @Test
     suspend fun `pipelining test`() {
-        val v2Client = ReThis(redis.host, redis.firstMappedPort, protocol = RespVer.V2) { maxConnections = 1 }
+        val v2Client = ReThis(redis.host, redis.firstMappedPort, protocol = RespVer.V2) {
+            pool {
+                poolSize = 1
+            }
+        }
         v2Client
             .pipeline {
                 set("test1", "testv1")
@@ -26,13 +30,16 @@ class PipeliningTest : ReThisTestCtx() {
     }
 
     @Test
-    suspend fun `pipelining + transaction test`() {
+    suspend fun `transaction + pipelining test`() {
         client
             .transaction {
-                client.pipeline {
-                    set("test1", "testv1")
-                    get("test1")
-                }
+                client
+                    .pipeline {
+                        set("test1", "testv1")
+                        get("test1")
+                    }.also {
+                        println("------$it")
+                    }
             }.run {
                 this shouldHaveSize 2
                 first() shouldBe PlainString("OK")
@@ -41,7 +48,7 @@ class PipeliningTest : ReThisTestCtx() {
     }
 
     @Test
-    suspend fun `transaction + pipeline test`() {
+    suspend fun `pipeline + transaction test`() {
         client
             .pipeline {
                 client.transaction {

@@ -1,5 +1,9 @@
 # Re.this Changelog
 
+## 0.2.0
+
+* Implemented Bitmap, Stream commands.
+
 ## 0.1.9
 
 * Improved redis response parsing.

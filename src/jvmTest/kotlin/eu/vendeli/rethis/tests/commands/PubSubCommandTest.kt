@@ -18,7 +18,7 @@ import kotlinx.coroutines.delay
 
 class PubSubCommandTest : ReThisTestCtx() {
     @BeforeEach
-    suspend fun clearSubs() {
+    fun clearSubs() {
         client.subscriptions.unsubscribeAll()
     }
 

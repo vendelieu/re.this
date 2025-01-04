@@ -8,14 +8,13 @@ import eu.vendeli.rethis.types.core.RArray
 import eu.vendeli.rethis.types.core.toArg
 import eu.vendeli.rethis.types.coroutine.CoLocalConn
 import eu.vendeli.rethis.utils.bufferValues
-import eu.vendeli.rethis.utils.coLaunch
 import eu.vendeli.rethis.utils.readRedisMessage
 import io.kotest.assertions.throwables.shouldNotThrowAny
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
 import io.ktor.utils.io.*
-import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.launch
 
 class TransactionCommandTest : ReThisTestCtx() {
     @Test
@@ -52,7 +51,8 @@ class TransactionCommandTest : ReThisTestCtx() {
     suspend fun `test EXEC command with queued commands that fail`() {
         val conn = client.connectionPool.acquire()
         client
-            .coLaunch(currentCoroutineContext() + CoLocalConn(conn)) {
+            .rethisCoScope
+            .launch(CoLocalConn(conn)) {
                 client.multi()
                 client.set("testKey1", "testVal1")
                 client.set("testKey2", "testVal2")
@@ -78,7 +78,8 @@ class TransactionCommandTest : ReThisTestCtx() {
     suspend fun `test WATCH command with multiple keys`() {
         val conn = client.connectionPool.acquire()
         client
-            .coLaunch(currentCoroutineContext() + CoLocalConn(conn)) {
+            .rethisCoScope
+            .launch(CoLocalConn(conn)) {
                 client.watch("testKey1", "testKey2")
                 client.set("testKey1", "testVal1")
                 client.set("testKey2", "testVal2")

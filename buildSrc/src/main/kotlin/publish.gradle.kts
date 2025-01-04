@@ -1,3 +1,4 @@
+import CommonParams.REPO_URL
 import com.vanniktech.maven.publish.JavadocJar
 import com.vanniktech.maven.publish.KotlinMultiplatform
 import com.vanniktech.maven.publish.SonatypeHost
@@ -17,7 +18,7 @@ mavenPublishing {
     val javaDoc = if (releaseMode) {
         signAllPublications()
 
-        JavadocJar.Dokka("dokkaHtml")
+        JavadocJar.Dokka("dokkaGenerate")
     } else JavadocJar.Empty()
 
     configure(KotlinMultiplatform(javaDoc, true))
@@ -26,7 +27,7 @@ mavenPublishing {
         name = project.name
         description = "Kotlin Multiplatform Redis Client: coroutine-based, DSL-powered, and easy to use."
         inceptionYear = "2024"
-        url = "https://github.com/vendelieu/re.this"
+        url = REPO_URL
 
         licenses {
             license {
@@ -45,11 +46,11 @@ mavenPublishing {
         scm {
             connection = "scm:git:github.com/vendelieu/re.this.git"
             developerConnection = "scm:git:ssh://github.com/vendelieu/re.this.git"
-            url = "https://github.com/vendelieu/re.this.git"
+            url = "$REPO_URL.git"
         }
         issueManagement {
             system = "Github"
-            url = "https://github.com/vendelieu/re.this/issues"
+            url = "$REPO_URL/issues"
         }
     }
 }

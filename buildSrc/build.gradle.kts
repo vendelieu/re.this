@@ -4,6 +4,7 @@ plugins {
 
 dependencies {
     implementation(libs.kotlin.gradlePlugin)
+    implementation(libs.dokka)
     implementation(libs.publisher)
 }
 

@@ -12,7 +12,7 @@ class ActiveSubscriptions {
         it.cancel()
         jobs.remove(id)
         it.isCancelled
-    } ?: false
+    } == true
 
     fun unsubscribeAll(): Boolean {
         jobs.forEach { unsubscribe(it.key) }
@@ -24,5 +24,5 @@ class ActiveSubscriptions {
         this.eventHandler = eventHandler
     }
 
-    fun isActive(id: String): Boolean = jobs[id]?.isActive ?: false
+    fun isActive(id: String): Boolean = jobs[id]?.isActive == true
 }

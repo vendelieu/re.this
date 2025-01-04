@@ -2,10 +2,14 @@ package eu.vendeli.rethis.utils
 
 import eu.vendeli.rethis.types.core.*
 import eu.vendeli.rethis.utils.Const.EOL
+import io.ktor.network.sockets.Connection
 import io.ktor.utils.io.charsets.*
 import io.ktor.utils.io.core.*
+import io.ktor.utils.io.writeBuffer
 import kotlinx.io.Buffer
 import kotlinx.io.Sink
+import kotlinx.io.Source
+import kotlin.jvm.JvmName
 
 @Suppress("NOTHING_TO_INLINE")
 internal inline fun Buffer.writeValues(value: List<Argument>, charset: Charset) = apply {
@@ -14,6 +18,11 @@ internal inline fun Buffer.writeValues(value: List<Argument>, charset: Charset) 
 
 @Suppress("NOTHING_TO_INLINE")
 internal inline fun bufferValues(value: List<Argument>, charset: Charset) = Buffer().writeValues(value, charset)
+
+internal suspend inline fun Connection.sendRequest(source: Source) {
+    output.writeBuffer(source)
+    output.flush()
+}
 
 internal fun Sink.writeRedisValue(
     data: Any?,
@@ -33,6 +42,15 @@ internal fun Sink.writeRedisValue(
 
 @Suppress("NOTHING_TO_INLINE")
 internal inline fun <T, R : Argument> MutableList<R>.writeArg(value: List<T>): MutableList<R> {
+    if (isEmpty()) return this
+
+    value.forEach { writeArg(it) }
+    return this
+}
+
+@JvmName("writeArgArray")
+@Suppress("NOTHING_TO_INLINE")
+internal inline fun <T, R : Argument> MutableList<R>.writeArg(vararg value: T): MutableList<R> {
     if (isEmpty()) return this
 
     value.forEach { writeArg(it) }

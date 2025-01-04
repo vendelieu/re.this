@@ -37,7 +37,7 @@ enum class HostType {
 }
 
 fun KotlinTarget.isCompilationAllowed(): Boolean {
-    if ((name == KotlinMetadataTarget.METADATA_TARGET_NAME) || !EnvParams.releaseMode) {
+    if ((name == KotlinMetadataTarget.METADATA_TARGET_NAME) || !CommonParams.releaseMode) {
         return true
     }
 
@@ -73,9 +73,9 @@ fun AbstractPublishToMaven.isAllowed(targets: NamedDomainObjectCollection<Kotlin
     val publicationName: String? = publication?.name
 
     return when {
-        publicationName == "kotlinMultiplatform" -> !EnvParams.releaseMode || EnvParams.metadataOnly
+        publicationName == "kotlinMultiplatform" -> !CommonParams.releaseMode || CommonParams.metadataOnly
 
-        EnvParams.metadataOnly -> false
+        CommonParams.metadataOnly -> false
 
         publicationName != null -> {
             val target = targets.find { it.name.startsWith(publicationName) }

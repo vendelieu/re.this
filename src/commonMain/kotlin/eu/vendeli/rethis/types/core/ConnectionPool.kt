@@ -1,17 +1,15 @@
 package eu.vendeli.rethis.types.core
 
 import eu.vendeli.rethis.ReThis
-import eu.vendeli.rethis.utils.coLaunch
 import eu.vendeli.rethis.utils.readRedisMessage
+import eu.vendeli.rethis.utils.sendRequest
 import eu.vendeli.rethis.utils.writeRedisValue
 import io.ktor.network.selector.*
 import io.ktor.network.sockets.*
 import io.ktor.network.tls.*
 import io.ktor.util.logging.*
-import io.ktor.utils.io.*
-import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.runBlocking
 import kotlinx.io.Buffer
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
@@ -26,10 +24,11 @@ internal class ConnectionPool(
     @OptIn(ExperimentalCoroutinesApi::class)
     internal val isEmpty: Boolean get() = connections.isEmpty
 
-    private val connections = Channel<Connection>(client.cfg.maxConnections)
-    private val selector = SelectorManager(client.cfg.dispatcher + client.rootJob)
+    private val job = SupervisorJob(client.rootJob)
+    private val connections = Channel<Connection>(client.cfg.poolConfiguration.poolSize)
+    private val selector = SelectorManager(client.cfg.poolConfiguration.dispatcher + job + CoroutineName("ReThis Pool"))
 
-    private suspend fun createConn(): Connection {
+    internal suspend fun createConn(): Connection {
         logger.trace("Creating connection to $address")
         val conn = aSocket(selector)
             .tcp()
@@ -57,8 +56,7 @@ internal class ConnectionPool(
         reqBuffer.writeRedisValue(listOf("HELLO".toArg(), client.protocol.literal.toArg()))
         requests++
 
-        conn.output.writeBuffer(reqBuffer)
-        conn.output.flush()
+        conn.sendRequest(reqBuffer)
         repeat(requests) {
             logger.trace("Connection establishment response: " + conn.input.readRedisMessage(client.cfg.charset))
         }
@@ -66,16 +64,18 @@ internal class ConnectionPool(
         return conn
     }
 
-    fun prepare() = runBlocking {
+    fun prepare() = client.rethisCoScope.launch {
         logger.info("Filling ConnectionPool with connections")
-        repeat(client.cfg.maxConnections) {
-            client.coLaunch { connections.trySend(createConn()) }
+        repeat(client.cfg.poolConfiguration.poolSize) {
+            client.rethisCoScope.launch { connections.trySend(createConn()) }
         }
     }
 
     suspend fun acquire(): Connection = connections.receive()
 
-    suspend fun release(connection: Connection) = connections.send(connection)
+    suspend fun release(connection: Connection) {
+        connections.send(connection)
+    }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     fun disconnect() = runBlocking {

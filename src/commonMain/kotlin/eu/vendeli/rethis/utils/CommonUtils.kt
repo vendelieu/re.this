@@ -6,8 +6,11 @@ import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.types.core.*
 import eu.vendeli.rethis.types.coroutine.CoLocalConn
 import io.ktor.utils.io.*
+import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
+import kotlin.coroutines.CoroutineContext
 
 fun RType.isOk() = unwrap<String>() == "OK"
 
@@ -24,6 +27,9 @@ private inline fun String?.isEqTo(other: String) = if (this != null) {
     false
 }
 
+internal suspend inline fun <reified T : CoroutineContext.Element> takeFromCoCtx(element: CoroutineContext.Key<T>): T? =
+    currentCoroutineContext()[element]
+
 internal suspend inline fun ReThis.registerSubscription(
     regCommand: String,
     unRegCommand: String,
@@ -32,11 +38,10 @@ internal suspend inline fun ReThis.registerSubscription(
     handler: SubscriptionHandler,
 ) {
     val connection = connectionPool.acquire()
-    val handlerJob = coLaunch(CoLocalConn(connection)) {
-        val conn = coroutineContext[CoLocalConn]!!.connection
+    val handlerJob = rethisCoScope.launch(CoLocalConn(connection)) {
+        val conn = currentCoroutineContext()[CoLocalConn]!!.connection
         try {
-            conn.output.writeBuffer(bufferValues(listOf(regCommand.toArg(), target.toArg()), cfg.charset))
-            conn.output.flush()
+            conn.sendRequest(bufferValues(listOf(regCommand.toArg(), target.toArg()), cfg.charset))
 
             while (isActive) {
                 conn.input.awaitContent()
@@ -70,8 +75,7 @@ internal suspend inline fun ReThis.registerSubscription(
             logger.error("Caught exception in $target channel handler")
             subscriptions.eventHandler?.onException(target, e)
         } finally {
-            conn.output.writeBuffer(bufferValues(listOf(unRegCommand.toArg(), target.toArg()), cfg.charset))
-            conn.output.flush()
+            conn.sendRequest(bufferValues(listOf(unRegCommand.toArg(), target.toArg()), cfg.charset))
             connectionPool.release(conn)
             subscriptions.unsubscribe(target)
         }

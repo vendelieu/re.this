@@ -2,7 +2,6 @@ package eu.vendeli.rethis
 
 import com.redis.testcontainers.RedisContainer
 import io.kotest.core.spec.style.AnnotationSpec
-import io.ktor.network.sockets.*
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import org.testcontainers.utility.DockerImageName

@@ -1,5 +1,6 @@
 package eu.vendeli.rethis
 
+import eu.vendeli.rethis.annotations.ReThisDSL
 import eu.vendeli.rethis.annotations.ReThisInternal
 import eu.vendeli.rethis.types.core.*
 import eu.vendeli.rethis.types.coroutine.CoLocalConn
@@ -10,11 +11,11 @@ import eu.vendeli.rethis.utils.Const.DEFAULT_PORT
 import io.ktor.network.sockets.*
 import io.ktor.util.logging.*
 import io.ktor.utils.io.*
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.*
 import kotlinx.io.Buffer
 import kotlin.jvm.JvmName
 
+@ReThisDSL
 class ReThis(
     address: Address = Host(DEFAULT_HOST, DEFAULT_PORT),
     val protocol: RespVer = RespVer.V3,
@@ -30,6 +31,7 @@ class ReThis(
     internal val logger = KtorSimpleLogger("eu.vendeli.rethis.ReThis")
     internal val cfg: ClientConfiguration = ClientConfiguration().apply(configurator)
     internal val rootJob = SupervisorJob()
+    internal val rethisCoScope = CoroutineScope(rootJob + cfg.poolConfiguration.dispatcher + CoroutineName("ReThis"))
     internal val connectionPool by lazy { ConnectionPool(this, address.socket).also { it.prepare() } }
 
     init {
@@ -54,16 +56,17 @@ class ReThis(
 
     suspend fun pipeline(block: suspend ReThis.() -> Unit): List<RType> {
         val responses = mutableListOf<RType>()
-        val pipelineCtx = currentCoroutineContext()[CoPipelineCtx]
+        val pipelineCtx = takeFromCoCtx(CoPipelineCtx)
         var ctxConn: Connection? = null
         if (pipelineCtx == null) {
             val requests = mutableListOf<Any?>()
             logger.info("Pipeline started")
             try {
-                coLaunch(currentCoroutineContext() + CoPipelineCtx(requests)) {
-                    block()
-                    coroutineContext[CoLocalConn]?.also { ctxConn = it.connection }
-                }.join()
+                rethisCoScope
+                    .launch(currentCoroutineContext() + CoPipelineCtx(requests)) {
+                        block()
+                        ctxConn = currentCoroutineContext()[CoLocalConn]?.connection
+                    }.join()
             } catch (e: Throwable) {
                 logger.error("Pipeline removed")
                 requests.clear()
@@ -72,55 +75,59 @@ class ReThis(
             val pipelinedPayload = Buffer().apply {
                 requests.forEach { writeRedisValue(it, cfg.charset) }
             }
-            logger.debug("Executing pipelined request")
-            if (ctxConn != null) {
-                ctxConn.output.writeBuffer(pipelinedPayload)
-                ctxConn.output.flush()
-                requests.forEach { _ -> responses.add(ctxConn.input.readRedisMessage(cfg.charset)) }
+            logger.debug("Executing pipelined request\nRequest payload: $requests")
+
+            val connection = ctxConn
+            if (connection != null) {
+                connection.sendRequest(pipelinedPayload)
+                requests.forEach { _ -> responses.add(connection.input.readRedisMessage(cfg.charset)) }
             } else {
                 connectionPool.use { connection ->
-                    connection.output.writeBuffer(pipelinedPayload)
-                    connection.output.flush()
+                    connection.sendRequest(pipelinedPayload)
                     requests.forEach { _ -> responses.add(connection.input.readRedisMessage(cfg.charset)) }
                 }
             }
             requests.clear()
         } else {
+            logger.warn("Nested pipeline detected")
             block()
+            return emptyList()
         }
         logger.info("Pipeline finished")
+        logger.trace("Such responses returned $responses")
         return responses
     }
 
     suspend fun transaction(block: suspend ReThis.() -> Unit): List<RType> {
-        val coLocalCon = currentCoroutineContext()[CoLocalConn]
+        val coLocalCon = takeFromCoCtx(CoLocalConn)
         if (coLocalCon != null) {
+            logger.warn("Nested transaction detected")
             block()
             return emptyList()
         }
 
         return connectionPool.use { conn ->
             logger.debug("Started transaction")
-            conn.output.writeBuffer(bufferValues(listOf("MULTI".toArg()), cfg.charset))
-            conn.output.flush()
+            conn.sendRequest(listOf("MULTI".toArg()))
             require(conn.input.readRedisMessage(cfg.charset).value == "OK")
 
             var e: Throwable? = null
-            coLaunch(currentCoroutineContext() + CoLocalConn(conn)) {
-                runCatching { block() }.getOrElse { e = it }
-            }.join()
+            rethisCoScope
+                .launch(currentCoroutineContext() + CoLocalConn(conn)) {
+                    runCatching { block() }.getOrElse { e = it }
+                }.join()
             e?.also {
-                conn.output.writeBuffer(bufferValues(listOf("DISCARD".toArg()), cfg.charset))
-                conn.output.flush()
+                conn.sendRequest(listOf("DISCARD".toArg()))
                 require(conn.input.readRedisMessage(cfg.charset).value == "OK")
                 logger.error("Transaction canceled", it)
                 return@use emptyList()
             }
 
             logger.debug("Transaction completed")
-            conn.output.writeBuffer(bufferValues(listOf("EXEC".toArg()), cfg.charset))
-            conn.output.flush()
-            conn.input.readRedisMessage(cfg.charset).unwrapList()
+            conn.sendRequest(listOf("EXEC".toArg()))
+            conn.input.readRedisMessage(cfg.charset).unwrapList<RType>().also {
+                logger.debug("Response payload: $it")
+            }
         }
     }
 
@@ -128,20 +135,17 @@ class ReThis(
     suspend fun execute(payload: List<Argument>, rawResponse: Boolean = false): RType =
         handleRequest(payload)?.input?.readRedisMessage(cfg.charset, rawResponse) ?: RType.Null
 
-    @ReThisInternal
     @JvmName("executeSimple")
     internal suspend inline fun <reified T> execute(
         payload: List<Argument>,
     ): T? = handleRequest(payload)?.input?.processRedisSimpleResponse(cfg.charset)
 
-    @ReThisInternal
     @JvmName("executeList")
     internal suspend inline fun <reified T> execute(
         payload: List<Argument>,
         isCollectionResponse: Boolean = false,
     ): List<T>? = handleRequest(payload)?.input?.processRedisListResponse(cfg.charset)
 
-    @ReThisInternal
     @JvmName("executeMap")
     internal suspend inline fun <reified K : Any, reified V> execute(
         payload: List<Argument>,

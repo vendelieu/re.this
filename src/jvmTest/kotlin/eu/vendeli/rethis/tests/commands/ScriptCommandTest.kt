@@ -4,13 +4,12 @@ import eu.vendeli.rethis.ReThisTestCtx
 import eu.vendeli.rethis.commands.*
 import eu.vendeli.rethis.types.core.BulkString
 import eu.vendeli.rethis.types.core.RArray
-import eu.vendeli.rethis.utils.coLaunch
 import io.kotest.assertions.throwables.shouldNotThrowAny
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
-import io.ktor.utils.io.*
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class ScriptCommandTest : ReThisTestCtx() {
     @Test
@@ -96,7 +95,7 @@ class ScriptCommandTest : ReThisTestCtx() {
                 "\n" +
                 "redis.register_function { function_name='fun10', callback=myfunc10, flags={ 'no-writes' } }"
         client.functionLoad(script).shouldNotBeNull()
-        client.coLaunch {
+        client.rethisCoScope.launch {
             client.fcall("fun10", 0)
         }
         delay(100)
@@ -152,7 +151,7 @@ class ScriptCommandTest : ReThisTestCtx() {
 
     @Test
     suspend fun `test SCRIPT KILL command`() {
-        client.coLaunch {
+        client.rethisCoScope.launch {
             client
                 .eval(
                     "local count = 0; while true do count = count + 1; end",
@@ -161,7 +160,7 @@ class ScriptCommandTest : ReThisTestCtx() {
                 ).shouldNotBeNull()
         }
         delay(100)
-        client.scriptKill() shouldBe "OK"
+        client.scriptKill() shouldBe true
     }
 
     @Test

@@ -109,7 +109,7 @@ internal suspend fun ByteReadChannel.readRedisMessage(charset: Charset, rawOnly:
     }
 }
 
-internal suspend fun <T> ByteReadChannel.processRedisSimpleResponse(
+internal suspend inline fun <T> ByteReadChannel.processRedisSimpleResponse(
     charset: Charset,
 ): T? {
     val type = RespCode.fromCode(readByte()) // Read the type byte (e.g., +, -, :, $, *)
@@ -164,7 +164,7 @@ internal suspend fun <T> ByteReadChannel.processRedisSimpleResponse(
     }?.safeCast()
 }
 
-internal suspend fun <T> ByteReadChannel.processRedisListResponse(
+internal suspend inline fun <T> ByteReadChannel.processRedisListResponse(
     charset: Charset,
 ): List<T>? {
     val type = RespCode.fromCode(readByte()) // Read the type byte (e.g., +, -, :, $, *)
@@ -233,7 +233,6 @@ internal suspend fun <K : Any, V : Any> ByteReadChannel.processRedisMapResponse(
  */
 private suspend fun ByteReadChannel.readLine2Buffer(): Buffer {
     val buffer = Buffer()
-    var prevByte: Byte? = null
     while (true) {
         val byte = readByte()
 
@@ -248,7 +247,6 @@ private suspend fun ByteReadChannel.readLine2Buffer(): Buffer {
             }
         }
         buffer.writeByte(byte)
-        prevByte = byte
     }
     return buffer
 }

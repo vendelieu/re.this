@@ -1,17 +1,14 @@
 @file:Suppress("PropertyName")
 
 import kotlinx.validation.ExperimentalBCVApi
-import org.jetbrains.dokka.base.DokkaBase
-import org.jetbrains.dokka.base.DokkaBaseConfiguration
-import java.time.LocalDate
 
 plugins {
     alias(libs.plugins.deteKT)
-    alias(libs.plugins.dokka)
     alias(libs.plugins.ktlinter)
     alias(libs.plugins.kotlin.binvalid)
     alias(libs.plugins.kover)
-    id("publish")
+    dokka
+    publish
 }
 
 group = "eu.vendeli.re.this"
@@ -48,21 +45,8 @@ configureKotlin {
     }
 }
 
-buildscript { dependencies.classpath(libs.dokka.base) }
-
 tasks {
     withType<Test> { useJUnitPlatform() }
-    dokkaHtml.configure {
-        outputDirectory = layout.buildDirectory.asFile.orNull?.resolve("dokka")
-        dokkaSourceSets {
-            collectionSchema.elements.forEach { _ -> moduleName = "re.this" }
-        }
-        pluginConfiguration<DokkaBase, DokkaBaseConfiguration> {
-            customAssets = listOf(rootDir.resolve("assets/logo-icon.svg"))
-            homepageLink = "https://github.com/vendelieu/re.this"
-            footerMessage = "© ${LocalDate.now().year} Vendelieu"
-        }
-    }
 }
 
 @OptIn(ExperimentalBCVApi::class)
