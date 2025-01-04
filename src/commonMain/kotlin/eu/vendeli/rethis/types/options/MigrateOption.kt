@@ -10,16 +10,16 @@ sealed class MigrateOption {
     data object REPLACE : Strategy()
 
     sealed class Authorization : MigrateOption()
-    data class AUTH(
-        val password: String,
+    class AUTH(
+        password: String,
     ) : Authorization(),
         VaryingArgument {
         override val data: List<Argument> = listOf("AUTH".toArg(), password.toArg())
     }
 
-    data class AUTH2(
-        val username: String,
-        val password: String,
+    class AUTH2(
+        username: String,
+        password: String,
     ) : Authorization(),
         VaryingArgument {
         override val data: List<Argument> = listOf("AUTH".toArg(), username.toArg(), password.toArg())

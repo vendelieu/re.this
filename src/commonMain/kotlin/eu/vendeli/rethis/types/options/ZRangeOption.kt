@@ -8,9 +8,9 @@ sealed class ZRangeOption {
     data object BYSCORE : Type()
     data object BYLEX : Type()
 
-    data class LIMIT(
-        val offset: Long,
-        val count: Long,
+    class LIMIT(
+        offset: Long,
+        count: Long,
     ) : ZRangeOption(),
         VaryingArgument {
         override val data = listOf("LIMIT".toArg(), offset.toArg(), count.toArg())

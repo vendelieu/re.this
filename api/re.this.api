@@ -32,6 +32,18 @@ public abstract interface annotation class eu/vendeli/rethis/annotations/ReThisD
 public abstract interface annotation class eu/vendeli/rethis/annotations/ReThisInternal : java/lang/annotation/Annotation {
 }
 
+public final class eu/vendeli/rethis/commands/BitmapCommandsKt {
+	public static final fun bitCount (Leu/vendeli/rethis/ReThis;Ljava/lang/String;Leu/vendeli/rethis/types/options/BitcountOption$Range;Leu/vendeli/rethis/types/options/BitmapDataType;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun bitCount$default (Leu/vendeli/rethis/ReThis;Ljava/lang/String;Leu/vendeli/rethis/types/options/BitcountOption$Range;Leu/vendeli/rethis/types/options/BitmapDataType;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public static final fun bitOp (Leu/vendeli/rethis/ReThis;Leu/vendeli/rethis/types/options/BitOpOption$OperationType;Ljava/lang/String;[Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static final fun bitPos (Leu/vendeli/rethis/ReThis;Ljava/lang/String;JLjava/lang/Long;Ljava/lang/Long;Leu/vendeli/rethis/types/options/BitOpOption$OperationType;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun bitPos$default (Leu/vendeli/rethis/ReThis;Ljava/lang/String;JLjava/lang/Long;Ljava/lang/Long;Leu/vendeli/rethis/types/options/BitOpOption$OperationType;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public static final fun bitfield (Leu/vendeli/rethis/ReThis;Ljava/lang/String;[Leu/vendeli/rethis/types/options/BitfieldOption;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static final fun bitfieldRO (Leu/vendeli/rethis/ReThis;Ljava/lang/String;[Leu/vendeli/rethis/types/options/BitfieldOption$GET;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static final fun getBit (Leu/vendeli/rethis/ReThis;Ljava/lang/String;JLkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static final fun setBit (Leu/vendeli/rethis/ReThis;Ljava/lang/String;JJLkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
 public final class eu/vendeli/rethis/commands/ConnectionCommandsKt {
 	public static final fun hello (Leu/vendeli/rethis/ReThis;ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static synthetic fun hello$default (Leu/vendeli/rethis/ReThis;ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
@@ -1021,32 +1033,74 @@ public final class eu/vendeli/rethis/types/options/AlmostEqual : eu/vendeli/reth
 
 public final class eu/vendeli/rethis/types/options/BYBOX : eu/vendeli/rethis/types/options/Shape, eu/vendeli/rethis/types/core/VaryingArgument {
 	public fun <init> (DDLeu/vendeli/rethis/types/common/GeoUnit;)V
-	public final fun component1 ()D
-	public final fun component2 ()D
-	public final fun component3 ()Leu/vendeli/rethis/types/common/GeoUnit;
-	public final fun copy (DDLeu/vendeli/rethis/types/common/GeoUnit;)Leu/vendeli/rethis/types/options/BYBOX;
-	public static synthetic fun copy$default (Leu/vendeli/rethis/types/options/BYBOX;DDLeu/vendeli/rethis/types/common/GeoUnit;ILjava/lang/Object;)Leu/vendeli/rethis/types/options/BYBOX;
-	public fun equals (Ljava/lang/Object;)Z
 	public fun getData ()Ljava/util/List;
-	public final fun getHeight ()D
-	public final fun getUnit ()Leu/vendeli/rethis/types/common/GeoUnit;
-	public final fun getWidth ()D
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
 }
 
 public final class eu/vendeli/rethis/types/options/BYRADIUS : eu/vendeli/rethis/types/options/Shape, eu/vendeli/rethis/types/core/VaryingArgument {
 	public fun <init> (DLeu/vendeli/rethis/types/common/GeoUnit;)V
-	public final fun component1 ()D
-	public final fun component2 ()Leu/vendeli/rethis/types/common/GeoUnit;
-	public final fun copy (DLeu/vendeli/rethis/types/common/GeoUnit;)Leu/vendeli/rethis/types/options/BYRADIUS;
-	public static synthetic fun copy$default (Leu/vendeli/rethis/types/options/BYRADIUS;DLeu/vendeli/rethis/types/common/GeoUnit;ILjava/lang/Object;)Leu/vendeli/rethis/types/options/BYRADIUS;
-	public fun equals (Ljava/lang/Object;)Z
 	public fun getData ()Ljava/util/List;
-	public final fun getRadius ()D
-	public final fun getUnit ()Leu/vendeli/rethis/types/common/GeoUnit;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
+}
+
+public final class eu/vendeli/rethis/types/options/BitOpOption {
+	public fun <init> ()V
+}
+
+public final class eu/vendeli/rethis/types/options/BitOpOption$OperationType : java/lang/Enum {
+	public static final field AND Leu/vendeli/rethis/types/options/BitOpOption$OperationType;
+	public static final field NOT Leu/vendeli/rethis/types/options/BitOpOption$OperationType;
+	public static final field OR Leu/vendeli/rethis/types/options/BitOpOption$OperationType;
+	public static final field XOR Leu/vendeli/rethis/types/options/BitOpOption$OperationType;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Leu/vendeli/rethis/types/options/BitOpOption$OperationType;
+	public static fun values ()[Leu/vendeli/rethis/types/options/BitOpOption$OperationType;
+}
+
+public abstract class eu/vendeli/rethis/types/options/BitcountOption {
+}
+
+public final class eu/vendeli/rethis/types/options/BitcountOption$Range : eu/vendeli/rethis/types/options/BitcountOption, eu/vendeli/rethis/types/core/VaryingArgument {
+	public fun <init> (II)V
+	public fun getData ()Ljava/util/List;
+}
+
+public abstract class eu/vendeli/rethis/types/options/BitfieldOption {
+}
+
+public final class eu/vendeli/rethis/types/options/BitfieldOption$GET : eu/vendeli/rethis/types/options/BitfieldOption, eu/vendeli/rethis/types/core/VaryingArgument {
+	public fun <init> (Ljava/lang/String;J)V
+	public fun getData ()Ljava/util/List;
+}
+
+public final class eu/vendeli/rethis/types/options/BitfieldOption$INCRBY : eu/vendeli/rethis/types/options/BitfieldOption, eu/vendeli/rethis/types/core/VaryingArgument {
+	public fun <init> (Ljava/lang/String;JJ)V
+	public fun getData ()Ljava/util/List;
+}
+
+public final class eu/vendeli/rethis/types/options/BitfieldOption$OVERFLOW : eu/vendeli/rethis/types/options/BitfieldOption, eu/vendeli/rethis/types/core/VaryingArgument {
+	public fun <init> (Leu/vendeli/rethis/types/options/BitfieldOption$OVERFLOW$Type;)V
+	public fun getData ()Ljava/util/List;
+}
+
+public final class eu/vendeli/rethis/types/options/BitfieldOption$OVERFLOW$Type : java/lang/Enum {
+	public static final field FAIL Leu/vendeli/rethis/types/options/BitfieldOption$OVERFLOW$Type;
+	public static final field SAT Leu/vendeli/rethis/types/options/BitfieldOption$OVERFLOW$Type;
+	public static final field WRAP Leu/vendeli/rethis/types/options/BitfieldOption$OVERFLOW$Type;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Leu/vendeli/rethis/types/options/BitfieldOption$OVERFLOW$Type;
+	public static fun values ()[Leu/vendeli/rethis/types/options/BitfieldOption$OVERFLOW$Type;
+}
+
+public final class eu/vendeli/rethis/types/options/BitfieldOption$SET : eu/vendeli/rethis/types/options/BitfieldOption, eu/vendeli/rethis/types/core/VaryingArgument {
+	public fun <init> (Ljava/lang/String;JJ)V
+	public fun getData ()Ljava/util/List;
+}
+
+public final class eu/vendeli/rethis/types/options/BitmapDataType : java/lang/Enum {
+	public static final field BIT Leu/vendeli/rethis/types/options/BitmapDataType;
+	public static final field BYTE Leu/vendeli/rethis/types/options/BitmapDataType;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Leu/vendeli/rethis/types/options/BitmapDataType;
+	public static fun values ()[Leu/vendeli/rethis/types/options/BitmapDataType;
 }
 
 public abstract class eu/vendeli/rethis/types/options/CenterPoint : eu/vendeli/rethis/types/options/GeoSearchOption {
@@ -1057,14 +1111,7 @@ public abstract class eu/vendeli/rethis/types/options/CopyOption {
 
 public final class eu/vendeli/rethis/types/options/CopyOption$DB : eu/vendeli/rethis/types/options/CopyOption, eu/vendeli/rethis/types/core/VaryingArgument {
 	public fun <init> (J)V
-	public final fun component1 ()J
-	public final fun copy (J)Leu/vendeli/rethis/types/options/CopyOption$DB;
-	public static synthetic fun copy$default (Leu/vendeli/rethis/types/options/CopyOption$DB;JILjava/lang/Object;)Leu/vendeli/rethis/types/options/CopyOption$DB;
-	public fun equals (Ljava/lang/Object;)Z
 	public fun getData ()Ljava/util/List;
-	public final fun getDestination ()J
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
 }
 
 public final class eu/vendeli/rethis/types/options/CopyOption$REPLACE : eu/vendeli/rethis/types/options/CopyOption {
@@ -1086,28 +1133,13 @@ public abstract class eu/vendeli/rethis/types/options/Exactement : eu/vendeli/re
 
 public final class eu/vendeli/rethis/types/options/FROMLONLAT : eu/vendeli/rethis/types/options/CenterPoint, eu/vendeli/rethis/types/core/VaryingArgument {
 	public fun <init> (DD)V
-	public final fun component1 ()D
-	public final fun component2 ()D
-	public final fun copy (DD)Leu/vendeli/rethis/types/options/FROMLONLAT;
-	public static synthetic fun copy$default (Leu/vendeli/rethis/types/options/FROMLONLAT;DDILjava/lang/Object;)Leu/vendeli/rethis/types/options/FROMLONLAT;
-	public fun equals (Ljava/lang/Object;)Z
 	public fun getData ()Ljava/util/List;
-	public final fun getLatitude ()D
-	public final fun getLongitude ()D
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
 }
 
 public final class eu/vendeli/rethis/types/options/FROMMEMBER : eu/vendeli/rethis/types/options/CenterPoint, eu/vendeli/rethis/types/core/VaryingArgument {
 	public fun <init> (Ljava/lang/String;)V
-	public final fun component1 ()Ljava/lang/String;
-	public final fun copy (Ljava/lang/String;)Leu/vendeli/rethis/types/options/FROMMEMBER;
-	public static synthetic fun copy$default (Leu/vendeli/rethis/types/options/FROMMEMBER;Ljava/lang/String;ILjava/lang/Object;)Leu/vendeli/rethis/types/options/FROMMEMBER;
-	public fun equals (Ljava/lang/Object;)Z
 	public fun getData ()Ljava/util/List;
 	public final fun getMember ()Ljava/lang/String;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
 }
 
 public abstract class eu/vendeli/rethis/types/options/FunctionRestoreOption {
@@ -1199,26 +1231,12 @@ public abstract class eu/vendeli/rethis/types/options/HScanOption {
 
 public final class eu/vendeli/rethis/types/options/HScanOption$Count : eu/vendeli/rethis/types/options/HScanOption, eu/vendeli/rethis/types/core/VaryingArgument {
 	public fun <init> (J)V
-	public final fun component1 ()J
-	public final fun copy (J)Leu/vendeli/rethis/types/options/HScanOption$Count;
-	public static synthetic fun copy$default (Leu/vendeli/rethis/types/options/HScanOption$Count;JILjava/lang/Object;)Leu/vendeli/rethis/types/options/HScanOption$Count;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getCount ()J
 	public fun getData ()Ljava/util/List;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
 }
 
 public final class eu/vendeli/rethis/types/options/HScanOption$Match : eu/vendeli/rethis/types/options/HScanOption, eu/vendeli/rethis/types/core/VaryingArgument {
 	public fun <init> (Ljava/lang/String;)V
-	public final fun component1 ()Ljava/lang/String;
-	public final fun copy (Ljava/lang/String;)Leu/vendeli/rethis/types/options/HScanOption$Match;
-	public static synthetic fun copy$default (Leu/vendeli/rethis/types/options/HScanOption$Match;Ljava/lang/String;ILjava/lang/Object;)Leu/vendeli/rethis/types/options/HScanOption$Match;
-	public fun equals (Ljava/lang/Object;)Z
 	public fun getData ()Ljava/util/List;
-	public final fun getPattern ()Ljava/lang/String;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
 }
 
 public final class eu/vendeli/rethis/types/options/HScanOption$NOVALUES : eu/vendeli/rethis/types/options/HScanOption {
@@ -1253,38 +1271,17 @@ public abstract class eu/vendeli/rethis/types/options/LPosOption$CommonOption : 
 
 public final class eu/vendeli/rethis/types/options/LPosOption$Count : eu/vendeli/rethis/types/options/LPosOption, eu/vendeli/rethis/types/core/VaryingArgument {
 	public fun <init> (J)V
-	public final fun component1 ()J
-	public final fun copy (J)Leu/vendeli/rethis/types/options/LPosOption$Count;
-	public static synthetic fun copy$default (Leu/vendeli/rethis/types/options/LPosOption$Count;JILjava/lang/Object;)Leu/vendeli/rethis/types/options/LPosOption$Count;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getCount ()J
 	public fun getData ()Ljava/util/List;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
 }
 
 public final class eu/vendeli/rethis/types/options/LPosOption$MaxLen : eu/vendeli/rethis/types/options/LPosOption$CommonOption, eu/vendeli/rethis/types/core/VaryingArgument {
 	public fun <init> (J)V
-	public final fun component1 ()J
-	public final fun copy (J)Leu/vendeli/rethis/types/options/LPosOption$MaxLen;
-	public static synthetic fun copy$default (Leu/vendeli/rethis/types/options/LPosOption$MaxLen;JILjava/lang/Object;)Leu/vendeli/rethis/types/options/LPosOption$MaxLen;
-	public fun equals (Ljava/lang/Object;)Z
 	public fun getData ()Ljava/util/List;
-	public final fun getMaxLen ()J
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
 }
 
 public final class eu/vendeli/rethis/types/options/LPosOption$Rank : eu/vendeli/rethis/types/options/LPosOption$CommonOption, eu/vendeli/rethis/types/core/VaryingArgument {
 	public fun <init> (J)V
-	public final fun component1 ()J
-	public final fun copy (J)Leu/vendeli/rethis/types/options/LPosOption$Rank;
-	public static synthetic fun copy$default (Leu/vendeli/rethis/types/options/LPosOption$Rank;JILjava/lang/Object;)Leu/vendeli/rethis/types/options/LPosOption$Rank;
-	public fun equals (Ljava/lang/Object;)Z
 	public fun getData ()Ljava/util/List;
-	public final fun getRank ()J
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
 }
 
 public abstract class eu/vendeli/rethis/types/options/LcsMode : eu/vendeli/rethis/types/options/LcsOptions {
@@ -1326,28 +1323,12 @@ public abstract class eu/vendeli/rethis/types/options/MigrateOption {
 
 public final class eu/vendeli/rethis/types/options/MigrateOption$AUTH : eu/vendeli/rethis/types/options/MigrateOption$Authorization, eu/vendeli/rethis/types/core/VaryingArgument {
 	public fun <init> (Ljava/lang/String;)V
-	public final fun component1 ()Ljava/lang/String;
-	public final fun copy (Ljava/lang/String;)Leu/vendeli/rethis/types/options/MigrateOption$AUTH;
-	public static synthetic fun copy$default (Leu/vendeli/rethis/types/options/MigrateOption$AUTH;Ljava/lang/String;ILjava/lang/Object;)Leu/vendeli/rethis/types/options/MigrateOption$AUTH;
-	public fun equals (Ljava/lang/Object;)Z
 	public fun getData ()Ljava/util/List;
-	public final fun getPassword ()Ljava/lang/String;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
 }
 
 public final class eu/vendeli/rethis/types/options/MigrateOption$AUTH2 : eu/vendeli/rethis/types/options/MigrateOption$Authorization, eu/vendeli/rethis/types/core/VaryingArgument {
 	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
-	public final fun component1 ()Ljava/lang/String;
-	public final fun component2 ()Ljava/lang/String;
-	public final fun copy (Ljava/lang/String;Ljava/lang/String;)Leu/vendeli/rethis/types/options/MigrateOption$AUTH2;
-	public static synthetic fun copy$default (Leu/vendeli/rethis/types/options/MigrateOption$AUTH2;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Leu/vendeli/rethis/types/options/MigrateOption$AUTH2;
-	public fun equals (Ljava/lang/Object;)Z
 	public fun getData ()Ljava/util/List;
-	public final fun getPassword ()Ljava/lang/String;
-	public final fun getUsername ()Ljava/lang/String;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
 }
 
 public abstract class eu/vendeli/rethis/types/options/MigrateOption$Authorization : eu/vendeli/rethis/types/options/MigrateOption {
@@ -1377,14 +1358,7 @@ public abstract class eu/vendeli/rethis/types/options/MigrateOption$Strategy : e
 
 public final class eu/vendeli/rethis/types/options/MinMatchLen : eu/vendeli/rethis/types/options/LcsOptions, eu/vendeli/rethis/types/core/VaryingArgument {
 	public fun <init> (J)V
-	public final fun component1 ()J
-	public final fun copy (J)Leu/vendeli/rethis/types/options/MinMatchLen;
-	public static synthetic fun copy$default (Leu/vendeli/rethis/types/options/MinMatchLen;JILjava/lang/Object;)Leu/vendeli/rethis/types/options/MinMatchLen;
-	public fun equals (Ljava/lang/Object;)Z
 	public fun getData ()Ljava/util/List;
-	public final fun getLength ()J
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
 }
 
 public abstract class eu/vendeli/rethis/types/options/RestoreOption {
@@ -1399,26 +1373,13 @@ public final class eu/vendeli/rethis/types/options/RestoreOption$ABSTTL : eu/ven
 
 public final class eu/vendeli/rethis/types/options/RestoreOption$FREQ : eu/vendeli/rethis/types/options/RestoreOption, eu/vendeli/rethis/types/core/VaryingArgument {
 	public fun <init> (J)V
-	public final fun component1 ()J
-	public final fun copy (J)Leu/vendeli/rethis/types/options/RestoreOption$FREQ;
-	public static synthetic fun copy$default (Leu/vendeli/rethis/types/options/RestoreOption$FREQ;JILjava/lang/Object;)Leu/vendeli/rethis/types/options/RestoreOption$FREQ;
-	public fun equals (Ljava/lang/Object;)Z
 	public fun getData ()Ljava/util/List;
-	public final fun getFrequency ()J
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
 }
 
 public final class eu/vendeli/rethis/types/options/RestoreOption$IDLETIME : eu/vendeli/rethis/types/options/RestoreOption, eu/vendeli/rethis/types/core/VaryingArgument {
 	public synthetic fun <init> (JLkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public final fun component1-UwyO8pc ()J
-	public final fun copy-LRDsOJo (J)Leu/vendeli/rethis/types/options/RestoreOption$IDLETIME;
-	public static synthetic fun copy-LRDsOJo$default (Leu/vendeli/rethis/types/options/RestoreOption$IDLETIME;JILjava/lang/Object;)Leu/vendeli/rethis/types/options/RestoreOption$IDLETIME;
-	public fun equals (Ljava/lang/Object;)Z
 	public fun getData ()Ljava/util/List;
 	public final fun getSeconds-UwyO8pc ()J
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
 }
 
 public final class eu/vendeli/rethis/types/options/RestoreOption$REPLACE : eu/vendeli/rethis/types/options/RestoreOption {
@@ -1433,26 +1394,12 @@ public abstract class eu/vendeli/rethis/types/options/SScanOption {
 
 public final class eu/vendeli/rethis/types/options/SScanOption$COUNT : eu/vendeli/rethis/types/options/SScanOption, eu/vendeli/rethis/types/core/VaryingArgument {
 	public fun <init> (J)V
-	public final fun component1 ()J
-	public final fun copy (J)Leu/vendeli/rethis/types/options/SScanOption$COUNT;
-	public static synthetic fun copy$default (Leu/vendeli/rethis/types/options/SScanOption$COUNT;JILjava/lang/Object;)Leu/vendeli/rethis/types/options/SScanOption$COUNT;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getCount ()J
 	public fun getData ()Ljava/util/List;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
 }
 
 public final class eu/vendeli/rethis/types/options/SScanOption$MATCH : eu/vendeli/rethis/types/options/SScanOption, eu/vendeli/rethis/types/core/VaryingArgument {
 	public fun <init> (Ljava/lang/String;)V
-	public final fun component1 ()Ljava/lang/String;
-	public final fun copy (Ljava/lang/String;)Leu/vendeli/rethis/types/options/SScanOption$MATCH;
-	public static synthetic fun copy$default (Leu/vendeli/rethis/types/options/SScanOption$MATCH;Ljava/lang/String;ILjava/lang/Object;)Leu/vendeli/rethis/types/options/SScanOption$MATCH;
-	public fun equals (Ljava/lang/Object;)Z
 	public fun getData ()Ljava/util/List;
-	public final fun getPattern ()Ljava/lang/String;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
 }
 
 public abstract class eu/vendeli/rethis/types/options/ScanOption {
@@ -1460,38 +1407,18 @@ public abstract class eu/vendeli/rethis/types/options/ScanOption {
 
 public final class eu/vendeli/rethis/types/options/ScanOption$Count : eu/vendeli/rethis/types/options/ScanOption, eu/vendeli/rethis/types/core/VaryingArgument {
 	public fun <init> (J)V
-	public final fun component1 ()J
-	public final fun copy (J)Leu/vendeli/rethis/types/options/ScanOption$Count;
-	public static synthetic fun copy$default (Leu/vendeli/rethis/types/options/ScanOption$Count;JILjava/lang/Object;)Leu/vendeli/rethis/types/options/ScanOption$Count;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getCount ()J
 	public fun getData ()Ljava/util/List;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
 }
 
 public final class eu/vendeli/rethis/types/options/ScanOption$Match : eu/vendeli/rethis/types/options/ScanOption, eu/vendeli/rethis/types/core/VaryingArgument {
 	public fun <init> (Ljava/lang/String;)V
-	public final fun component1 ()Ljava/lang/String;
-	public final fun copy (Ljava/lang/String;)Leu/vendeli/rethis/types/options/ScanOption$Match;
-	public static synthetic fun copy$default (Leu/vendeli/rethis/types/options/ScanOption$Match;Ljava/lang/String;ILjava/lang/Object;)Leu/vendeli/rethis/types/options/ScanOption$Match;
-	public fun equals (Ljava/lang/Object;)Z
 	public fun getData ()Ljava/util/List;
-	public final fun getPattern ()Ljava/lang/String;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
 }
 
 public final class eu/vendeli/rethis/types/options/ScanOption$Type : eu/vendeli/rethis/types/options/ScanOption, eu/vendeli/rethis/types/core/VaryingArgument {
 	public fun <init> (Ljava/lang/String;)V
-	public final fun component1 ()Ljava/lang/String;
-	public final fun copy (Ljava/lang/String;)Leu/vendeli/rethis/types/options/ScanOption$Type;
-	public static synthetic fun copy$default (Leu/vendeli/rethis/types/options/ScanOption$Type;Ljava/lang/String;ILjava/lang/Object;)Leu/vendeli/rethis/types/options/ScanOption$Type;
-	public fun equals (Ljava/lang/Object;)Z
 	public fun getData ()Ljava/util/List;
 	public final fun getType ()Ljava/lang/String;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
 }
 
 public abstract class eu/vendeli/rethis/types/options/SetExpire : eu/vendeli/rethis/types/options/SetOption {
@@ -1549,14 +1476,7 @@ public final class eu/vendeli/rethis/types/options/SortOption$ASC : eu/vendeli/r
 
 public final class eu/vendeli/rethis/types/options/SortOption$BY : eu/vendeli/rethis/types/options/SortOption, eu/vendeli/rethis/types/core/VaryingArgument {
 	public fun <init> (Ljava/lang/String;)V
-	public final fun component1 ()Ljava/lang/String;
-	public final fun copy (Ljava/lang/String;)Leu/vendeli/rethis/types/options/SortOption$BY;
-	public static synthetic fun copy$default (Leu/vendeli/rethis/types/options/SortOption$BY;Ljava/lang/String;ILjava/lang/Object;)Leu/vendeli/rethis/types/options/SortOption$BY;
-	public fun equals (Ljava/lang/Object;)Z
 	public fun getData ()Ljava/util/List;
-	public final fun getPattern ()Ljava/lang/String;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
 }
 
 public final class eu/vendeli/rethis/types/options/SortOption$DESC : eu/vendeli/rethis/types/options/SortOption$Order {
@@ -1568,28 +1488,12 @@ public final class eu/vendeli/rethis/types/options/SortOption$DESC : eu/vendeli/
 
 public final class eu/vendeli/rethis/types/options/SortOption$GET : eu/vendeli/rethis/types/options/SortOption, eu/vendeli/rethis/types/core/VaryingArgument {
 	public fun <init> (Ljava/lang/String;)V
-	public final fun component1 ()Ljava/lang/String;
-	public final fun copy (Ljava/lang/String;)Leu/vendeli/rethis/types/options/SortOption$GET;
-	public static synthetic fun copy$default (Leu/vendeli/rethis/types/options/SortOption$GET;Ljava/lang/String;ILjava/lang/Object;)Leu/vendeli/rethis/types/options/SortOption$GET;
-	public fun equals (Ljava/lang/Object;)Z
 	public fun getData ()Ljava/util/List;
-	public final fun getPattern ()Ljava/lang/String;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
 }
 
 public final class eu/vendeli/rethis/types/options/SortOption$LIMIT : eu/vendeli/rethis/types/options/SortOption, eu/vendeli/rethis/types/core/VaryingArgument {
 	public fun <init> (JJ)V
-	public final fun component1 ()J
-	public final fun component2 ()J
-	public final fun copy (JJ)Leu/vendeli/rethis/types/options/SortOption$LIMIT;
-	public static synthetic fun copy$default (Leu/vendeli/rethis/types/options/SortOption$LIMIT;JJILjava/lang/Object;)Leu/vendeli/rethis/types/options/SortOption$LIMIT;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getCount ()J
 	public fun getData ()Ljava/util/List;
-	public final fun getOffset ()J
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
 }
 
 public abstract class eu/vendeli/rethis/types/options/SortOption$Order : eu/vendeli/rethis/types/options/SortOption {
@@ -1597,14 +1501,7 @@ public abstract class eu/vendeli/rethis/types/options/SortOption$Order : eu/vend
 
 public final class eu/vendeli/rethis/types/options/SortOption$STORE : eu/vendeli/rethis/types/options/SortOption, eu/vendeli/rethis/types/core/VaryingArgument {
 	public fun <init> (Ljava/lang/String;)V
-	public final fun component1 ()Ljava/lang/String;
-	public final fun copy (Ljava/lang/String;)Leu/vendeli/rethis/types/options/SortOption$STORE;
-	public static synthetic fun copy$default (Leu/vendeli/rethis/types/options/SortOption$STORE;Ljava/lang/String;ILjava/lang/Object;)Leu/vendeli/rethis/types/options/SortOption$STORE;
-	public fun equals (Ljava/lang/Object;)Z
 	public fun getData ()Ljava/util/List;
-	public final fun getDestination ()Ljava/lang/String;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
 }
 
 public abstract class eu/vendeli/rethis/types/options/SortRoOption {
@@ -1626,14 +1523,7 @@ public final class eu/vendeli/rethis/types/options/SortRoOption$ASC : eu/vendeli
 
 public final class eu/vendeli/rethis/types/options/SortRoOption$BY : eu/vendeli/rethis/types/options/SortRoOption, eu/vendeli/rethis/types/core/VaryingArgument {
 	public fun <init> (Ljava/lang/String;)V
-	public final fun component1 ()Ljava/lang/String;
-	public final fun copy (Ljava/lang/String;)Leu/vendeli/rethis/types/options/SortRoOption$BY;
-	public static synthetic fun copy$default (Leu/vendeli/rethis/types/options/SortRoOption$BY;Ljava/lang/String;ILjava/lang/Object;)Leu/vendeli/rethis/types/options/SortRoOption$BY;
-	public fun equals (Ljava/lang/Object;)Z
 	public fun getData ()Ljava/util/List;
-	public final fun getPattern ()Ljava/lang/String;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
 }
 
 public final class eu/vendeli/rethis/types/options/SortRoOption$DESC : eu/vendeli/rethis/types/options/SortRoOption$Order {
@@ -1645,28 +1535,12 @@ public final class eu/vendeli/rethis/types/options/SortRoOption$DESC : eu/vendel
 
 public final class eu/vendeli/rethis/types/options/SortRoOption$GET : eu/vendeli/rethis/types/options/SortRoOption, eu/vendeli/rethis/types/core/VaryingArgument {
 	public fun <init> (Ljava/lang/String;)V
-	public final fun component1 ()Ljava/lang/String;
-	public final fun copy (Ljava/lang/String;)Leu/vendeli/rethis/types/options/SortRoOption$GET;
-	public static synthetic fun copy$default (Leu/vendeli/rethis/types/options/SortRoOption$GET;Ljava/lang/String;ILjava/lang/Object;)Leu/vendeli/rethis/types/options/SortRoOption$GET;
-	public fun equals (Ljava/lang/Object;)Z
 	public fun getData ()Ljava/util/List;
-	public final fun getPattern ()Ljava/lang/String;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
 }
 
 public final class eu/vendeli/rethis/types/options/SortRoOption$LIMIT : eu/vendeli/rethis/types/options/SortRoOption, eu/vendeli/rethis/types/core/VaryingArgument {
 	public fun <init> (JJ)V
-	public final fun component1 ()J
-	public final fun component2 ()J
-	public final fun copy (JJ)Leu/vendeli/rethis/types/options/SortRoOption$LIMIT;
-	public static synthetic fun copy$default (Leu/vendeli/rethis/types/options/SortRoOption$LIMIT;JJILjava/lang/Object;)Leu/vendeli/rethis/types/options/SortRoOption$LIMIT;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getCount ()J
 	public fun getData ()Ljava/util/List;
-	public final fun getOffset ()J
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
 }
 
 public abstract class eu/vendeli/rethis/types/options/SortRoOption$Order : eu/vendeli/rethis/types/options/SortRoOption {
@@ -1751,39 +1625,13 @@ public abstract class eu/vendeli/rethis/types/options/XAddOption$ID : eu/vendeli
 
 public final class eu/vendeli/rethis/types/options/XAddOption$Id : eu/vendeli/rethis/types/options/XAddOption$ID {
 	public fun <init> (Ljava/lang/String;)V
-	public final fun component1 ()Ljava/lang/String;
-	public final fun copy (Ljava/lang/String;)Leu/vendeli/rethis/types/options/XAddOption$Id;
-	public static synthetic fun copy$default (Leu/vendeli/rethis/types/options/XAddOption$Id;Ljava/lang/String;ILjava/lang/Object;)Leu/vendeli/rethis/types/options/XAddOption$Id;
-	public fun equals (Ljava/lang/Object;)Z
 	public final fun getId ()Ljava/lang/String;
-	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
 
 public final class eu/vendeli/rethis/types/options/XAddOption$NOMKSTREAM : eu/vendeli/rethis/types/options/XAddOption {
 	public static final field INSTANCE Leu/vendeli/rethis/types/options/XAddOption$NOMKSTREAM;
 	public fun equals (Ljava/lang/Object;)Z
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
-public abstract class eu/vendeli/rethis/types/options/XGroupId {
-}
-
-public final class eu/vendeli/rethis/types/options/XGroupId$DOLLAR : eu/vendeli/rethis/types/options/XGroupId {
-	public static final field INSTANCE Leu/vendeli/rethis/types/options/XGroupId$DOLLAR;
-	public fun equals (Ljava/lang/Object;)Z
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
-public final class eu/vendeli/rethis/types/options/XGroupId$Id : eu/vendeli/rethis/types/options/XGroupId {
-	public fun <init> (Ljava/lang/String;)V
-	public final fun component1 ()Ljava/lang/String;
-	public final fun copy (Ljava/lang/String;)Leu/vendeli/rethis/types/options/XGroupId$Id;
-	public static synthetic fun copy$default (Leu/vendeli/rethis/types/options/XGroupId$Id;Ljava/lang/String;ILjava/lang/Object;)Leu/vendeli/rethis/types/options/XGroupId$Id;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getId ()Ljava/lang/String;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -1833,16 +1681,7 @@ public final class eu/vendeli/rethis/types/options/ZRangeOption$BYSCORE : eu/ven
 
 public final class eu/vendeli/rethis/types/options/ZRangeOption$LIMIT : eu/vendeli/rethis/types/options/ZRangeOption, eu/vendeli/rethis/types/core/VaryingArgument {
 	public fun <init> (JJ)V
-	public final fun component1 ()J
-	public final fun component2 ()J
-	public final fun copy (JJ)Leu/vendeli/rethis/types/options/ZRangeOption$LIMIT;
-	public static synthetic fun copy$default (Leu/vendeli/rethis/types/options/ZRangeOption$LIMIT;JJILjava/lang/Object;)Leu/vendeli/rethis/types/options/ZRangeOption$LIMIT;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getCount ()J
 	public fun getData ()Ljava/util/List;
-	public final fun getOffset ()J
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
 }
 
 public abstract class eu/vendeli/rethis/types/options/ZRangeOption$Type : eu/vendeli/rethis/types/options/ZRangeOption {

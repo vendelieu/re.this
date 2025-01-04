@@ -12,7 +12,7 @@ sealed class XAddOption {
     data object NOMKSTREAM : XAddOption()
 
     sealed class ID : XAddOption()
-    data class Id(
+    class Id(
         val id: String,
     ) : ID() {
         override fun toString(): String = id

@@ -10,8 +10,8 @@ sealed class LcsMode : LcsOptions() {
     data object IDX : LcsMode()
 }
 
-data class MinMatchLen(
-    val length: Long,
+class MinMatchLen(
+    length: Long,
 ) : LcsOptions(),
     VaryingArgument {
     override val data = listOf("MINMATCHLEN".toArg(), length.toArg())
