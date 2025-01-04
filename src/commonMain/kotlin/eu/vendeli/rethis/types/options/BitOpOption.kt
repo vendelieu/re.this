@@ -5,6 +5,6 @@ class BitOpOption {
         AND,
         OR,
         XOR,
-        NOT
+        NOT,
     }
 }

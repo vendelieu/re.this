@@ -5,7 +5,10 @@ import eu.vendeli.rethis.types.core.VaryingArgument
 import eu.vendeli.rethis.types.core.toArg
 
 sealed class XOption {
-    class Limit(count: Long) : XOption(), VaryingArgument {
+    class Limit(
+        count: Long,
+    ) : XOption(),
+        VaryingArgument {
         override val data: List<Argument> = listOf("LIMIT".toArg(), count.toArg())
     }
 }
@@ -19,7 +22,10 @@ data object Equal : Exactement()
 data object Approximate : Exactement()
 
 sealed class XId : XOption() {
-    class Id(id: String) : XId(), VaryingArgument {
+    class Id(
+        id: String,
+    ) : XId(),
+        VaryingArgument {
         override val data: List<Argument> = listOf(id.toArg())
     }
 

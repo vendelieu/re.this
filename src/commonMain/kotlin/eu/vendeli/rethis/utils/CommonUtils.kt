@@ -39,10 +39,9 @@ internal suspend inline fun ReThis.registerSubscription(
 ) {
     val connection = connectionPool.acquire()
     val handlerJob = rethisCoScope.launch(CoLocalConn(connection)) {
-        val conn = coroutineContext[CoLocalConn]!!.connection
+        val conn = currentCoroutineContext()[CoLocalConn]!!.connection
         try {
-            conn.output.writeBuffer(bufferValues(listOf(regCommand.toArg(), target.toArg()), cfg.charset))
-            conn.output.flush()
+            conn.sendRequest(bufferValues(listOf(regCommand.toArg(), target.toArg()), cfg.charset))
 
             while (isActive) {
                 conn.input.awaitContent()
@@ -76,8 +75,7 @@ internal suspend inline fun ReThis.registerSubscription(
             logger.error("Caught exception in $target channel handler")
             subscriptions.eventHandler?.onException(target, e)
         } finally {
-            conn.output.writeBuffer(bufferValues(listOf(unRegCommand.toArg(), target.toArg()), cfg.charset))
-            conn.output.flush()
+            conn.sendRequest(bufferValues(listOf(unRegCommand.toArg(), target.toArg()), cfg.charset))
             connectionPool.release(conn)
             subscriptions.unsubscribe(target)
         }

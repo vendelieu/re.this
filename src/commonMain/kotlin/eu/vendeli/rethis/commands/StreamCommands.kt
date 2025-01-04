@@ -123,7 +123,10 @@ suspend fun ReThis.xGroupDestroy(key: String, group: String): Long? = execute<Lo
 )
 
 suspend fun ReThis.xGroupSetId(
-    key: String, group: String, id: XId, entriesRead: Long? = null,
+    key: String,
+    group: String,
+    id: XId,
+    entriesRead: Long? = null,
 ): Boolean = execute<String>(
     mutableListOf(
         "XGROUP".toArg(),
@@ -211,7 +214,10 @@ suspend fun ReThis.xReadGroup(
 ).unwrapRespIndMap<String, RType>()
 
 suspend fun ReThis.xRevRange(
-    key: String, end: String, start: String, limit: XOption.Limit? = null,
+    key: String,
+    end: String,
+    start: String,
+    limit: XOption.Limit? = null,
 ): List<RType> = execute(
     mutableListOf("XREVRANGE".toArg(), key.toArg(), end.toArg(), start.toArg()).writeArg(limit),
 ).unwrapList<RType>()

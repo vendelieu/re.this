@@ -30,13 +30,16 @@ class PipeliningTest : ReThisTestCtx() {
     }
 
     @Test
-    suspend fun `pipelining + transaction test`() {
+    suspend fun `transaction + pipelining test`() {
         client
             .transaction {
-                client.pipeline {
-                    set("test1", "testv1")
-                    get("test1")
-                }
+                client
+                    .pipeline {
+                        set("test1", "testv1")
+                        get("test1")
+                    }.also {
+                        println("------$it")
+                    }
             }.run {
                 this shouldHaveSize 2
                 first() shouldBe PlainString("OK")
@@ -45,7 +48,7 @@ class PipeliningTest : ReThisTestCtx() {
     }
 
     @Test
-    suspend fun `transaction + pipeline test`() {
+    suspend fun `pipeline + transaction test`() {
         client
             .pipeline {
                 client.transaction {

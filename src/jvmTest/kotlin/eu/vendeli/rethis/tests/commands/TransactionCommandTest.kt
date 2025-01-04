@@ -14,7 +14,6 @@ import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
 import io.ktor.utils.io.*
-import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.launch
 
 class TransactionCommandTest : ReThisTestCtx() {

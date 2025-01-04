@@ -13,20 +13,22 @@ sealed class XAddOption {
         threshold: Long,
         exactement: Exactement? = null,
         limit: XOption.Limit? = null,
-    ) : XAddOption(), VaryingArgument {
+    ) : XAddOption(),
+        VaryingArgument {
         override val data: List<Argument> = mutableListOf(
             strategy.toArg(),
         ).writeArg(
             exactement,
             threshold,
-            limit
+            limit,
         )
     }
 
     sealed class Identifier : XAddOption()
     class Id(
         id: String,
-    ) : Identifier(), VaryingArgument {
+    ) : Identifier(),
+        VaryingArgument {
         override val data: List<Argument> = listOf(id.toArg())
     }
 

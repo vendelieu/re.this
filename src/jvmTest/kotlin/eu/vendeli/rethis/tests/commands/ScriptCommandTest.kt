@@ -160,7 +160,7 @@ class ScriptCommandTest : ReThisTestCtx() {
                 ).shouldNotBeNull()
         }
         delay(100)
-        client.scriptKill() shouldBe "OK"
+        client.scriptKill() shouldBe true
     }
 
     @Test
