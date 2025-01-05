@@ -77,6 +77,7 @@ internal suspend inline fun ReThis.registerSubscription(
         } finally {
             conn.sendRequest(bufferValues(listOf(unRegCommand.toArg(), target.toArg()), cfg.charset))
             subscriptions.unsubscribe(target)
+            connection.socket.close()
         }
     }
 
