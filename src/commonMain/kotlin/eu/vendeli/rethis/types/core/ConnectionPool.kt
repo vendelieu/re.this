@@ -106,6 +106,7 @@ internal class ConnectionPool(
         runCatching { createConn() }
             .onSuccess {
                 connections.send(it)
+                logger.trace("Connection refilled with $it")
                 return
             }.onFailure {
                 if (ex != null) ex.addSuppressed(it) else ex = it
