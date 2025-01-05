@@ -26,7 +26,9 @@ internal class ConnectionPool(
 
     private val job = SupervisorJob(client.rootJob)
     private val connections = Channel<Connection>(client.cfg.poolConfiguration.poolSize)
-    private val selector = SelectorManager(client.cfg.poolConfiguration.dispatcher + job + CoroutineName("ReThis Pool"))
+    private val selector = SelectorManager(
+        client.cfg.poolConfiguration.dispatcher + job + CoroutineName("ReThis-ConnectionPool"),
+    )
 
     internal suspend fun createConn(): Connection {
         logger.trace("Creating connection to $address")
@@ -43,19 +45,21 @@ internal class ConnectionPool(
         var requests = 0
 
         if (client.cfg.auth != null) client.cfg.auth?.run {
-            logger.debug("Authenticating to $address with $this")
+            logger.trace("Authenticating to $address.")
             reqBuffer.writeRedisValue(listOfNotNull("AUTH".toArg(), username?.toArg(), password.toArg()))
             requests++
         }
 
         client.cfg.db?.takeIf { it > 0 }?.let {
-            requests++
+            logger.trace("Selecting database $it to $address.")
             reqBuffer.writeRedisValue(listOf("SELECT".toArg(), it.toArg()))
+            requests++
         }
 
         reqBuffer.writeRedisValue(listOf("HELLO".toArg(), client.protocol.literal.toArg()))
         requests++
 
+        logger.trace("Sending connection establishment requests ($requests)")
         conn.sendRequest(reqBuffer)
         repeat(requests) {
             logger.trace("Connection establishment response: " + conn.input.readRedisMessage(client.cfg.charset))
@@ -74,6 +78,7 @@ internal class ConnectionPool(
     suspend fun acquire(): Connection = connections.receive()
 
     suspend fun release(connection: Connection) {
+        logger.trace("Releasing connection ${connection.socket}, health status: ${!connection.input.isClosedForRead}")
         connections.send(connection)
     }
 

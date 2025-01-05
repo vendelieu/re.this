@@ -35,8 +35,6 @@ class ReThis(
     internal val connectionPool by lazy { ConnectionPool(this, address.socket).also { it.prepare() } }
 
     init {
-        logger.info("Created client (RESP $protocol)")
-
         if (address is Url) {
             cfg.db = address.db
             if (address.credentials.isNotEmpty()) {
@@ -46,6 +44,16 @@ class ReThis(
                 )
             }
         }
+
+        buildString {
+            append("Created ReThis client.\n")
+            append("Address: $address\n")
+            append("DB: ${cfg.db}\n")
+            append("Auth: ${cfg.auth != null}\n")
+            append("TLS: ${cfg.tlsConfig != null}\n")
+            append("Pool size: ${cfg.poolConfiguration.poolSize}\n")
+            append("Protocol: ${protocol.literal}\n")
+        }.let { logger.info(it) }
     }
 
     val subscriptions = ActiveSubscriptions()
