@@ -37,7 +37,7 @@ internal suspend inline fun ReThis.registerSubscription(
     messageMarker: String,
     handler: SubscriptionHandler,
 ) {
-    val connection = connectionPool.acquire()
+    val connection = connectionPool.createConn()
     val handlerJob = rethisCoScope.launch(CoLocalConn(connection)) {
         val conn = currentCoroutineContext()[CoLocalConn]!!.connection
         try {
@@ -76,7 +76,6 @@ internal suspend inline fun ReThis.registerSubscription(
             subscriptions.eventHandler?.onException(target, e)
         } finally {
             conn.sendRequest(bufferValues(listOf(unRegCommand.toArg(), target.toArg()), cfg.charset))
-            connectionPool.release(conn)
             subscriptions.unsubscribe(target)
         }
     }
