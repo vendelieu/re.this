@@ -101,7 +101,7 @@ internal class ConnectionPool(
             else logger.warn("Connection refills failed, maximum attempts reached", ex)
             return
         }
-        delay(cfg.reconnectDelay)
+        delay(attempt * cfg.reconnectDelay)
         logger.trace("Refilling ConnectionPool. Attempt $attempt")
         runCatching { createConn() }.onSuccess {
             connections.send(it)
