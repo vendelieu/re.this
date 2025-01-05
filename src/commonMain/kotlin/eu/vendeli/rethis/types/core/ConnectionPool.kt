@@ -103,12 +103,13 @@ internal class ConnectionPool(
         }
         delay(attempt * cfg.reconnectDelay)
         logger.trace("Refilling ConnectionPool. Attempt $attempt")
-        runCatching { createConn() }.onSuccess {
-            connections.send(it)
-            return
-        }.onFailure {
-            if (ex != null) ex.addSuppressed(it) else ex = it
-        }
+        runCatching { createConn() }
+            .onSuccess {
+                connections.send(it)
+                return
+            }.onFailure {
+                if (ex != null) ex.addSuppressed(it) else ex = it
+            }
         logger.debug("Connection refill failed, remaining attempts: ${cfg.reconnectAttempts - attempt}")
         refill(attempt + 1)
     }
