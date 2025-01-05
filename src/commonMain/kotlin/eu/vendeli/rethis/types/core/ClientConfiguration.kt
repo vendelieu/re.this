@@ -13,7 +13,8 @@ data class ClientConfiguration(
     var charset: Charset = Charsets.UTF_8,
     var tlsConfig: TLSConfig? = null,
     internal var auth: AuthConfiguration? = null,
-    internal var poolConfiguration: PoolConfiguration = PoolConfiguration(),
+    internal val poolConfiguration: PoolConfiguration = PoolConfiguration(),
+    internal val reconnectionStrategy: ReconnectionStrategyConfiguration = ReconnectionStrategyConfiguration(),
 ) {
     fun auth(password: String, username: String? = null) {
         auth = AuthConfiguration(password, username)
@@ -22,12 +23,23 @@ data class ClientConfiguration(
     fun pool(block: PoolConfiguration.() -> Unit) {
         poolConfiguration.block()
     }
+
+    fun reconnectionStrategy(block: ReconnectionStrategyConfiguration.() -> Unit) {
+        reconnectionStrategy.block()
+    }
 }
 
 @ConfigurationDSL
 data class AuthConfiguration(
     var password: String,
     var username: String? = null,
+)
+
+@ConfigurationDSL
+data class ReconnectionStrategyConfiguration(
+    var doHealthCheck: Boolean = true,
+    var reconnectAttempts: Int = 3,
+    var reconnectDelay: Long = 3000L,
 )
 
 @ConfigurationDSL

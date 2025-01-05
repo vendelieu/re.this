@@ -17,7 +17,7 @@ import kotlin.jvm.JvmName
 
 @ReThisDSL
 class ReThis(
-    address: Address = Host(DEFAULT_HOST, DEFAULT_PORT),
+    internal val address: Address = Host(DEFAULT_HOST, DEFAULT_PORT),
     val protocol: RespVer = RespVer.V3,
     configurator: ClientConfiguration.() -> Unit = {},
 ) {
@@ -32,7 +32,7 @@ class ReThis(
     internal val cfg: ClientConfiguration = ClientConfiguration().apply(configurator)
     internal val rootJob = SupervisorJob()
     internal val rethisCoScope = CoroutineScope(rootJob + cfg.poolConfiguration.dispatcher + CoroutineName("ReThis"))
-    internal val connectionPool by lazy { ConnectionPool(this, address.socket).also { it.prepare() } }
+    internal val connectionPool by lazy { ConnectionPool(this).also { it.prepare() } }
 
     init {
         if (address is Url) {
