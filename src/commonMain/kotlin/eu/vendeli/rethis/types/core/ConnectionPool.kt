@@ -93,26 +93,31 @@ internal class ConnectionPool(
         }
     }
 
-    private tailrec suspend fun refill(attempt: Int = 1) {
+    private suspend fun refill() {
         val cfg = client.cfg.reconnectionStrategy
+        if (cfg.reconnectAttempts <= 0) return
+        var attempt = 0
         var ex: Throwable? = null
-        if (cfg.reconnectAttempts >= attempt) {
-            if (ex == null) logger.warn("Connection refills failed, maximum attempts reached")
-            else logger.warn("Connection refills failed, maximum attempts reached", ex)
-            return
+
+        while (attempt < cfg.reconnectAttempts) {
+            attempt++
+            logger.trace("Refilling ConnectionPool. Attempt $attempt")
+            runCatching { createConn() }
+                .onSuccess {
+                    connections.send(it)
+                    logger.trace("Connection refilled with $it")
+                    return
+                }.onFailure {
+                    if (ex != null) ex.addSuppressed(it) else ex = it
+                }
+
+            logger.debug("Connection refill failed, remaining attempts: ${cfg.reconnectAttempts - attempt}")
+            delay(attempt * cfg.reconnectDelay)
         }
-        delay(attempt * cfg.reconnectDelay)
-        logger.trace("Refilling ConnectionPool. Attempt $attempt")
-        runCatching { createConn() }
-            .onSuccess {
-                connections.send(it)
-                logger.trace("Connection refilled with $it")
-                return
-            }.onFailure {
-                if (ex != null) ex.addSuppressed(it) else ex = it
-            }
-        logger.debug("Connection refill failed, remaining attempts: ${cfg.reconnectAttempts - attempt}")
-        refill(attempt + 1)
+
+        val logMsg = "Connection refills failed, maximum attempts reached"
+        if (ex == null) logger.warn(logMsg)
+        else logger.warn(logMsg, ex)
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
