@@ -48,11 +48,11 @@ class ReThis(
         buildString {
             append("Created ReThis client.\n")
             append("Address: $address\n")
-            append("DB: ${cfg.db}\n")
+            append("DB: ${cfg.db ?: 0}\n")
             append("Auth: ${cfg.auth != null}\n")
             append("TLS: ${cfg.tlsConfig != null}\n")
             append("Pool size: ${cfg.poolConfiguration.poolSize}\n")
-            append("Protocol: ${protocol.literal}\n")
+            append("Protocol: ${protocol}\n")
         }.let { logger.info(it) }
     }
 

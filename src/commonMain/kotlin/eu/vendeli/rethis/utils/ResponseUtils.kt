@@ -74,7 +74,7 @@ internal suspend fun ByteReadChannel.readRedisMessage(charset: Charset, rawOnly:
             val content = readRemaining(size).readText(charset)
             readShort() // Skip CRLF
             val encoding = content.subSequence(0, 3) // First 3 bytes are encoding
-            val data = content.subSequence(4, size.toInt() - 4) // Skip encoding and colon (:)
+            val data = content.subSequence(4, size.toInt())
             VerbatimString(encoding.toString(), data.toString())
         }
 
@@ -156,7 +156,7 @@ internal suspend inline fun <T> ByteReadChannel.processRedisSimpleResponse(
             val content = readRemaining(size).readText(charset)
             readShort() // Skip CRLF
             val encoding = content.subSequence(0, 3) // First 3 bytes are encoding
-            val data = content.subSequence(4, size.toInt() - 4) // Skip encoding and colon (:)
+            val data = content.subSequence(4, size.toInt())
             "$encoding:$data"
         }
 

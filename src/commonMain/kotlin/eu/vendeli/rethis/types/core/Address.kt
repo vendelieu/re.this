@@ -9,6 +9,13 @@ expect sealed class Address() {
     internal abstract val socket: SocketAddress
 }
 
+@Suppress("NOTHING_TO_INLINE")
+internal inline fun Address.stringify() = when (val thiz = socket) {
+    is InetSocketAddress -> "InetSocket(${thiz.hostname}:${thiz.port})"
+    is UnixSocketAddress -> "UnixSocket(${thiz.path})"
+    else -> socket.toString()
+}
+
 class Host(
     host: String,
     port: Int,
