@@ -15,7 +15,7 @@ fun Project.configureKotlin(block: KotlinMultiplatformExtension.() -> Unit) {
             freeCompilerArgs = listOf("-opt-in=eu.vendeli.rethis.annotations.ReThisInternal")
         }
 
-        val jvmTargetVer = 11
+        val jvmTargetVer = 17
         jvm {
             withJava()
             compilations.all {

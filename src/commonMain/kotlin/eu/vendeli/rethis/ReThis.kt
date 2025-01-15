@@ -17,7 +17,7 @@ import kotlin.jvm.JvmName
 
 @ReThisDSL
 class ReThis(
-    address: Address = Host(DEFAULT_HOST, DEFAULT_PORT),
+    internal val address: Address = Host(DEFAULT_HOST, DEFAULT_PORT),
     val protocol: RespVer = RespVer.V3,
     configurator: ClientConfiguration.() -> Unit = {},
 ) {
@@ -32,11 +32,9 @@ class ReThis(
     internal val cfg: ClientConfiguration = ClientConfiguration().apply(configurator)
     internal val rootJob = SupervisorJob()
     internal val rethisCoScope = CoroutineScope(rootJob + cfg.poolConfiguration.dispatcher + CoroutineName("ReThis"))
-    internal val connectionPool by lazy { ConnectionPool(this, address.socket).also { it.prepare() } }
+    internal val connectionPool by lazy { ConnectionPool(this).also { it.prepare() } }
 
     init {
-        logger.info("Created client (RESP $protocol)")
-
         if (address is Url) {
             cfg.db = address.db
             if (address.credentials.isNotEmpty()) {
@@ -46,6 +44,16 @@ class ReThis(
                 )
             }
         }
+
+        buildString {
+            append("Created ReThis client.\n")
+            append("Address: $address\n")
+            append("DB: ${cfg.db ?: 0}\n")
+            append("Auth: ${cfg.auth != null}\n")
+            append("TLS: ${cfg.tlsConfig != null}\n")
+            append("Pool size: ${cfg.poolConfiguration.poolSize}\n")
+            append("Protocol: ${protocol}\n")
+        }.let { logger.info(it) }
     }
 
     val subscriptions = ActiveSubscriptions()

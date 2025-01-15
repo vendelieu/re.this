@@ -17,7 +17,6 @@ import kotlin.contracts.contract
 
 internal class ConnectionPool(
     internal val client: ReThis,
-    private val address: SocketAddress,
 ) {
     internal val logger = KtorSimpleLogger("eu.vendeli.rethis.ConnectionPool")
 
@@ -25,14 +24,24 @@ internal class ConnectionPool(
     internal val isEmpty: Boolean get() = connections.isEmpty
 
     private val job = SupervisorJob(client.rootJob)
+    private val poolScope = CoroutineScope(
+        client.cfg.poolConfiguration.dispatcher + job + CoroutineName("ReThis-ConnectionPool"),
+    )
     private val connections = Channel<Connection>(client.cfg.poolConfiguration.poolSize)
-    private val selector = SelectorManager(client.cfg.poolConfiguration.dispatcher + job + CoroutineName("ReThis Pool"))
+    private val selector = SelectorManager(poolScope.coroutineContext)
 
     internal suspend fun createConn(): Connection {
-        logger.trace("Creating connection to $address")
+        logger.trace("Creating connection to ${client.address}")
         val conn = aSocket(selector)
             .tcp()
-            .connect(address)
+            .connect(client.address.socket) {
+                client.cfg.socketConfiguration.run {
+                    timeout?.let { socketTimeout = it }
+                    linger?.let { lingerSeconds = it }
+                    this@connect.keepAlive = keepAlive
+                    this@connect.noDelay = noDelay
+                }
+            }
             .let { socket ->
                 client.cfg.tlsConfig?.let {
                     socket.tls(selector.coroutineContext, it)
@@ -43,19 +52,21 @@ internal class ConnectionPool(
         var requests = 0
 
         if (client.cfg.auth != null) client.cfg.auth?.run {
-            logger.debug("Authenticating to $address with $this")
+            logger.trace("Authenticating to ${client.address}.")
             reqBuffer.writeRedisValue(listOfNotNull("AUTH".toArg(), username?.toArg(), password.toArg()))
             requests++
         }
 
         client.cfg.db?.takeIf { it > 0 }?.let {
-            requests++
+            logger.trace("Selecting database $it to ${client.address}.")
             reqBuffer.writeRedisValue(listOf("SELECT".toArg(), it.toArg()))
+            requests++
         }
 
         reqBuffer.writeRedisValue(listOf("HELLO".toArg(), client.protocol.literal.toArg()))
         requests++
 
+        logger.trace("Sending connection establishment requests ($requests)")
         conn.sendRequest(reqBuffer)
         repeat(requests) {
             logger.trace("Connection establishment response: " + conn.input.readRedisMessage(client.cfg.charset))
@@ -73,8 +84,47 @@ internal class ConnectionPool(
 
     suspend fun acquire(): Connection = connections.receive()
 
-    suspend fun release(connection: Connection) {
-        connections.send(connection)
+    fun release(connection: Connection) {
+        handle(connection)
+    }
+
+    private fun handle(connection: Connection) = poolScope.launch {
+        logger.trace("Releasing connection ${connection.socket}")
+        val cfg = client.cfg.reconnectionStrategy
+        if (cfg.doHealthCheck && connection.input.isClosedForRead) { // connection is corrupted
+            logger.warn("Connection ${connection.socket} is corrupted, refilling")
+            connection.socket.close()
+            refill()
+        } else {
+            connections.send(connection)
+        }
+    }
+
+    private suspend fun refill() {
+        val cfg = client.cfg.reconnectionStrategy
+        if (cfg.reconnectAttempts <= 0) return
+        var attempt = 0
+        var ex: Throwable? = null
+
+        while (attempt < cfg.reconnectAttempts) {
+            attempt++
+            logger.trace("Refilling ConnectionPool. Attempt $attempt")
+            runCatching { createConn() }
+                .onSuccess {
+                    connections.send(it)
+                    logger.trace("Connection refilled with $it")
+                    return
+                }.onFailure {
+                    if (ex != null) ex.addSuppressed(it) else ex = it
+                }
+
+            logger.debug("Connection refill failed, remaining attempts: ${cfg.reconnectAttempts - attempt}")
+            delay(attempt * cfg.reconnectDelay)
+        }
+
+        val logMsg = "Connection refills failed, maximum attempts reached"
+        if (ex == null) logger.warn(logMsg)
+        else logger.warn(logMsg, ex)
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)

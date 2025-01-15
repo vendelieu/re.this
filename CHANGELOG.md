@@ -1,5 +1,11 @@
 # Re.this Changelog
 
+## 0.2.1
+
+* Added connection retrying.
+* Added socket configuration.
+* Upgraded JVM target version to 17
+
 ## 0.2.0
 
 * Implemented Bitmap, Stream commands.
