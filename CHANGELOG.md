@@ -4,6 +4,7 @@
 
 * Added connection retrying.
 * Added socket configuration.
+* Upgraded JVM target version to 17
 
 ## 0.2.0
 
