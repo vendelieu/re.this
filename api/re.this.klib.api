@@ -502,7 +502,7 @@ final class eu.vendeli.rethis.types.core/BulkString : eu.vendeli.rethis.types.co
 }
 
 final class eu.vendeli.rethis.types.core/ClientConfiguration { // eu.vendeli.rethis.types.core/ClientConfiguration|null[0]
-    constructor <init>(kotlin/Int? = ..., io.ktor.utils.io.charsets/Charset = ..., io.ktor.network.tls/TLSConfig? = ..., eu.vendeli.rethis.types.core/AuthConfiguration? = ..., eu.vendeli.rethis.types.core/PoolConfiguration = ...) // eu.vendeli.rethis.types.core/ClientConfiguration.<init>|<init>(kotlin.Int?;io.ktor.utils.io.charsets.Charset;io.ktor.network.tls.TLSConfig?;eu.vendeli.rethis.types.core.AuthConfiguration?;eu.vendeli.rethis.types.core.PoolConfiguration){}[0]
+    constructor <init>(kotlin/Int? = ..., io.ktor.utils.io.charsets/Charset = ..., io.ktor.network.tls/TLSConfig? = ..., eu.vendeli.rethis.types.core/AuthConfiguration? = ..., eu.vendeli.rethis.types.core/PoolConfiguration = ..., eu.vendeli.rethis.types.core/ReconnectionStrategyConfiguration = ..., eu.vendeli.rethis.types.core/SocketConfiguration = ...) // eu.vendeli.rethis.types.core/ClientConfiguration.<init>|<init>(kotlin.Int?;io.ktor.utils.io.charsets.Charset;io.ktor.network.tls.TLSConfig?;eu.vendeli.rethis.types.core.AuthConfiguration?;eu.vendeli.rethis.types.core.PoolConfiguration;eu.vendeli.rethis.types.core.ReconnectionStrategyConfiguration;eu.vendeli.rethis.types.core.SocketConfiguration){}[0]
 
     final var charset // eu.vendeli.rethis.types.core/ClientConfiguration.charset|{}charset[0]
         final fun <get-charset>(): io.ktor.utils.io.charsets/Charset // eu.vendeli.rethis.types.core/ClientConfiguration.charset.<get-charset>|<get-charset>(){}[0]
@@ -518,10 +518,12 @@ final class eu.vendeli.rethis.types.core/ClientConfiguration { // eu.vendeli.ret
     final fun component1(): kotlin/Int? // eu.vendeli.rethis.types.core/ClientConfiguration.component1|component1(){}[0]
     final fun component2(): io.ktor.utils.io.charsets/Charset // eu.vendeli.rethis.types.core/ClientConfiguration.component2|component2(){}[0]
     final fun component3(): io.ktor.network.tls/TLSConfig? // eu.vendeli.rethis.types.core/ClientConfiguration.component3|component3(){}[0]
-    final fun copy(kotlin/Int? = ..., io.ktor.utils.io.charsets/Charset = ..., io.ktor.network.tls/TLSConfig? = ..., eu.vendeli.rethis.types.core/AuthConfiguration? = ..., eu.vendeli.rethis.types.core/PoolConfiguration = ...): eu.vendeli.rethis.types.core/ClientConfiguration // eu.vendeli.rethis.types.core/ClientConfiguration.copy|copy(kotlin.Int?;io.ktor.utils.io.charsets.Charset;io.ktor.network.tls.TLSConfig?;eu.vendeli.rethis.types.core.AuthConfiguration?;eu.vendeli.rethis.types.core.PoolConfiguration){}[0]
+    final fun copy(kotlin/Int? = ..., io.ktor.utils.io.charsets/Charset = ..., io.ktor.network.tls/TLSConfig? = ..., eu.vendeli.rethis.types.core/AuthConfiguration? = ..., eu.vendeli.rethis.types.core/PoolConfiguration = ..., eu.vendeli.rethis.types.core/ReconnectionStrategyConfiguration = ..., eu.vendeli.rethis.types.core/SocketConfiguration = ...): eu.vendeli.rethis.types.core/ClientConfiguration // eu.vendeli.rethis.types.core/ClientConfiguration.copy|copy(kotlin.Int?;io.ktor.utils.io.charsets.Charset;io.ktor.network.tls.TLSConfig?;eu.vendeli.rethis.types.core.AuthConfiguration?;eu.vendeli.rethis.types.core.PoolConfiguration;eu.vendeli.rethis.types.core.ReconnectionStrategyConfiguration;eu.vendeli.rethis.types.core.SocketConfiguration){}[0]
     final fun equals(kotlin/Any?): kotlin/Boolean // eu.vendeli.rethis.types.core/ClientConfiguration.equals|equals(kotlin.Any?){}[0]
     final fun hashCode(): kotlin/Int // eu.vendeli.rethis.types.core/ClientConfiguration.hashCode|hashCode(){}[0]
     final fun pool(kotlin/Function1<eu.vendeli.rethis.types.core/PoolConfiguration, kotlin/Unit>) // eu.vendeli.rethis.types.core/ClientConfiguration.pool|pool(kotlin.Function1<eu.vendeli.rethis.types.core.PoolConfiguration,kotlin.Unit>){}[0]
+    final fun reconnectionStrategy(kotlin/Function1<eu.vendeli.rethis.types.core/ReconnectionStrategyConfiguration, kotlin/Unit>) // eu.vendeli.rethis.types.core/ClientConfiguration.reconnectionStrategy|reconnectionStrategy(kotlin.Function1<eu.vendeli.rethis.types.core.ReconnectionStrategyConfiguration,kotlin.Unit>){}[0]
+    final fun socket(kotlin/Function1<eu.vendeli.rethis.types.core/SocketConfiguration, kotlin/Unit>) // eu.vendeli.rethis.types.core/ClientConfiguration.socket|socket(kotlin.Function1<eu.vendeli.rethis.types.core.SocketConfiguration,kotlin.Unit>){}[0]
     final fun toString(): kotlin/String // eu.vendeli.rethis.types.core/ClientConfiguration.toString|toString(){}[0]
 }
 
@@ -636,6 +638,54 @@ final class eu.vendeli.rethis.types.core/RSet : eu.vendeli.rethis.types.core/RTy
     final fun equals(kotlin/Any?): kotlin/Boolean // eu.vendeli.rethis.types.core/RSet.equals|equals(kotlin.Any?){}[0]
     final fun hashCode(): kotlin/Int // eu.vendeli.rethis.types.core/RSet.hashCode|hashCode(){}[0]
     final fun toString(): kotlin/String // eu.vendeli.rethis.types.core/RSet.toString|toString(){}[0]
+}
+
+final class eu.vendeli.rethis.types.core/ReconnectionStrategyConfiguration { // eu.vendeli.rethis.types.core/ReconnectionStrategyConfiguration|null[0]
+    constructor <init>(kotlin/Boolean = ..., kotlin/Int = ..., kotlin/Long = ...) // eu.vendeli.rethis.types.core/ReconnectionStrategyConfiguration.<init>|<init>(kotlin.Boolean;kotlin.Int;kotlin.Long){}[0]
+
+    final var doHealthCheck // eu.vendeli.rethis.types.core/ReconnectionStrategyConfiguration.doHealthCheck|{}doHealthCheck[0]
+        final fun <get-doHealthCheck>(): kotlin/Boolean // eu.vendeli.rethis.types.core/ReconnectionStrategyConfiguration.doHealthCheck.<get-doHealthCheck>|<get-doHealthCheck>(){}[0]
+        final fun <set-doHealthCheck>(kotlin/Boolean) // eu.vendeli.rethis.types.core/ReconnectionStrategyConfiguration.doHealthCheck.<set-doHealthCheck>|<set-doHealthCheck>(kotlin.Boolean){}[0]
+    final var reconnectAttempts // eu.vendeli.rethis.types.core/ReconnectionStrategyConfiguration.reconnectAttempts|{}reconnectAttempts[0]
+        final fun <get-reconnectAttempts>(): kotlin/Int // eu.vendeli.rethis.types.core/ReconnectionStrategyConfiguration.reconnectAttempts.<get-reconnectAttempts>|<get-reconnectAttempts>(){}[0]
+        final fun <set-reconnectAttempts>(kotlin/Int) // eu.vendeli.rethis.types.core/ReconnectionStrategyConfiguration.reconnectAttempts.<set-reconnectAttempts>|<set-reconnectAttempts>(kotlin.Int){}[0]
+    final var reconnectDelay // eu.vendeli.rethis.types.core/ReconnectionStrategyConfiguration.reconnectDelay|{}reconnectDelay[0]
+        final fun <get-reconnectDelay>(): kotlin/Long // eu.vendeli.rethis.types.core/ReconnectionStrategyConfiguration.reconnectDelay.<get-reconnectDelay>|<get-reconnectDelay>(){}[0]
+        final fun <set-reconnectDelay>(kotlin/Long) // eu.vendeli.rethis.types.core/ReconnectionStrategyConfiguration.reconnectDelay.<set-reconnectDelay>|<set-reconnectDelay>(kotlin.Long){}[0]
+
+    final fun component1(): kotlin/Boolean // eu.vendeli.rethis.types.core/ReconnectionStrategyConfiguration.component1|component1(){}[0]
+    final fun component2(): kotlin/Int // eu.vendeli.rethis.types.core/ReconnectionStrategyConfiguration.component2|component2(){}[0]
+    final fun component3(): kotlin/Long // eu.vendeli.rethis.types.core/ReconnectionStrategyConfiguration.component3|component3(){}[0]
+    final fun copy(kotlin/Boolean = ..., kotlin/Int = ..., kotlin/Long = ...): eu.vendeli.rethis.types.core/ReconnectionStrategyConfiguration // eu.vendeli.rethis.types.core/ReconnectionStrategyConfiguration.copy|copy(kotlin.Boolean;kotlin.Int;kotlin.Long){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // eu.vendeli.rethis.types.core/ReconnectionStrategyConfiguration.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // eu.vendeli.rethis.types.core/ReconnectionStrategyConfiguration.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // eu.vendeli.rethis.types.core/ReconnectionStrategyConfiguration.toString|toString(){}[0]
+}
+
+final class eu.vendeli.rethis.types.core/SocketConfiguration { // eu.vendeli.rethis.types.core/SocketConfiguration|null[0]
+    constructor <init>(kotlin/Long? = ..., kotlin/Int? = ..., kotlin/Boolean = ..., kotlin/Boolean = ...) // eu.vendeli.rethis.types.core/SocketConfiguration.<init>|<init>(kotlin.Long?;kotlin.Int?;kotlin.Boolean;kotlin.Boolean){}[0]
+
+    final var keepAlive // eu.vendeli.rethis.types.core/SocketConfiguration.keepAlive|{}keepAlive[0]
+        final fun <get-keepAlive>(): kotlin/Boolean // eu.vendeli.rethis.types.core/SocketConfiguration.keepAlive.<get-keepAlive>|<get-keepAlive>(){}[0]
+        final fun <set-keepAlive>(kotlin/Boolean) // eu.vendeli.rethis.types.core/SocketConfiguration.keepAlive.<set-keepAlive>|<set-keepAlive>(kotlin.Boolean){}[0]
+    final var linger // eu.vendeli.rethis.types.core/SocketConfiguration.linger|{}linger[0]
+        final fun <get-linger>(): kotlin/Int? // eu.vendeli.rethis.types.core/SocketConfiguration.linger.<get-linger>|<get-linger>(){}[0]
+        final fun <set-linger>(kotlin/Int?) // eu.vendeli.rethis.types.core/SocketConfiguration.linger.<set-linger>|<set-linger>(kotlin.Int?){}[0]
+    final var noDelay // eu.vendeli.rethis.types.core/SocketConfiguration.noDelay|{}noDelay[0]
+        final fun <get-noDelay>(): kotlin/Boolean // eu.vendeli.rethis.types.core/SocketConfiguration.noDelay.<get-noDelay>|<get-noDelay>(){}[0]
+        final fun <set-noDelay>(kotlin/Boolean) // eu.vendeli.rethis.types.core/SocketConfiguration.noDelay.<set-noDelay>|<set-noDelay>(kotlin.Boolean){}[0]
+    final var timeout // eu.vendeli.rethis.types.core/SocketConfiguration.timeout|{}timeout[0]
+        final fun <get-timeout>(): kotlin/Long? // eu.vendeli.rethis.types.core/SocketConfiguration.timeout.<get-timeout>|<get-timeout>(){}[0]
+        final fun <set-timeout>(kotlin/Long?) // eu.vendeli.rethis.types.core/SocketConfiguration.timeout.<set-timeout>|<set-timeout>(kotlin.Long?){}[0]
+
+    final fun component1(): kotlin/Long? // eu.vendeli.rethis.types.core/SocketConfiguration.component1|component1(){}[0]
+    final fun component2(): kotlin/Int? // eu.vendeli.rethis.types.core/SocketConfiguration.component2|component2(){}[0]
+    final fun component3(): kotlin/Boolean // eu.vendeli.rethis.types.core/SocketConfiguration.component3|component3(){}[0]
+    final fun component4(): kotlin/Boolean // eu.vendeli.rethis.types.core/SocketConfiguration.component4|component4(){}[0]
+    final fun copy(kotlin/Long? = ..., kotlin/Int? = ..., kotlin/Boolean = ..., kotlin/Boolean = ...): eu.vendeli.rethis.types.core/SocketConfiguration // eu.vendeli.rethis.types.core/SocketConfiguration.copy|copy(kotlin.Long?;kotlin.Int?;kotlin.Boolean;kotlin.Boolean){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // eu.vendeli.rethis.types.core/SocketConfiguration.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // eu.vendeli.rethis.types.core/SocketConfiguration.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // eu.vendeli.rethis.types.core/SocketConfiguration.toString|toString(){}[0]
 }
 
 final class eu.vendeli.rethis.types.core/UnixSocket : eu.vendeli.rethis.types.core/Address { // eu.vendeli.rethis.types.core/UnixSocket|null[0]
@@ -796,7 +846,7 @@ final class eu.vendeli.rethis/ReThis { // eu.vendeli.rethis/ReThis|null[0]
         final fun <get-subscriptions>(): eu.vendeli.rethis.types.core/ActiveSubscriptions // eu.vendeli.rethis/ReThis.subscriptions.<get-subscriptions>|<get-subscriptions>(){}[0]
 
     final fun disconnect() // eu.vendeli.rethis/ReThis.disconnect|disconnect(){}[0]
-    final fun reconnect(): kotlinx.coroutines/Job // eu.vendeli.rethis/ReThis.reconnect|reconnect(){}[0]
+    final fun reconnect() // eu.vendeli.rethis/ReThis.reconnect|reconnect(){}[0]
     final suspend fun execute(kotlin.collections/List<eu.vendeli.rethis.types.core/Argument>, kotlin/Boolean = ...): eu.vendeli.rethis.types.core/RType // eu.vendeli.rethis/ReThis.execute|execute(kotlin.collections.List<eu.vendeli.rethis.types.core.Argument>;kotlin.Boolean){}[0]
     final suspend fun pipeline(kotlin.coroutines/SuspendFunction1<eu.vendeli.rethis/ReThis, kotlin/Unit>): kotlin.collections/List<eu.vendeli.rethis.types.core/RType> // eu.vendeli.rethis/ReThis.pipeline|pipeline(kotlin.coroutines.SuspendFunction1<eu.vendeli.rethis.ReThis,kotlin.Unit>){}[0]
     final suspend fun transaction(kotlin.coroutines/SuspendFunction1<eu.vendeli.rethis/ReThis, kotlin/Unit>): kotlin.collections/List<eu.vendeli.rethis.types.core/RType> // eu.vendeli.rethis/ReThis.transaction|transaction(kotlin.coroutines.SuspendFunction1<eu.vendeli.rethis.ReThis,kotlin.Unit>){}[0]
@@ -855,7 +905,9 @@ final value class eu.vendeli.rethis.types.core/LongArg : eu.vendeli.rethis.types
     final fun toString(): kotlin/String // eu.vendeli.rethis.types.core/LongArg.toString|toString(){}[0]
 }
 
-sealed class eu.vendeli.rethis.types.core/Address // eu.vendeli.rethis.types.core/Address|null[0]
+sealed class eu.vendeli.rethis.types.core/Address { // eu.vendeli.rethis.types.core/Address|null[0]
+    open fun toString(): kotlin/String // eu.vendeli.rethis.types.core/Address.toString|toString(){}[0]
+}
 
 sealed class eu.vendeli.rethis.types.core/RPrimitive : eu.vendeli.rethis.types.core/RType // eu.vendeli.rethis.types.core/RPrimitive|null[0]
 

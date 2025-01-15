@@ -25,7 +25,7 @@ data class ClientConfiguration(
     internal var auth: AuthConfiguration? = null,
     internal val poolConfiguration: PoolConfiguration = PoolConfiguration(),
     internal val reconnectionStrategy: ReconnectionStrategyConfiguration = ReconnectionStrategyConfiguration(),
-    internal val socketConfiguration: SocketConfiguration = SocketConfiguration()
+    internal val socketConfiguration: SocketConfiguration = SocketConfiguration(),
 ) {
     /**
      * Configures authentication for the client.

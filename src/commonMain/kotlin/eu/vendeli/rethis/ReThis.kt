@@ -60,7 +60,9 @@ class ReThis(
     val isDisconnected: Boolean get() = connectionPool.isEmpty
 
     fun disconnect() = connectionPool.disconnect()
-    fun reconnect() = connectionPool.prepare()
+    fun reconnect() {
+        if (connectionPool.isEmpty) connectionPool.prepare()
+    }
 
     suspend fun pipeline(block: suspend ReThis.() -> Unit): List<RType> {
         val responses = mutableListOf<RType>()
