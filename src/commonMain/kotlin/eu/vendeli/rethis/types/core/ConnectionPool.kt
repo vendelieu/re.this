@@ -34,7 +34,14 @@ internal class ConnectionPool(
         logger.trace("Creating connection to ${client.address}")
         val conn = aSocket(selector)
             .tcp()
-            .connect(client.address.socket)
+            .connect(client.address.socket) {
+                client.cfg.socketConfiguration.run {
+                    timeout?.let { socketTimeout = it }
+                    linger?.let { lingerSeconds = it }
+                    this@connect.keepAlive = keepAlive
+                    this@connect.noDelay = noDelay
+                }
+            }
             .let { socket ->
                 client.cfg.tlsConfig?.let {
                     socket.tls(selector.coroutineContext, it)
