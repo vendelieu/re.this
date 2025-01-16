@@ -5,12 +5,12 @@ package eu.vendeli.rethis.utils
 import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.types.core.*
 import eu.vendeli.rethis.types.coroutine.CoLocalConn
-import io.ktor.utils.io.*
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlin.coroutines.CoroutineContext
+import kotlin.reflect.KClass
 
 fun RType.isOk() = unwrap<String>() == "OK"
 
@@ -19,6 +19,10 @@ internal inline fun <T> Any.cast(): T = this as T
 
 @Suppress("UNCHECKED_CAST", "NOTHING_TO_INLINE")
 internal inline fun <T> Any.safeCast(): T? = this as? T
+
+@Suppress("UNCHECKED_CAST", "NOTHING_TO_INLINE")
+internal inline fun <T : Any> Any.safeCast(clazz: KClass<T>): T? =
+    if (this::class == clazz) this as T else null
 
 @Suppress("NOTHING_TO_INLINE")
 private inline fun String?.isEqTo(other: String) = if (this != null) {

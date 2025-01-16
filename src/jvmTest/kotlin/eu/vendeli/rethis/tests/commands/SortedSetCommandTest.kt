@@ -7,6 +7,7 @@ import eu.vendeli.rethis.types.common.ScanResult
 import eu.vendeli.rethis.types.common.ZMember
 import eu.vendeli.rethis.types.common.ZPopResult
 import eu.vendeli.rethis.types.options.ZPopCommonOption
+import io.kotest.matchers.maps.shouldContain
 import io.kotest.matchers.shouldBe
 
 class SortedSetCommandTest : ReThisTestCtx() {
@@ -52,7 +53,7 @@ class SortedSetCommandTest : ReThisTestCtx() {
     suspend fun `test ZPOPMIN command`() {
         client.zAdd("testSet27", ZMember("testValue27", 1.0))
 
-        client.zPopmin("testSet27") shouldBe listOf("testValue27", 1.0)
+        client.zPopmin("testSet27") shouldContain ("testValue27" to 1.0)
     }
 
     @Test

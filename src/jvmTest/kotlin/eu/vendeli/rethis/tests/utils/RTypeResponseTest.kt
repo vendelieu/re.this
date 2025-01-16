@@ -48,7 +48,11 @@ class RTypeResponseTest : ReThisTestCtx() {
             writeFully("!21\r\nSYNTAX invalid syntax\r\n".encodeToByteArray())
         }
 
-        channel.readRedisMessage(charset).safeCast<RType.Error>()?.exception?.message shouldBe "SYNTAX invalid syntax"
+        channel
+            .readRedisMessage(charset)
+            .safeCast<RType.Error>()
+            ?.exception
+            ?.message shouldBe "SYNTAX invalid syntax"
     }
 
     @Test
@@ -80,7 +84,8 @@ class RTypeResponseTest : ReThisTestCtx() {
         val result = channel.readRedisMessage(charset)
         result shouldBe RArray(
             listOf(
-                PlainString("first"), PlainString("second"),
+                PlainString("first"),
+                PlainString("second"),
             ),
         )
     }

@@ -41,8 +41,7 @@ internal class ConnectionPool(
                     this@connect.keepAlive = keepAlive
                     this@connect.noDelay = noDelay
                 }
-            }
-            .let { socket ->
+            }.let { socket ->
                 client.cfg.tlsConfig?.let {
                     socket.tls(selector.coroutineContext, it)
                 } ?: socket

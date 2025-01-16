@@ -13,6 +13,7 @@ import eu.vendeli.rethis.types.options.ZPopCommonOption
 import eu.vendeli.rethis.types.options.ZRangeOption
 import eu.vendeli.rethis.utils.cast
 import eu.vendeli.rethis.utils.safeCast
+import eu.vendeli.rethis.utils.unwrapRespIndMap
 import eu.vendeli.rethis.utils.writeArg
 
 suspend fun ReThis.bzMPop(
@@ -232,13 +233,12 @@ suspend fun ReThis.zPopmax(key: String, count: Long? = null): List<MPopResult> =
     MPopResult(name = item.first().unwrap<String>()!!, poppedElements = item.last().unwrapSet<String>().toList())
 }
 
-suspend fun ReThis.zPopmin(key: String): List<Double> = execute<Double>(
+suspend fun ReThis.zPopmin(key: String): Map<String, Double?> = execute(
     listOfNotNull(
         "ZPOPMIN".toArg(),
         key.toArg(),
     ),
-    isCollectionResponse = true,
-) ?: emptyList()
+).unwrapRespIndMap<String, Double>() ?: emptyMap()
 
 suspend fun ReThis.zPopmin(key: String, count: Long): List<List<ZMember>> = execute(
     listOfNotNull(
