@@ -130,7 +130,7 @@ class ReThis(
                 conn.sendRequest(listOf("DISCARD".toArg()))
                 require(conn.input.readRedisMessage(cfg.charset).value == "OK")
                 logger.error("Transaction canceled", it)
-                return@use emptyList()
+                throw it
             }
 
             logger.debug("Transaction completed")
@@ -146,20 +146,20 @@ class ReThis(
         handleRequest(payload)?.input?.readRedisMessage(cfg.charset, rawResponse) ?: RType.Null
 
     @JvmName("executeSimple")
-    internal suspend inline fun <reified T> execute(
+    internal suspend inline fun <reified T : Any> execute(
         payload: List<Argument>,
-    ): T? = handleRequest(payload)?.input?.processRedisSimpleResponse(cfg.charset)
+    ): T? = handleRequest(payload)?.input?.processRedisSimpleResponse(T::class, cfg.charset)
 
     @JvmName("executeList")
-    internal suspend inline fun <reified T> execute(
+    internal suspend inline fun <reified T : Any> execute(
         payload: List<Argument>,
         isCollectionResponse: Boolean = false,
-    ): List<T>? = handleRequest(payload)?.input?.processRedisListResponse(cfg.charset)
+    ): List<T>? = handleRequest(payload)?.input?.processRedisListResponse(T::class, cfg.charset)
 
     @JvmName("executeMap")
-    internal suspend inline fun <reified K : Any, reified V> execute(
+    internal suspend inline fun <reified K : Any, reified V : Any> execute(
         payload: List<Argument>,
-    ): Map<K, V?>? = handleRequest(payload)?.input?.processRedisMapResponse(cfg.charset)
+    ): Map<K, V?>? = handleRequest(payload)?.input?.processRedisMapResponse(K::class, V::class, cfg.charset)
 
     private suspend fun handleRequest(
         payload: List<Argument>,

@@ -1,5 +1,9 @@
 # Re.this Changelog
 
+## 0.2.2
+
+* Fixed casting issue caused by type erasure and wrong inlining.
+
 ## 0.2.1
 
 * Added connection retrying.

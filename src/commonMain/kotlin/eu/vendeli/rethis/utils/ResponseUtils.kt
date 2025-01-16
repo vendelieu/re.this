@@ -14,6 +14,7 @@ import io.ktor.utils.io.core.*
 import kotlinx.io.Buffer
 import kotlinx.io.readDecimalLong
 import kotlinx.io.readString
+import kotlin.reflect.KClass
 
 internal suspend fun ByteReadChannel.readRedisMessage(charset: Charset, rawOnly: Boolean = false): RType {
     val type = RespCode.fromCode(readByte()) // Read the type byte (e.g., +, -, :, $, *)
@@ -109,7 +110,8 @@ internal suspend fun ByteReadChannel.readRedisMessage(charset: Charset, rawOnly:
     }
 }
 
-internal suspend inline fun <T> ByteReadChannel.processRedisSimpleResponse(
+internal suspend fun <T : Any> ByteReadChannel.processRedisSimpleResponse(
+    tClass: KClass<T>,
     charset: Charset,
 ): T? {
     val type = RespCode.fromCode(readByte()) // Read the type byte (e.g., +, -, :, $, *)
@@ -161,10 +163,11 @@ internal suspend inline fun <T> ByteReadChannel.processRedisSimpleResponse(
         }
 
         else -> null
-    }?.safeCast()
+    }?.safeCast(tClass)
 }
 
-internal suspend inline fun <T> ByteReadChannel.processRedisListResponse(
+internal suspend fun <T : Any> ByteReadChannel.processRedisListResponse(
+    tClass: KClass<T>,
     charset: Charset,
 ): List<T>? {
     val type = RespCode.fromCode(readByte()) // Read the type byte (e.g., +, -, :, $, *)
@@ -175,7 +178,7 @@ internal suspend inline fun <T> ByteReadChannel.processRedisListResponse(
             val arraySize = line.readDecimalLong()
             if (arraySize < 0) return null // Handle null array (`*-1`)
             List(arraySize.toInt()) {
-                processRedisSimpleResponse<T>(charset)
+                processRedisSimpleResponse<T>(tClass,charset)
             } // Recursively read each array element
         }
 
@@ -183,7 +186,7 @@ internal suspend inline fun <T> ByteReadChannel.processRedisListResponse(
             val setSize = line.readDecimalLong()
             if (setSize < 0) return null // Handle null set
             List(setSize.toInt()) {
-                processRedisSimpleResponse<T>(charset)
+                processRedisSimpleResponse<T>(tClass, charset)
             }
         }
 
@@ -191,7 +194,7 @@ internal suspend inline fun <T> ByteReadChannel.processRedisListResponse(
             val pushSize = line.readDecimalLong()
             if (pushSize < 0) return null // Handle null push message
             List(pushSize.toInt()) {
-                processRedisSimpleResponse<T>(charset)
+                processRedisSimpleResponse<T>(tClass, charset)
             }
         }
 
@@ -200,6 +203,8 @@ internal suspend inline fun <T> ByteReadChannel.processRedisListResponse(
 }
 
 internal suspend fun <K : Any, V : Any> ByteReadChannel.processRedisMapResponse(
+    kClass: KClass<K>,
+    vClass: KClass<V>,
     charset: Charset,
 ): Map<K, V>? {
     val type = RespCode.fromCode(readByte()) // Read the type byte (e.g., +, -, :, $, *)
@@ -211,8 +216,8 @@ internal suspend fun <K : Any, V : Any> ByteReadChannel.processRedisMapResponse(
             if (mapSize < 0) return null // Handle null map
             buildMap<K, V?>(mapSize.toInt()) {
                 (1..mapSize.toInt()).forEach {
-                    val key = processRedisSimpleResponse<K>(charset) ?: exception { "Invalid map key" }
-                    val value = processRedisSimpleResponse<V>(charset)
+                    val key = processRedisSimpleResponse<K>(kClass, charset) ?: exception { "Invalid map key" }
+                    val value = processRedisSimpleResponse<V>(vClass, charset)
                     put(key, value)
                 }
             }
