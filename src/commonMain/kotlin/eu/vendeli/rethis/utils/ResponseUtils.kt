@@ -17,8 +17,7 @@ import kotlinx.io.readString
 import kotlin.reflect.KClass
 
 internal suspend fun ByteReadChannel.readRedisMessage(charset: Charset, rawOnly: Boolean = false): RType {
-    val type = RespCode.fromCode(readByte()) // Read the type byte (e.g., +, -, :, $, *)
-    val line = readLine2Buffer()
+    val (type, line) = readCodeWithLine()
 
     if (rawOnly) return RType.Raw(readByteArray(line.readDecimalLong().toInt()))
 
@@ -114,8 +113,7 @@ internal suspend fun <T : Any> ByteReadChannel.processRedisSimpleResponse(
     tClass: KClass<T>,
     charset: Charset,
 ): T? {
-    val type = RespCode.fromCode(readByte()) // Read the type byte (e.g., +, -, :, $, *)
-    val line = readLine2Buffer()
+    val (type, line) = readCodeWithLine()
 
     return when (type) {
         RespCode.SIMPLE_STRING -> line.readText(charset) // Return SimpleString type
@@ -170,15 +168,14 @@ internal suspend fun <T : Any> ByteReadChannel.processRedisListResponse(
     tClass: KClass<T>,
     charset: Charset,
 ): List<T>? {
-    val type = RespCode.fromCode(readByte()) // Read the type byte (e.g., +, -, :, $, *)
-    val line = readLine2Buffer()
+    val (type, line) = readCodeWithLine()
 
     return when (type) {
         RespCode.ARRAY -> {
             val arraySize = line.readDecimalLong()
             if (arraySize < 0) return null // Handle null array (`*-1`)
             List(arraySize.toInt()) {
-                processRedisSimpleResponse<T>(tClass,charset)
+                processRedisSimpleResponse<T>(tClass, charset)
             } // Recursively read each array element
         }
 
@@ -207,8 +204,7 @@ internal suspend fun <K : Any, V : Any> ByteReadChannel.processRedisMapResponse(
     vClass: KClass<V>,
     charset: Charset,
 ): Map<K, V>? {
-    val type = RespCode.fromCode(readByte()) // Read the type byte (e.g., +, -, :, $, *)
-    val line = readLine2Buffer()
+    val (type, line) = readCodeWithLine()
 
     return when (type) {
         RespCode.MAP -> {
@@ -227,16 +223,7 @@ internal suspend fun <K : Any, V : Any> ByteReadChannel.processRedisMapResponse(
     }?.safeCast()
 }
 
-/**
- * Reads a line from the `ByteReadChannel` into a `Buffer`, stopping at a CRLF sequence.
- *
- * The method reads bytes one by one and appends them to a buffer until it encounters
- * a carriage return followed by a newline (CRLF). The CRLF sequence is not included
- * in the returned buffer.
- *
- * @return A `Buffer` containing the line read from the channel, excluding the CRLF.
- */
-private suspend fun ByteReadChannel.readLine2Buffer(): Buffer {
+private suspend inline fun ByteReadChannel.readCodeWithLine(): Pair<RespCode, Buffer> {
     val buffer = Buffer()
     while (true) {
         val byte = readByte()
@@ -253,7 +240,7 @@ private suspend fun ByteReadChannel.readLine2Buffer(): Buffer {
         }
         buffer.writeByte(byte)
     }
-    return buffer
+    return RespCode.fromCode(buffer.readByte()) to buffer
 }
 
 internal inline fun <reified L, reified R> RType.unwrapRespIndMap(): Map<L, R?>? =
