@@ -7,9 +7,7 @@ import kotlinx.benchmark.Benchmark
 import kotlinx.benchmark.Blackhole
 import kotlinx.benchmark.Setup
 import kotlinx.benchmark.TearDown
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import org.openjdk.jmh.annotations.*
 import java.util.concurrent.TimeUnit
 
@@ -25,8 +23,7 @@ class KredsBenchmark {
     @Setup
     fun setup() {
         kreds = newClient(Endpoint("localhost", 6379))
-        GlobalScope.launch {
-//            kreds.use { it.ping("test") }
+        GlobalScope.launch(Dispatchers.IO) {
             kreds.ping("test")
         }
     }
@@ -38,21 +35,15 @@ class KredsBenchmark {
 
     @Benchmark
     fun kredsSet(bh: Blackhole) {
-        GlobalScope.launch {
-            bh.consume(
-                kreds.set("key", "value"),
-//                kreds.use { it.set("key", "value") },
-            )
+        GlobalScope.launch(Dispatchers.IO) {
+            bh.consume(kreds.runCatching { set("key", "value") })
         }
     }
 
     @Benchmark
     fun kredsGet(bh: Blackhole) {
-        GlobalScope.launch {
-            bh.consume(
-//            kreds.use { it.get("key") }
-                kreds.get("key"),
-            )
+        GlobalScope.launch(Dispatchers.IO) {
+            bh.consume(kreds.runCatching { get("key") })
         }
     }
 }

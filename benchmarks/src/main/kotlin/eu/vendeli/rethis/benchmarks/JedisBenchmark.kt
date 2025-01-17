@@ -26,11 +26,11 @@ class JedisBenchmark {
 
     @Benchmark
     fun jedisSet(bh: Blackhole) {
-        bh.consume(jedis.set("key", "value"))
+        bh.consume(jedis.runCatching { set("key", "value") })
     }
 
     @Benchmark
     fun jedisGet(bh: Blackhole) {
-        bh.consume(jedis.get("key"))
+        bh.consume(jedis.runCatching { get("key") })
     }
 }

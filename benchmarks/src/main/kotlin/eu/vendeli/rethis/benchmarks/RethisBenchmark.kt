@@ -5,6 +5,7 @@ import eu.vendeli.rethis.commands.get
 import eu.vendeli.rethis.commands.ping
 import eu.vendeli.rethis.commands.set
 import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import org.openjdk.jmh.annotations.*
@@ -33,14 +34,14 @@ class RethisBenchmark {
 
     @Benchmark
     fun rethisSet(bh: Blackhole) {
-        GlobalScope.launch {
+        GlobalScope.launch(Dispatchers.IO) {
             bh.consume(rethis.runCatching { set("key", "value") })
         }
     }
 
     @Benchmark
     fun rethisGet(bh: Blackhole) {
-        GlobalScope.launch {
+        GlobalScope.launch(Dispatchers.IO) {
             bh.consume(rethis.runCatching { get("key") })
         }
     }

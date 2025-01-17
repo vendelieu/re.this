@@ -3,12 +3,9 @@ package eu.vendeli.rethis.benchmarks
 import io.lettuce.core.RedisClient
 import io.lettuce.core.api.async.RedisAsyncCommands
 import kotlinx.benchmark.*
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.*
 import kotlinx.coroutines.future.await
-import kotlinx.coroutines.launch
 import org.openjdk.jmh.annotations.Timeout
-import redis.clients.jedis.JedisPooled
 import java.util.concurrent.TimeUnit
 
 @OptIn(DelicateCoroutinesApi::class)
@@ -33,15 +30,15 @@ class LettuceBenchmark {
 
     @Benchmark
     fun lettuceSet(bh: Blackhole) {
-        GlobalScope.launch {
-            bh.consume(lettuce.set("key", "value").await())
+        GlobalScope.launch(Dispatchers.IO) {
+            bh.consume(lettuce.runCatching { set("key", "value").await() })
         }
     }
 
     @Benchmark
     fun lettuceGet(bh: Blackhole) {
-        GlobalScope.launch {
-            bh.consume(lettuce.get("key").await())
+        GlobalScope.launch(Dispatchers.IO) {
+            bh.consume(lettuce.runCatching { get("key").await() })
         }
     }
 }
