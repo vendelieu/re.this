@@ -3,9 +3,10 @@ package eu.vendeli.rethis.tests.utils
 import com.ionspin.kotlin.bignum.integer.BigInteger
 import com.ionspin.kotlin.bignum.integer.toBigInteger
 import eu.vendeli.rethis.ReThisTestCtx
-import eu.vendeli.rethis.utils.processRedisListResponse
-import eu.vendeli.rethis.utils.processRedisMapResponse
-import eu.vendeli.rethis.utils.processRedisSimpleResponse
+import eu.vendeli.rethis.utils.parseResponse
+import eu.vendeli.rethis.utils.readListResponseTyped
+import eu.vendeli.rethis.utils.readMapResponseTyped
+import eu.vendeli.rethis.utils.readSimpleResponseTyped
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.shouldBe
@@ -22,7 +23,7 @@ class ResponseUtilsTest : ReThisTestCtx() {
             writeFully("+Hello, World!\r\n".encodeToByteArray())
         }
 
-        val result = channel.processRedisSimpleResponse<String>(String::class, charset)
+        val result = channel.parseResponse().readSimpleResponseTyped(String::class, charset)
         result shouldBe "Hello, World!"
     }
 
@@ -32,7 +33,7 @@ class ResponseUtilsTest : ReThisTestCtx() {
             writeFully("=15\r\ntxt:Some string\r\n".encodeToByteArray())
         }
 
-        val result = channel.processRedisSimpleResponse<String>(String::class, charset)
+        val result = channel.parseResponse().readSimpleResponseTyped(String::class, charset)
         result shouldBe "txt:Some string"
     }
 
@@ -43,7 +44,7 @@ class ResponseUtilsTest : ReThisTestCtx() {
         }
 
         shouldThrow<eu.vendeli.rethis.ReThisException> {
-            channel.processRedisSimpleResponse<String>(String::class, charset)
+            channel.parseResponse().readSimpleResponseTyped(String::class, charset)
         }.message shouldBe "Error message"
     }
 
@@ -54,7 +55,7 @@ class ResponseUtilsTest : ReThisTestCtx() {
         }
 
         shouldThrow<eu.vendeli.rethis.ReThisException> {
-            channel.processRedisSimpleResponse<String>(String::class, charset)
+            channel.parseResponse().readSimpleResponseTyped(String::class, charset)
         }.message shouldBe "SYNTAX invalid syntax"
     }
 
@@ -64,7 +65,7 @@ class ResponseUtilsTest : ReThisTestCtx() {
             writeFully(":123\r\n".encodeToByteArray())
         }
 
-        val result = channel.processRedisSimpleResponse<Long>(Long::class, charset)
+        val result = channel.parseResponse().readSimpleResponseTyped(Long::class, charset)
         result shouldBe 123L
     }
 
@@ -74,7 +75,7 @@ class ResponseUtilsTest : ReThisTestCtx() {
             writeFully("$5\r\nHello\r\n".encodeToByteArray())
         }
 
-        val result = channel.processRedisSimpleResponse<String>(String::class, charset)
+        val result = channel.parseResponse().readSimpleResponseTyped(String::class, charset)
         result shouldBe "Hello"
     }
 
@@ -84,7 +85,7 @@ class ResponseUtilsTest : ReThisTestCtx() {
             writeFully("$-1\r\n".encodeToByteArray())
         }
 
-        val result = channel.processRedisSimpleResponse<String>(String::class, charset)
+        val result = channel.parseResponse().readSimpleResponseTyped(String::class, charset)
         result.shouldBeNull()
     }
 
@@ -94,7 +95,7 @@ class ResponseUtilsTest : ReThisTestCtx() {
             writeFully("_\r\n".encodeToByteArray())
         }
 
-        val result = channel.processRedisSimpleResponse<String>(String::class, charset)
+        val result = channel.parseResponse().readSimpleResponseTyped(String::class, charset)
         result.shouldBeNull()
     }
 
@@ -104,7 +105,7 @@ class ResponseUtilsTest : ReThisTestCtx() {
             writeFully("#t\r\n".encodeToByteArray())
         }
 
-        val result = channel.processRedisSimpleResponse<Boolean>(Boolean::class, charset)
+        val result = channel.parseResponse().readSimpleResponseTyped(Boolean::class, charset)
         result shouldBe true
     }
 
@@ -114,7 +115,7 @@ class ResponseUtilsTest : ReThisTestCtx() {
             writeFully(",3.14\r\n".encodeToByteArray())
         }
 
-        val result = channel.processRedisSimpleResponse<Double>(Double::class, charset)
+        val result = channel.parseResponse().readSimpleResponseTyped(Double::class, charset)
         result shouldBe 3.14
     }
 
@@ -124,7 +125,7 @@ class ResponseUtilsTest : ReThisTestCtx() {
             writeFully("(12345678901234567890\r\n".encodeToByteArray())
         }
 
-        val result = channel.processRedisSimpleResponse<BigInteger>(BigInteger::class, charset)
+        val result = channel.parseResponse().readSimpleResponseTyped(BigInteger::class, charset)
         result shouldBe "12345678901234567890".toBigInteger()
     }
 
@@ -134,7 +135,7 @@ class ResponseUtilsTest : ReThisTestCtx() {
             writeFully("*2\r\n$5\r\nHello\r\n$5\r\nWorld\r\n".encodeToByteArray())
         }
 
-        val result = channel.processRedisListResponse<String>(String::class, charset)
+        val result = channel.parseResponse().readListResponseTyped<String>(String::class, charset)
         result shouldBe listOf("Hello", "World")
     }
 
@@ -144,7 +145,7 @@ class ResponseUtilsTest : ReThisTestCtx() {
             writeFully("~2\r\n$5\r\nHello\r\n$5\r\nWorld\r\n".encodeToByteArray())
         }
 
-        val result = channel.processRedisListResponse<String>(String::class, charset)
+        val result = channel.parseResponse().readListResponseTyped<String>(String::class, charset)
         result shouldBe listOf("Hello", "World")
     }
 
@@ -154,7 +155,7 @@ class ResponseUtilsTest : ReThisTestCtx() {
             writeFully(">2\r\n$5\r\nHello\r\n$5\r\nWorld\r\n".encodeToByteArray())
         }
 
-        val result = channel.processRedisListResponse<String>(String::class, charset)
+        val result = channel.parseResponse().readListResponseTyped<String>(String::class, charset)
         result shouldBe listOf("Hello", "World")
     }
 
@@ -164,7 +165,7 @@ class ResponseUtilsTest : ReThisTestCtx() {
             writeFully("%2\r\n+first\r\n:1\r\n+second\r\n:2\r\n".encodeToByteArray())
         }
 
-        val result = channel.processRedisMapResponse<String, Long>(String::class, Long::class, charset)
+        val result = channel.parseResponse().readMapResponseTyped<String, Long>(String::class, Long::class, charset)
         result shouldBe mapOf(
             "first" to 1L,
             "second" to 2L,

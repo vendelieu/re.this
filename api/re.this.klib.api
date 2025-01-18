@@ -1631,7 +1631,6 @@ final object eu.vendeli.rethis.types.options/WITHMATCHLEN : eu.vendeli.rethis.ty
     final fun toString(): kotlin/String // eu.vendeli.rethis.types.options/WITHMATCHLEN.toString|toString(){}[0]
 }
 
-final fun (eu.vendeli.rethis.types.core/RType).eu.vendeli.rethis.utils/isOk(): kotlin/Boolean // eu.vendeli.rethis.utils/isOk|isOk@eu.vendeli.rethis.types.core.RType(){}[0]
 final fun (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.wrappers/Hash(kotlin/String): eu.vendeli.rethis.wrappers/ReThisMap // eu.vendeli.rethis.wrappers/Hash|Hash@eu.vendeli.rethis.ReThis(kotlin.String){}[0]
 final fun (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.wrappers/Set(kotlin/String): eu.vendeli.rethis.wrappers/ReThisSet // eu.vendeli.rethis.wrappers/Set|Set@eu.vendeli.rethis.ReThis(kotlin.String){}[0]
 final fun (kotlin/Any).eu.vendeli.rethis.types.core/toArg(): eu.vendeli.rethis.types.core/Argument // eu.vendeli.rethis.types.core/toArg|toArg@kotlin.Any(){}[0]

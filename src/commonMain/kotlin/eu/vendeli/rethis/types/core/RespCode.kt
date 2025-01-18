@@ -27,5 +27,7 @@ internal enum class RespCode(
         fun fromCode(code: Byte): RespCode = EntryMap[code] ?: exception {
             "No suitable message type found - ${code.toInt().toChar()}"
         }
+
+        fun isSimpleType(type: RespCode): Boolean = type != ARRAY && type != SET && type != PUSH && type != MAP
     }
 }

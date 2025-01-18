@@ -3,7 +3,8 @@ package eu.vendeli.rethis.tests.utils
 import com.ionspin.kotlin.bignum.integer.toBigInteger
 import eu.vendeli.rethis.ReThisTestCtx
 import eu.vendeli.rethis.types.core.*
-import eu.vendeli.rethis.utils.readRedisMessage
+import eu.vendeli.rethis.utils.parseResponse
+import eu.vendeli.rethis.utils.readResponseWrapped
 import eu.vendeli.rethis.utils.safeCast
 import io.kotest.matchers.shouldBe
 import io.ktor.utils.io.*
@@ -17,7 +18,7 @@ class RTypeResponseTest : ReThisTestCtx() {
             writeFully("+Hello, World!\r\n".encodeToByteArray())
         }
 
-        val result = channel.readRedisMessage(charset)
+        val result = channel.parseResponse().readResponseWrapped(charset)
         result shouldBe PlainString("Hello, World!")
     }
 
@@ -27,7 +28,7 @@ class RTypeResponseTest : ReThisTestCtx() {
             writeFully("=15\r\ntxt:Some string\r\n".encodeToByteArray())
         }
 
-        val result = channel.readRedisMessage(charset)
+        val result = channel.parseResponse().readResponseWrapped(charset)
         result shouldBe VerbatimString("txt", "Some string")
     }
 
@@ -37,7 +38,7 @@ class RTypeResponseTest : ReThisTestCtx() {
             writeFully("-Error message\r\n".encodeToByteArray())
         }
 
-        val result = channel.readRedisMessage(charset)
+        val result = channel.parseResponse().readResponseWrapped(charset)
 
         result.safeCast<RType.Error>()?.exception?.message shouldBe "Error message"
     }
@@ -49,7 +50,8 @@ class RTypeResponseTest : ReThisTestCtx() {
         }
 
         channel
-            .readRedisMessage(charset)
+            .parseResponse()
+            .readResponseWrapped(charset)
             .safeCast<RType.Error>()
             ?.exception
             ?.message shouldBe "SYNTAX invalid syntax"
@@ -61,7 +63,7 @@ class RTypeResponseTest : ReThisTestCtx() {
             writeFully(":123\r\n".encodeToByteArray())
         }
 
-        val result = channel.readRedisMessage(charset)
+        val result = channel.parseResponse().readResponseWrapped(charset)
         result shouldBe Int64(123)
     }
 
@@ -71,7 +73,7 @@ class RTypeResponseTest : ReThisTestCtx() {
             writeFully("$5\r\nHello\r\n".encodeToByteArray())
         }
 
-        val result = channel.readRedisMessage(charset)
+        val result = channel.parseResponse().readResponseWrapped(charset)
         result shouldBe BulkString("Hello")
     }
 
@@ -81,7 +83,7 @@ class RTypeResponseTest : ReThisTestCtx() {
             writeFully("*2\r\n+first\r\n+second\r\n".encodeToByteArray())
         }
 
-        val result = channel.readRedisMessage(charset)
+        val result = channel.parseResponse().readResponseWrapped(charset)
         result shouldBe RArray(
             listOf(
                 PlainString("first"),
@@ -96,7 +98,7 @@ class RTypeResponseTest : ReThisTestCtx() {
             writeFully("$-1\r\n".encodeToByteArray())
         }
 
-        val result = channel.readRedisMessage(charset)
+        val result = channel.parseResponse().readResponseWrapped(charset)
         result shouldBe RType.Null
     }
 
@@ -106,7 +108,7 @@ class RTypeResponseTest : ReThisTestCtx() {
             writeFully("_\r\n".encodeToByteArray())
         }
 
-        val result = channel.readRedisMessage(charset)
+        val result = channel.parseResponse().readResponseWrapped(charset)
         result shouldBe RType.Null
     }
 
@@ -116,7 +118,7 @@ class RTypeResponseTest : ReThisTestCtx() {
             writeFully("*-1\r\n".encodeToByteArray())
         }
 
-        val result = channel.readRedisMessage(charset)
+        val result = channel.parseResponse().readResponseWrapped(charset)
         result shouldBe RType.Null
     }
 
@@ -126,7 +128,7 @@ class RTypeResponseTest : ReThisTestCtx() {
             writeFully("#t\r\n".encodeToByteArray())
         }
 
-        val result = channel.readRedisMessage(charset)
+        val result = channel.parseResponse().readResponseWrapped(charset)
         result shouldBe Bool(true)
     }
 
@@ -136,7 +138,7 @@ class RTypeResponseTest : ReThisTestCtx() {
             writeFully(",3.14\r\n".encodeToByteArray())
         }
 
-        val result = channel.readRedisMessage(charset)
+        val result = channel.parseResponse().readResponseWrapped(charset)
         result shouldBe F64(3.14)
     }
 
@@ -146,7 +148,7 @@ class RTypeResponseTest : ReThisTestCtx() {
             writeFully("(12345678901234567890\r\n".encodeToByteArray())
         }
 
-        val result = channel.readRedisMessage(charset)
+        val result = channel.parseResponse().readResponseWrapped(charset)
         result shouldBe BigNumber("12345678901234567890".toBigInteger())
     }
 
@@ -156,7 +158,7 @@ class RTypeResponseTest : ReThisTestCtx() {
             writeFully("~2\r\n$5\r\nHello\r\n$5\r\nWorld\r\n".encodeToByteArray())
         }
 
-        val result = channel.readRedisMessage(charset)
+        val result = channel.parseResponse().readResponseWrapped(charset)
         result shouldBe RSet(setOf(BulkString("Hello"), BulkString("World")))
     }
 
@@ -166,7 +168,7 @@ class RTypeResponseTest : ReThisTestCtx() {
             writeFully(">2\r\n$5\r\nHello\r\n$5\r\nWorld\r\n".encodeToByteArray())
         }
 
-        val result = channel.readRedisMessage(charset)
+        val result = channel.parseResponse().readResponseWrapped(charset)
         result shouldBe Push(listOf(BulkString("Hello"), BulkString("World")))
     }
 
@@ -176,7 +178,7 @@ class RTypeResponseTest : ReThisTestCtx() {
             writeFully("%2\r\n+first\r\n:1\r\n+second\r\n:2\r\n".encodeToByteArray())
         }
 
-        val result = channel.readRedisMessage(charset)
+        val result = channel.parseResponse().readResponseWrapped(charset)
         result shouldBe RMap(
             mapOf(
                 PlainString("first") to Int64(1),

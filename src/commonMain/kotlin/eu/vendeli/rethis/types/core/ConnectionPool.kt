@@ -1,7 +1,7 @@
 package eu.vendeli.rethis.types.core
 
 import eu.vendeli.rethis.ReThis
-import eu.vendeli.rethis.utils.readRedisMessage
+import eu.vendeli.rethis.utils.readResponseWrapped
 import eu.vendeli.rethis.utils.sendRequest
 import eu.vendeli.rethis.utils.writeRedisValue
 import io.ktor.network.selector.*
@@ -10,6 +10,7 @@ import io.ktor.network.tls.*
 import io.ktor.util.logging.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.channels.onFailure
 import kotlinx.io.Buffer
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
@@ -68,14 +69,15 @@ internal class ConnectionPool(
         logger.trace("Sending connection establishment requests ($requests)")
         conn.sendRequest(reqBuffer)
         repeat(requests) {
-            logger.trace("Connection establishment response: " + conn.input.readRedisMessage(client.cfg.charset))
+            val response = conn.readResponseWrapped(client.cfg.charset)
+            logger.trace("Connection establishment response: $response")
         }
 
         return conn
     }
 
     fun prepare() = client.rethisCoScope.launch {
-        logger.info("Filling ConnectionPool with connections")
+        logger.info("Filling ConnectionPool with connections (${client.cfg.poolConfiguration.poolSize})")
         repeat(client.cfg.poolConfiguration.poolSize) {
             client.rethisCoScope.launch { connections.trySend(createConn()) }
         }
@@ -87,15 +89,20 @@ internal class ConnectionPool(
         handle(connection)
     }
 
-    private fun handle(connection: Connection) = poolScope.launch {
+    private fun handle(connection: Connection) = poolScope.launch(Dispatchers.IO) {
         logger.trace("Releasing connection ${connection.socket}")
         val cfg = client.cfg.reconnectionStrategy
         if (cfg.doHealthCheck && connection.input.isClosedForRead) { // connection is corrupted
             logger.warn("Connection ${connection.socket} is corrupted, refilling")
-            connection.socket.close()
-            refill()
+            launch {
+                connection.socket.close()
+                refill()
+            }
         } else {
-            connections.send(connection)
+            connections.trySend(connection).onFailure {
+                logger.warn("Pool is full, closing connection ${connection.socket}")
+                connection.socket.close()
+            }
         }
     }
 

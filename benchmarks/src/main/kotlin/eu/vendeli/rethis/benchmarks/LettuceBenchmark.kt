@@ -3,8 +3,8 @@ package eu.vendeli.rethis.benchmarks
 import io.lettuce.core.RedisClient
 import io.lettuce.core.api.async.RedisAsyncCommands
 import kotlinx.benchmark.*
-import kotlinx.coroutines.*
-import kotlinx.coroutines.future.await
+import kotlinx.coroutines.DelicateCoroutinesApi
+import org.openjdk.jmh.annotations.Fork
 import org.openjdk.jmh.annotations.Timeout
 import java.util.concurrent.TimeUnit
 
@@ -14,31 +14,24 @@ import java.util.concurrent.TimeUnit
 @Warmup(iterations = 2, time = 1000, timeUnit = TimeUnit.MILLISECONDS)
 @Measurement(iterations = 5, time = 1000, timeUnit = TimeUnit.MILLISECONDS)
 @Timeout(time = 10, timeUnit = TimeUnit.SECONDS)
+@Fork(1, jvmArgsAppend = ["-Xms500m", "-Xmx12g", "-Xss2m", "-XX:MaxMetaspaceSize=1g"])
 class LettuceBenchmark {
     private lateinit var lettuce: RedisAsyncCommands<String, String>
 
     @Setup
     fun setup() {
         lettuce = RedisClient.create("redis://localhost").connect().async()
-        lettuce.ping().await(5, TimeUnit.SECONDS)
+        lettuce.ping().await(0, TimeUnit.SECONDS)
     }
 
     @TearDown
     fun tearDown() {
-        lettuce.quit()
+        lettuce.shutdown(false)
     }
 
     @Benchmark
-    fun lettuceSet(bh: Blackhole) {
-        GlobalScope.launch(Dispatchers.IO) {
-            bh.consume(lettuce.runCatching { set("key", "value").await() })
-        }
-    }
-
-    @Benchmark
-    fun lettuceGet(bh: Blackhole) {
-        GlobalScope.launch(Dispatchers.IO) {
-            bh.consume(lettuce.runCatching { get("key").await() })
-        }
+    fun lettuceSetGet(bh: Blackhole) {
+        bh.consume(lettuce.set("key", "value").get())
+        bh.consume(lettuce.get("key").get())
     }
 }

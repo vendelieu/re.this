@@ -1829,10 +1829,6 @@ public final class eu/vendeli/rethis/types/options/ZRangeOption$LIMIT : eu/vende
 public abstract class eu/vendeli/rethis/types/options/ZRangeOption$Type : eu/vendeli/rethis/types/options/ZRangeOption {
 }
 
-public final class eu/vendeli/rethis/utils/CommonUtilsKt {
-	public static final fun isOk (Leu/vendeli/rethis/types/core/RType;)Z
-}
-
 public final class eu/vendeli/rethis/wrappers/ReThisMap : kotlin/collections/AbstractMutableMap {
 	public fun <init> (Leu/vendeli/rethis/ReThis;Ljava/lang/String;)V
 	public fun clear ()V
