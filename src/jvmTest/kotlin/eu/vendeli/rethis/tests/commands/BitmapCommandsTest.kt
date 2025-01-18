@@ -6,7 +6,7 @@ import eu.vendeli.rethis.types.options.BitOpOption
 import eu.vendeli.rethis.types.options.BitfieldOption
 import io.kotest.matchers.shouldBe
 
-class BitCommandsTest : ReThisTestCtx() {
+class BitmapCommandsTest : ReThisTestCtx() {
     @Test
     suspend fun `test BITCOUNT command`() {
         val key = "testBitCountKey1"

@@ -35,17 +35,31 @@ a [benchmark](https://github.com/vendelieu/re.this/tree/master/benchmarks/src/ma
 comparing popular library solutions (more is better):
 
 ```javascript
-main summary:
-Benchmark                     Mode  Cnt        Score         Error  Units
-JedisBenchmark.jedisGet      thrpt    5    63010.453 ±    9777.678  ops/s
-JedisBenchmark.jedisSet      thrpt    5    62063.005 ±    3927.883  ops/s
-KredsBenchmark.kredsGet      thrpt    4   953107.876 ±  474436.565  ops/s
-KredsBenchmark.kredsSet      thrpt    4   860740.621 ±  219859.604  ops/s
-LettuceBenchmark.lettuceGet  thrpt    5   590292.775 ± 3079960.658  ops/s
-LettuceBenchmark.lettuceSet  thrpt    5   686790.196 ± 2646041.580  ops/s
-RethisBenchmark.rethisGet    thrpt    5  1376783.555 ±  680369.613  ops/s
-RethisBenchmark.rethisSet    thrpt    5  1487596.743 ±  487192.094  ops/s
+Benchmark                        Mode  Cnt        Score        Error  Units
+JedisBenchmark.jedisSetGet      thrpt    5    31663.176 ±   2013.542  ops/s
+KredsBenchmark.kredsSetGet      thrpt    5  1026596.540 ± 250026.517  ops/s
+LettuceBenchmark.lettuceSetGet  thrpt    5    20273.552 ±   1136.556  ops/s
+RethisBenchmark.rethisSetGet    thrpt    5  1580822.077 ± 316104.641  ops/s
 ```
+
+<details>
+  <summary>Details</summary>
+
+* `Jedis` (Pooled) gives roughly the same results inside the coroutine as outside.
+* `Kreds` with the `.use {}` approach gives worse results.
+* The most interesting thing happens with `Lettuce` it gives excellent results (almost as `Re.This`, sometimes really
+  near)
+  if you use it on top of asynchronous coroutine client, but in this case the Heap dies in seconds (out of memory).
+  And if swap gc (but still using coroutines) to zgc it gives same performance as `kreds` but now without the memory
+  problems.
+
+</details>
+
+
+<details>
+  <summary>Specs</summary>
+  Intel® Core™ i9-10900K CPU @ 3.70GHz × 20 | RAM: 16,0 GiB
+</details>
 
 # Usage
 
@@ -147,7 +161,7 @@ There are plans to add nodejs support.
 
 Re.This is compatible with:
 
-- Java 11
+- Java 17
 - Redis (any version)
 
 Supports and handles the use of `RESPv2`/`RESPv3` and handles differences in responses within a command.

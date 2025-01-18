@@ -4,247 +4,71 @@ import com.ionspin.kotlin.bignum.integer.BigInteger
 import eu.vendeli.rethis.ReThisException
 import eu.vendeli.rethis.exception
 import eu.vendeli.rethis.types.core.*
+import eu.vendeli.rethis.types.core.RType.Error
+import eu.vendeli.rethis.types.core.ResponseToken.Data
+import eu.vendeli.rethis.types.core.ResponseToken.Type
 import eu.vendeli.rethis.utils.Const.CARRIAGE_RETURN_BYTE
 import eu.vendeli.rethis.utils.Const.FALSE_BYTE
 import eu.vendeli.rethis.utils.Const.NEWLINE_BYTE
 import eu.vendeli.rethis.utils.Const.TRUE_BYTE
+import io.ktor.network.sockets.*
 import io.ktor.utils.io.*
 import io.ktor.utils.io.charsets.*
 import io.ktor.utils.io.core.*
-import kotlinx.io.Buffer
+import kotlinx.io.Source
+import kotlinx.io.readByteArray
 import kotlinx.io.readDecimalLong
 import kotlinx.io.readString
 import kotlin.reflect.KClass
 
-internal suspend fun ByteReadChannel.readRedisMessage(charset: Charset, rawOnly: Boolean = false): RType {
-    val type = RespCode.fromCode(readByte()) // Read the type byte (e.g., +, -, :, $, *)
-    val line = readLine2Buffer()
+// Common utils
 
-    if (rawOnly) return RType.Raw(readByteArray(line.readDecimalLong().toInt()))
+internal suspend fun ByteReadChannel.parseResponse(): ArrayDeque<ResponseToken> {
+    val response = ArrayDeque<ResponseToken>()
+    if (availableForRead <= 0) awaitContent()
+    while (availableForRead > 0) {
+        val line = readLineCRLF()
+        val type = RespCode.fromCode(line.readByte())
+        when (type) {
+            RespCode.BULK, RespCode.BULK_ERROR, RespCode.VERBATIM_STRING -> {
+                val size = line.readDecimalLong()
+                response.addLast(Type(type, size.toInt()))
 
-    return when (type) {
-        RespCode.SIMPLE_STRING -> PlainString(line.readText(charset)) // Return SimpleString type
-
-        RespCode.SIMPLE_ERROR -> RType.Error(line.readText(charset)) // Error response
-
-        RespCode.INTEGER -> Int64(line.readDecimalLong())
-
-        RespCode.BULK -> {
-            val size = line.readDecimalLong() // Parse the size from the bulk string header ($<size>)
-            if (size < 0) return RType.Null // Handle null bulk string (`$-1`)
-            val content = readRemaining(size.toLong()).readText(charset) // Read the specified size of bytes
-            readShort() // Skip CRLF after the bulk string
-            BulkString(content)
-        }
-
-        RespCode.ARRAY -> {
-            val arraySize = line.readDecimalLong()
-            if (arraySize < 0) return RType.Null // Handle null array (`*-1`)
-            val elements =
-                List(arraySize.toInt()) { readRedisMessage(charset, rawOnly) } // Recursively read each array element
-            RArray(elements)
-        }
-
-        RespCode.NULL -> RType.Null
-
-        RespCode.BOOLEAN -> when (line.readByte()) {
-            TRUE_BYTE -> Bool(true)
-            FALSE_BYTE -> Bool(false)
-            else -> exception { "Invalid boolean format: $line" }
-        }
-
-        RespCode.DOUBLE -> F64(line.readString().toDouble())
-
-        RespCode.BIG_NUMBER -> try {
-            BigNumber(BigInteger.parseString(line.readText(charset)))
-        } catch (e: NumberFormatException) {
-            exception(e) { "Invalid BigInteger format: $line" }
-        }
-
-        RespCode.BULK_ERROR -> {
-            val size = line.readDecimalLong() // Parse the size from the bulk error header
-            if (size < 0) exception { "Invalid bulk error size: $size" }
-            val content = readRemaining(size) // Read the error content
-            readShort() // Skip CRLF after the bulk error
-            RType.Error(content.readText(charset))
-        }
-
-        RespCode.VERBATIM_STRING -> {
-            val size = line.readDecimalLong()
-            if (size < 0) return RType.Null // Handle null verbatim string
-            val content = readRemaining(size).readText(charset)
-            readShort() // Skip CRLF
-            val encoding = content.subSequence(0, 3) // First 3 bytes are encoding
-            val data = content.subSequence(4, size.toInt())
-            VerbatimString(encoding.toString(), data.toString())
-        }
-
-        RespCode.MAP -> {
-            val mapSize = line.readDecimalLong()
-            if (mapSize < 0) return RType.Null // Handle null map
-            val resultMap = mutableMapOf<RPrimitive, RType>()
-            (1..mapSize).forEach {
-                val key = readRedisMessage(charset, rawOnly) as RPrimitive
-                val value = readRedisMessage(charset, rawOnly)
-                resultMap[key] = value
-            }
-            RMap(resultMap)
-        }
-
-        RespCode.SET -> {
-            val setSize = line.readDecimalLong()
-            if (setSize < 0) return RType.Null // Handle null set
-            val resultSet = mutableSetOf<RPrimitive>()
-            (1..setSize).forEach {
-                resultSet.add(readRedisMessage(charset, rawOnly) as RPrimitive)
-            }
-            RSet(resultSet)
-        }
-
-        RespCode.PUSH -> {
-            val pushSize = line.readDecimalLong()
-            if (pushSize < 0) return RType.Null // Handle null push message
-            val elements = List(pushSize.toInt()) { readRedisMessage(charset, rawOnly) as RPrimitive }
-            Push(elements)
-        }
-    }
-}
-
-internal suspend fun <T : Any> ByteReadChannel.processRedisSimpleResponse(
-    tClass: KClass<T>,
-    charset: Charset,
-): T? {
-    val type = RespCode.fromCode(readByte()) // Read the type byte (e.g., +, -, :, $, *)
-    val line = readLine2Buffer()
-
-    return when (type) {
-        RespCode.SIMPLE_STRING -> line.readText(charset) // Return SimpleString type
-        RespCode.SIMPLE_ERROR -> throw ReThisException(line.readText(charset)) // Error response
-        RespCode.INTEGER -> line.readDecimalLong()
-        RespCode.BULK -> {
-            val size = line.readDecimalLong() // Parse the size from the bulk string header ($<size>)
-            if (size < 0) return null // Handle null bulk string (`$-1`)
-            val content = readRemaining(size.toLong()).readText(charset) // Read the specified size of bytes
-            readShort() // Skip CRLF after the bulk string
-            content
-        }
-
-        RespCode.NULL -> null
-        RespCode.BOOLEAN -> when (line.readByte()) {
-            TRUE_BYTE -> true
-            FALSE_BYTE -> false
-            else -> exception { "Invalid boolean format: $line" }
-        }
-
-        RespCode.DOUBLE -> line.readString().toDouble()
-
-        RespCode.BIG_NUMBER -> try {
-            BigInteger.parseString(line.readText(charset))
-        } catch (e: NumberFormatException) {
-            exception(e) { "Invalid BigInteger format: $line" }
-        }
-
-        RespCode.BULK_ERROR -> {
-            val size = line.readDecimalLong() // Parse the size from the bulk error header
-            if (size < 0) exception { "Invalid bulk error size: $size" }
-            val content = readRemaining(size) // Read the error content
-            readShort() // Skip CRLF after the bulk error
-            throw ReThisException(content.readText(charset))
-        }
-
-        RespCode.VERBATIM_STRING -> {
-            val size = line.readDecimalLong()
-            if (size < 0) return null // Handle null verbatim string
-            val content = readRemaining(size).readText(charset)
-            readShort() // Skip CRLF
-            val encoding = content.subSequence(0, 3) // First 3 bytes are encoding
-            val data = content.subSequence(4, size.toInt())
-            "$encoding:$data"
-        }
-
-        else -> null
-    }?.safeCast(tClass)
-}
-
-internal suspend fun <T : Any> ByteReadChannel.processRedisListResponse(
-    tClass: KClass<T>,
-    charset: Charset,
-): List<T>? {
-    val type = RespCode.fromCode(readByte()) // Read the type byte (e.g., +, -, :, $, *)
-    val line = readLine2Buffer()
-
-    return when (type) {
-        RespCode.ARRAY -> {
-            val arraySize = line.readDecimalLong()
-            if (arraySize < 0) return null // Handle null array (`*-1`)
-            List(arraySize.toInt()) {
-                processRedisSimpleResponse<T>(tClass,charset)
-            } // Recursively read each array element
-        }
-
-        RespCode.SET -> {
-            val setSize = line.readDecimalLong()
-            if (setSize < 0) return null // Handle null set
-            List(setSize.toInt()) {
-                processRedisSimpleResponse<T>(tClass, charset)
-            }
-        }
-
-        RespCode.PUSH -> {
-            val pushSize = line.readDecimalLong()
-            if (pushSize < 0) return null // Handle null push message
-            List(pushSize.toInt()) {
-                processRedisSimpleResponse<T>(tClass, charset)
-            }
-        }
-
-        else -> null
-    }?.safeCast()
-}
-
-internal suspend fun <K : Any, V : Any> ByteReadChannel.processRedisMapResponse(
-    kClass: KClass<K>,
-    vClass: KClass<V>,
-    charset: Charset,
-): Map<K, V>? {
-    val type = RespCode.fromCode(readByte()) // Read the type byte (e.g., +, -, :, $, *)
-    val line = readLine2Buffer()
-
-    return when (type) {
-        RespCode.MAP -> {
-            val mapSize = line.readDecimalLong()
-            if (mapSize < 0) return null // Handle null map
-            buildMap<K, V?>(mapSize.toInt()) {
-                (1..mapSize.toInt()).forEach {
-                    val key = processRedisSimpleResponse<K>(kClass, charset) ?: exception { "Invalid map key" }
-                    val value = processRedisSimpleResponse<V>(vClass, charset)
-                    put(key, value)
+                if (size > 0) {
+                    response.addLast(Data(readRemaining(size)))
+                    readShort() // skip CRLF
                 }
             }
-        }
 
-        else -> null
-    }?.safeCast()
+            RespCode.ARRAY, RespCode.SET, RespCode.PUSH, RespCode.MAP -> {
+                val size = line.readDecimalLong()
+                response.addLast(Type(type, size.toInt()))
+            }
+
+            else -> {
+                response.addLast(Type(type))
+                response.addLast(Data(line))
+            }
+        }
+    }
+    return response
 }
 
-/**
- * Reads a line from the `ByteReadChannel` into a `Buffer`, stopping at a CRLF sequence.
- *
- * The method reads bytes one by one and appends them to a buffer until it encounters
- * a carriage return followed by a newline (CRLF). The CRLF sequence is not included
- * in the returned buffer.
- *
- * @return A `Buffer` containing the line read from the channel, excluding the CRLF.
- */
-private suspend fun ByteReadChannel.readLine2Buffer(): Buffer {
-    val buffer = Buffer()
+internal suspend inline fun Connection.parseResponse(): ArrayDeque<ResponseToken> = input.parseResponse()
+internal suspend inline fun Connection.readResponseWrapped(
+    charset: Charset,
+    rawOnly: Boolean = false,
+) = parseResponse().readResponseWrapped(charset, rawOnly)
+
+private suspend inline fun ByteReadChannel.readLineCRLF(): kotlinx.io.Buffer {
+    val buffer = kotlinx.io.Buffer()
     while (true) {
         val byte = readByte()
 
         if (byte == CARRIAGE_RETURN_BYTE) {
             val nextByte = readByte()
             if (nextByte == NEWLINE_BYTE) {
-                break // End of line found
+                break
             } else {
                 buffer.writeByte(CARRIAGE_RETURN_BYTE)
                 buffer.writeByte(NEWLINE_BYTE)
@@ -260,3 +84,238 @@ internal inline fun <reified L, reified R> RType.unwrapRespIndMap(): Map<L, R?>?
     if (this is RArray) cast<RArray>().value.chunked(2).associate {
         it.first().unwrap<L>()!! to it.last().unwrap<R>()
     } else unwrapMap<L, R>()
+
+@Suppress("NOTHING_TO_INLINE")
+private inline fun ArrayDeque<ResponseToken>.validatedResponseType(): Type {
+    val typeToken = removeFirst()
+    if (typeToken !is Type) exception {
+        "Invalid response structure, wrong head token, expected type token but given $typeToken"
+    }
+    return typeToken
+}
+
+@Suppress("NOTHING_TO_INLINE")
+private inline fun ArrayDeque<ResponseToken>.validatedSimpleResponse(typeToken: Type): Source {
+    if (!RespCode.isSimpleType(typeToken.type)) exception {
+        "Wrong response type, expected simple type, given ${typeToken.type}"
+    }
+
+    if (typeToken.type != RespCode.NULL && isEmpty()) exception {
+        "Invalid response structure, expected data token, given $typeToken"
+    }
+    val dataToken = removeFirst()
+
+    if (dataToken !is Data) exception {
+        "Invalid response structure, expected data token, given $dataToken"
+    }
+
+    return dataToken.buffer
+}
+
+// Wrapped response parsing
+
+internal fun ArrayDeque<ResponseToken>.readResponseWrapped(
+    charset: Charset,
+    rawOnly: Boolean = false,
+): RType {
+    if (isEmpty()) return RType.Null
+    val typeToken = validatedResponseType()
+    val size = typeToken.size ?: 0
+
+    return when (typeToken.type) {
+        RespCode.ARRAY -> {
+            if (size < 0) return RType.Null
+            val elements = List(size) {
+                readResponseWrapped(charset, rawOnly)
+            }
+            RArray(elements)
+        }
+
+        RespCode.SET -> {
+            if (size < 0) return RType.Null
+            val resultSet = mutableSetOf<RPrimitive>()
+            repeat(size) {
+                resultSet.add(readResponseWrapped(charset, rawOnly) as RPrimitive)
+            }
+            RSet(resultSet)
+        }
+
+        RespCode.PUSH -> {
+            if (size < 0) return RType.Null
+            val elements = List(size) {
+                readResponseWrapped(charset, rawOnly) as RPrimitive
+            }
+            Push(elements)
+        }
+
+        RespCode.MAP -> {
+            if (size < 0) return RType.Null
+            val resultMap = mutableMapOf<RPrimitive, RType>()
+            repeat(size) {
+                val keyData = readResponseWrapped(charset, rawOnly)
+                val valueType = readResponseWrapped(charset, rawOnly)
+
+                resultMap[keyData as RPrimitive] = valueType
+            }
+            RMap(resultMap)
+        }
+
+        else -> readSimpleResponseWrapped(charset, rawOnly, typeToken)
+    }
+}
+
+private fun ArrayDeque<ResponseToken>.readSimpleResponseWrapped(
+    charset: Charset,
+    rawOnly: Boolean = false,
+    type: Type? = null,
+): RType {
+    val typeToken = type ?: validatedResponseType()
+    val size = typeToken.size ?: 0
+    if (size == -1) return RType.Null
+    val data = validatedSimpleResponse(typeToken)
+    if (rawOnly) return RType.Raw(data.readByteArray(size))
+
+    return when (typeToken.type) {
+        RespCode.SIMPLE_STRING -> PlainString(data.readText(charset))
+
+        RespCode.SIMPLE_ERROR -> Error(data.readText(charset))
+
+        RespCode.INTEGER -> Int64(data.readDecimalLong())
+
+        RespCode.NULL -> RType.Null
+
+        RespCode.BULK -> {
+            if (size < 0) return RType.Null
+            val content = data.readText(charset)
+            BulkString(content)
+        }
+
+        RespCode.BOOLEAN -> when (data.readByte()) {
+            TRUE_BYTE -> Bool(true)
+            FALSE_BYTE -> Bool(false)
+            else -> exception { "Invalid boolean format" }
+        }
+
+        RespCode.DOUBLE -> F64(data.readString().toDouble())
+
+        RespCode.BIG_NUMBER -> try {
+            BigNumber(BigInteger.parseString(data.readText(charset)))
+        } catch (e: NumberFormatException) {
+            exception(e) { "Invalid BigInteger format" }
+        }
+
+        RespCode.BULK_ERROR -> {
+            if (size < 0) exception { "Invalid bulk error size: $size" }
+            Error(data.readText(charset))
+        }
+
+        RespCode.VERBATIM_STRING -> {
+            if (size < 0) return RType.Null
+            val content = data.readText(charset)
+            val encoding = content.subSequence(0, 3)
+            val data = content.subSequence(4, size.toInt())
+            VerbatimString(encoding.toString(), data.toString())
+        }
+
+        RespCode.ARRAY, RespCode.MAP, RespCode.SET, RespCode.PUSH -> exception {
+            "Invalid response type for simple response: ${typeToken.type}"
+        }
+    }
+}
+
+// Typed response parsing
+
+internal fun <T : Any> ArrayDeque<ResponseToken>.readSimpleResponseTyped(
+    tClass: KClass<T>,
+    charset: Charset,
+): T? {
+    if (isEmpty()) return null
+    val typeToken = validatedResponseType()
+    val size = typeToken.size ?: 0
+    if (size == -1) return null
+    val data = validatedSimpleResponse(typeToken)
+
+    return when (typeToken.type) {
+        RespCode.SIMPLE_STRING -> data.readText(charset)
+        RespCode.SIMPLE_ERROR -> throw ReThisException(data.readText(charset))
+        RespCode.INTEGER -> data.readDecimalLong()
+        RespCode.BULK -> {
+            if (size < 0) return null
+            data.readText(charset)
+        }
+
+        RespCode.BOOLEAN -> when (val line = data.readByte()) {
+            TRUE_BYTE -> true
+            FALSE_BYTE -> false
+            else -> exception { "Invalid boolean format: $line" }
+        }
+
+        RespCode.DOUBLE -> data.readString().toDouble()
+
+        RespCode.BIG_NUMBER -> try {
+            BigInteger.parseString(data.readText(charset))
+        } catch (e: NumberFormatException) {
+            exception(e) { "Invalid BigInteger format" }
+        }
+
+        RespCode.BULK_ERROR -> {
+            if (size < 0) exception { "Invalid bulk error size: $size" }
+            throw ReThisException(data.readText(charset))
+        }
+
+        RespCode.VERBATIM_STRING -> {
+            if (size < 0) return null
+            val content = data.readText(charset)
+            val encoding = content.subSequence(0, 3)
+            val data = content.subSequence(4, size.toInt())
+            "$encoding:$data"
+        }
+
+        else -> null
+    }?.safeCast(tClass)
+}
+
+internal fun <T : Any> ArrayDeque<ResponseToken>.readListResponseTyped(
+    tClass: KClass<T>,
+    charset: Charset,
+): List<T>? {
+    if (isEmpty()) return null
+    val typeToken = validatedResponseType()
+    val size = typeToken.size ?: 0
+
+    return when (typeToken.type) {
+        RespCode.ARRAY, RespCode.SET, RespCode.PUSH -> {
+            if (size < 0) return null
+            List(size) {
+                readSimpleResponseTyped<T>(tClass, charset)
+            }
+        }
+
+        else -> null
+    }?.safeCast()
+}
+
+internal fun <K : Any, V : Any> ArrayDeque<ResponseToken>.readMapResponseTyped(
+    kClass: KClass<K>,
+    vClass: KClass<V>,
+    charset: Charset,
+): Map<K, V>? {
+    if (isEmpty()) return null
+    val typeToken = validatedResponseType()
+    val size = typeToken.size ?: 0
+
+    return when (typeToken.type) {
+        RespCode.MAP -> {
+            if (size < 0) return null
+            buildMap<K, V?>(size) {
+                repeat(size) {
+                    val keyData = readSimpleResponseTyped(kClass, charset) ?: exception { "Invalid map key" }
+                    val valueType = readSimpleResponseTyped(vClass, charset)
+                    put(keyData, valueType)
+                }
+            }
+        }
+
+        else -> null
+    }?.safeCast()
+}

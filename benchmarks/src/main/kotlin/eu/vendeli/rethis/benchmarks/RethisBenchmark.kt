@@ -17,6 +17,7 @@ import java.util.concurrent.TimeUnit
 @Warmup(iterations = 2, time = 1000, timeUnit = TimeUnit.MILLISECONDS)
 @Measurement(iterations = 5, time = 1000, timeUnit = TimeUnit.MILLISECONDS)
 @Timeout(time = 10, timeUnit = TimeUnit.SECONDS)
+@Fork(1, jvmArgsAppend = ["-Xms500m", "-Xmx12g", "-Xss2m", "-XX:MaxMetaspaceSize=1g"])
 class RethisBenchmark {
     private lateinit var rethis: ReThis
 
@@ -32,16 +33,10 @@ class RethisBenchmark {
     }
 
     @Benchmark
-    fun rethisSet(bh: Blackhole) {
+    fun rethisSetGet(bh: Blackhole) {
         GlobalScope.launch {
-            bh.consume(rethis.runCatching { set("key", "value") })
-        }
-    }
-
-    @Benchmark
-    fun rethisGet(bh: Blackhole) {
-        GlobalScope.launch {
-            bh.consume(rethis.runCatching { get("key") })
+            bh.consume(rethis.set("key", "value"))
+            bh.consume(rethis.get("key"))
         }
     }
 }

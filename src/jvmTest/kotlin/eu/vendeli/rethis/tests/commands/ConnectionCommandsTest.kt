@@ -59,9 +59,7 @@ class ConnectionCommandsTest : ReThisTestCtx() {
     }
 
     @Test
-    fun `test SELECT command with invalid database index`() = runTest {
-        shouldThrow<ReThisException> {
-            client.select(100)
-        }
+    suspend fun `test SELECT command with invalid database index`() = shouldThrow<ReThisException> {
+        client.select(100)
     }
 }

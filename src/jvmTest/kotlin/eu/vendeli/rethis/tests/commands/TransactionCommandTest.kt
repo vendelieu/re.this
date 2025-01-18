@@ -9,7 +9,7 @@ import eu.vendeli.rethis.types.core.RArray
 import eu.vendeli.rethis.types.core.toArg
 import eu.vendeli.rethis.types.coroutine.CoLocalConn
 import eu.vendeli.rethis.utils.bufferValues
-import eu.vendeli.rethis.utils.readRedisMessage
+import eu.vendeli.rethis.utils.readResponseWrapped
 import eu.vendeli.rethis.utils.sendRequest
 import io.kotest.assertions.throwables.shouldNotThrowAny
 import io.kotest.assertions.throwables.shouldThrow
@@ -24,16 +24,16 @@ class TransactionCommandTest : ReThisTestCtx() {
         val conn = client.connectionPool.acquire()
 
         conn.sendRequest(bufferValues(listOf("MULTI".toArg()), Charsets.UTF_8))
-        conn.input.readRedisMessage(Charsets.UTF_8) shouldBe PlainString("OK")
+        conn.readResponseWrapped(Charsets.UTF_8) shouldBe PlainString("OK")
 
         conn.sendRequest(bufferValues(listOf("SET".toArg(), "test3".toArg(), "testv3".toArg()), Charsets.UTF_8))
-        conn.input.readRedisMessage(Charsets.UTF_8) shouldBe PlainString("QUEUED")
+        conn.readResponseWrapped(Charsets.UTF_8) shouldBe PlainString("QUEUED")
 
         conn.sendRequest(bufferValues(listOf("SET".toArg(), "test4".toArg(), "testv4".toArg()), Charsets.UTF_8))
-        conn.input.readRedisMessage(Charsets.UTF_8) shouldBe PlainString("QUEUED")
+        conn.readResponseWrapped(Charsets.UTF_8) shouldBe PlainString("QUEUED")
 
         conn.sendRequest(bufferValues(listOf("EXEC".toArg()), Charsets.UTF_8))
-        conn.input.readRedisMessage(Charsets.UTF_8) shouldBe RArray(listOf(PlainString("OK"), PlainString("OK")))
+        conn.readResponseWrapped(Charsets.UTF_8) shouldBe RArray(listOf(PlainString("OK"), PlainString("OK")))
     }
 
     @Test

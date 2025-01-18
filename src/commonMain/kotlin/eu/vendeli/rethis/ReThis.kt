@@ -32,7 +32,7 @@ class ReThis(
     internal val cfg: ClientConfiguration = ClientConfiguration().apply(configurator)
     internal val rootJob = SupervisorJob()
     internal val rethisCoScope = CoroutineScope(rootJob + cfg.poolConfiguration.dispatcher + CoroutineName("ReThis"))
-    internal val connectionPool by lazy { ConnectionPool(this).also { it.prepare() } }
+    internal val connectionPool = ConnectionPool(this)
 
     init {
         if (address is Url) {
@@ -90,11 +90,13 @@ class ReThis(
             val connection = ctxConn
             if (connection != null) {
                 connection.sendRequest(pipelinedPayload)
-                requests.forEach { _ -> responses.add(connection.input.readRedisMessage(cfg.charset)) }
+                val resData = connection.parseResponse()
+                requests.forEach { _ -> responses.add(resData.readResponseWrapped(cfg.charset)) }
             } else {
-                connectionPool.use { connection ->
-                    connection.sendRequest(pipelinedPayload)
-                    requests.forEach { _ -> responses.add(connection.input.readRedisMessage(cfg.charset)) }
+                connectionPool.use { conn ->
+                    conn.sendRequest(pipelinedPayload)
+                    val resData = conn.parseResponse()
+                    requests.forEach { _ -> responses.add(resData.readResponseWrapped(cfg.charset)) }
                 }
             }
             requests.clear()
@@ -119,7 +121,11 @@ class ReThis(
         return connectionPool.use { conn ->
             logger.debug("Started transaction")
             conn.sendRequest(listOf("MULTI".toArg()))
-            require(conn.input.readRedisMessage(cfg.charset).value == "OK")
+            require(
+                conn
+                    .readResponseWrapped(cfg.charset)
+                    .value == "OK",
+            )
 
             var e: Throwable? = null
             rethisCoScope
@@ -128,42 +134,60 @@ class ReThis(
                 }.join()
             e?.also {
                 conn.sendRequest(listOf("DISCARD".toArg()))
-                require(conn.input.readRedisMessage(cfg.charset).value == "OK")
+                require(conn.readResponseWrapped(cfg.charset).value == "OK")
                 logger.error("Transaction canceled", it)
                 throw it
             }
 
             logger.debug("Transaction completed")
             conn.sendRequest(listOf("EXEC".toArg()))
-            conn.input.readRedisMessage(cfg.charset).unwrapList<RType>().also {
+            conn.readResponseWrapped(cfg.charset).unwrapList<RType>().also {
                 logger.debug("Response payload: $it")
             }
         }
     }
 
     @ReThisInternal
-    suspend fun execute(payload: List<Argument>, rawResponse: Boolean = false): RType =
-        handleRequest(payload)?.input?.readRedisMessage(cfg.charset, rawResponse) ?: RType.Null
+    suspend fun execute(
+        payload: List<Argument>,
+        rawResponse: Boolean = false,
+    ): RType = rethisCoScope
+        .async(Dispatchers.IO) {
+            handleRequest(payload)
+        }.await()
+        ?.readResponseWrapped(cfg.charset, rawResponse) ?: RType.Null
 
     @JvmName("executeSimple")
     internal suspend inline fun <reified T : Any> execute(
         payload: List<Argument>,
-    ): T? = handleRequest(payload)?.input?.processRedisSimpleResponse(T::class, cfg.charset)
+    ): T? = rethisCoScope
+        .async(currentCoroutineContext() + Dispatchers.IO) {
+            handleRequest(payload)
+        }.await()
+        ?.readSimpleResponseTyped(T::class, cfg.charset)
 
     @JvmName("executeList")
     internal suspend inline fun <reified T : Any> execute(
         payload: List<Argument>,
         isCollectionResponse: Boolean = false,
-    ): List<T>? = handleRequest(payload)?.input?.processRedisListResponse(T::class, cfg.charset)
+    ): List<T>? = rethisCoScope
+        .async(currentCoroutineContext() + Dispatchers.IO) {
+            handleRequest(payload)
+        }.await()
+        ?.readListResponseTyped(T::class, cfg.charset)
 
     @JvmName("executeMap")
     internal suspend inline fun <reified K : Any, reified V : Any> execute(
         payload: List<Argument>,
-    ): Map<K, V?>? = handleRequest(payload)?.input?.processRedisMapResponse(K::class, V::class, cfg.charset)
+    ): Map<K, V?>? = rethisCoScope
+        .async(currentCoroutineContext() + Dispatchers.IO) {
+            handleRequest(payload)
+        }.await()
+        ?.readMapResponseTyped(K::class, V::class, cfg.charset)
 
     private suspend fun handleRequest(
         payload: List<Argument>,
-    ): Connection? {
+    ): ArrayDeque<ResponseToken>? {
         val currentCoCtx = currentCoroutineContext()
         val coLocalConn = currentCoCtx[CoLocalConn]
         val coPipeline = currentCoCtx[CoPipelineCtx]
@@ -174,11 +198,13 @@ class ReThis(
             }
 
             coLocalConn != null -> {
-                coLocalConn.connection.sendRequest(payload)
+                coLocalConn.connection
+                    .sendRequest(payload)
+                    .parseResponse()
             }
 
             else -> connectionPool.use { connection ->
-                connection.sendRequest(payload)
+                connection.sendRequest(payload).parseResponse()
             }
         }
     }

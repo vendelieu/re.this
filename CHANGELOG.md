@@ -1,5 +1,9 @@
 # Re.this Changelog
 
+## 0.2.3
+
+* Reorganized response parsing to improve performance, improved benchmarks.
+
 ## 0.2.2
 
 * Fixed casting issue caused by type erasure and wrong inlining.

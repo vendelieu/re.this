@@ -17,7 +17,4 @@ dependencies {
 }
 
 allOpen.annotation("org.openjdk.jmh.annotations.State")
-
-benchmark {
-    targets.register("main")
-}
+benchmark.targets.register("main")

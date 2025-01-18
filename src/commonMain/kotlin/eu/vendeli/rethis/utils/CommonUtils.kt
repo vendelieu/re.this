@@ -12,8 +12,6 @@ import kotlinx.coroutines.launch
 import kotlin.coroutines.CoroutineContext
 import kotlin.reflect.KClass
 
-fun RType.isOk() = unwrap<String>() == "OK"
-
 @Suppress("UNCHECKED_CAST", "NOTHING_TO_INLINE")
 internal inline fun <T> Any.cast(): T = this as T
 
@@ -49,7 +47,7 @@ internal suspend inline fun ReThis.registerSubscription(
 
             while (isActive) {
                 conn.input.awaitContent()
-                val msg = conn.input.readRedisMessage(cfg.charset)
+                val msg = conn.parseResponse().readResponseWrapped(cfg.charset)
                 val input = if (msg is Push) msg.value else msg.safeCast<RArray>()?.value
                 logger.debug("Handling event in $target channel subscription")
 
