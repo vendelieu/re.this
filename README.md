@@ -49,7 +49,7 @@ RethisBenchmark.rethisSetGet    thrpt    5  1580822.077 ± 316104.641  ops/s
 * `Kreds` with the `.use {}` approach gives worse results.
 * The most interesting thing happens with `Lettuce` it gives excellent results (almost as `Re.This`, sometimes really
   near)
-  if you use it on top of asynchronous coroutine client, but in this case the Heap dies in seconds (out of memory).
+  if you use its asynchronous client on top of coroutines, but in this case the Heap dies in seconds (goes out of memory).
   And if swap gc (but still using coroutines) to zgc it gives same performance as `kreds` but now without the memory
   problems.
 
