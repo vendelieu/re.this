@@ -777,8 +777,6 @@ $dokka.location:eu.vendeli.rethis.types.options/ZRangeOption.LIMIT/LIMIT/#kotlin
 $dokka.location:eu.vendeli.rethis.types.options/ZRangeOption.LIMIT/data/#/PointingToDeclaration/re.this/eu.vendeli.rethis.types.options/-z-range-option/-l-i-m-i-t/data.html
 $dokka.location:eu.vendeli.rethis.types.options/ZRangeOption.Type///PointingToDeclaration/re.this/eu.vendeli.rethis.types.options/-z-range-option/-type/index.html
 $dokka.location:eu.vendeli.rethis.types.options/ZRangeOption///PointingToDeclaration/re.this/eu.vendeli.rethis.types.options/-z-range-option/index.html
-$dokka.location:eu.vendeli.rethis.utils////PointingToDeclaration/re.this/eu.vendeli.rethis.utils/index.html
-$dokka.location:eu.vendeli.rethis.utils//isOk/eu.vendeli.rethis.types.core.RType#/PointingToDeclaration/re.this/eu.vendeli.rethis.utils/is-ok.html
 $dokka.location:eu.vendeli.rethis.wrappers////PointingToDeclaration/re.this/eu.vendeli.rethis.wrappers/index.html
 $dokka.location:eu.vendeli.rethis.wrappers//Hash/eu.vendeli.rethis.ReThis#kotlin.String/PointingToDeclaration/re.this/eu.vendeli.rethis.wrappers/-hash.html
 $dokka.location:eu.vendeli.rethis.wrappers//Set/eu.vendeli.rethis.ReThis#kotlin.String/PointingToDeclaration/re.this/eu.vendeli.rethis.wrappers/-set.html
@@ -829,5 +827,4 @@ eu.vendeli.rethis.types.common
 eu.vendeli.rethis.types.core
 eu.vendeli.rethis.types.coroutine
 eu.vendeli.rethis.types.options
-eu.vendeli.rethis.utils
 eu.vendeli.rethis.wrappers
