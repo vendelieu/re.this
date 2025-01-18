@@ -32,7 +32,7 @@ class ReThis(
     internal val cfg: ClientConfiguration = ClientConfiguration().apply(configurator)
     internal val rootJob = SupervisorJob()
     internal val rethisCoScope = CoroutineScope(rootJob + cfg.poolConfiguration.dispatcher + CoroutineName("ReThis"))
-    internal val connectionPool by lazy { ConnectionPool(this).also { it.prepare() } }
+    internal val connectionPool = ConnectionPool(this)
 
     init {
         if (address is Url) {
@@ -90,11 +90,13 @@ class ReThis(
             val connection = ctxConn
             if (connection != null) {
                 connection.sendRequest(pipelinedPayload)
-                requests.forEach { _ -> responses.add(connection.readResponseWrapped(cfg.charset)) }
+                val resData = connection.parseResponse()
+                requests.forEach { _ -> responses.add(resData.readResponseWrapped(cfg.charset)) }
             } else {
-                connectionPool.use { connection ->
-                    connection.sendRequest(pipelinedPayload)
-                    requests.forEach { _ -> responses.add(connection.readResponseWrapped(cfg.charset)) }
+                connectionPool.use { conn ->
+                    conn.sendRequest(pipelinedPayload)
+                    val resData = conn.parseResponse()
+                    requests.forEach { _ -> responses.add(resData.readResponseWrapped(cfg.charset)) }
                 }
             }
             requests.clear()
@@ -132,11 +134,7 @@ class ReThis(
                 }.join()
             e?.also {
                 conn.sendRequest(listOf("DISCARD".toArg()))
-                require(
-                    conn
-                        .readResponseWrapped(cfg.charset)
-                        .value == "OK",
-                )
+                require(conn.readResponseWrapped(cfg.charset).value == "OK")
                 logger.error("Transaction canceled", it)
                 throw it
             }
@@ -154,7 +152,7 @@ class ReThis(
         payload: List<Argument>,
         rawResponse: Boolean = false,
     ): RType = rethisCoScope
-        .async(currentCoroutineContext() + Dispatchers.IO) {
+        .async(Dispatchers.IO) {
             handleRequest(payload)
         }.await()
         ?.readResponseWrapped(cfg.charset, rawResponse) ?: RType.Null

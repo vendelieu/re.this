@@ -1,16 +1,16 @@
- package eu.vendeli.rethis.tests
+package eu.vendeli.rethis.tests
 
- import eu.vendeli.rethis.ReThis
- import eu.vendeli.rethis.ReThisTestCtx
- import eu.vendeli.rethis.commands.get
- import eu.vendeli.rethis.commands.set
- import eu.vendeli.rethis.types.core.BulkString
- import eu.vendeli.rethis.types.core.PlainString
- import eu.vendeli.rethis.types.core.RespVer
- import io.kotest.matchers.collections.shouldHaveSize
- import io.kotest.matchers.shouldBe
+import eu.vendeli.rethis.ReThis
+import eu.vendeli.rethis.ReThisTestCtx
+import eu.vendeli.rethis.commands.get
+import eu.vendeli.rethis.commands.set
+import eu.vendeli.rethis.types.core.BulkString
+import eu.vendeli.rethis.types.core.PlainString
+import eu.vendeli.rethis.types.core.RespVer
+import io.kotest.matchers.collections.shouldHaveSize
+import io.kotest.matchers.shouldBe
 
- class PipeliningTest : ReThisTestCtx() {
+class PipeliningTest : ReThisTestCtx() {
     @Test
     suspend fun `pipelining test`() {
         val v2Client = ReThis(redis.host, redis.firstMappedPort, protocol = RespVer.V2) {
@@ -101,4 +101,4 @@
                 last() shouldBe BulkString("testv1")
             }
     }
- }
+}

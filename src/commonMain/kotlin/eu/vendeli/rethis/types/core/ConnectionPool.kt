@@ -31,6 +31,10 @@ internal class ConnectionPool(
     private val connections = Channel<Connection>(client.cfg.poolConfiguration.poolSize)
     private val selector = SelectorManager(poolScope.coroutineContext)
 
+    init {
+        poolScope.launch { prepare() }
+    }
+
     internal suspend fun createConn(): Connection {
         logger.trace("Creating connection to ${client.address}")
         val conn = aSocket(selector)
@@ -70,16 +74,17 @@ internal class ConnectionPool(
         conn.sendRequest(reqBuffer)
         repeat(requests) {
             val response = conn.readResponseWrapped(client.cfg.charset)
-            logger.trace("Connection establishment response: $response")
+            logger.trace("Connection establishment response ($it): $response")
         }
 
         return conn
     }
 
-    fun prepare() = client.rethisCoScope.launch {
+    @Suppress("OPT_IN_USAGE")
+    fun prepare() = client.rethisCoScope.launch(Dispatchers.IO) {
         logger.info("Filling ConnectionPool with connections (${client.cfg.poolConfiguration.poolSize})")
-        repeat(client.cfg.poolConfiguration.poolSize) {
-            client.rethisCoScope.launch { connections.trySend(createConn()) }
+        if (connections.isEmpty) repeat(client.cfg.poolConfiguration.poolSize) {
+            launch { connections.trySend(createConn()) }
         }
     }
 

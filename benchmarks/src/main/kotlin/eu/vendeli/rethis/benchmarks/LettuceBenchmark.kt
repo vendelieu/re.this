@@ -21,7 +21,7 @@ class LettuceBenchmark {
     @Setup
     fun setup() {
         lettuce = RedisClient.create("redis://localhost").connect().async()
-        lettuce.ping().await(0, TimeUnit.SECONDS)
+        lettuce.ping().get()
     }
 
     @TearDown
