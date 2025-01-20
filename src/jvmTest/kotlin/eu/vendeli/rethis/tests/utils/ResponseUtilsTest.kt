@@ -15,8 +15,6 @@ import io.ktor.utils.io.core.*
 import kotlinx.io.Buffer
 
 class ResponseUtilsTest : ReThisTestCtx() {
-    private val charset = Charsets.UTF_8
-
     @Test
     suspend fun `test processRedisSimpleResponse with simple string`() {
         val channel = ByteReadChannel {
@@ -171,6 +169,8 @@ class ResponseUtilsTest : ReThisTestCtx() {
             "second" to 2L,
         )
     }
+
+    private val charset = Charsets.UTF_8
 
     @Suppress("TestFunctionName")
     private suspend fun ByteReadChannel(block: suspend Buffer.() -> Unit): ByteReadChannel {

@@ -36,10 +36,10 @@ comparing popular library solutions (more is better):
 
 ```javascript
 Benchmark                        Mode  Cnt        Score        Error  Units
-JedisBenchmark.jedisSetGet      thrpt    5    31663.176 ±   2013.542  ops/s
-KredsBenchmark.kredsSetGet      thrpt    5  1026596.540 ± 250026.517  ops/s
-LettuceBenchmark.lettuceSetGet  thrpt    5    20273.552 ±   1136.556  ops/s
-RethisBenchmark.rethisSetGet    thrpt    5  1580822.077 ± 316104.641  ops/s
+JedisBenchmark.jedisSetGet      thrpt    5    31393.802 ±   5501.760  ops/s
+KredsBenchmark.kredsSetGet      thrpt    5  1051938.506 ± 344626.183  ops/s
+LettuceBenchmark.lettuceSetGet  thrpt    5    19780.976 ±   1544.416  ops/s
+RethisBenchmark.rethisSetGet    thrpt    5  1555443.251 ± 552464.716  ops/s
 ```
 
 <details>

@@ -1,5 +1,9 @@
 # Re.this Changelog
 
+## 0.2.4
+
+* Enhanced the algorithm for parsing.
+
 ## 0.2.3
 
 * Reorganized response parsing to improve performance, improved benchmarks.
