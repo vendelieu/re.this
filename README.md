@@ -24,7 +24,7 @@ To use Re.This in your project, add the following dependency to your Gradle buil
 
 ```gradle
 dependencies {
-    implementation("eu.vendeli:re.this:0.2.3")
+    implementation("eu.vendeli:re.this:0.2.4")
 }
 ```
 
