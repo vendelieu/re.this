@@ -90,13 +90,11 @@ class ReThis(
             val connection = ctxConn
             if (connection != null) {
                 connection.sendRequest(pipelinedPayload)
-                val resData = connection.parseResponse()
-                requests.forEach { _ -> responses.add(resData.readResponseWrapped(cfg.charset)) }
+                requests.forEach { _ -> responses.add(connection.readResponseWrapped(cfg.charset)) }
             } else {
-                connectionPool.use { conn ->
-                    conn.sendRequest(pipelinedPayload)
-                    val resData = conn.parseResponse()
-                    requests.forEach { _ -> responses.add(resData.readResponseWrapped(cfg.charset)) }
+                connectionPool.use { connection ->
+                    connection.sendRequest(pipelinedPayload)
+                    requests.forEach { _ -> responses.add(connection.readResponseWrapped(cfg.charset)) }
                 }
             }
             requests.clear()

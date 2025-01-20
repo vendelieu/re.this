@@ -5,8 +5,8 @@ import eu.vendeli.rethis.ReThisException
 import eu.vendeli.rethis.exception
 import eu.vendeli.rethis.types.core.*
 import eu.vendeli.rethis.types.core.RType.Error
+import eu.vendeli.rethis.types.core.ResponseToken.Code
 import eu.vendeli.rethis.types.core.ResponseToken.Data
-import eu.vendeli.rethis.types.core.ResponseToken.Type
 import eu.vendeli.rethis.utils.Const.CARRIAGE_RETURN_BYTE
 import eu.vendeli.rethis.utils.Const.FALSE_BYTE
 import eu.vendeli.rethis.utils.Const.NEWLINE_BYTE
@@ -25,33 +25,65 @@ import kotlin.reflect.KClass
 
 internal suspend fun ByteReadChannel.parseResponse(): ArrayDeque<ResponseToken> {
     val response = ArrayDeque<ResponseToken>()
-    if (availableForRead <= 0) awaitContent()
-    while (availableForRead > 0) {
-        val line = readLineCRLF()
-        val type = RespCode.fromCode(line.readByte())
-        when (type) {
-            RespCode.BULK, RespCode.BULK_ERROR, RespCode.VERBATIM_STRING -> {
-                val size = line.readDecimalLong()
-                response.addLast(Type(type, size.toInt()))
+    val stack = ArrayDeque<Long>() // Stack to manage aggregate sizes
 
-                if (size > 0) {
-                    response.addLast(Data(readRemaining(size)))
-                    readShort() // skip CRLF
-                }
-            }
+    val line = readLineCRLF()
+    val code = RespCode.fromCode(line.readByte())
+    parseToken(response, stack, line, code)
 
-            RespCode.ARRAY, RespCode.SET, RespCode.PUSH, RespCode.MAP -> {
-                val size = line.readDecimalLong()
-                response.addLast(Type(type, size.toInt()))
-            }
+    return response
+}
 
-            else -> {
-                response.addLast(Type(type))
-                response.addLast(Data(line))
+private suspend fun ByteReadChannel.parseToken(
+    response: ArrayDeque<ResponseToken>,
+    stack: ArrayDeque<Long>,
+    line: Source,
+    code: RespCode,
+) {
+    when (code.type) {
+        RespCode.Type.SIMPLE -> {
+            response.addLast(Code(code))
+            response.addLast(Data(line))
+        }
+
+        RespCode.Type.SIMPLE_AGG -> {
+            val size = line.readDecimalLong()
+            response.addLast(Code(code, size.toInt()))
+            if (size > 0) {
+                response.addLast(Data(readRemaining(size)))
+                readShort() // skip CRLF
             }
         }
+
+        RespCode.Type.AGGREGATE -> {
+            val size = line.readDecimalLong()
+            response.addLast(Code(code, size.toInt()))
+            stack.addLast(if (code == RespCode.MAP) size * 2 else size) // Push the size onto the stack
+        }
     }
-    return response
+
+    // Process nested aggregates if there are any
+    processNestedAggregates(response, stack)
+}
+
+private suspend fun ByteReadChannel.processNestedAggregates(
+    response: ArrayDeque<ResponseToken>,
+    stack: ArrayDeque<Long>,
+) {
+    while (stack.isNotEmpty()) {
+        val currentSize = stack.last()
+        if (currentSize > 0) {
+            // Read the next segment
+            val nestedLine = readLineCRLF()
+            val nestedCode = RespCode.fromCode(nestedLine.readByte())
+
+            // Decrement the current size in the stack
+            stack[stack.lastIndex] = currentSize - 1
+            parseToken(response, stack, nestedLine, nestedCode)
+        } else {
+            stack.removeLast() // Pop the stack when done
+        }
+    }
 }
 
 internal suspend inline fun Connection.parseResponse(): ArrayDeque<ResponseToken> = input.parseResponse()
@@ -86,22 +118,22 @@ internal inline fun <reified L, reified R> RType.unwrapRespIndMap(): Map<L, R?>?
     } else unwrapMap<L, R>()
 
 @Suppress("NOTHING_TO_INLINE")
-private inline fun ArrayDeque<ResponseToken>.validatedResponseType(): Type {
+private inline fun ArrayDeque<ResponseToken>.validatedResponseType(): Code {
     val typeToken = removeFirst()
-    if (typeToken !is Type) exception {
+    if (typeToken !is Code) exception {
         "Invalid response structure, wrong head token, expected type token but given $typeToken"
     }
     return typeToken
 }
 
 @Suppress("NOTHING_TO_INLINE")
-private inline fun ArrayDeque<ResponseToken>.validatedSimpleResponse(typeToken: Type): Source {
-    if (!RespCode.isSimpleType(typeToken.type)) exception {
-        "Wrong response type, expected simple type, given ${typeToken.type}"
+private inline fun ArrayDeque<ResponseToken>.validatedSimpleResponse(codeToken: Code): Source {
+    if (!codeToken.code.isSimple) exception {
+        "Wrong response type, expected simple type, given ${codeToken.code}"
     }
 
-    if (typeToken.type != RespCode.NULL && isEmpty()) exception {
-        "Invalid response structure, expected data token, given $typeToken"
+    if (codeToken.code != RespCode.NULL && isEmpty()) exception {
+        "Invalid response structure, expected data token, given $codeToken"
     }
     val dataToken = removeFirst()
 
@@ -122,7 +154,7 @@ internal fun ArrayDeque<ResponseToken>.readResponseWrapped(
     val typeToken = validatedResponseType()
     val size = typeToken.size ?: 0
 
-    return when (typeToken.type) {
+    return when (typeToken.code) {
         RespCode.ARRAY -> {
             if (size < 0) return RType.Null
             val elements = List(size) {
@@ -167,15 +199,15 @@ internal fun ArrayDeque<ResponseToken>.readResponseWrapped(
 private fun ArrayDeque<ResponseToken>.readSimpleResponseWrapped(
     charset: Charset,
     rawOnly: Boolean = false,
-    type: Type? = null,
+    code: Code? = null,
 ): RType {
-    val typeToken = type ?: validatedResponseType()
+    val typeToken = code ?: validatedResponseType()
     val size = typeToken.size ?: 0
     if (size == -1) return RType.Null
     val data = validatedSimpleResponse(typeToken)
     if (rawOnly) return RType.Raw(data.readByteArray(size))
 
-    return when (typeToken.type) {
+    return when (typeToken.code) {
         RespCode.SIMPLE_STRING -> PlainString(data.readText(charset))
 
         RespCode.SIMPLE_ERROR -> Error(data.readText(charset))
@@ -217,8 +249,8 @@ private fun ArrayDeque<ResponseToken>.readSimpleResponseWrapped(
             VerbatimString(encoding.toString(), data.toString())
         }
 
-        RespCode.ARRAY, RespCode.MAP, RespCode.SET, RespCode.PUSH -> exception {
-            "Invalid response type for simple response: ${typeToken.type}"
+        RespCode.ARRAY, RespCode.SET, RespCode.PUSH, RespCode.MAP, RespCode.ATTRIBUTE -> exception {
+            "Invalid response type for simple response: ${typeToken.code}"
         }
     }
 }
@@ -235,7 +267,7 @@ internal fun <T : Any> ArrayDeque<ResponseToken>.readSimpleResponseTyped(
     if (size == -1) return null
     val data = validatedSimpleResponse(typeToken)
 
-    return when (typeToken.type) {
+    return when (typeToken.code) {
         RespCode.SIMPLE_STRING -> data.readText(charset)
         RespCode.SIMPLE_ERROR -> throw ReThisException(data.readText(charset))
         RespCode.INTEGER -> data.readDecimalLong()
@@ -283,7 +315,7 @@ internal fun <T : Any> ArrayDeque<ResponseToken>.readListResponseTyped(
     val typeToken = validatedResponseType()
     val size = typeToken.size ?: 0
 
-    return when (typeToken.type) {
+    return when (typeToken.code) {
         RespCode.ARRAY, RespCode.SET, RespCode.PUSH -> {
             if (size < 0) return null
             List(size) {
@@ -304,7 +336,7 @@ internal fun <K : Any, V : Any> ArrayDeque<ResponseToken>.readMapResponseTyped(
     val typeToken = validatedResponseType()
     val size = typeToken.size ?: 0
 
-    return when (typeToken.type) {
+    return when (typeToken.code) {
         RespCode.MAP -> {
             if (size < 0) return null
             buildMap<K, V?>(size) {
