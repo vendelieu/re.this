@@ -109,7 +109,7 @@ class ReThis(
             return emptyList()
         }
         logger.info("Pipeline finished")
-        logger.trace("Such responses returned $responses")
+        logger.trace { "Such responses returned $responses" }
         return responses
     }
 
@@ -231,7 +231,7 @@ class ReThis(
     }
 
     private suspend fun Connection.sendRequest(payload: List<Argument>): Connection = apply {
-        logger.trace("Sending request with such payload $payload")
+        logger.trace { "Sending request with such payload $payload" }
         output.writeBuffer(bufferValues(payload, cfg.charset))
         output.flush()
     }

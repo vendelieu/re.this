@@ -36,7 +36,7 @@ internal class ConnectionPool(
     }
 
     internal suspend fun createConn(): Connection {
-        logger.trace("Creating connection to ${client.address}")
+        logger.trace { "Creating connection to ${client.address}" }
         val conn = aSocket(selector)
             .tcp()
             .connect(client.address.socket) {
@@ -56,13 +56,13 @@ internal class ConnectionPool(
         var requests = 0
 
         if (client.cfg.auth != null) client.cfg.auth?.run {
-            logger.trace("Authenticating to ${client.address}.")
+            logger.trace { "Authenticating to ${client.address}." }
             reqBuffer.writeRedisValue(listOfNotNull("AUTH".toArg(), username?.toArg(), password.toArg()))
             requests++
         }
 
         client.cfg.db?.takeIf { it > 0 }?.let {
-            logger.trace("Selecting database $it to ${client.address}.")
+            logger.trace { "Selecting database $it to ${client.address}." }
             reqBuffer.writeRedisValue(listOf("SELECT".toArg(), it.toArg()))
             requests++
         }
@@ -70,11 +70,11 @@ internal class ConnectionPool(
         reqBuffer.writeRedisValue(listOf("HELLO".toArg(), client.protocol.literal.toArg()))
         requests++
 
-        logger.trace("Sending connection establishment requests ($requests)")
+        logger.trace { "Sending connection establishment requests ($requests)" }
         conn.sendRequest(reqBuffer)
         repeat(requests) {
             val response = conn.readResponseWrapped(client.cfg.charset)
-            logger.trace("Connection establishment response ($it): $response")
+            logger.trace { "Connection establishment response ($it): $response" }
         }
 
         return conn
@@ -95,7 +95,7 @@ internal class ConnectionPool(
     }
 
     private fun handle(connectionConfiguration: Connection) = poolScope.launch(Dispatchers.IO) {
-        logger.trace("Releasing connection ${connectionConfiguration.socket}")
+        logger.trace { "Releasing connection ${connectionConfiguration.socket}" }
         if (connectionConfiguration.input.isClosedForRead) { // connection is corrupted
             logger.warn("Connection ${connectionConfiguration.socket} is corrupted, refilling")
             launch {
@@ -118,11 +118,11 @@ internal class ConnectionPool(
 
         while (attempt < cfg.reconnectAttempts) {
             attempt++
-            logger.trace("Refilling ConnectionPool. Attempt $attempt")
+            logger.trace { "Refilling ConnectionPool. Attempt $attempt" }
             runCatching { createConn() }
                 .onSuccess {
                     connections.send(it)
-                    logger.trace("Connection refilled with $it")
+                    logger.trace { "Connection refilled with $it" }
                     return
                 }.onFailure {
                     if (ex != null) ex.addSuppressed(it) else ex = it
@@ -153,7 +153,7 @@ internal suspend inline fun <R> ConnectionPool.use(block: (Connection) -> R): R 
     }
     var exception: Throwable? = null
     val connection = acquire()
-    logger.trace("Using ${connection.socket} for request")
+    logger.trace { "Using ${connection.socket} for request" }
     try {
         return block(connection)
     } catch (e: Throwable) {
