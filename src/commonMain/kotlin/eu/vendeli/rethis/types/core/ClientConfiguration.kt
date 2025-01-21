@@ -24,7 +24,6 @@ data class ClientConfiguration(
     var tlsConfig: TLSConfig? = null,
     internal var auth: AuthConfiguration? = null,
     internal val connectionConfiguration: ConnectionConfiguration = ConnectionConfiguration(),
-    internal val reconnectionStrategy: ReconnectionStrategyConfiguration = ReconnectionStrategyConfiguration(),
     internal val socketConfiguration: SocketConfiguration = SocketConfiguration(),
 ) {
     /**
@@ -44,15 +43,6 @@ data class ClientConfiguration(
      */
     fun connection(block: ConnectionConfiguration.() -> Unit) {
         connectionConfiguration.block()
-    }
-
-    /**
-     * Configures the reconnection strategy.
-     *
-     * @param block A lambda to configure the reconnection strategy.
-     */
-    fun reconnectionStrategy(block: ReconnectionStrategyConfiguration.() -> Unit) {
-        reconnectionStrategy.block()
     }
 
     /**
@@ -95,29 +85,19 @@ data class SocketConfiguration(
 )
 
 /**
- * Configuration for redis connection reconnection strategy.
- *
- * @property doHealthCheck if true, performs health checks on the connection before adding it to the pool, defaults to true
- * @property reconnectAttempts the number of times to attempt reconnecting to the redis server on failure, defaults to 3
- * @property reconnectDelay the delay in milliseconds between reconnecting, defaults to 3000L
- */
-@ConfigurationDSL
-data class ReconnectionStrategyConfiguration(
-    var doHealthCheck: Boolean = true,
-    var reconnectAttempts: Int = 3,
-    var reconnectDelay: Long = 3000L,
-)
-
-/**
  * Configuration for redis connection.
  *
  * @property defaultConnectionSource the default connection source, defaults to [ConnectionSource.POOL]
  * @property poolSize the size of the connection pool, defaults to 50
  * @property dispatcher the dispatcher to use for connection pool coroutines, defaults to [Dispatchers.IO]
+ * @property reconnectAttempts the number of times to attempt reconnecting to the redis server on failure, defaults to 3
+ * @property reconnectDelay the delay in milliseconds between reconnecting, defaults to 3000L
  */
 @ConfigurationDSL
 data class ConnectionConfiguration(
     var defaultConnectionSource: ConnectionSource = ConnectionSource.POOL,
     var poolSize: Int = 50,
     var dispatcher: CoroutineDispatcher = Dispatchers.IO,
+    var reconnectAttempts: Int = 3,
+    var reconnectDelay: Long = 3000L,
 )

@@ -29,7 +29,7 @@ class RethisBenchmark {
 
     @TearDown
     fun tearDown() {
-        rethis.disconnect()
+        rethis.shutdown()
     }
 
     @Benchmark

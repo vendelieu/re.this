@@ -3,12 +3,10 @@ package eu.vendeli.rethis.tests.cases
 import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.ReThisTestCtx
 import eu.vendeli.rethis.commands.*
-import eu.vendeli.rethis.types.core.ConnectionSource
 import eu.vendeli.rethis.types.core.RType
 import io.kotest.matchers.shouldBe
 import io.ktor.util.collections.*
 import kotlinx.coroutines.*
-import kotlinx.coroutines.time.delay
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 

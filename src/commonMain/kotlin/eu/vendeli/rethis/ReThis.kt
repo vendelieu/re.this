@@ -65,6 +65,10 @@ class ReThis(
         if (connectionPool.isEmpty) connectionPool.prepare()
     }
 
+    fun shutdown() = runBlocking {
+        rootJob.cancelAndJoin()
+    }
+
     suspend fun pipeline(block: suspend ReThis.() -> Unit): List<RType> {
         val responses = mutableListOf<RType>()
         val pipelineCtx = takeFromCoCtx(CoPipelineCtx)

@@ -96,8 +96,7 @@ internal class ConnectionPool(
 
     private fun handle(connectionConfiguration: Connection) = poolScope.launch(Dispatchers.IO) {
         logger.trace("Releasing connection ${connectionConfiguration.socket}")
-        val cfg = client.cfg.reconnectionStrategy
-        if (cfg.doHealthCheck && connectionConfiguration.input.isClosedForRead) { // connection is corrupted
+        if (connectionConfiguration.input.isClosedForRead) { // connection is corrupted
             logger.warn("Connection ${connectionConfiguration.socket} is corrupted, refilling")
             launch {
                 connectionConfiguration.socket.close()
@@ -112,7 +111,7 @@ internal class ConnectionPool(
     }
 
     private suspend fun refill() {
-        val cfg = client.cfg.reconnectionStrategy
+        val cfg = client.cfg.connectionConfiguration
         if (cfg.reconnectAttempts <= 0) return
         var attempt = 0
         var ex: Throwable? = null
