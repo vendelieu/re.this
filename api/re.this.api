@@ -12,7 +12,8 @@ public final class eu/vendeli/rethis/ReThis {
 	public final fun isDisconnected ()Z
 	public final fun pipeline (Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public final fun reconnect ()V
-	public final fun transaction (Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun transaction (Leu/vendeli/rethis/types/core/ConnectionSource;Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun transaction$default (Leu/vendeli/rethis/ReThis;Leu/vendeli/rethis/types/core/ConnectionSource;Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
 }
 
 public final class eu/vendeli/rethis/ReThisException : java/lang/RuntimeException {
@@ -782,27 +783,55 @@ public final class eu/vendeli/rethis/types/core/BulkString : eu/vendeli/rethis/t
 
 public final class eu/vendeli/rethis/types/core/ClientConfiguration {
 	public fun <init> ()V
-	public fun <init> (Ljava/lang/Integer;Ljava/nio/charset/Charset;Lio/ktor/network/tls/TLSConfig;Leu/vendeli/rethis/types/core/AuthConfiguration;Leu/vendeli/rethis/types/core/PoolConfiguration;Leu/vendeli/rethis/types/core/ReconnectionStrategyConfiguration;Leu/vendeli/rethis/types/core/SocketConfiguration;)V
-	public synthetic fun <init> (Ljava/lang/Integer;Ljava/nio/charset/Charset;Lio/ktor/network/tls/TLSConfig;Leu/vendeli/rethis/types/core/AuthConfiguration;Leu/vendeli/rethis/types/core/PoolConfiguration;Leu/vendeli/rethis/types/core/ReconnectionStrategyConfiguration;Leu/vendeli/rethis/types/core/SocketConfiguration;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Ljava/lang/Integer;Ljava/nio/charset/Charset;Lio/ktor/network/tls/TLSConfig;Leu/vendeli/rethis/types/core/AuthConfiguration;Leu/vendeli/rethis/types/core/ConnectionConfiguration;Leu/vendeli/rethis/types/core/ReconnectionStrategyConfiguration;Leu/vendeli/rethis/types/core/SocketConfiguration;)V
+	public synthetic fun <init> (Ljava/lang/Integer;Ljava/nio/charset/Charset;Lio/ktor/network/tls/TLSConfig;Leu/vendeli/rethis/types/core/AuthConfiguration;Leu/vendeli/rethis/types/core/ConnectionConfiguration;Leu/vendeli/rethis/types/core/ReconnectionStrategyConfiguration;Leu/vendeli/rethis/types/core/SocketConfiguration;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun auth (Ljava/lang/String;Ljava/lang/String;)V
 	public static synthetic fun auth$default (Leu/vendeli/rethis/types/core/ClientConfiguration;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)V
 	public final fun component1 ()Ljava/lang/Integer;
 	public final fun component2 ()Ljava/nio/charset/Charset;
 	public final fun component3 ()Lio/ktor/network/tls/TLSConfig;
-	public final fun copy (Ljava/lang/Integer;Ljava/nio/charset/Charset;Lio/ktor/network/tls/TLSConfig;Leu/vendeli/rethis/types/core/AuthConfiguration;Leu/vendeli/rethis/types/core/PoolConfiguration;Leu/vendeli/rethis/types/core/ReconnectionStrategyConfiguration;Leu/vendeli/rethis/types/core/SocketConfiguration;)Leu/vendeli/rethis/types/core/ClientConfiguration;
-	public static synthetic fun copy$default (Leu/vendeli/rethis/types/core/ClientConfiguration;Ljava/lang/Integer;Ljava/nio/charset/Charset;Lio/ktor/network/tls/TLSConfig;Leu/vendeli/rethis/types/core/AuthConfiguration;Leu/vendeli/rethis/types/core/PoolConfiguration;Leu/vendeli/rethis/types/core/ReconnectionStrategyConfiguration;Leu/vendeli/rethis/types/core/SocketConfiguration;ILjava/lang/Object;)Leu/vendeli/rethis/types/core/ClientConfiguration;
+	public final fun connection (Lkotlin/jvm/functions/Function1;)V
+	public final fun copy (Ljava/lang/Integer;Ljava/nio/charset/Charset;Lio/ktor/network/tls/TLSConfig;Leu/vendeli/rethis/types/core/AuthConfiguration;Leu/vendeli/rethis/types/core/ConnectionConfiguration;Leu/vendeli/rethis/types/core/ReconnectionStrategyConfiguration;Leu/vendeli/rethis/types/core/SocketConfiguration;)Leu/vendeli/rethis/types/core/ClientConfiguration;
+	public static synthetic fun copy$default (Leu/vendeli/rethis/types/core/ClientConfiguration;Ljava/lang/Integer;Ljava/nio/charset/Charset;Lio/ktor/network/tls/TLSConfig;Leu/vendeli/rethis/types/core/AuthConfiguration;Leu/vendeli/rethis/types/core/ConnectionConfiguration;Leu/vendeli/rethis/types/core/ReconnectionStrategyConfiguration;Leu/vendeli/rethis/types/core/SocketConfiguration;ILjava/lang/Object;)Leu/vendeli/rethis/types/core/ClientConfiguration;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getCharset ()Ljava/nio/charset/Charset;
 	public final fun getDb ()Ljava/lang/Integer;
 	public final fun getTlsConfig ()Lio/ktor/network/tls/TLSConfig;
 	public fun hashCode ()I
-	public final fun pool (Lkotlin/jvm/functions/Function1;)V
 	public final fun reconnectionStrategy (Lkotlin/jvm/functions/Function1;)V
 	public final fun setCharset (Ljava/nio/charset/Charset;)V
 	public final fun setDb (Ljava/lang/Integer;)V
 	public final fun setTlsConfig (Lio/ktor/network/tls/TLSConfig;)V
 	public final fun socket (Lkotlin/jvm/functions/Function1;)V
 	public fun toString ()Ljava/lang/String;
+}
+
+public final class eu/vendeli/rethis/types/core/ConnectionConfiguration {
+	public fun <init> ()V
+	public fun <init> (Leu/vendeli/rethis/types/core/ConnectionSource;ILkotlinx/coroutines/CoroutineDispatcher;)V
+	public synthetic fun <init> (Leu/vendeli/rethis/types/core/ConnectionSource;ILkotlinx/coroutines/CoroutineDispatcher;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Leu/vendeli/rethis/types/core/ConnectionSource;
+	public final fun component2 ()I
+	public final fun component3 ()Lkotlinx/coroutines/CoroutineDispatcher;
+	public final fun copy (Leu/vendeli/rethis/types/core/ConnectionSource;ILkotlinx/coroutines/CoroutineDispatcher;)Leu/vendeli/rethis/types/core/ConnectionConfiguration;
+	public static synthetic fun copy$default (Leu/vendeli/rethis/types/core/ConnectionConfiguration;Leu/vendeli/rethis/types/core/ConnectionSource;ILkotlinx/coroutines/CoroutineDispatcher;ILjava/lang/Object;)Leu/vendeli/rethis/types/core/ConnectionConfiguration;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getDefaultConnectionSource ()Leu/vendeli/rethis/types/core/ConnectionSource;
+	public final fun getDispatcher ()Lkotlinx/coroutines/CoroutineDispatcher;
+	public final fun getPoolSize ()I
+	public fun hashCode ()I
+	public final fun setDefaultConnectionSource (Leu/vendeli/rethis/types/core/ConnectionSource;)V
+	public final fun setDispatcher (Lkotlinx/coroutines/CoroutineDispatcher;)V
+	public final fun setPoolSize (I)V
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class eu/vendeli/rethis/types/core/ConnectionSource : java/lang/Enum {
+	public static final field POOL Leu/vendeli/rethis/types/core/ConnectionSource;
+	public static final field STANDALONE Leu/vendeli/rethis/types/core/ConnectionSource;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Leu/vendeli/rethis/types/core/ConnectionSource;
+	public static fun values ()[Leu/vendeli/rethis/types/core/ConnectionSource;
 }
 
 public final class eu/vendeli/rethis/types/core/DoubleArg : eu/vendeli/rethis/types/core/Argument {
@@ -885,23 +914,6 @@ public final class eu/vendeli/rethis/types/core/PlainString : eu/vendeli/rethis/
 	public synthetic fun getValue ()Ljava/lang/Object;
 	public fun getValue ()Ljava/lang/String;
 	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
-public final class eu/vendeli/rethis/types/core/PoolConfiguration {
-	public fun <init> ()V
-	public fun <init> (ILkotlinx/coroutines/CoroutineDispatcher;)V
-	public synthetic fun <init> (ILkotlinx/coroutines/CoroutineDispatcher;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public final fun component1 ()I
-	public final fun component2 ()Lkotlinx/coroutines/CoroutineDispatcher;
-	public final fun copy (ILkotlinx/coroutines/CoroutineDispatcher;)Leu/vendeli/rethis/types/core/PoolConfiguration;
-	public static synthetic fun copy$default (Leu/vendeli/rethis/types/core/PoolConfiguration;ILkotlinx/coroutines/CoroutineDispatcher;ILjava/lang/Object;)Leu/vendeli/rethis/types/core/PoolConfiguration;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getDispatcher ()Lkotlinx/coroutines/CoroutineDispatcher;
-	public final fun getPoolSize ()I
-	public fun hashCode ()I
-	public final fun setDispatcher (Lkotlinx/coroutines/CoroutineDispatcher;)V
-	public final fun setPoolSize (I)V
 	public fun toString ()Ljava/lang/String;
 }
 
@@ -1827,6 +1839,10 @@ public final class eu/vendeli/rethis/types/options/ZRangeOption$LIMIT : eu/vende
 }
 
 public abstract class eu/vendeli/rethis/types/options/ZRangeOption$Type : eu/vendeli/rethis/types/options/ZRangeOption {
+}
+
+public final class eu/vendeli/rethis/utils/CommonUtilsKt {
+	public static final fun isOk (Leu/vendeli/rethis/types/core/RType;)Z
 }
 
 public final class eu/vendeli/rethis/wrappers/ReThisMap : kotlin/collections/AbstractMutableMap {

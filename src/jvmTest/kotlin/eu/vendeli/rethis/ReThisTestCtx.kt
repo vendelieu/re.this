@@ -18,5 +18,12 @@ abstract class ReThisTestCtx(
         start()
     }
 
-    protected val client = ReThis(redis.host, redis.firstMappedPort)
+    @Suppress("ktlint:standard:backing-property-naming")
+    private var _client = ReThis(redis.host, redis.firstMappedPort)
+
+    protected val client get() = _client
+
+    protected fun resetClient(newClient: ReThis = ReThis(redis.host, redis.firstMappedPort)) {
+        _client = newClient
+    }
 }

@@ -3,23 +3,28 @@ package eu.vendeli.rethis.tests.cases
 import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.ReThisTestCtx
 import eu.vendeli.rethis.commands.*
+import eu.vendeli.rethis.types.core.ConnectionSource
 import eu.vendeli.rethis.types.core.RType
+import io.kotest.matchers.shouldBe
 import io.ktor.util.collections.*
 import kotlinx.coroutines.*
+import kotlinx.coroutines.time.delay
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 
 class TestCase : ReThisTestCtx() {
     @Test
     suspend fun `operations in transaction test case`() {
+        val mainJob = Job()
         val coroutineScope = CoroutineScope(
-            Dispatchers.IO + CoroutineName("CustomCoroutineScope"),
+            Dispatchers.IO + CoroutineName("CustomCoroutineScope") + mainJob,
         )
 
         val map1 = ConcurrentMap<Int, Job>()
         val map2 = ConcurrentMap<Int, Job>()
 
-        repeat(1_000) { id ->
+        val totalRepeats = 1_000
+        repeat(totalRepeats) { id ->
             client.transaction {
                 hSet(
                     "some:key:$id",
@@ -33,53 +38,45 @@ class TestCase : ReThisTestCtx() {
                 sAdd("some:key", id.toString())
             }
 
-            map2[id] = coroutineScope.launch(start = CoroutineStart.LAZY) {
-                while (true) {
-                    client.hPExpire("some:key:$id", 1.minutes, "some-value1-$id")
-                    delay(5.seconds)
-                }
-            }.also { job ->
-                job.invokeOnCompletion {
-                    map2.remove(id)
-                }
+            map2[id] = coroutineScope
+                .launch(start = CoroutineStart.LAZY) {
+                    repeat(totalRepeats) {
+                        client.hPExpire("some:key:$id", 1.minutes, "some-value1-$id")
+                        delay(2.seconds)
+                    }
+                }.also { job ->
+                    job.invokeOnCompletion {
+                        map2.remove(id)
+                    }
 
-                job.start()
-            }
-
-            map1[id] = coroutineScope.launch(start = CoroutineStart.LAZY) {
-                delay(10.seconds)
-
-                val value1 = client.hGet("some:key:$id", "some:field1")
-                val value2 = client.hGet("some:key:$id", "some:field2")
-                val value3 = client.hGet("some:key:$id", "some:field3")
-
-                if (value1 != "some-value1-$id") {
-                    throw IllegalArgumentException("value must be 'some-value1-$id', but found '$value1'")
+                    job.start()
                 }
 
-                if (value2 != "some-value2-$id") {
-                    throw IllegalArgumentException("value must be 'some-value2-$id', but found '$value2'")
-                }
+            map1[id] = coroutineScope
+                .launch(start = CoroutineStart.LAZY) {
+                    delay(10.seconds)
 
-                if (value3 != "some-value3-$id") {
-                    throw IllegalArgumentException("value must be 'some-value3-$id', but found '$value3'")
-                }
+                    client.hGet("some:key:$id", "some:field1") shouldBe "some-value1-$id"
+                    client.hGet("some:key:$id", "some:field2") shouldBe "some-value2-$id"
+                    client.hGet("some:key:$id", "some:field3") shouldBe "some-value3-$id"
+                    delay(100)
 
-                client.transaction {
-                    del("some:key:$id")
-                    sRem("some:key", id.toString())
-                }
-            }.also { job ->
-                job.invokeOnCompletion {
-                    map1.remove(id)
-                    map2[id]?.cancel()
-                }
+                    client.transaction {
+                        del("some:key:$id")
+                        sRem("some:key", id.toString())
+                    }
+                }.also { job ->
+                    job.invokeOnCompletion {
+                        map1.remove(id)
+                        map2[id]?.cancel()
+                    }
 
-                job.start()
-            }
+                    job.start()
+                }
         }
-    }
 
+        joinAll(*mainJob.children.toList().toTypedArray())
+    }
 
     private val scriptsSha1Map = ConcurrentMap<String, String>()
     internal suspend inline fun ReThis.fastEval(
@@ -101,14 +98,16 @@ class TestCase : ReThisTestCtx() {
 
     @Test
     suspend fun `script operations test case`() {
+        val mainJob = Job()
         val coroutineScope = CoroutineScope(
-            Dispatchers.IO + CoroutineName("CustomCoroutineScope"),
+            Dispatchers.IO + CoroutineName("CustomCoroutineScope") + mainJob,
         )
 
         val map1 = ConcurrentMap<Int, Job>()
         val map2 = ConcurrentMap<Int, Job>()
 
-        repeat(1_000) { id ->
+        val totalRepeats = 1_000
+        repeat(totalRepeats) { id ->
             client.fastEval(
                 "script1",
                 """
@@ -127,57 +126,49 @@ class TestCase : ReThisTestCtx() {
                 ).flatMap { listOf(it.key, it.value) }.toTypedArray(),
             )
 
-            map2[id] = coroutineScope.launch(start = CoroutineStart.LAZY) {
-                while (true) {
-                    client.hPExpire("some:key:$id", 1.minutes, "some:field1")
-                    delay(5.seconds)
-                }
-            }.also { job ->
-                job.invokeOnCompletion {
-                    map2.remove(id)
-                }
+            map2[id] = coroutineScope
+                .launch(start = CoroutineStart.LAZY) {
+                    repeat(totalRepeats) {
+                        client.hPExpire("some:key:$id", 1.minutes, "some-value1-$id")
+                        delay(2.seconds)
+                    }
+                }.also { job ->
+                    job.invokeOnCompletion {
+                        map2.remove(id)
+                    }
 
-                job.start()
-            }
-
-            map1[id] = coroutineScope.launch(start = CoroutineStart.LAZY) {
-                delay(10.seconds)
-
-                val value1 = client.hGet("some:key:$id", "some:field1")
-                val value2 = client.hGet("some:key:$id", "some:field2")
-                val value3 = client.hGet("some:key:$id", "some:field3")
-
-                if (value1 != "some-value1-$id") {
-                    throw IllegalArgumentException("value must be 'some-value1-$id', but found '$value1'")
+                    job.start()
                 }
 
-                if (value2 != "some-value2-$id") {
-                    throw IllegalArgumentException("value must be 'some-value2-$id', but found '$value2'")
-                }
+            map1[id] = coroutineScope
+                .launch(start = CoroutineStart.LAZY) {
+                    delay(10.seconds)
 
-                if (value3 != "some-value3-$id") {
-                    throw IllegalArgumentException("value must be 'some-value3-$id', but found '$value3'")
-                }
+                    client.hGet("some:key:$id", "some:field1") shouldBe "some-value1-$id"
+                    client.hGet("some:key:$id", "some:field2") shouldBe "some-value2-$id"
+                    client.hGet("some:key:$id", "some:field3") shouldBe "some-value3-$id"
+                    delay(100)
 
-                client.fastEval(
-                    "script2",
-                    """
+                    client.fastEval(
+                        "script2",
+                        """
                         redis.call('DEL', KEYS[1])
                         redis.call('SREM', KEYS[2], ARGV[1])
-                    """.trimIndent(),
-                    2,
-                    "some:key:$id",
-                    "some:key",
-                    id.toString(),
-                )
-            }.also { job ->
-                job.invokeOnCompletion {
-                    map1.remove(id)
-                    map2[id]?.cancel()
-                }
+                        """.trimIndent(),
+                        2,
+                        "some:key:$id",
+                        "some:key",
+                        id.toString(),
+                    )
+                }.also { job ->
+                    job.invokeOnCompletion {
+                        map1.remove(id)
+                        map2[id]?.cancel()
+                    }
 
-                job.start()
-            }
+                    job.start()
+                }
         }
+        joinAll(*mainJob.children.toList().toTypedArray())
     }
 }

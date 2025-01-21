@@ -7,6 +7,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.withContext
 
+@Suppress("ktlint:standard:function-naming")
 class MultiprocessingTest : ReThisTestCtx() {
     @Test
     suspend fun `multiprocessing test`() = withContext(Dispatchers.IO) {

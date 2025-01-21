@@ -1,6 +1,7 @@
 package eu.vendeli.rethis.commands
 
 import eu.vendeli.rethis.ReThis
+import eu.vendeli.rethis.exception
 import eu.vendeli.rethis.types.common.ChannelSubscription
 import eu.vendeli.rethis.types.common.PubSubNumEntry
 import eu.vendeli.rethis.types.core.*
@@ -83,7 +84,7 @@ suspend fun ReThis.pubSubShardNumSub(vararg channel: String): List<PubSubNumEntr
 }
 
 suspend fun ReThis.pUnsubscribe(vararg pattern: String): RType {
-    require(pattern.isNotEmpty())
+    if (pattern.isEmpty()) exception { "At least one pattern is required" }
     pattern.forEach { subscriptions.unsubscribe(it) }
     return execute(
         listOf(
@@ -136,7 +137,7 @@ suspend fun ReThis.subscribe(
 }
 
 suspend fun ReThis.sUnsubscribe(vararg pattern: String): RType {
-    require(pattern.isNotEmpty())
+    if (pattern.isEmpty()) exception { "At least one pattern is required" }
     pattern.forEach { subscriptions.unsubscribe(it) }
     return execute(
         listOf(
@@ -147,7 +148,7 @@ suspend fun ReThis.sUnsubscribe(vararg pattern: String): RType {
 }
 
 suspend fun ReThis.unsubscribe(vararg pattern: String): RType {
-    require(pattern.isNotEmpty())
+    if (pattern.isEmpty()) exception { "At least one pattern is required" }
     pattern.forEach { subscriptions.unsubscribe(it) }
     return execute(
         listOf(

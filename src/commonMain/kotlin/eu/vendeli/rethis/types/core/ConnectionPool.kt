@@ -26,9 +26,9 @@ internal class ConnectionPool(
 
     private val job = SupervisorJob(client.rootJob)
     private val poolScope = CoroutineScope(
-        client.cfg.poolConfiguration.dispatcher + job + CoroutineName("ReThis-ConnectionPool"),
+        client.cfg.connectionConfiguration.dispatcher + job + CoroutineName("ReThis-ConnectionPool"),
     )
-    private val connections = Channel<Connection>(client.cfg.poolConfiguration.poolSize)
+    private val connections = Channel<Connection>(client.cfg.connectionConfiguration.poolSize)
     private val selector = SelectorManager(poolScope.coroutineContext)
 
     init {
@@ -82,8 +82,8 @@ internal class ConnectionPool(
 
     @Suppress("OPT_IN_USAGE")
     fun prepare() = client.rethisCoScope.launch(Dispatchers.IO) {
-        logger.info("Filling ConnectionPool with connections (${client.cfg.poolConfiguration.poolSize})")
-        if (connections.isEmpty) repeat(client.cfg.poolConfiguration.poolSize) {
+        logger.info("Filling ConnectionPool with connections (${client.cfg.connectionConfiguration.poolSize})")
+        if (connections.isEmpty) repeat(client.cfg.connectionConfiguration.poolSize) {
             launch { connections.trySend(createConn()) }
         }
     }
@@ -94,19 +94,19 @@ internal class ConnectionPool(
         handle(connection)
     }
 
-    private fun handle(connection: Connection) = poolScope.launch(Dispatchers.IO) {
-        logger.trace("Releasing connection ${connection.socket}")
+    private fun handle(connectionConfiguration: Connection) = poolScope.launch(Dispatchers.IO) {
+        logger.trace("Releasing connection ${connectionConfiguration.socket}")
         val cfg = client.cfg.reconnectionStrategy
-        if (cfg.doHealthCheck && connection.input.isClosedForRead) { // connection is corrupted
-            logger.warn("Connection ${connection.socket} is corrupted, refilling")
+        if (cfg.doHealthCheck && connectionConfiguration.input.isClosedForRead) { // connection is corrupted
+            logger.warn("Connection ${connectionConfiguration.socket} is corrupted, refilling")
             launch {
-                connection.socket.close()
+                connectionConfiguration.socket.close()
                 refill()
             }
         } else {
-            connections.trySend(connection).onFailure {
-                logger.warn("Pool is full, closing connection ${connection.socket}")
-                connection.socket.close()
+            connections.trySend(connectionConfiguration).onFailure {
+                logger.warn("Pool is full, closing connection ${connectionConfiguration.socket}")
+                connectionConfiguration.socket.close()
             }
         }
     }

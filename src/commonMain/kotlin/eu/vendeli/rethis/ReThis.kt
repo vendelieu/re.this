@@ -31,7 +31,8 @@ class ReThis(
     internal val logger = KtorSimpleLogger("eu.vendeli.rethis.ReThis")
     internal val cfg: ClientConfiguration = ClientConfiguration().apply(configurator)
     internal val rootJob = SupervisorJob()
-    internal val rethisCoScope = CoroutineScope(rootJob + cfg.poolConfiguration.dispatcher + CoroutineName("ReThis"))
+    internal val rethisCoScope =
+        CoroutineScope(rootJob + cfg.connectionConfiguration.dispatcher + CoroutineName("ReThis"))
     internal val connectionPool = ConnectionPool(this)
 
     init {
@@ -51,7 +52,7 @@ class ReThis(
             append("DB: ${cfg.db ?: 0}\n")
             append("Auth: ${cfg.auth != null}\n")
             append("TLS: ${cfg.tlsConfig != null}\n")
-            append("Pool size: ${cfg.poolConfiguration.poolSize}\n")
+            append("Pool size: ${cfg.connectionConfiguration.poolSize}\n")
             append("Protocol: ${protocol}\n")
         }.let { logger.info(it) }
     }
@@ -108,22 +109,27 @@ class ReThis(
         return responses
     }
 
-    suspend fun transaction(block: suspend ReThis.() -> Unit): List<RType> {
+    suspend fun transaction(
+        connectionSource: ConnectionSource = ConnectionSource.POOL,
+        block: suspend ReThis.() -> Unit,
+    ): List<RType> {
         val coLocalCon = takeFromCoCtx(CoLocalConn)
         if (coLocalCon != null) {
             logger.warn("Nested transaction detected")
             block()
             return emptyList()
         }
+        val conn = if (connectionSource == ConnectionSource.POOL)
+            connectionPool.acquire()
+        else connectionPool.createConn()
 
-        return connectionPool.use { conn ->
+        return try {
             logger.debug("Started transaction")
             conn.sendRequest(listOf("MULTI".toArg()))
-            require(
-                conn
-                    .readResponseWrapped(cfg.charset)
-                    .value == "OK",
-            )
+            val transactionResponse = conn.readResponseWrapped(cfg.charset)
+            if (!transactionResponse.isOk()) exception {
+                "Wrong transaction response, excepted OK but given ${transactionResponse.value}"
+            }
 
             var e: Throwable? = null
             rethisCoScope
@@ -132,7 +138,10 @@ class ReThis(
                 }.join()
             e?.also {
                 conn.sendRequest(listOf("DISCARD".toArg()))
-                require(conn.readResponseWrapped(cfg.charset).value == "OK")
+                val discardResponse = conn.readResponseWrapped(cfg.charset)
+                if (!discardResponse.isOk()) exception {
+                    "Wrong discard response, excepted OK but given $discardResponse"
+                }
                 logger.error("Transaction canceled", it)
                 throw it
             }
@@ -142,6 +151,9 @@ class ReThis(
             conn.readResponseWrapped(cfg.charset).unwrapList<RType>().also {
                 logger.debug("Response payload: $it")
             }
+        } finally {
+            if (connectionSource == ConnectionSource.POOL) connectionPool.release(conn)
+            else conn.socket.close()
         }
     }
 
@@ -150,7 +162,7 @@ class ReThis(
         payload: List<Argument>,
         rawResponse: Boolean = false,
     ): RType = rethisCoScope
-        .async(Dispatchers.IO) {
+        .async(currentCoroutineContext() + Dispatchers.IO) {
             handleRequest(payload)
         }.await()
         ?.readResponseWrapped(cfg.charset, rawResponse) ?: RType.Null
@@ -201,8 +213,15 @@ class ReThis(
                     .parseResponse()
             }
 
-            else -> connectionPool.use { connection ->
-                connection.sendRequest(payload).parseResponse()
+            else -> {
+                val isPoolSource = cfg.connectionConfiguration.defaultConnectionSource == ConnectionSource.POOL
+                val conn = if (isPoolSource) connectionPool.acquire() else connectionPool.createConn()
+
+                try {
+                    conn.sendRequest(payload).parseResponse()
+                } finally {
+                    if (isPoolSource) connectionPool.release(conn) else conn.socket.close()
+                }
             }
         }
     }

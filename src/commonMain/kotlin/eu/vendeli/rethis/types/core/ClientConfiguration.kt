@@ -14,7 +14,7 @@ import kotlinx.coroutines.IO
  * @property charset The character set to use for communication.
  * @property tlsConfig The TLS configuration to use when connecting.
  * @property auth The authentication options.
- * @property poolConfiguration The pool configuration.
+ * @property connectionConfiguration The pool configuration.
  * @property reconnectionStrategy The reconnection strategy to use.
  */
 @ConfigurationDSL
@@ -23,7 +23,7 @@ data class ClientConfiguration(
     var charset: Charset = Charsets.UTF_8,
     var tlsConfig: TLSConfig? = null,
     internal var auth: AuthConfiguration? = null,
-    internal val poolConfiguration: PoolConfiguration = PoolConfiguration(),
+    internal val connectionConfiguration: ConnectionConfiguration = ConnectionConfiguration(),
     internal val reconnectionStrategy: ReconnectionStrategyConfiguration = ReconnectionStrategyConfiguration(),
     internal val socketConfiguration: SocketConfiguration = SocketConfiguration(),
 ) {
@@ -42,8 +42,8 @@ data class ClientConfiguration(
      *
      * @param block A lambda to configure the pool settings.
      */
-    fun pool(block: PoolConfiguration.() -> Unit) {
-        poolConfiguration.block()
+    fun connection(block: ConnectionConfiguration.() -> Unit) {
+        connectionConfiguration.block()
     }
 
     /**
@@ -109,13 +109,15 @@ data class ReconnectionStrategyConfiguration(
 )
 
 /**
- * Configuration for redis connection pool.
+ * Configuration for redis connection.
  *
+ * @property defaultConnectionSource the default connection source, defaults to [ConnectionSource.POOL]
  * @property poolSize the size of the connection pool, defaults to 50
  * @property dispatcher the dispatcher to use for connection pool coroutines, defaults to [Dispatchers.IO]
  */
 @ConfigurationDSL
-data class PoolConfiguration(
+data class ConnectionConfiguration(
+    var defaultConnectionSource: ConnectionSource = ConnectionSource.POOL,
     var poolSize: Int = 50,
     var dispatcher: CoroutineDispatcher = Dispatchers.IO,
 )

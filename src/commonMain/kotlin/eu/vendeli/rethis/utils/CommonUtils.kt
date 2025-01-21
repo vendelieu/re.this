@@ -12,6 +12,8 @@ import kotlinx.coroutines.launch
 import kotlin.coroutines.CoroutineContext
 import kotlin.reflect.KClass
 
+fun RType.isOk() = unwrap<String>() == "OK"
+
 @Suppress("UNCHECKED_CAST", "NOTHING_TO_INLINE")
 internal inline fun <T> Any.cast(): T = this as T
 
