@@ -174,5 +174,6 @@ class PubSubCommandTest : ReThisTestCtx() {
         onSub shouldBeGreaterThan 0
         onUnsub shouldBe 0
         caughtEx.shouldNotBeNull().shouldBeTypeOf<ReThisException>().shouldHaveMessage("test")
+        delay(100)
     }
 }

@@ -2,6 +2,7 @@ package eu.vendeli.rethis
 
 import com.redis.testcontainers.RedisContainer
 import io.kotest.core.spec.style.AnnotationSpec
+import kotlinx.coroutines.delay
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import org.testcontainers.utility.DockerImageName
@@ -25,5 +26,10 @@ abstract class ReThisTestCtx(
 
     protected fun resetClient(newClient: ReThis = ReThis(redis.host, redis.firstMappedPort)) {
         _client = newClient
+    }
+
+    @AfterAll
+    suspend fun afterAll() {
+        delay(1000)
     }
 }
