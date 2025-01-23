@@ -5,7 +5,7 @@
 // - Show manifest properties: true
 // - Show declarations: true
 
-// Library unique name: <eu.vendeli.re.this:re.this>
+// Library unique name: <eu.vendeli.rethis:rethis>
 open annotation class eu.vendeli.rethis.annotations/ConfigurationDSL : kotlin/Annotation { // eu.vendeli.rethis.annotations/ConfigurationDSL|null[0]
     constructor <init>() // eu.vendeli.rethis.annotations/ConfigurationDSL.<init>|<init>(){}[0]
 }
@@ -868,7 +868,7 @@ final class eu.vendeli.rethis/ReThis { // eu.vendeli.rethis/ReThis|null[0]
         final fun <get-subscriptions>(): eu.vendeli.rethis.types.core/ActiveSubscriptions // eu.vendeli.rethis/ReThis.subscriptions.<get-subscriptions>|<get-subscriptions>(){}[0]
 
     final fun disconnect() // eu.vendeli.rethis/ReThis.disconnect|disconnect(){}[0]
-    final fun reconnect() // eu.vendeli.rethis/ReThis.reconnect|reconnect(){}[0]
+    final fun reconnect(): kotlinx.coroutines/Job // eu.vendeli.rethis/ReThis.reconnect|reconnect(){}[0]
     final fun shutdown() // eu.vendeli.rethis/ReThis.shutdown|shutdown(){}[0]
     final suspend fun execute(kotlin.collections/List<eu.vendeli.rethis.types.core/Argument>, kotlin/Boolean = ...): eu.vendeli.rethis.types.core/RType // eu.vendeli.rethis/ReThis.execute|execute(kotlin.collections.List<eu.vendeli.rethis.types.core.Argument>;kotlin.Boolean){}[0]
     final suspend fun pipeline(kotlin.coroutines/SuspendFunction1<eu.vendeli.rethis/ReThis, kotlin/Unit>): kotlin.collections/List<eu.vendeli.rethis.types.core/RType> // eu.vendeli.rethis/ReThis.pipeline|pipeline(kotlin.coroutines.SuspendFunction1<eu.vendeli.rethis.ReThis,kotlin.Unit>){}[0]

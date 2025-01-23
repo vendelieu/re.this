@@ -127,7 +127,8 @@ class ReThis(
 
         return try {
             logger.debug("Started transaction")
-            val transactionResponse = conn.sendRequest(listOf("MULTI".toArg()))
+            val transactionResponse = conn
+                .sendRequest(listOf("MULTI".toArg()))
                 .parseResponse()
                 .readResponseWrapped(cfg.charset)
             if (!transactionResponse.isOk()) exception {
@@ -140,7 +141,8 @@ class ReThis(
                     runCatching { block() }.getOrElse { e = it }
                 }.join()
             e?.also {
-                val discardResponse = conn.sendRequest(listOf("DISCARD".toArg()))
+                val discardResponse = conn
+                    .sendRequest(listOf("DISCARD".toArg()))
                     .parseResponse()
                     .readResponseWrapped(cfg.charset)
                 if (!discardResponse.isOk()) exception {
@@ -152,10 +154,12 @@ class ReThis(
 
             logger.debug("Transaction completed")
 
-            conn.sendRequest(listOf("EXEC".toArg()))
+            conn
+                .sendRequest(listOf("EXEC".toArg()))
                 .parseResponse()
                 .readResponseWrapped(cfg.charset)
-                .unwrapList<RType>().also {
+                .unwrapList<RType>()
+                .also {
                     logger.debug("Response payload: $it")
                 }
         } finally {

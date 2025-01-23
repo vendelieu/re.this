@@ -131,7 +131,9 @@ internal class ConnectionPool(
             runCatching { createConn() }
                 .onSuccess { conn ->
                     launch {
-                        while (!trySend(conn).isSuccess) { yield() }
+                        while (!trySend(conn).isSuccess) {
+                            yield()
+                        }
                     }
                     logger.trace { "Connection refilled with $conn" }
                     return@launch
