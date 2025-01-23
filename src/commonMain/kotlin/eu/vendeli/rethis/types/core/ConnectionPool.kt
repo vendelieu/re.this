@@ -34,7 +34,6 @@ internal class ConnectionPool(
 
     init {
         poolScope.launch { prepare() }
-        poolScope.launch { cleaner() }
     }
 
     internal suspend fun createConn(): RConnection {
@@ -85,7 +84,8 @@ internal class ConnectionPool(
     @Suppress("OPT_IN_USAGE")
     fun prepare() = client.rethisCoScope.launch(Dispatchers.IO) {
         logger.info("Filling ConnectionPool with connections (${client.cfg.connectionConfiguration.poolSize})")
-        if (connections.isEmpty) repeat(client.cfg.connectionConfiguration.poolSize) {
+        cleaner()
+        repeat(client.cfg.connectionConfiguration.poolSize) {
             launch { connections.trySend(createConn()) }
         }
     }
@@ -96,25 +96,32 @@ internal class ConnectionPool(
         coldPool.send(connection)
     }
 
-    private suspend fun cleaner() = withContext(Job(poolJob)) {
-        while (isActive) {
-            val connection = coldPool.receive()
-            if (connection.input.isClosedForRead) {
-                logger.trace { "Cleaned connection ${connection.socket}" }
-                connection.socket.close()
-                connections.refill()
-                continue
+    private val cleanerDispatcher = Dispatchers.Default.limitedParallelism(1)
+    private val cleanerJob = SupervisorJob()
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private val cleanerScope = CoroutineScope(cleanerDispatcher + cleanerJob + CoroutineName("PoolCleaner"))
+
+    @OptIn(DelicateCoroutinesApi::class)
+    private fun cleaner() = GlobalScope.launch {
+        cleanerScope.launch {
+            while (isActive) {
+                val connection = coldPool.tryReceive().getOrNull() ?: continue
+                if (connection.input.isClosedForRead) {
+                    logger.trace { "Cleaned connection ${connection.socket}" }
+                    connection.socket.close()
+                    connections.refill()
+                    continue
+                }
+                connections.trySend(connection).onFailure { connection.socket.close() }
+                coldPool.refill()
             }
-            connections.trySend(connection).onFailure {
-                connection.socket.close()
-            }
-            coldPool.refill()
         }
     }
 
-    private suspend fun Channel<RConnection>.refill() {
+    private fun Channel<RConnection>.refill() = cleanerScope.launch {
         val cfg = client.cfg.connectionConfiguration
-        if (cfg.reconnectAttempts <= 0) return
+        if (cfg.reconnectAttempts <= 0) return@launch
         var attempt = 0
         var ex: Throwable? = null
 
@@ -123,9 +130,11 @@ internal class ConnectionPool(
             logger.trace { "Refilling ConnectionPool. Attempt $attempt" }
             runCatching { createConn() }
                 .onSuccess { conn ->
-                    trySend(conn)
+                    launch {
+                        while (!trySend(conn).isSuccess) { yield() }
+                    }
                     logger.trace { "Connection refilled with $conn" }
-                    return
+                    return@launch
                 }.onFailure {
                     if (ex != null) ex.addSuppressed(it) else ex = it
                 }
@@ -142,6 +151,7 @@ internal class ConnectionPool(
     @OptIn(ExperimentalCoroutinesApi::class)
     fun disconnect() = runBlocking {
         logger.debug("Disconnecting from Redis")
+        cleanerJob.cancelAndJoin()
         while (!connections.isEmpty) {
             connections.receive().socket.close()
         }

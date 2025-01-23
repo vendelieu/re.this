@@ -20,6 +20,7 @@ class ClientConnectionTest : ReThisTestCtx() {
 
     @Test
     suspend fun `client reconnect test`() {
+        client.reconnect()
         client.ping()
 
         client.isDisconnected shouldBe false

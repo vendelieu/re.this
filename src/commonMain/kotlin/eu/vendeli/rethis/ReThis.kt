@@ -60,9 +60,7 @@ class ReThis(
     val isDisconnected: Boolean get() = connectionPool.isEmpty
 
     fun disconnect() = connectionPool.disconnect()
-    fun reconnect() {
-        if (connectionPool.isEmpty) connectionPool.prepare()
-    }
+    fun reconnect() = connectionPool.prepare()
 
     fun shutdown() = runBlocking {
         rootJob.cancelAndJoin()
