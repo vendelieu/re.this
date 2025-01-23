@@ -1,5 +1,12 @@
 # Re.this Changelog
 
+## 0.2.5
+
+* Moved `reconnectionStrategy` block in configuration to new `connection` block.
+* Added option to set connection source, `STANDALONE` or `POOL`, for all responses in config `connection` block, or for
+  transaction.
+* Added `shutdown` hook.
+
 ## 0.2.4
 
 * Enhanced the algorithm for parsing.

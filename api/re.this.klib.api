@@ -636,6 +636,28 @@ final class eu.vendeli.rethis.types.core/RArray : eu.vendeli.rethis.types.core/R
     final fun toString(): kotlin/String // eu.vendeli.rethis.types.core/RArray.toString|toString(){}[0]
 }
 
+final class eu.vendeli.rethis.types.core/RConnection { // eu.vendeli.rethis.types.core/RConnection|null[0]
+    constructor <init>(io.ktor.network.sockets/Socket, io.ktor.utils.io/ByteReadChannel, io.ktor.utils.io/ByteWriteChannel, kotlinx.coroutines.sync/Mutex = ...) // eu.vendeli.rethis.types.core/RConnection.<init>|<init>(io.ktor.network.sockets.Socket;io.ktor.utils.io.ByteReadChannel;io.ktor.utils.io.ByteWriteChannel;kotlinx.coroutines.sync.Mutex){}[0]
+
+    final val input // eu.vendeli.rethis.types.core/RConnection.input|{}input[0]
+        final fun <get-input>(): io.ktor.utils.io/ByteReadChannel // eu.vendeli.rethis.types.core/RConnection.input.<get-input>|<get-input>(){}[0]
+    final val output // eu.vendeli.rethis.types.core/RConnection.output|{}output[0]
+        final fun <get-output>(): io.ktor.utils.io/ByteWriteChannel // eu.vendeli.rethis.types.core/RConnection.output.<get-output>|<get-output>(){}[0]
+    final val socket // eu.vendeli.rethis.types.core/RConnection.socket|{}socket[0]
+        final fun <get-socket>(): io.ktor.network.sockets/Socket // eu.vendeli.rethis.types.core/RConnection.socket.<get-socket>|<get-socket>(){}[0]
+    final val status // eu.vendeli.rethis.types.core/RConnection.status|{}status[0]
+        final fun <get-status>(): kotlinx.coroutines.sync/Mutex // eu.vendeli.rethis.types.core/RConnection.status.<get-status>|<get-status>(){}[0]
+
+    final fun component1(): io.ktor.network.sockets/Socket // eu.vendeli.rethis.types.core/RConnection.component1|component1(){}[0]
+    final fun component2(): io.ktor.utils.io/ByteReadChannel // eu.vendeli.rethis.types.core/RConnection.component2|component2(){}[0]
+    final fun component3(): io.ktor.utils.io/ByteWriteChannel // eu.vendeli.rethis.types.core/RConnection.component3|component3(){}[0]
+    final fun component4(): kotlinx.coroutines.sync/Mutex // eu.vendeli.rethis.types.core/RConnection.component4|component4(){}[0]
+    final fun copy(io.ktor.network.sockets/Socket = ..., io.ktor.utils.io/ByteReadChannel = ..., io.ktor.utils.io/ByteWriteChannel = ..., kotlinx.coroutines.sync/Mutex = ...): eu.vendeli.rethis.types.core/RConnection // eu.vendeli.rethis.types.core/RConnection.copy|copy(io.ktor.network.sockets.Socket;io.ktor.utils.io.ByteReadChannel;io.ktor.utils.io.ByteWriteChannel;kotlinx.coroutines.sync.Mutex){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // eu.vendeli.rethis.types.core/RConnection.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // eu.vendeli.rethis.types.core/RConnection.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // eu.vendeli.rethis.types.core/RConnection.toString|toString(){}[0]
+}
+
 final class eu.vendeli.rethis.types.core/RMap : eu.vendeli.rethis.types.core/RType { // eu.vendeli.rethis.types.core/RMap|null[0]
     constructor <init>(kotlin.collections/Map<eu.vendeli.rethis.types.core/RPrimitive, eu.vendeli.rethis.types.core/RType?>) // eu.vendeli.rethis.types.core/RMap.<init>|<init>(kotlin.collections.Map<eu.vendeli.rethis.types.core.RPrimitive,eu.vendeli.rethis.types.core.RType?>){}[0]
 
@@ -715,10 +737,10 @@ final class eu.vendeli.rethis.types.core/VerbatimString : eu.vendeli.rethis.type
 }
 
 final class eu.vendeli.rethis.types.coroutine/CoLocalConn : kotlin.coroutines/AbstractCoroutineContextElement, kotlin.coroutines/CoroutineContext.Element { // eu.vendeli.rethis.types.coroutine/CoLocalConn|null[0]
-    constructor <init>(io.ktor.network.sockets/Connection) // eu.vendeli.rethis.types.coroutine/CoLocalConn.<init>|<init>(io.ktor.network.sockets.Connection){}[0]
+    constructor <init>(eu.vendeli.rethis.types.core/RConnection) // eu.vendeli.rethis.types.coroutine/CoLocalConn.<init>|<init>(eu.vendeli.rethis.types.core.RConnection){}[0]
 
     final val connection // eu.vendeli.rethis.types.coroutine/CoLocalConn.connection|{}connection[0]
-        final fun <get-connection>(): io.ktor.network.sockets/Connection // eu.vendeli.rethis.types.coroutine/CoLocalConn.connection.<get-connection>|<get-connection>(){}[0]
+        final fun <get-connection>(): eu.vendeli.rethis.types.core/RConnection // eu.vendeli.rethis.types.coroutine/CoLocalConn.connection.<get-connection>|<get-connection>(){}[0]
     final val key // eu.vendeli.rethis.types.coroutine/CoLocalConn.key|{}key[0]
         final fun <get-key>(): eu.vendeli.rethis.types.coroutine/CoLocalConn.Key // eu.vendeli.rethis.types.coroutine/CoLocalConn.key.<get-key>|<get-key>(){}[0]
 
@@ -1635,6 +1657,7 @@ final object eu.vendeli.rethis.types.options/WITHMATCHLEN : eu.vendeli.rethis.ty
 final fun (eu.vendeli.rethis.types.core/RType).eu.vendeli.rethis.utils/isOk(): kotlin/Boolean // eu.vendeli.rethis.utils/isOk|isOk@eu.vendeli.rethis.types.core.RType(){}[0]
 final fun (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.wrappers/Hash(kotlin/String): eu.vendeli.rethis.wrappers/ReThisMap // eu.vendeli.rethis.wrappers/Hash|Hash@eu.vendeli.rethis.ReThis(kotlin.String){}[0]
 final fun (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.wrappers/Set(kotlin/String): eu.vendeli.rethis.wrappers/ReThisSet // eu.vendeli.rethis.wrappers/Set|Set@eu.vendeli.rethis.ReThis(kotlin.String){}[0]
+final fun (io.ktor.network.sockets/Socket).eu.vendeli.rethis.types.core/rConnection(): eu.vendeli.rethis.types.core/RConnection // eu.vendeli.rethis.types.core/rConnection|rConnection@io.ktor.network.sockets.Socket(){}[0]
 final fun (kotlin/Any).eu.vendeli.rethis.types.core/toArg(): eu.vendeli.rethis.types.core/Argument // eu.vendeli.rethis.types.core/toArg|toArg@kotlin.Any(){}[0]
 final inline fun (kotlin.collections/List<kotlin/Any>).eu.vendeli.rethis.types.core/toArg(): kotlin.collections/List<eu.vendeli.rethis.types.core/Argument> // eu.vendeli.rethis.types.core/toArg|toArg@kotlin.collections.List<kotlin.Any>(){}[0]
 final suspend fun (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.commands/append(kotlin/String, kotlin/String): kotlin/Long // eu.vendeli.rethis.commands/append|append@eu.vendeli.rethis.ReThis(kotlin.String;kotlin.String){}[0]

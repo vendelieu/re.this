@@ -96,7 +96,6 @@ internal class ConnectionPool(
         coldPool.send(connection)
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class, DelicateCoroutinesApi::class)
     private suspend fun cleaner() = withContext(Job(poolJob)) {
         while (isActive) {
             val connection = coldPool.receive()
