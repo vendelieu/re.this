@@ -1,4 +1,4 @@
-rootProject.name = "re.this"
+rootProject.name = "rethis"
 
 include("benchmarks")
 

@@ -75,5 +75,5 @@ jobs:
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
         with:
-          files: re.this/build/reports/kover/report.xml
+          files: rethis/build/reports/kover/report.xml
           verbose: true

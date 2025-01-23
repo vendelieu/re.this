@@ -1,7 +1,8 @@
-# Re.this Changelog
+# Re.This Changelog
 
 ## 0.2.5
 
+* Change artifactId from `re.this` to `rethis`, to avoid problems with build on some platforms.
 * Moved `reconnectionStrategy` block in configuration to new `connection` block.
 * Added option to set connection source, `STANDALONE` or `POOL`, for all responses in config `connection` block, or for
   transaction.
