@@ -57,7 +57,6 @@ class TestCase : ReThisTestCtx() {
                     client.hGet("some:key:$id", "some:field1") shouldBe "some-value1-$id"
                     client.hGet("some:key:$id", "some:field2") shouldBe "some-value2-$id"
                     client.hGet("some:key:$id", "some:field3") shouldBe "some-value3-$id"
-                    delay(100)
 
                     client.transaction {
                         del("some:key:$id")
@@ -145,7 +144,6 @@ class TestCase : ReThisTestCtx() {
                     client.hGet("some:key:$id", "some:field1") shouldBe "some-value1-$id"
                     client.hGet("some:key:$id", "some:field2") shouldBe "some-value2-$id"
                     client.hGet("some:key:$id", "some:field3") shouldBe "some-value3-$id"
-                    delay(100)
 
                     client.fastEval(
                         "script2",

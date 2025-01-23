@@ -24,18 +24,20 @@ internal class ConnectionPool(
     @OptIn(ExperimentalCoroutinesApi::class)
     internal val isEmpty: Boolean get() = connections.isEmpty
 
-    private val job = SupervisorJob(client.rootJob)
+    private val poolJob = SupervisorJob(client.rootJob)
     private val poolScope = CoroutineScope(
-        client.cfg.connectionConfiguration.dispatcher + job + CoroutineName("ReThis-ConnectionPool"),
+        client.cfg.connectionConfiguration.dispatcher + poolJob + CoroutineName("ReThis|ConnectionPool"),
     )
-    private val connections = Channel<Connection>(client.cfg.connectionConfiguration.poolSize)
+    private val connections = Channel<RConnection>(client.cfg.connectionConfiguration.poolSize)
+    private val coldPool = Channel<RConnection>(client.cfg.connectionConfiguration.poolSize)
     private val selector = SelectorManager(poolScope.coroutineContext)
 
     init {
         poolScope.launch { prepare() }
+        poolScope.launch { cleaner() }
     }
 
-    internal suspend fun createConn(): Connection {
+    internal suspend fun createConn(): RConnection {
         logger.trace { "Creating connection to ${client.address}" }
         val conn = aSocket(selector)
             .tcp()
@@ -50,7 +52,7 @@ internal class ConnectionPool(
                 client.cfg.tlsConfig?.let {
                     socket.tls(selector.coroutineContext, it)
                 } ?: socket
-            }.connection()
+            }.rConnection()
 
         val reqBuffer = Buffer()
         var requests = 0
@@ -88,29 +90,30 @@ internal class ConnectionPool(
         }
     }
 
-    suspend fun acquire(): Connection = connections.receive()
+    suspend fun acquire(): RConnection = connections.receive()
 
-    fun release(connection: Connection) {
-        handle(connection)
+    fun release(connection: RConnection) = poolScope.launch {
+        coldPool.send(connection)
     }
 
-    private fun handle(connectionConfiguration: Connection) = poolScope.launch(Dispatchers.IO) {
-        logger.trace { "Releasing connection ${connectionConfiguration.socket}" }
-        if (connectionConfiguration.input.isClosedForRead) { // connection is corrupted
-            logger.warn("Connection ${connectionConfiguration.socket} is corrupted, refilling")
-            launch {
-                connectionConfiguration.socket.close()
-                refill()
+    @OptIn(ExperimentalCoroutinesApi::class, DelicateCoroutinesApi::class)
+    private suspend fun cleaner() = withContext(Job(poolJob)) {
+        while (isActive) {
+            val connection = coldPool.receive()
+            if (connection.input.isClosedForRead) {
+                logger.trace { "Cleaned connection ${connection.socket}" }
+                connection.socket.close()
+                connections.refill()
+                continue
             }
-        } else {
-            connections.trySend(connectionConfiguration).onFailure {
-                logger.warn("Pool is full, closing connection ${connectionConfiguration.socket}")
-                connectionConfiguration.socket.close()
+            connections.trySend(connection).onFailure {
+                connection.socket.close()
             }
+            coldPool.refill()
         }
     }
 
-    private suspend fun refill() {
+    private suspend fun Channel<RConnection>.refill() {
         val cfg = client.cfg.connectionConfiguration
         if (cfg.reconnectAttempts <= 0) return
         var attempt = 0
@@ -120,9 +123,9 @@ internal class ConnectionPool(
             attempt++
             logger.trace { "Refilling ConnectionPool. Attempt $attempt" }
             runCatching { createConn() }
-                .onSuccess {
-                    connections.send(it)
-                    logger.trace { "Connection refilled with $it" }
+                .onSuccess { conn ->
+                    trySend(conn)
+                    logger.trace { "Connection refilled with $conn" }
                     return
                 }.onFailure {
                     if (ex != null) ex.addSuppressed(it) else ex = it
@@ -147,13 +150,14 @@ internal class ConnectionPool(
 }
 
 @OptIn(ExperimentalContracts::class)
-internal suspend inline fun <R> ConnectionPool.use(block: (Connection) -> R): R {
+internal suspend inline fun <R> ConnectionPool.use(block: (RConnection) -> R): R {
     contract {
         callsInPlace(block, InvocationKind.EXACTLY_ONCE)
     }
     var exception: Throwable? = null
     val connection = acquire()
     logger.trace { "Using ${connection.socket} for request" }
+    connection.status.lock()
     try {
         return block(connection)
     } catch (e: Throwable) {
@@ -169,5 +173,6 @@ internal suspend inline fun <R> ConnectionPool.use(block: (Connection) -> R): R 
                 throw exception
             }
         }
+        connection.status.unlock()
     }
 }

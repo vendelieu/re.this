@@ -11,7 +11,6 @@ import eu.vendeli.rethis.utils.Const.CARRIAGE_RETURN_BYTE
 import eu.vendeli.rethis.utils.Const.FALSE_BYTE
 import eu.vendeli.rethis.utils.Const.NEWLINE_BYTE
 import eu.vendeli.rethis.utils.Const.TRUE_BYTE
-import io.ktor.network.sockets.*
 import io.ktor.utils.io.*
 import io.ktor.utils.io.charsets.*
 import io.ktor.utils.io.core.*
@@ -86,8 +85,8 @@ private suspend fun ByteReadChannel.processNestedAggregates(
     }
 }
 
-internal suspend inline fun Connection.parseResponse(): ArrayDeque<ResponseToken> = input.parseResponse()
-internal suspend inline fun Connection.readResponseWrapped(
+internal suspend inline fun RConnection.parseResponse(): ArrayDeque<ResponseToken> = input.parseResponse()
+internal suspend inline fun RConnection.readResponseWrapped(
     charset: Charset,
     rawOnly: Boolean = false,
 ) = parseResponse().readResponseWrapped(charset, rawOnly)

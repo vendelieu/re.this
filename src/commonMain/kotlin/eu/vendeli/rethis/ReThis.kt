@@ -8,7 +8,6 @@ import eu.vendeli.rethis.types.coroutine.CoPipelineCtx
 import eu.vendeli.rethis.utils.*
 import eu.vendeli.rethis.utils.Const.DEFAULT_HOST
 import eu.vendeli.rethis.utils.Const.DEFAULT_PORT
-import io.ktor.network.sockets.*
 import io.ktor.util.logging.*
 import io.ktor.utils.io.*
 import kotlinx.coroutines.*
@@ -72,7 +71,7 @@ class ReThis(
     suspend fun pipeline(block: suspend ReThis.() -> Unit): List<RType> {
         val responses = mutableListOf<RType>()
         val pipelineCtx = takeFromCoCtx(CoPipelineCtx)
-        var ctxConn: Connection? = null
+        var ctxConn: RConnection? = null
         if (pipelineCtx == null) {
             val requests = mutableListOf<Any?>()
             logger.info("Pipeline started")
@@ -95,12 +94,16 @@ class ReThis(
             val connection = ctxConn
             if (connection != null) {
                 connection.sendRequest(pipelinedPayload)
-                requests.forEach { _ -> responses.add(connection.readResponseWrapped(cfg.charset)) }
-            } else {
-                connectionPool.use { connection ->
-                    connection.sendRequest(pipelinedPayload)
-                    requests.forEach { _ -> responses.add(connection.readResponseWrapped(cfg.charset)) }
+                requests.map {
+                    connection.parseResponse()
+                }.map {
+                    it.readResponseWrapped(cfg.charset)
                 }
+            } else connectionPool.use { connection ->
+                connection.sendRequest(pipelinedPayload)
+                requests.map { connection.parseResponse() }
+            }.map {
+                it.readResponseWrapped(cfg.charset)
             }
             requests.clear()
         } else {
@@ -126,11 +129,13 @@ class ReThis(
         val conn = if (connectionSource == ConnectionSource.POOL)
             connectionPool.acquire()
         else connectionPool.createConn()
+        conn.status.lock()
 
         return try {
             logger.debug("Started transaction")
-            conn.sendRequest(listOf("MULTI".toArg()))
-            val transactionResponse = conn.readResponseWrapped(cfg.charset)
+            val transactionResponse = conn.sendRequest(listOf("MULTI".toArg()))
+                .parseResponse()
+                .readResponseWrapped(cfg.charset)
             if (!transactionResponse.isOk()) exception {
                 "Wrong transaction response, excepted OK but given ${transactionResponse.value}"
             }
@@ -141,8 +146,9 @@ class ReThis(
                     runCatching { block() }.getOrElse { e = it }
                 }.join()
             e?.also {
-                conn.sendRequest(listOf("DISCARD".toArg()))
-                val discardResponse = conn.readResponseWrapped(cfg.charset)
+                val discardResponse = conn.sendRequest(listOf("DISCARD".toArg()))
+                    .parseResponse()
+                    .readResponseWrapped(cfg.charset)
                 if (!discardResponse.isOk()) exception {
                     "Wrong discard response, excepted OK but given $discardResponse"
                 }
@@ -151,11 +157,15 @@ class ReThis(
             }
 
             logger.debug("Transaction completed")
+
             conn.sendRequest(listOf("EXEC".toArg()))
-            conn.readResponseWrapped(cfg.charset).unwrapList<RType>().also {
-                logger.debug("Response payload: $it")
-            }
+                .parseResponse()
+                .readResponseWrapped(cfg.charset)
+                .unwrapList<RType>().also {
+                    logger.debug("Response payload: $it")
+                }
         } finally {
+            conn.status.unlock()
             if (connectionSource == ConnectionSource.POOL) connectionPool.release(conn)
             else conn.socket.close()
         }
@@ -220,18 +230,19 @@ class ReThis(
             else -> {
                 val isPoolSource = cfg.connectionConfiguration.defaultConnectionSource == ConnectionSource.POOL
                 val conn = if (isPoolSource) connectionPool.acquire() else connectionPool.createConn()
-
+                conn.status.lock()
                 try {
                     conn.sendRequest(payload).parseResponse()
                 } finally {
+                    conn.status.unlock()
                     if (isPoolSource) connectionPool.release(conn) else conn.socket.close()
                 }
             }
         }
     }
 
-    private suspend fun Connection.sendRequest(payload: List<Argument>): Connection = apply {
-        logger.trace { "Sending request with such payload $payload" }
+    private suspend fun RConnection.sendRequest(payload: List<Argument>): RConnection = apply {
+        logger.trace { "Sending request with such payload $payload within $socket" }
         output.writeBuffer(bufferValues(payload, cfg.charset))
         output.flush()
     }
