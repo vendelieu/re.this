@@ -407,14 +407,19 @@ $dokka.location:eu.vendeli.rethis.types.core/BulkString///PointingToDeclaration/
 $dokka.location:eu.vendeli.rethis.types.core/BulkString/BulkString/#kotlin.String/PointingToDeclaration/re.this/eu.vendeli.rethis.types.core/-bulk-string/-bulk-string.html
 $dokka.location:eu.vendeli.rethis.types.core/BulkString/value/#/PointingToDeclaration/re.this/eu.vendeli.rethis.types.core/-bulk-string/value.html
 $dokka.location:eu.vendeli.rethis.types.core/ClientConfiguration///PointingToDeclaration/re.this/eu.vendeli.rethis.types.core/-client-configuration/index.html
-$dokka.location:eu.vendeli.rethis.types.core/ClientConfiguration/ClientConfiguration/#kotlin.Int?#io.ktor.utils.io.charsets.Charset#io.ktor.network.tls.TLSConfig?#eu.vendeli.rethis.types.core.AuthConfiguration?#eu.vendeli.rethis.types.core.PoolConfiguration#eu.vendeli.rethis.types.core.ReconnectionStrategyConfiguration#eu.vendeli.rethis.types.core.SocketConfiguration/PointingToDeclaration/re.this/eu.vendeli.rethis.types.core/-client-configuration/-client-configuration.html
+$dokka.location:eu.vendeli.rethis.types.core/ClientConfiguration/ClientConfiguration/#kotlin.Int?#io.ktor.utils.io.charsets.Charset#io.ktor.network.tls.TLSConfig?#eu.vendeli.rethis.types.core.AuthConfiguration?#eu.vendeli.rethis.types.core.ConnectionConfiguration#eu.vendeli.rethis.types.core.SocketConfiguration/PointingToDeclaration/re.this/eu.vendeli.rethis.types.core/-client-configuration/-client-configuration.html
 $dokka.location:eu.vendeli.rethis.types.core/ClientConfiguration/auth/#kotlin.String#kotlin.String?/PointingToDeclaration/re.this/eu.vendeli.rethis.types.core/-client-configuration/auth.html
 $dokka.location:eu.vendeli.rethis.types.core/ClientConfiguration/charset/#/PointingToDeclaration/re.this/eu.vendeli.rethis.types.core/-client-configuration/charset.html
+$dokka.location:eu.vendeli.rethis.types.core/ClientConfiguration/connection/#kotlin.Function1[eu.vendeli.rethis.types.core.ConnectionConfiguration,kotlin.Unit]/PointingToDeclaration/re.this/eu.vendeli.rethis.types.core/-client-configuration/connection.html
 $dokka.location:eu.vendeli.rethis.types.core/ClientConfiguration/db/#/PointingToDeclaration/re.this/eu.vendeli.rethis.types.core/-client-configuration/db.html
-$dokka.location:eu.vendeli.rethis.types.core/ClientConfiguration/pool/#kotlin.Function1[eu.vendeli.rethis.types.core.PoolConfiguration,kotlin.Unit]/PointingToDeclaration/re.this/eu.vendeli.rethis.types.core/-client-configuration/pool.html
-$dokka.location:eu.vendeli.rethis.types.core/ClientConfiguration/reconnectionStrategy/#kotlin.Function1[eu.vendeli.rethis.types.core.ReconnectionStrategyConfiguration,kotlin.Unit]/PointingToDeclaration/re.this/eu.vendeli.rethis.types.core/-client-configuration/reconnection-strategy.html
 $dokka.location:eu.vendeli.rethis.types.core/ClientConfiguration/socket/#kotlin.Function1[eu.vendeli.rethis.types.core.SocketConfiguration,kotlin.Unit]/PointingToDeclaration/re.this/eu.vendeli.rethis.types.core/-client-configuration/socket.html
 $dokka.location:eu.vendeli.rethis.types.core/ClientConfiguration/tlsConfig/#/PointingToDeclaration/re.this/eu.vendeli.rethis.types.core/-client-configuration/tls-config.html
+$dokka.location:eu.vendeli.rethis.types.core/ConnectionConfiguration///PointingToDeclaration/re.this/eu.vendeli.rethis.types.core/-connection-configuration/index.html
+$dokka.location:eu.vendeli.rethis.types.core/ConnectionConfiguration/ConnectionConfiguration/#kotlin.Int#kotlin.Long#kotlin.Int#kotlinx.coroutines.CoroutineDispatcher/PointingToDeclaration/re.this/eu.vendeli.rethis.types.core/-connection-configuration/-connection-configuration.html
+$dokka.location:eu.vendeli.rethis.types.core/ConnectionConfiguration/dispatcher/#/PointingToDeclaration/re.this/eu.vendeli.rethis.types.core/-connection-configuration/dispatcher.html
+$dokka.location:eu.vendeli.rethis.types.core/ConnectionConfiguration/poolSize/#/PointingToDeclaration/re.this/eu.vendeli.rethis.types.core/-connection-configuration/pool-size.html
+$dokka.location:eu.vendeli.rethis.types.core/ConnectionConfiguration/reconnectAttempts/#/PointingToDeclaration/re.this/eu.vendeli.rethis.types.core/-connection-configuration/reconnect-attempts.html
+$dokka.location:eu.vendeli.rethis.types.core/ConnectionConfiguration/reconnectDelay/#/PointingToDeclaration/re.this/eu.vendeli.rethis.types.core/-connection-configuration/reconnect-delay.html
 $dokka.location:eu.vendeli.rethis.types.core/DoubleArg///PointingToDeclaration/re.this/eu.vendeli.rethis.types.core/-double-arg/index.html
 $dokka.location:eu.vendeli.rethis.types.core/DoubleArg/DoubleArg/#kotlin.Double/PointingToDeclaration/re.this/eu.vendeli.rethis.types.core/-double-arg/-double-arg.html
 $dokka.location:eu.vendeli.rethis.types.core/DoubleArg/value/#/PointingToDeclaration/re.this/eu.vendeli.rethis.types.core/-double-arg/value.html
@@ -435,10 +440,6 @@ $dokka.location:eu.vendeli.rethis.types.core/LongArg/value/#/PointingToDeclarati
 $dokka.location:eu.vendeli.rethis.types.core/PlainString///PointingToDeclaration/re.this/eu.vendeli.rethis.types.core/-plain-string/index.html
 $dokka.location:eu.vendeli.rethis.types.core/PlainString/PlainString/#kotlin.String/PointingToDeclaration/re.this/eu.vendeli.rethis.types.core/-plain-string/-plain-string.html
 $dokka.location:eu.vendeli.rethis.types.core/PlainString/value/#/PointingToDeclaration/re.this/eu.vendeli.rethis.types.core/-plain-string/value.html
-$dokka.location:eu.vendeli.rethis.types.core/PoolConfiguration///PointingToDeclaration/re.this/eu.vendeli.rethis.types.core/-pool-configuration/index.html
-$dokka.location:eu.vendeli.rethis.types.core/PoolConfiguration/PoolConfiguration/#kotlin.Int#kotlinx.coroutines.CoroutineDispatcher/PointingToDeclaration/re.this/eu.vendeli.rethis.types.core/-pool-configuration/-pool-configuration.html
-$dokka.location:eu.vendeli.rethis.types.core/PoolConfiguration/dispatcher/#/PointingToDeclaration/re.this/eu.vendeli.rethis.types.core/-pool-configuration/dispatcher.html
-$dokka.location:eu.vendeli.rethis.types.core/PoolConfiguration/poolSize/#/PointingToDeclaration/re.this/eu.vendeli.rethis.types.core/-pool-configuration/pool-size.html
 $dokka.location:eu.vendeli.rethis.types.core/Push///PointingToDeclaration/re.this/eu.vendeli.rethis.types.core/-push/index.html
 $dokka.location:eu.vendeli.rethis.types.core/Push/Push/#kotlin.collections.List[eu.vendeli.rethis.types.core.RPrimitive]/PointingToDeclaration/re.this/eu.vendeli.rethis.types.core/-push/-push.html
 $dokka.location:eu.vendeli.rethis.types.core/Push/value/#/PointingToDeclaration/re.this/eu.vendeli.rethis.types.core/-push/value.html
@@ -461,11 +462,6 @@ $dokka.location:eu.vendeli.rethis.types.core/RType.Raw///PointingToDeclaration/
 $dokka.location:eu.vendeli.rethis.types.core/RType.Raw/value/#/PointingToDeclaration/re.this/eu.vendeli.rethis.types.core/-r-type/-raw/value.html
 $dokka.location:eu.vendeli.rethis.types.core/RType///PointingToDeclaration/re.this/eu.vendeli.rethis.types.core/-r-type/index.html
 $dokka.location:eu.vendeli.rethis.types.core/RType/value/#/PointingToDeclaration/re.this/eu.vendeli.rethis.types.core/-r-type/value.html
-$dokka.location:eu.vendeli.rethis.types.core/ReconnectionStrategyConfiguration///PointingToDeclaration/re.this/eu.vendeli.rethis.types.core/-reconnection-strategy-configuration/index.html
-$dokka.location:eu.vendeli.rethis.types.core/ReconnectionStrategyConfiguration/ReconnectionStrategyConfiguration/#kotlin.Boolean#kotlin.Int#kotlin.Long/PointingToDeclaration/re.this/eu.vendeli.rethis.types.core/-reconnection-strategy-configuration/-reconnection-strategy-configuration.html
-$dokka.location:eu.vendeli.rethis.types.core/ReconnectionStrategyConfiguration/doHealthCheck/#/PointingToDeclaration/re.this/eu.vendeli.rethis.types.core/-reconnection-strategy-configuration/do-health-check.html
-$dokka.location:eu.vendeli.rethis.types.core/ReconnectionStrategyConfiguration/reconnectAttempts/#/PointingToDeclaration/re.this/eu.vendeli.rethis.types.core/-reconnection-strategy-configuration/reconnect-attempts.html
-$dokka.location:eu.vendeli.rethis.types.core/ReconnectionStrategyConfiguration/reconnectDelay/#/PointingToDeclaration/re.this/eu.vendeli.rethis.types.core/-reconnection-strategy-configuration/reconnect-delay.html
 $dokka.location:eu.vendeli.rethis.types.core/RespVer.V2///PointingToDeclaration/re.this/eu.vendeli.rethis.types.core/-resp-ver/-v2/index.html
 $dokka.location:eu.vendeli.rethis.types.core/RespVer.V3///PointingToDeclaration/re.this/eu.vendeli.rethis.types.core/-resp-ver/-v3/index.html
 $dokka.location:eu.vendeli.rethis.types.core/RespVer///PointingToDeclaration/re.this/eu.vendeli.rethis.types.core/-resp-ver/index.html
@@ -777,6 +773,8 @@ $dokka.location:eu.vendeli.rethis.types.options/ZRangeOption.LIMIT/LIMIT/#kotlin
 $dokka.location:eu.vendeli.rethis.types.options/ZRangeOption.LIMIT/data/#/PointingToDeclaration/re.this/eu.vendeli.rethis.types.options/-z-range-option/-l-i-m-i-t/data.html
 $dokka.location:eu.vendeli.rethis.types.options/ZRangeOption.Type///PointingToDeclaration/re.this/eu.vendeli.rethis.types.options/-z-range-option/-type/index.html
 $dokka.location:eu.vendeli.rethis.types.options/ZRangeOption///PointingToDeclaration/re.this/eu.vendeli.rethis.types.options/-z-range-option/index.html
+$dokka.location:eu.vendeli.rethis.utils////PointingToDeclaration/re.this/eu.vendeli.rethis.utils/index.html
+$dokka.location:eu.vendeli.rethis.utils//isOk/eu.vendeli.rethis.types.core.RType#/PointingToDeclaration/re.this/eu.vendeli.rethis.utils/is-ok.html
 $dokka.location:eu.vendeli.rethis.wrappers////PointingToDeclaration/re.this/eu.vendeli.rethis.wrappers/index.html
 $dokka.location:eu.vendeli.rethis.wrappers//Hash/eu.vendeli.rethis.ReThis#kotlin.String/PointingToDeclaration/re.this/eu.vendeli.rethis.wrappers/-hash.html
 $dokka.location:eu.vendeli.rethis.wrappers//Set/eu.vendeli.rethis.ReThis#kotlin.String/PointingToDeclaration/re.this/eu.vendeli.rethis.wrappers/-set.html
@@ -814,6 +812,7 @@ $dokka.location:eu.vendeli.rethis/ReThis/isDisconnected/#/PointingToDeclaration/
 $dokka.location:eu.vendeli.rethis/ReThis/pipeline/#kotlin.coroutines.SuspendFunction1[eu.vendeli.rethis.ReThis,kotlin.Unit]/PointingToDeclaration/re.this/eu.vendeli.rethis/-re-this/pipeline.html
 $dokka.location:eu.vendeli.rethis/ReThis/protocol/#/PointingToDeclaration/re.this/eu.vendeli.rethis/-re-this/protocol.html
 $dokka.location:eu.vendeli.rethis/ReThis/reconnect/#/PointingToDeclaration/re.this/eu.vendeli.rethis/-re-this/reconnect.html
+$dokka.location:eu.vendeli.rethis/ReThis/shutdown/#/PointingToDeclaration/re.this/eu.vendeli.rethis/-re-this/shutdown.html
 $dokka.location:eu.vendeli.rethis/ReThis/subscriptions/#/PointingToDeclaration/re.this/eu.vendeli.rethis/-re-this/subscriptions.html
 $dokka.location:eu.vendeli.rethis/ReThis/transaction/#kotlin.coroutines.SuspendFunction1[eu.vendeli.rethis.ReThis,kotlin.Unit]/PointingToDeclaration/re.this/eu.vendeli.rethis/-re-this/transaction.html
 $dokka.location:eu.vendeli.rethis/ReThisException///PointingToDeclaration/re.this/eu.vendeli.rethis/-re-this-exception/index.html
@@ -827,4 +826,5 @@ eu.vendeli.rethis.types.common
 eu.vendeli.rethis.types.core
 eu.vendeli.rethis.types.coroutine
 eu.vendeli.rethis.types.options
+eu.vendeli.rethis.utils
 eu.vendeli.rethis.wrappers
