@@ -13,9 +13,6 @@ import kotlinx.coroutines.IO
  * @property db The database index to switch to after connecting.
  * @property charset The character set to use for communication.
  * @property tlsConfig The TLS configuration to use when connecting.
- * @property auth The authentication options.
- * @property poolConfiguration The pool configuration.
- * @property reconnectionStrategy The reconnection strategy to use.
  */
 @ConfigurationDSL
 data class ClientConfiguration(
@@ -23,8 +20,7 @@ data class ClientConfiguration(
     var charset: Charset = Charsets.UTF_8,
     var tlsConfig: TLSConfig? = null,
     internal var auth: AuthConfiguration? = null,
-    internal val poolConfiguration: PoolConfiguration = PoolConfiguration(),
-    internal val reconnectionStrategy: ReconnectionStrategyConfiguration = ReconnectionStrategyConfiguration(),
+    internal val connectionConfiguration: ConnectionConfiguration = ConnectionConfiguration(),
     internal val socketConfiguration: SocketConfiguration = SocketConfiguration(),
 ) {
     /**
@@ -38,21 +34,12 @@ data class ClientConfiguration(
     }
 
     /**
-     * Configures the connection pool settings.
+     * Configures the connection settings.
      *
-     * @param block A lambda to configure the pool settings.
+     * @param block A lambda to configure the connection settings.
      */
-    fun pool(block: PoolConfiguration.() -> Unit) {
-        poolConfiguration.block()
-    }
-
-    /**
-     * Configures the reconnection strategy.
-     *
-     * @param block A lambda to configure the reconnection strategy.
-     */
-    fun reconnectionStrategy(block: ReconnectionStrategyConfiguration.() -> Unit) {
-        reconnectionStrategy.block()
+    fun connection(block: ConnectionConfiguration.() -> Unit) {
+        connectionConfiguration.block()
     }
 
     /**
@@ -95,27 +82,17 @@ data class SocketConfiguration(
 )
 
 /**
- * Configuration for redis connection reconnection strategy.
+ * Configuration for redis connection.
  *
- * @property doHealthCheck if true, performs health checks on the connection before adding it to the pool, defaults to true
  * @property reconnectAttempts the number of times to attempt reconnecting to the redis server on failure, defaults to 3
  * @property reconnectDelay the delay in milliseconds between reconnecting, defaults to 3000L
- */
-@ConfigurationDSL
-data class ReconnectionStrategyConfiguration(
-    var doHealthCheck: Boolean = true,
-    var reconnectAttempts: Int = 3,
-    var reconnectDelay: Long = 3000L,
-)
-
-/**
- * Configuration for redis connection pool.
- *
  * @property poolSize the size of the connection pool, defaults to 50
  * @property dispatcher the dispatcher to use for connection pool coroutines, defaults to [Dispatchers.IO]
  */
 @ConfigurationDSL
-data class PoolConfiguration(
+data class ConnectionConfiguration(
+    var reconnectAttempts: Int = 3,
+    var reconnectDelay: Long = 3000L,
     var poolSize: Int = 50,
     var dispatcher: CoroutineDispatcher = Dispatchers.IO,
 )

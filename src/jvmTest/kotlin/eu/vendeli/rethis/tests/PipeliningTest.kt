@@ -14,7 +14,7 @@ class PipeliningTest : ReThisTestCtx() {
     @Test
     suspend fun `pipelining test`() {
         val v2Client = ReThis(redis.host, redis.firstMappedPort, protocol = RespVer.V2) {
-            pool {
+            connection {
                 poolSize = 1
             }
         }

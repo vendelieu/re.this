@@ -27,7 +27,9 @@ internal enum class RespCode(
     val isSimple = type == Type.SIMPLE || type == Type.SIMPLE_AGG
 
     enum class Type {
-        SIMPLE, SIMPLE_AGG, AGGREGATE
+        SIMPLE,
+        SIMPLE_AGG,
+        AGGREGATE,
     }
 
     companion object {
