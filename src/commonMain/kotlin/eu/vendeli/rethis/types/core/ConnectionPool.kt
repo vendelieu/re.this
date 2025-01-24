@@ -26,9 +26,9 @@ internal class ConnectionPool(
 
     private val job = SupervisorJob(client.rootJob)
     private val poolScope = CoroutineScope(
-        client.cfg.poolConfiguration.dispatcher + job + CoroutineName("ReThis-ConnectionPool"),
+        client.cfg.connectionConfiguration.dispatcher + job + CoroutineName("ReThis-ConnectionPool"),
     )
-    private val connections = Channel<Connection>(client.cfg.poolConfiguration.poolSize)
+    private val connections = Channel<Connection>(client.cfg.connectionConfiguration.poolSize)
     private val selector = SelectorManager(poolScope.coroutineContext)
 
     init {
@@ -82,8 +82,8 @@ internal class ConnectionPool(
 
     @Suppress("OPT_IN_USAGE")
     fun prepare() = client.rethisCoScope.launch(Dispatchers.IO) {
-        logger.info("Filling ConnectionPool with connections (${client.cfg.poolConfiguration.poolSize})")
-        if (connections.isEmpty) repeat(client.cfg.poolConfiguration.poolSize) {
+        logger.info("Filling ConnectionPool with connections (${client.cfg.connectionConfiguration.poolSize})")
+        if (connections.isEmpty) repeat(client.cfg.connectionConfiguration.poolSize) {
             launch { connections.trySend(createConn()) }
         }
     }
@@ -96,8 +96,7 @@ internal class ConnectionPool(
 
     private fun handle(connection: Connection) = poolScope.launch(Dispatchers.IO) {
         logger.trace("Releasing connection ${connection.socket}")
-        val cfg = client.cfg.reconnectionStrategy
-        if (cfg.doHealthCheck && connection.input.isClosedForRead) { // connection is corrupted
+        if (connection.input.isClosedForRead) { // connection is corrupted
             logger.warn("Connection ${connection.socket} is corrupted, refilling")
             launch {
                 connection.socket.close()
@@ -112,7 +111,7 @@ internal class ConnectionPool(
     }
 
     private suspend fun refill() {
-        val cfg = client.cfg.reconnectionStrategy
+        val cfg = client.cfg.connectionConfiguration
         if (cfg.reconnectAttempts <= 0) return
         var attempt = 0
         var ex: Throwable? = null

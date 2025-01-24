@@ -31,7 +31,9 @@ class ReThis(
     internal val logger = KtorSimpleLogger("eu.vendeli.rethis.ReThis")
     internal val cfg: ClientConfiguration = ClientConfiguration().apply(configurator)
     internal val rootJob = SupervisorJob()
-    internal val rethisCoScope = CoroutineScope(rootJob + cfg.poolConfiguration.dispatcher + CoroutineName("ReThis"))
+    internal val rethisCoScope = CoroutineScope(
+        rootJob + cfg.connectionConfiguration.dispatcher + CoroutineName("ReThis"),
+    )
     internal val connectionPool = ConnectionPool(this)
 
     init {
@@ -51,7 +53,7 @@ class ReThis(
             append("DB: ${cfg.db ?: 0}\n")
             append("Auth: ${cfg.auth != null}\n")
             append("TLS: ${cfg.tlsConfig != null}\n")
-            append("Pool size: ${cfg.poolConfiguration.poolSize}\n")
+            append("Pool size: ${cfg.connectionConfiguration.poolSize}\n")
             append("Protocol: ${protocol}\n")
         }.let { logger.info(it) }
     }
@@ -62,6 +64,11 @@ class ReThis(
     fun disconnect() = connectionPool.disconnect()
     fun reconnect() {
         if (connectionPool.isEmpty) connectionPool.prepare()
+    }
+
+    fun shutdown() = runBlocking {
+        disconnect()
+        rootJob.cancelAndJoin()
     }
 
     suspend fun pipeline(block: suspend ReThis.() -> Unit): List<RType> {
@@ -88,15 +95,24 @@ class ReThis(
             logger.debug("Executing pipelined request\nRequest payload: $requests")
 
             val connection = ctxConn
-            if (connection != null) {
-                connection.sendRequest(pipelinedPayload)
-                requests.forEach { _ -> responses.add(connection.readResponseWrapped(cfg.charset)) }
-            } else {
-                connectionPool.use { connection ->
+            if (connection != null) rethisCoScope
+                .async {
                     connection.sendRequest(pipelinedPayload)
-                    requests.forEach { _ -> responses.add(connection.readResponseWrapped(cfg.charset)) }
+                    requests.map { connection.parseResponse() }
+                }.await()
+                .map {
+                    it.readResponseWrapped(cfg.charset)
+                } else
+                connectionPool.use { connection ->
+                    rethisCoScope
+                        .async {
+                            connection.sendRequest(pipelinedPayload)
+                            requests.map { connection.parseResponse() }
+                        }.await()
+                        .map {
+                            it.readResponseWrapped(cfg.charset)
+                        }
                 }
-            }
             requests.clear()
         } else {
             logger.warn("Nested pipeline detected")
@@ -117,31 +133,40 @@ class ReThis(
         }
 
         return connectionPool.use { conn ->
-            logger.debug("Started transaction")
-            conn.sendRequest(listOf("MULTI".toArg()))
-            require(
-                conn
-                    .readResponseWrapped(cfg.charset)
-                    .value == "OK",
-            )
-
-            var e: Throwable? = null
             rethisCoScope
-                .launch(currentCoroutineContext() + CoLocalConn(conn)) {
-                    runCatching { block() }.getOrElse { e = it }
-                }.join()
-            e?.also {
-                conn.sendRequest(listOf("DISCARD".toArg()))
-                require(conn.readResponseWrapped(cfg.charset).value == "OK")
-                logger.error("Transaction canceled", it)
-                throw it
-            }
+                .async {
+                    logger.debug("Started transaction")
+                    val multiRequest = conn
+                        .sendRequest(listOf("MULTI".toArg()))
+                        .parseResponse()
+                    if (!multiRequest.readResponseWrapped(cfg.charset).isOk())
+                        throw ReThisException("Failed to start transaction")
 
-            logger.debug("Transaction completed")
-            conn.sendRequest(listOf("EXEC".toArg()))
-            conn.readResponseWrapped(cfg.charset).unwrapList<RType>().also {
-                logger.debug("Response payload: $it")
-            }
+                    var e: Throwable? = null
+                    rethisCoScope
+                        .launch(currentCoroutineContext() + CoLocalConn(conn)) {
+                            runCatching { block() }.getOrElse { e = it }
+                        }.join()
+                    e?.also {
+                        val discardRequest = conn
+                            .sendRequest(listOf("DISCARD".toArg()))
+                            .parseResponse()
+                        if (!discardRequest.readResponseWrapped(cfg.charset).isOk())
+                            throw ReThisException("Failed to cancel transaction")
+                        logger.error("Transaction canceled", it)
+                        throw it
+                    }
+
+                    logger.debug("Transaction completed")
+                    conn
+                        .sendRequest(listOf("EXEC".toArg()))
+                        .parseResponse()
+                }.await()
+                .readResponseWrapped(cfg.charset)
+                .unwrapList<RType>()
+                .also {
+                    logger.debug("Response payload: $it")
+                }
         }
     }
 
@@ -196,13 +221,17 @@ class ReThis(
             }
 
             coLocalConn != null -> {
-                coLocalConn.connection
-                    .sendRequest(payload)
-                    .parseResponse()
+                runBlocking {
+                    coLocalConn.connection
+                        .sendRequest(payload)
+                        .parseResponse()
+                }
             }
 
             else -> connectionPool.use { connection ->
-                connection.sendRequest(payload).parseResponse()
+                runBlocking {
+                    connection.sendRequest(payload).parseResponse()
+                }
             }
         }
     }
