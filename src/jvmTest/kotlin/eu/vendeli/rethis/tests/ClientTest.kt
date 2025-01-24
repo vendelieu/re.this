@@ -20,6 +20,7 @@ class ClientTest : ReThisTestCtx() {
 
     @Test
     suspend fun `client reconnect test`() {
+        client.reconnect()
         client.ping()
 
         client.isDisconnected shouldBe false
@@ -33,6 +34,7 @@ class ClientTest : ReThisTestCtx() {
 
     @Test
     suspend fun `client shutdown test`() {
+        client.reconnect()
         client.ping()
 
         client.isDisconnected shouldBe false

@@ -72,7 +72,6 @@ class ReThis(
     }
 
     suspend fun pipeline(block: suspend ReThis.() -> Unit): List<RType> {
-        val responses = mutableListOf<RType>()
         val pipelineCtx = takeFromCoCtx(CoPipelineCtx)
         var ctxConn: Connection? = null
         if (pipelineCtx == null) {
@@ -95,33 +94,29 @@ class ReThis(
             logger.debug("Executing pipelined request\nRequest payload: $requests")
 
             val connection = ctxConn
-            if (connection != null) rethisCoScope
-                .async {
-                    connection.sendRequest(pipelinedPayload)
-                    requests.map { connection.parseResponse() }
-                }.await()
-                .map {
+            return if (connection != null) runBlocking {
+                connection.sendRequest(pipelinedPayload)
+                requests.map { connection.parseResponse() }
+            }.map {
+                it.readResponseWrapped(cfg.charset)
+            } else connectionPool
+                .use { connection ->
+                    runBlocking {
+                        connection.sendRequest(pipelinedPayload)
+                        requests.map { connection.parseResponse() }
+                    }
+                }.map {
                     it.readResponseWrapped(cfg.charset)
-                } else
-                connectionPool.use { connection ->
-                    rethisCoScope
-                        .async {
-                            connection.sendRequest(pipelinedPayload)
-                            requests.map { connection.parseResponse() }
-                        }.await()
-                        .map {
-                            it.readResponseWrapped(cfg.charset)
-                        }
+                }.also {
+                    requests.clear()
+                    logger.info("Pipeline finished")
+                    logger.trace { "Such responses returned $it" }
                 }
-            requests.clear()
         } else {
             logger.warn("Nested pipeline detected")
             block()
             return emptyList()
         }
-        logger.info("Pipeline finished")
-        logger.trace("Such responses returned $responses")
-        return responses
     }
 
     suspend fun transaction(block: suspend ReThis.() -> Unit): List<RType> {
@@ -133,35 +128,32 @@ class ReThis(
         }
 
         return connectionPool.use { conn ->
+            logger.debug("Started transaction")
+            val multiRequest = conn
+                .sendRequest(listOf("MULTI".toArg()))
+                .parseResponse()
+            if (!multiRequest.readResponseWrapped(cfg.charset).isOk())
+                throw ReThisException("Failed to start transaction")
+
+            var e: Throwable? = null
             rethisCoScope
-                .async {
-                    logger.debug("Started transaction")
-                    val multiRequest = conn
-                        .sendRequest(listOf("MULTI".toArg()))
-                        .parseResponse()
-                    if (!multiRequest.readResponseWrapped(cfg.charset).isOk())
-                        throw ReThisException("Failed to start transaction")
+                .launch(currentCoroutineContext() + CoLocalConn(conn)) {
+                    runCatching { block() }.getOrElse { e = it }
+                }.join()
+            e?.also {
+                val discardRequest = conn
+                    .sendRequest(listOf("DISCARD".toArg()))
+                    .parseResponse()
+                if (!discardRequest.readResponseWrapped(cfg.charset).isOk())
+                    throw ReThisException("Failed to cancel transaction")
+                logger.error("Transaction canceled", it)
+                throw it
+            }
 
-                    var e: Throwable? = null
-                    rethisCoScope
-                        .launch(currentCoroutineContext() + CoLocalConn(conn)) {
-                            runCatching { block() }.getOrElse { e = it }
-                        }.join()
-                    e?.also {
-                        val discardRequest = conn
-                            .sendRequest(listOf("DISCARD".toArg()))
-                            .parseResponse()
-                        if (!discardRequest.readResponseWrapped(cfg.charset).isOk())
-                            throw ReThisException("Failed to cancel transaction")
-                        logger.error("Transaction canceled", it)
-                        throw it
-                    }
-
-                    logger.debug("Transaction completed")
-                    conn
-                        .sendRequest(listOf("EXEC".toArg()))
-                        .parseResponse()
-                }.await()
+            logger.debug("Transaction completed")
+            conn
+                .sendRequest(listOf("EXEC".toArg()))
+                .parseResponse()
                 .readResponseWrapped(cfg.charset)
                 .unwrapList<RType>()
                 .also {
@@ -237,7 +229,7 @@ class ReThis(
     }
 
     private suspend fun Connection.sendRequest(payload: List<Argument>): Connection = apply {
-        logger.trace("Sending request with such payload $payload")
+        logger.trace { "Sending request with such payload $payload" }
         output.writeBuffer(bufferValues(payload, cfg.charset))
         output.flush()
     }
