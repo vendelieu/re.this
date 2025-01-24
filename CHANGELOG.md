@@ -1,5 +1,10 @@
 # Re.this Changelog
 
+## 0.2.5
+
+* Added `shutdown` hook.
+* Improved request flow.
+
 ## 0.2.4
 
 * Enhanced the algorithm for parsing.
