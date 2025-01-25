@@ -42,7 +42,7 @@ internal suspend inline fun ReThis.registerSubscription(
     handler: SubscriptionHandler,
 ) {
     val connection = connectionPool.createConn()
-    val handlerJob = rethisCoScope.launch(CoLocalConn(connection)) {
+    val handlerJob = coScope.launch(CoLocalConn(connection)) {
         val conn = currentCoroutineContext()[CoLocalConn]!!.connection
         try {
             conn.sendRequest(bufferValues(listOf(regCommand.toArg(), target.toArg()), cfg.charset))

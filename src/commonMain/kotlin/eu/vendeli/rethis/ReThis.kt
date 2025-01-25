@@ -31,7 +31,7 @@ class ReThis(
     internal val logger = KtorSimpleLogger("eu.vendeli.rethis.ReThis")
     internal val cfg: ClientConfiguration = ClientConfiguration().apply(configurator)
     internal val rootJob = SupervisorJob()
-    internal val rethisCoScope = CoroutineScope(
+    internal val coScope = CoroutineScope(
         rootJob + cfg.connectionConfiguration.dispatcher + CoroutineName("ReThis"),
     )
     internal val connectionPool = ConnectionPool(this)
@@ -75,13 +75,13 @@ class ReThis(
         val pipelineCtx = takeFromCoCtx(CoPipelineCtx)
         var ctxConn: Connection? = null
         if (pipelineCtx == null) {
-            val requests = mutableListOf<Any?>()
+            val requests = mutableListOf<Argument>()
             logger.info("Pipeline started")
             try {
-                rethisCoScope
-                    .launch(currentCoroutineContext() + CoPipelineCtx(requests)) {
+                coScope
+                    .launch(currentCoroutineContext() + CoPipelineCtx(mutableListOf(requests))) {
                         block()
-                        ctxConn = currentCoroutineContext()[CoLocalConn]?.connection
+                        ctxConn = takeFromCoCtx(CoLocalConn)?.connection
                     }.join()
             } catch (e: Throwable) {
                 logger.error("Pipeline removed")
@@ -136,7 +136,7 @@ class ReThis(
                 throw ReThisException("Failed to start transaction")
 
             var e: Throwable? = null
-            rethisCoScope
+            coScope
                 .launch(currentCoroutineContext() + CoLocalConn(conn)) {
                     runCatching { block() }.getOrElse { e = it }
                 }.join()
@@ -166,8 +166,8 @@ class ReThis(
     suspend fun execute(
         payload: List<Argument>,
         rawResponse: Boolean = false,
-    ): RType = rethisCoScope
-        .async(Dispatchers.IO) {
+    ): RType = coScope
+        .async(currentCoroutineContext() + Dispatchers.IO) {
             handleRequest(payload)
         }.await()
         ?.readResponseWrapped(cfg.charset, rawResponse) ?: RType.Null
@@ -175,7 +175,7 @@ class ReThis(
     @JvmName("executeSimple")
     internal suspend inline fun <reified T : Any> execute(
         payload: List<Argument>,
-    ): T? = rethisCoScope
+    ): T? = coScope
         .async(currentCoroutineContext() + Dispatchers.IO) {
             handleRequest(payload)
         }.await()
@@ -185,7 +185,7 @@ class ReThis(
     internal suspend inline fun <reified T : Any> execute(
         payload: List<Argument>,
         isCollectionResponse: Boolean = false,
-    ): List<T>? = rethisCoScope
+    ): List<T>? = coScope
         .async(currentCoroutineContext() + Dispatchers.IO) {
             handleRequest(payload)
         }.await()
@@ -194,7 +194,7 @@ class ReThis(
     @JvmName("executeMap")
     internal suspend inline fun <reified K : Any, reified V : Any> execute(
         payload: List<Argument>,
-    ): Map<K, V?>? = rethisCoScope
+    ): Map<K, V?>? = coScope
         .async(currentCoroutineContext() + Dispatchers.IO) {
             handleRequest(payload)
         }.await()
@@ -212,18 +212,14 @@ class ReThis(
                 null
             }
 
-            coLocalConn != null -> {
-                runBlocking {
-                    coLocalConn.connection
-                        .sendRequest(payload)
-                        .parseResponse()
-                }
+            coLocalConn != null -> runBlocking {
+                coLocalConn.connection
+                    .sendRequest(payload)
+                    .parseResponse()
             }
 
             else -> connectionPool.use { connection ->
-                runBlocking {
-                    connection.sendRequest(payload).parseResponse()
-                }
+                runBlocking { connection.sendRequest(payload).parseResponse() }
             }
         }
     }

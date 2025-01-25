@@ -50,7 +50,7 @@ class TransactionCommandTest : ReThisTestCtx() {
     suspend fun `test EXEC command with queued commands that fail`() {
         val conn = client.connectionPool.acquire()
         client
-            .rethisCoScope
+            .coScope
             .launch(CoLocalConn(conn)) {
                 client.multi()
                 client.set("testKey1", "testVal1")
@@ -77,7 +77,7 @@ class TransactionCommandTest : ReThisTestCtx() {
     suspend fun `test WATCH command with multiple keys`() {
         val conn = client.connectionPool.acquire()
         client
-            .rethisCoScope
+            .coScope
             .launch(CoLocalConn(conn)) {
                 client.watch("testKey1", "testKey2")
                 client.set("testKey1", "testVal1")
