@@ -18,6 +18,9 @@ fun RType.isOk() = unwrap<String>() == "OK"
 internal inline fun <T> Any.cast(): T = this as T
 
 @Suppress("UNCHECKED_CAST", "NOTHING_TO_INLINE")
+internal inline fun <T : Any> Any.cast(clazz: KClass<T>): T = this as T
+
+@Suppress("UNCHECKED_CAST", "NOTHING_TO_INLINE")
 internal inline fun <T> Any.safeCast(): T? = this as? T
 
 @Suppress("UNCHECKED_CAST", "NOTHING_TO_INLINE")

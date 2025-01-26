@@ -13,7 +13,6 @@ import eu.vendeli.rethis.utils.safeCast
 import eu.vendeli.rethis.utils.unwrapRespIndMap
 import eu.vendeli.rethis.utils.writeArg
 import kotlinx.datetime.Instant
-import kotlin.Long
 import kotlin.time.Duration
 
 suspend fun ReThis.hDel(key: String, vararg field: String): Long = execute<Long>(
@@ -130,13 +129,14 @@ suspend fun ReThis.hLen(key: String): Long = execute<Long>(
     ),
 ) ?: 0
 
-suspend fun ReThis.hMGet(key: String, vararg field: String): List<String> = execute(
+suspend fun ReThis.hMGet(key: String, vararg field: String): List<String?> = execute<String>(
     listOf(
         "HMGET".toArg(),
         key.toArg(),
         *field.toArg(),
     ),
-).unwrapList()
+    isCollectionResponse = true,
+) ?: emptyList()
 
 suspend fun ReThis.hMSet(key: String, vararg fieldValue: Pair<String, String>): String? = execute<String>(
     mutableListOf(

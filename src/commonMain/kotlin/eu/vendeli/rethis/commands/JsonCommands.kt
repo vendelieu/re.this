@@ -60,22 +60,25 @@ suspend fun ReThis.jsonMSet(key: String, path: String, value: String): String? =
     listOf("JSON.MSET".toArg(), key.toArg(), path.toArg(), value.toArg()),
 )
 
-suspend fun ReThis.jsonNumIncrBy(key: String, path: String, increment: Long): List<Long?> = execute(
+suspend fun ReThis.jsonNumIncrBy(key: String, path: String, increment: Long): List<Long?> = execute<Long>(
     listOf("JSON.NUMINCRBY".toArg(), key.toArg(), path.toArg(), increment.toArg()),
-).unwrapList<Long?>()
+    isCollectionResponse = true,
+) ?: emptyList()
 
 suspend fun ReThis.jsonNumMultBy(key: String, path: String, multiplier: Long): List<Long?> = execute(
     listOf("JSON.NUMMULTBY".toArg(), key.toArg(), path.toArg(), multiplier.toArg()),
-).unwrapList()
+    isCollectionResponse = true,
+) ?: emptyList()
 
 suspend fun ReThis.jsonObjKeys(key: String, path: String): List<String> = execute(
     listOf("JSON.OBJKEYS".toArg(), key.toArg(), path.toArg()),
     isCollectionResponse = true,
 ) ?: emptyList()
 
-suspend fun ReThis.jsonObjLen(key: String, path: String): List<Long?> = execute(
+suspend fun ReThis.jsonObjLen(key: String, path: String): List<Long?> = execute<Long>(
     listOf("JSON.OBJLEN".toArg(), key.toArg(), path.toArg()),
-).unwrapList<Long?>()
+    isCollectionResponse = true,
+) ?: emptyList()
 
 suspend fun ReThis.jsonResp(key: String, path: String? = null): List<RType> = execute(
     mutableListOf("JSON.RESP".toArg(), key.toArg()).writeArg(path),
