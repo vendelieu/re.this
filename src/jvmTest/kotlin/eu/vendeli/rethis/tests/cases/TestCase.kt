@@ -40,7 +40,7 @@ class TestCase : ReThisTestCtx() {
                 .launch(start = CoroutineStart.LAZY) {
                     repeat(totalRepeats) {
                         client.hPExpire("some:key:$id", 1.minutes, "some-value1-$id")
-                        delay(5.seconds)
+                        delay(2.seconds)
                     }
                 }.also { job ->
                     job.invokeOnCompletion {
@@ -127,7 +127,7 @@ class TestCase : ReThisTestCtx() {
                 .launch(start = CoroutineStart.LAZY) {
                     repeat(totalRepeats) {
                         client.hPExpire("some:key:$id", 1.minutes, "some-value1-$id")
-                        delay(5.seconds)
+                        delay(2.seconds)
                     }
                 }.also { job ->
                     job.invokeOnCompletion {

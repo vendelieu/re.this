@@ -24,9 +24,9 @@ internal class ConnectionPool(
     @OptIn(ExperimentalCoroutinesApi::class)
     internal val isEmpty: Boolean get() = connections.isEmpty
 
-    private val job = SupervisorJob(client.rootJob)
+    private val poolJob = SupervisorJob(client.rootJob)
     private val poolScope = CoroutineScope(
-        client.cfg.connectionConfiguration.dispatcher + job + CoroutineName("ReThis-ConnectionPool"),
+        client.cfg.connectionConfiguration.dispatcher + poolJob + CoroutineName("ReThis-ConnectionPool"),
     )
     private val connections = Channel<Connection>(client.cfg.connectionConfiguration.poolSize)
     private val selector = SelectorManager(poolScope.coroutineContext)
@@ -81,7 +81,7 @@ internal class ConnectionPool(
     }
 
     @Suppress("OPT_IN_USAGE")
-    fun prepare() = client.rethisCoScope.launch(Dispatchers.IO) {
+    fun prepare() = poolScope.launch(Dispatchers.IO) {
         logger.info("Filling ConnectionPool with connections (${client.cfg.connectionConfiguration.poolSize})")
         if (connections.isEmpty) repeat(client.cfg.connectionConfiguration.poolSize) {
             launch { connections.trySend(createConn()) }

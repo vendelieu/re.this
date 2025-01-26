@@ -1,10 +1,11 @@
 package eu.vendeli.rethis.types.coroutine
 
+import eu.vendeli.rethis.types.core.Argument
 import kotlin.coroutines.AbstractCoroutineContextElement
 import kotlin.coroutines.CoroutineContext
 
-class CoPipelineCtx(
-    val pipelinedRequests: MutableList<Any?>,
+internal class CoPipelineCtx(
+    val pipelinedRequests: MutableList<List<Argument>>,
 ) : AbstractCoroutineContextElement(CoPipelineCtx),
     CoroutineContext.Element {
     override val key = Key

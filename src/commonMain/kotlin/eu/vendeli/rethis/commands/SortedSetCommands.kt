@@ -222,7 +222,8 @@ suspend fun ReThis.zMscore(key: String, vararg members: String): List<Double?> =
         key.toArg(),
         *members.toArg(),
     ),
-).unwrapList<Double?>()
+    isCollectionResponse = true,
+) ?: emptyList()
 
 suspend fun ReThis.zPopmax(key: String, count: Long? = null): List<MPopResult> = execute(
     mutableListOf(

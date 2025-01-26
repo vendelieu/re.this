@@ -95,7 +95,7 @@ class ScriptCommandTest : ReThisTestCtx() {
                 "\n" +
                 "redis.register_function { function_name='fun10', callback=myfunc10, flags={ 'no-writes' } }"
         client.functionLoad(script).shouldNotBeNull()
-        client.rethisCoScope.launch {
+        client.coScope.launch {
             client.fcall("fun10", 0)
         }
         delay(100)
@@ -151,7 +151,7 @@ class ScriptCommandTest : ReThisTestCtx() {
 
     @Test
     suspend fun `test SCRIPT KILL command`() {
-        client.rethisCoScope.launch {
+        client.coScope.launch {
             client
                 .eval(
                     "local count = 0; while true do count = count + 1; end",
