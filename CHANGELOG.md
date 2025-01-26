@@ -1,5 +1,10 @@
 # Re.this Changelog
 
+## 0.2.6
+
+* Added `RType.unwrap` function to unwrap RType.
+* Improved List nullable responses parsing.
+
 ## 0.2.5
 
 * Added `shutdown` hook.
