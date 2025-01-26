@@ -1,5 +1,9 @@
 # Re.this Changelog
 
+## 0.2.7
+
+* Try to fix jvm package.
+
 ## 0.2.6
 
 * Added `RType.unwrap` function to unwrap RType.

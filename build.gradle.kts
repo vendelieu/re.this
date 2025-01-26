@@ -11,7 +11,7 @@ plugins {
     publish
 }
 
-group = "eu.vendeli.re.this"
+group = "eu.vendeli.rethis"
 version = System.getenv("libVersion") ?: "dev"
 
 repositories { mavenCentral() }
