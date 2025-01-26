@@ -489,17 +489,6 @@ $dokka.location:eu.vendeli.rethis.types.core/VerbatimString/VerbatimString/#kotl
 $dokka.location:eu.vendeli.rethis.types.core/VerbatimString/data/#/PointingToDeclaration/re.this/eu.vendeli.rethis.types.core/-verbatim-string/data.html
 $dokka.location:eu.vendeli.rethis.types.core/VerbatimString/encoding/#/PointingToDeclaration/re.this/eu.vendeli.rethis.types.core/-verbatim-string/encoding.html
 $dokka.location:eu.vendeli.rethis.types.core/VerbatimString/value/#/PointingToDeclaration/re.this/eu.vendeli.rethis.types.core/-verbatim-string/value.html
-$dokka.location:eu.vendeli.rethis.types.coroutine////PointingToDeclaration/re.this/eu.vendeli.rethis.types.coroutine/index.html
-$dokka.location:eu.vendeli.rethis.types.coroutine/CoLocalConn.Key///PointingToDeclaration/re.this/eu.vendeli.rethis.types.coroutine/-co-local-conn/-key/index.html
-$dokka.location:eu.vendeli.rethis.types.coroutine/CoLocalConn///PointingToDeclaration/re.this/eu.vendeli.rethis.types.coroutine/-co-local-conn/index.html
-$dokka.location:eu.vendeli.rethis.types.coroutine/CoLocalConn/CoLocalConn/#io.ktor.network.sockets.Connection/PointingToDeclaration/re.this/eu.vendeli.rethis.types.coroutine/-co-local-conn/-co-local-conn.html
-$dokka.location:eu.vendeli.rethis.types.coroutine/CoLocalConn/connection/#/PointingToDeclaration/re.this/eu.vendeli.rethis.types.coroutine/-co-local-conn/connection.html
-$dokka.location:eu.vendeli.rethis.types.coroutine/CoLocalConn/key/#/PointingToDeclaration/re.this/eu.vendeli.rethis.types.coroutine/-co-local-conn/key.html
-$dokka.location:eu.vendeli.rethis.types.coroutine/CoPipelineCtx.Key///PointingToDeclaration/re.this/eu.vendeli.rethis.types.coroutine/-co-pipeline-ctx/-key/index.html
-$dokka.location:eu.vendeli.rethis.types.coroutine/CoPipelineCtx///PointingToDeclaration/re.this/eu.vendeli.rethis.types.coroutine/-co-pipeline-ctx/index.html
-$dokka.location:eu.vendeli.rethis.types.coroutine/CoPipelineCtx/CoPipelineCtx/#kotlin.collections.MutableList[kotlin.Any?]/PointingToDeclaration/re.this/eu.vendeli.rethis.types.coroutine/-co-pipeline-ctx/-co-pipeline-ctx.html
-$dokka.location:eu.vendeli.rethis.types.coroutine/CoPipelineCtx/key/#/PointingToDeclaration/re.this/eu.vendeli.rethis.types.coroutine/-co-pipeline-ctx/key.html
-$dokka.location:eu.vendeli.rethis.types.coroutine/CoPipelineCtx/pipelinedRequests/#/PointingToDeclaration/re.this/eu.vendeli.rethis.types.coroutine/-co-pipeline-ctx/pipelined-requests.html
 $dokka.location:eu.vendeli.rethis.types.options////PointingToDeclaration/re.this/eu.vendeli.rethis.types.options/index.html
 $dokka.location:eu.vendeli.rethis.types.options/Approximate///PointingToDeclaration/re.this/eu.vendeli.rethis.types.options/-approximate/index.html
 $dokka.location:eu.vendeli.rethis.types.options/BYBOX///PointingToDeclaration/re.this/eu.vendeli.rethis.types.options/-b-y-b-o-x/index.html
@@ -775,6 +764,8 @@ $dokka.location:eu.vendeli.rethis.types.options/ZRangeOption.Type///PointingToDe
 $dokka.location:eu.vendeli.rethis.types.options/ZRangeOption///PointingToDeclaration/re.this/eu.vendeli.rethis.types.options/-z-range-option/index.html
 $dokka.location:eu.vendeli.rethis.utils////PointingToDeclaration/re.this/eu.vendeli.rethis.utils/index.html
 $dokka.location:eu.vendeli.rethis.utils//isOk/eu.vendeli.rethis.types.core.RType#/PointingToDeclaration/re.this/eu.vendeli.rethis.utils/is-ok.html
+$dokka.location:eu.vendeli.rethis.utils//unwrap/eu.vendeli.rethis.types.core.RType#kotlin.reflect.KClass[TypeParam(bounds=[kotlin.Any])]/PointingToDeclaration/re.this/eu.vendeli.rethis.utils/unwrap.html
+$dokka.location:eu.vendeli.rethis.utils//unwrapType/eu.vendeli.rethis.types.core.RType#kotlin.reflect.KClass[TypeParam(bounds=[kotlin.Any])]/PointingToDeclaration/re.this/eu.vendeli.rethis.utils/unwrap-type.html
 $dokka.location:eu.vendeli.rethis.wrappers////PointingToDeclaration/re.this/eu.vendeli.rethis.wrappers/index.html
 $dokka.location:eu.vendeli.rethis.wrappers//Hash/eu.vendeli.rethis.ReThis#kotlin.String/PointingToDeclaration/re.this/eu.vendeli.rethis.wrappers/-hash.html
 $dokka.location:eu.vendeli.rethis.wrappers//Set/eu.vendeli.rethis.ReThis#kotlin.String/PointingToDeclaration/re.this/eu.vendeli.rethis.wrappers/-set.html
@@ -824,7 +815,6 @@ eu.vendeli.rethis.annotations
 eu.vendeli.rethis.commands
 eu.vendeli.rethis.types.common
 eu.vendeli.rethis.types.core
-eu.vendeli.rethis.types.coroutine
 eu.vendeli.rethis.types.options
 eu.vendeli.rethis.utils
 eu.vendeli.rethis.wrappers
