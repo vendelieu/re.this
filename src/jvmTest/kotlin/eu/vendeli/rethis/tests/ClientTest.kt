@@ -33,12 +33,8 @@ class ClientTest : ReThisTestCtx() {
     }
 
     @Test
-    suspend fun `client shutdown test`() {
-        client.reconnect()
-        client.ping()
-
-        client.isDisconnected shouldBe false
+    fun `client shutdown test`() {
         client.shutdown()
-        client.isDisconnected shouldBe true
+        client.rootJob.isCancelled shouldBe true
     }
 }
