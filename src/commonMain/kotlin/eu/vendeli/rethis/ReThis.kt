@@ -75,11 +75,11 @@ class ReThis(
         val pipelineCtx = takeFromCoCtx(CoPipelineCtx)
         var ctxConn: Connection? = null
         if (pipelineCtx == null) {
-            val requests = mutableListOf<Argument>()
+            val requests = mutableListOf<List<Argument>>()
             logger.info("Pipeline started")
             try {
                 coScope
-                    .launch(currentCoroutineContext() + CoPipelineCtx(mutableListOf(requests))) {
+                    .launch(currentCoroutineContext() + CoPipelineCtx(requests)) {
                         block()
                         ctxConn = takeFromCoCtx(CoLocalConn)?.connection
                     }.join()

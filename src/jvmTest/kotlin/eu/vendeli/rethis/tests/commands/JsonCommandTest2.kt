@@ -22,13 +22,13 @@ class JsonCommandTest2 : ReThisTestCtx(true) {
     @Test
     suspend fun `test JSON_NUMINCRBY command`() {
         client.jsonSet("testKey15", ".", "{\"a\":\"b\",\"b\":[{\"a\":2}, {\"a\":5}, {\"a\":\"c\"}]}")
-        client.jsonNumIncrBy("testKey15", "..a", 2) shouldBe listOf(4, 7L)
+        client.jsonNumIncrBy("testKey15", "..a", 2) shouldBe listOf(null, 4, 7L, null)
     }
 
     @Test
     suspend fun `test JSON_NUMMULTBY command`() {
         client.jsonSet("testKey16", ".", "{\"a\":\"b\",\"b\":[{\"a\":2}, {\"a\":5}, {\"a\":\"c\"}]}")
-        client.jsonNumMultBy("testKey16", "..a", 2) shouldBe listOf(4, 10L)
+        client.jsonNumMultBy("testKey16", "..a", 2) shouldBe listOf(null, 4, 10L, null)
     }
 
     @Test
@@ -40,7 +40,7 @@ class JsonCommandTest2 : ReThisTestCtx(true) {
     @Test
     suspend fun `test JSON_OBJLEN command`() {
         client.jsonSet("testKey18", ".", "{\"a\":[3], \"nested\": {\"a\": {\"b\":2, \"c\": 1}}}")
-        client.jsonObjLen("testKey18", "$..a") shouldBe listOf(2L)
+        client.jsonObjLen("testKey18", "$..a") shouldBe listOf(null, 2L)
     }
 
     @Test

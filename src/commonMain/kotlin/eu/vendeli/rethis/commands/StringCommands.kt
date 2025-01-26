@@ -183,7 +183,7 @@ suspend fun ReThis.mget(vararg key: String): List<String?> = execute(
         "MGET".toArg(),
         *key.toArg(),
     ),
-    isCollectionResponse = true
+    isCollectionResponse = true,
 ) ?: emptyList()
 
 suspend fun ReThis.mset(vararg kvPair: Pair<String, String>): String? = execute<String>(
