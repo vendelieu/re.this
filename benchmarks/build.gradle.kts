@@ -13,6 +13,7 @@ dependencies {
     implementation(project(":"))
     implementation("redis.clients:jedis:5.2.0")
     implementation("io.lettuce:lettuce-core:6.5.2.RELEASE")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactive:1.10.1")
     implementation("io.github.crackthecodeabhi:kreds:0.9.1")
 }
 
