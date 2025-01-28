@@ -33,7 +33,7 @@ configureKotlin {
             implementation(libs.test.kotest.junit5)
             implementation(libs.test.kotest.assertions)
             implementation(libs.logback)
-            implementation("com.redis:testcontainers-redis:1.7.0") {
+            implementation("com.redis:testcontainers-redis:2.2.3") {
                 exclude("commons-io", "commons-io")
                 exclude("org.apache.commons", "commons-compress")
                 exclude("com.fasterxml.woodstox", "woodstox-core")
