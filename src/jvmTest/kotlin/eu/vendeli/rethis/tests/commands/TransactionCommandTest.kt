@@ -10,7 +10,6 @@ import eu.vendeli.rethis.types.core.toArg
 import eu.vendeli.rethis.types.coroutine.CoLocalConn
 import eu.vendeli.rethis.utils.bufferValues
 import eu.vendeli.rethis.utils.readResponseWrapped
-import eu.vendeli.rethis.utils.sendRequest
 import io.kotest.assertions.throwables.shouldNotThrowAny
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.collections.shouldHaveSize
@@ -23,17 +22,22 @@ class TransactionCommandTest : ReThisTestCtx() {
     suspend fun `test EXEC command with multiple queued commands`() {
         val conn = client.connectionPool.acquire()
 
-        conn.sendRequest(bufferValues(listOf("MULTI".toArg()), Charsets.UTF_8))
-        conn.readResponseWrapped(Charsets.UTF_8) shouldBe PlainString("OK")
+        conn.writeRequest(listOf("MULTI".toArg()), Charsets.UTF_8)
+        conn.readResponse().readResponseWrapped(Charsets.UTF_8) shouldBe PlainString("OK")
 
-        conn.sendRequest(bufferValues(listOf("SET".toArg(), "test3".toArg(), "testv3".toArg()), Charsets.UTF_8))
-        conn.readResponseWrapped(Charsets.UTF_8) shouldBe PlainString("QUEUED")
+        conn.writeRequest(bufferValues(listOf("SET".toArg(), "test3".toArg(), "testv3".toArg()), Charsets.UTF_8))
+        conn.readResponse().readResponseWrapped(Charsets.UTF_8) shouldBe PlainString("QUEUED")
 
-        conn.sendRequest(bufferValues(listOf("SET".toArg(), "test4".toArg(), "testv4".toArg()), Charsets.UTF_8))
-        conn.readResponseWrapped(Charsets.UTF_8) shouldBe PlainString("QUEUED")
+        conn.writeRequest(bufferValues(listOf("SET".toArg(), "test4".toArg(), "testv4".toArg()), Charsets.UTF_8))
+        conn.readResponse().readResponseWrapped(Charsets.UTF_8) shouldBe PlainString("QUEUED")
 
-        conn.sendRequest(bufferValues(listOf("EXEC".toArg()), Charsets.UTF_8))
-        conn.readResponseWrapped(Charsets.UTF_8) shouldBe RArray(listOf(PlainString("OK"), PlainString("OK")))
+        conn.writeRequest(bufferValues(listOf("EXEC".toArg()), Charsets.UTF_8))
+        conn.readResponse().readResponseWrapped(Charsets.UTF_8) shouldBe RArray(
+            listOf(
+                PlainString("OK"),
+                PlainString("OK"),
+            ),
+        )
     }
 
     @Test

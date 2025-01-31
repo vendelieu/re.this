@@ -1,8 +1,6 @@
 package eu.vendeli.rethis.types.core
 
 import eu.vendeli.rethis.ReThis
-import eu.vendeli.rethis.utils.readResponseWrapped
-import eu.vendeli.rethis.utils.sendRequest
 import eu.vendeli.rethis.utils.writeRedisValue
 import io.ktor.network.selector.*
 import io.ktor.network.sockets.*
@@ -24,18 +22,18 @@ internal class ConnectionPool(
     @OptIn(ExperimentalCoroutinesApi::class)
     internal val isEmpty: Boolean get() = connections.isEmpty
 
-    private val poolJob = SupervisorJob(client.rootJob)
+    private val poolJob = Job(client.rootJob)
     private val poolScope = CoroutineScope(
-        client.cfg.connectionConfiguration.dispatcher + poolJob + CoroutineName("ReThis-ConnectionPool"),
+        client.cfg.connectionConfiguration.dispatcher + poolJob + CoroutineName("ReThis|ConnectionPool"),
     )
-    private val connections = Channel<Connection>(client.cfg.connectionConfiguration.poolSize)
+    private val connections = Channel<RConnection>(client.cfg.connectionConfiguration.poolSize)
     private val selector = SelectorManager(poolScope.coroutineContext)
 
     init {
         poolScope.launch { prepare() }
     }
 
-    internal suspend fun createConn(): Connection {
+    internal suspend fun createConn(): RConnection {
         logger.trace { "Creating connection to ${client.address}" }
         val conn = aSocket(selector)
             .tcp()
@@ -50,7 +48,7 @@ internal class ConnectionPool(
                 client.cfg.tlsConfig?.let {
                     socket.tls(selector.coroutineContext, it)
                 } ?: socket
-            }.connection()
+            }.rConnection()
 
         val reqBuffer = Buffer()
         var requests = 0
@@ -71,11 +69,7 @@ internal class ConnectionPool(
         requests++
 
         logger.trace { "Sending connection establishment requests ($requests)" }
-        conn.sendRequest(reqBuffer)
-        repeat(requests) {
-            val response = conn.readResponseWrapped(client.cfg.charset)
-            logger.trace { "Connection establishment response ($it): $response" }
-        }
+        conn.writeRequest(reqBuffer).readBatchResponse(requests)
 
         return conn
     }
@@ -88,13 +82,13 @@ internal class ConnectionPool(
         }
     }
 
-    suspend fun acquire(): Connection = connections.receive()
+    suspend fun acquire(): RConnection = connections.receive()
 
-    fun release(connection: Connection) {
+    fun release(connection: RConnection) {
         handle(connection)
     }
 
-    private fun handle(connection: Connection) = poolScope.launch(Dispatchers.IO) {
+    private fun handle(connection: RConnection) = poolScope.launch(Dispatchers.IO) {
         logger.trace { "Releasing connection ${connection.socket}" }
         if (connection.input.isClosedForRead) { // connection is corrupted
             logger.warn("Connection ${connection.socket} is corrupted, refilling")
@@ -147,27 +141,17 @@ internal class ConnectionPool(
 }
 
 @OptIn(ExperimentalContracts::class)
-internal suspend inline fun <R> ConnectionPool.use(block: (Connection) -> R): R {
+internal suspend inline fun <R> ConnectionPool.use(block: (RConnection) -> R): R {
     contract {
         callsInPlace(block, InvocationKind.EXACTLY_ONCE)
     }
-    var exception: Throwable? = null
     val connection = acquire()
     logger.trace { "Using ${connection.socket} for request" }
-    try {
-        return block(connection)
+    return try {
+        block(connection)
     } catch (e: Throwable) {
-        exception = e
         throw e
     } finally {
-        when {
-            exception?.cause == null -> release(connection)
-            else -> try {
-                release(connection)
-            } catch (closeException: Throwable) {
-                exception.cause?.addSuppressed(closeException)
-                throw exception
-            }
-        }
+        release(connection)
     }
 }

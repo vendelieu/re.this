@@ -86,12 +86,6 @@ private suspend fun ByteReadChannel.processNestedAggregates(
     }
 }
 
-internal suspend inline fun Connection.parseResponse(): ArrayDeque<ResponseToken> = input.parseResponse()
-internal suspend inline fun Connection.readResponseWrapped(
-    charset: Charset,
-    rawOnly: Boolean = false,
-) = parseResponse().readResponseWrapped(charset, rawOnly)
-
 private suspend inline fun ByteReadChannel.readLineCRLF(): kotlinx.io.Buffer {
     val buffer = kotlinx.io.Buffer()
     while (true) {

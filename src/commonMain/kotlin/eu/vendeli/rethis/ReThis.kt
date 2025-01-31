@@ -8,9 +8,7 @@ import eu.vendeli.rethis.types.coroutine.CoPipelineCtx
 import eu.vendeli.rethis.utils.*
 import eu.vendeli.rethis.utils.Const.DEFAULT_HOST
 import eu.vendeli.rethis.utils.Const.DEFAULT_PORT
-import io.ktor.network.sockets.*
 import io.ktor.util.logging.*
-import io.ktor.utils.io.*
 import kotlinx.coroutines.*
 import kotlinx.io.Buffer
 import kotlin.jvm.JvmName
@@ -73,7 +71,7 @@ class ReThis(
 
     suspend fun pipeline(block: suspend ReThis.() -> Unit): List<RType> {
         val pipelineCtx = takeFromCoCtx(CoPipelineCtx)
-        var ctxConn: Connection? = null
+        var ctxConn: RConnection? = null
         if (pipelineCtx == null) {
             val requests = mutableListOf<List<Argument>>()
             logger.info("Pipeline started")
@@ -94,17 +92,15 @@ class ReThis(
             logger.debug("Executing pipelined request\nRequest payload: $requests")
 
             val connection = ctxConn
-            return if (connection != null) runBlocking {
-                connection.sendRequest(pipelinedPayload)
-                requests.map { connection.parseResponse() }
+            return if (connection != null) run {
+                connection.writeRequest(pipelinedPayload).readBatchResponse(requests.size)
             }.map {
                 it.readResponseWrapped(cfg.charset)
             } else connectionPool
                 .use { connection ->
-                    runBlocking {
-                        connection.sendRequest(pipelinedPayload)
-                        requests.map { connection.parseResponse() }
-                    }
+                    connection
+                        .writeRequest(pipelinedPayload)
+                        .readBatchResponse(requests.size)
                 }.map {
                     it.readResponseWrapped(cfg.charset)
                 }.also {
@@ -130,8 +126,8 @@ class ReThis(
         return connectionPool.use { conn ->
             logger.debug("Started transaction")
             val multiRequest = conn
-                .sendRequest(listOf("MULTI".toArg()))
-                .parseResponse()
+                .writeRequest(listOf("MULTI".toArg()), cfg.charset)
+                .readResponse()
             if (!multiRequest.readResponseWrapped(cfg.charset).isOk())
                 throw ReThisException("Failed to start transaction")
 
@@ -142,8 +138,8 @@ class ReThis(
                 }.join()
             e?.also {
                 val discardRequest = conn
-                    .sendRequest(listOf("DISCARD".toArg()))
-                    .parseResponse()
+                    .writeRequest(listOf("DISCARD".toArg()), cfg.charset)
+                    .readResponse()
                 if (!discardRequest.readResponseWrapped(cfg.charset).isOk())
                     throw ReThisException("Failed to cancel transaction")
                 logger.error("Transaction canceled", it)
@@ -152,8 +148,8 @@ class ReThis(
 
             logger.debug("Transaction completed")
             conn
-                .sendRequest(listOf("EXEC".toArg()))
-                .parseResponse()
+                .writeRequest(listOf("EXEC".toArg()), cfg.charset)
+                .readResponse()
                 .readResponseWrapped(cfg.charset)
                 .unwrapList<RType>()
                 .also {
@@ -212,21 +208,14 @@ class ReThis(
                 null
             }
 
-            coLocalConn != null -> runBlocking {
+            coLocalConn != null ->
                 coLocalConn.connection
-                    .sendRequest(payload)
-                    .parseResponse()
-            }
+                    .writeRequest(payload, cfg.charset)
+                    .readResponse()
 
             else -> connectionPool.use { connection ->
-                runBlocking { connection.sendRequest(payload).parseResponse() }
+                coScope.async { connection.writeRequest(payload, cfg.charset).readResponse() }.await()
             }
         }
-    }
-
-    private suspend fun Connection.sendRequest(payload: List<Argument>): Connection = apply {
-        logger.trace { "Sending request with such payload $payload" }
-        output.writeBuffer(bufferValues(payload, cfg.charset))
-        output.flush()
     }
 }

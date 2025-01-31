@@ -1,11 +1,11 @@
 package eu.vendeli.rethis.types.coroutine
 
-import io.ktor.network.sockets.*
+import eu.vendeli.rethis.types.core.RConnection
 import kotlin.coroutines.AbstractCoroutineContextElement
 import kotlin.coroutines.CoroutineContext
 
 internal class CoLocalConn(
-    val connection: Connection,
+    val connection: RConnection,
 ) : AbstractCoroutineContextElement(CoLocalConn),
     CoroutineContext.Element {
     override val key = Key

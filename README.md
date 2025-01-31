@@ -35,11 +35,11 @@ a [benchmark](https://github.com/vendelieu/re.this/tree/master/benchmarks/src/ma
 comparing popular library solutions (more is better):
 
 ```javascript
-Benchmark                        Mode  Cnt        Score        Error  Units
-JedisBenchmark.jedisSetGet      thrpt    5    31393.802 ±   5501.760  ops/s
-KredsBenchmark.kredsSetGet      thrpt    5  1051938.506 ± 344626.183  ops/s
-LettuceBenchmark.lettuceSetGet  thrpt    5    19780.976 ±   1544.416  ops/s
-RethisBenchmark.rethisSetGet    thrpt    5  1555443.251 ± 552464.716  ops/s
+Benchmark                        Mode  Cnt        Score         Error  Units
+JedisBenchmark.jedisSetGet      thrpt    5    15726.989 ±    1939.998  ops/s
+KredsBenchmark.kredsSetGet      thrpt    5   839860.900 ±   28180.928  ops/s
+LettuceBenchmark.lettuceSetGet  thrpt    5  1380333.188 ± 6181093.607  ops/s
+RethisBenchmark.rethisSetGet    thrpt    5  1452718.508 ± 1341935.933  ops/s
 ```
 
 <details>

@@ -1,5 +1,6 @@
 package eu.vendeli.rethis.benchmarks
 
+import com.redis.testcontainers.RedisContainer
 import io.lettuce.core.ExperimentalLettuceCoroutinesApi
 import io.lettuce.core.RedisClient
 import io.lettuce.core.api.coroutines
@@ -10,6 +11,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import org.openjdk.jmh.annotations.Fork
 import org.openjdk.jmh.annotations.Timeout
+import org.testcontainers.utility.DockerImageName
 import java.util.concurrent.TimeUnit
 
 @OptIn(DelicateCoroutinesApi::class, ExperimentalLettuceCoroutinesApi::class)
@@ -21,10 +23,14 @@ import java.util.concurrent.TimeUnit
 @Fork(1, jvmArgsAppend = ["-Xms12g", "-Xmx12g", "-Xss2m", "-XX:MaxMetaspaceSize=1g"])
 class LettuceBenchmark {
     private lateinit var lettuce: RedisCoroutinesCommands<String, String>
+    private val redis = RedisContainer(
+        DockerImageName.parse("redis:7.4.0"),
+    )
 
     @Setup
     fun setup() {
-        lettuce = RedisClient.create("redis://localhost").connect().coroutines()
+        redis.start()
+        lettuce = RedisClient.create("redis://${redis.host}:${redis.firstMappedPort}").connect().coroutines()
 
         GlobalScope.launch {
             lettuce.ping()
@@ -33,6 +39,7 @@ class LettuceBenchmark {
 
     @TearDown
     fun tearDown() {
+        redis.stop()
         GlobalScope.launch {
             lettuce.shutdown(false)
         }
@@ -40,9 +47,12 @@ class LettuceBenchmark {
 
     @Benchmark
     fun lettuceSetGet(bh: Blackhole) {
+        val randInt = (1..10_000).random()
+
         GlobalScope.launch {
-            bh.consume(lettuce.set("key", "value"))
-            bh.consume(lettuce.get("key"))
+            bh.consume(lettuce.set("keyLettuce$randInt", "value$randInt"))
+            val value = lettuce.get("key")
+            assert(value == "value$randInt")
         }
     }
 }

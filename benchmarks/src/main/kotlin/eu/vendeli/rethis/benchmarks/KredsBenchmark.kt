@@ -1,5 +1,6 @@
 package eu.vendeli.rethis.benchmarks
 
+import com.redis.testcontainers.RedisContainer
 import io.github.crackthecodeabhi.kreds.connection.Endpoint
 import io.github.crackthecodeabhi.kreds.connection.KredsClient
 import io.github.crackthecodeabhi.kreds.connection.newClient
@@ -10,6 +11,7 @@ import kotlinx.benchmark.Setup
 import kotlinx.benchmark.TearDown
 import kotlinx.coroutines.*
 import org.openjdk.jmh.annotations.*
+import org.testcontainers.utility.DockerImageName
 import java.util.concurrent.TimeUnit
 
 @DelicateCoroutinesApi
@@ -21,10 +23,14 @@ import java.util.concurrent.TimeUnit
 @Fork(1, jvmArgsAppend = ["-Xms12g", "-Xmx12g", "-Xss2m", "-XX:MaxMetaspaceSize=1g"])
 class KredsBenchmark {
     private lateinit var kreds: KredsClient
+    private val redis = RedisContainer(
+        DockerImageName.parse("redis:7.4.0"),
+    )
 
     @Setup
     fun setup() {
-        kreds = newClient(Endpoint("localhost", 6379))
+        redis.start()
+        kreds = newClient(Endpoint(redis.host, redis.firstMappedPort))
         GlobalScope.launch {
             kreds.ping("test")
         }
@@ -32,6 +38,7 @@ class KredsBenchmark {
 
     @TearDown
     fun tearDown() {
+        redis.stop()
         GlobalScope.launch {
             kreds.use {
                 shutdown()
@@ -42,8 +49,11 @@ class KredsBenchmark {
     @Benchmark
     fun kredsSetGet(bh: Blackhole) {
         GlobalScope.launch {
-            bh.consume(kreds.set("key", "value"))
-            bh.consume(kreds.get("key"))
+            val randInt = (1..10_000).random()
+
+            bh.consume(kreds.set("keyKreds$randInt", "value$randInt"))
+            val value = kreds.get("keyKreds$randInt")
+            assert(value == "value$randInt")
         }
     }
 }

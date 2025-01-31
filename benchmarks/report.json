@@ -1,183 +1,6 @@
 [
     {
         "jmhVersion" : "1.21",
-        "benchmark" : "eu.vendeli.rethis.benchmarks.JedisBenchmark.jedisSetGet",
-        "mode" : "thrpt",
-        "threads" : 1,
-        "forks" : 1,
-        "jvm" : "/home/vendelieu/.jdks/azul-21.0.4/bin/java",
-        "jvmArgs" : [
-            "-Dfile.encoding=UTF-8",
-            "-Duser.country=US",
-            "-Duser.language=en",
-            "-Duser.variant",
-            "-Xms500m",
-            "-Xmx12g",
-            "-Xss2m",
-            "-XX:MaxMetaspaceSize=1g"
-        ],
-        "jdkVersion" : "21.0.4",
-        "vmName" : "OpenJDK 64-Bit Server VM",
-        "vmVersion" : "21.0.4+7-LTS",
-        "warmupIterations" : 2,
-        "warmupTime" : "1000 ms",
-        "warmupBatchSize" : 1,
-        "measurementIterations" : 5,
-        "measurementTime" : "1000 ms",
-        "measurementBatchSize" : 1,
-        "primaryMetric" : {
-            "score" : 31393.80171803222,
-            "scoreError" : 5501.760472535983,
-            "scoreConfidence" : [
-                25892.041245496235,
-                36895.562190568206
-            ],
-            "scorePercentiles" : {
-                "0.0" : 28905.065528842446,
-                "50.0" : 31967.946016893813,
-                "90.0" : 32322.84598870652,
-                "95.0" : 32322.84598870652,
-                "99.0" : 32322.84598870652,
-                "99.9" : 32322.84598870652,
-                "99.99" : 32322.84598870652,
-                "99.999" : 32322.84598870652,
-                "99.9999" : 32322.84598870652,
-                "100.0" : 32322.84598870652
-            },
-            "scoreUnit" : "ops/s",
-            "rawData" : [
-                [
-                    28905.065528842446,
-                    31503.472745177558,
-                    31967.946016893813,
-                    32322.84598870652,
-                    32269.678310540774
-                ]
-            ]
-        },
-        "secondaryMetrics" : {
-        }
-    },
-    {
-        "jmhVersion" : "1.21",
-        "benchmark" : "eu.vendeli.rethis.benchmarks.KredsBenchmark.kredsSetGet",
-        "mode" : "thrpt",
-        "threads" : 1,
-        "forks" : 1,
-        "jvm" : "/home/vendelieu/.jdks/azul-21.0.4/bin/java",
-        "jvmArgs" : [
-            "-Dfile.encoding=UTF-8",
-            "-Duser.country=US",
-            "-Duser.language=en",
-            "-Duser.variant",
-            "-Xms500m",
-            "-Xmx12g",
-            "-Xss2m",
-            "-XX:MaxMetaspaceSize=1g"
-        ],
-        "jdkVersion" : "21.0.4",
-        "vmName" : "OpenJDK 64-Bit Server VM",
-        "vmVersion" : "21.0.4+7-LTS",
-        "warmupIterations" : 2,
-        "warmupTime" : "1000 ms",
-        "warmupBatchSize" : 1,
-        "measurementIterations" : 5,
-        "measurementTime" : "1000 ms",
-        "measurementBatchSize" : 1,
-        "primaryMetric" : {
-            "score" : 1051938.5056489678,
-            "scoreError" : 344626.18254464783,
-            "scoreConfidence" : [
-                707312.32310432,
-                1396564.6881936155
-            ],
-            "scorePercentiles" : {
-                "0.0" : 922367.8872713071,
-                "50.0" : 1071596.278923895,
-                "90.0" : 1164418.6413353994,
-                "95.0" : 1164418.6413353994,
-                "99.0" : 1164418.6413353994,
-                "99.9" : 1164418.6413353994,
-                "99.99" : 1164418.6413353994,
-                "99.999" : 1164418.6413353994,
-                "99.9999" : 1164418.6413353994,
-                "100.0" : 1164418.6413353994
-            },
-            "scoreUnit" : "ops/s",
-            "rawData" : [
-                [
-                    1083894.5297497094,
-                    1071596.278923895,
-                    1017415.1909645286,
-                    922367.8872713071,
-                    1164418.6413353994
-                ]
-            ]
-        },
-        "secondaryMetrics" : {
-        }
-    },
-    {
-        "jmhVersion" : "1.21",
-        "benchmark" : "eu.vendeli.rethis.benchmarks.LettuceBenchmark.lettuceSetGet",
-        "mode" : "thrpt",
-        "threads" : 1,
-        "forks" : 1,
-        "jvm" : "/home/vendelieu/.jdks/azul-21.0.4/bin/java",
-        "jvmArgs" : [
-            "-Dfile.encoding=UTF-8",
-            "-Duser.country=US",
-            "-Duser.language=en",
-            "-Duser.variant",
-            "-Xms500m",
-            "-Xmx12g",
-            "-Xss2m",
-            "-XX:MaxMetaspaceSize=1g"
-        ],
-        "jdkVersion" : "21.0.4",
-        "vmName" : "OpenJDK 64-Bit Server VM",
-        "vmVersion" : "21.0.4+7-LTS",
-        "warmupIterations" : 2,
-        "warmupTime" : "1000 ms",
-        "warmupBatchSize" : 1,
-        "measurementIterations" : 5,
-        "measurementTime" : "1000 ms",
-        "measurementBatchSize" : 1,
-        "primaryMetric" : {
-            "score" : 19780.97556410821,
-            "scoreError" : 1544.4155267993876,
-            "scoreConfidence" : [
-                18236.56003730882,
-                21325.391090907597
-            ],
-            "scorePercentiles" : {
-                "0.0" : 19143.57705184882,
-                "50.0" : 19847.492253456585,
-                "90.0" : 20185.20138732132,
-                "95.0" : 20185.20138732132,
-                "99.0" : 20185.20138732132,
-                "99.9" : 20185.20138732132,
-                "99.99" : 20185.20138732132,
-                "99.999" : 20185.20138732132,
-                "99.9999" : 20185.20138732132,
-                "100.0" : 20185.20138732132
-            },
-            "scoreUnit" : "ops/s",
-            "rawData" : [
-                [
-                    19847.492253456585,
-                    20185.20138732132,
-                    19697.760644168786,
-                    19143.57705184882,
-                    20030.846483745525
-                ]
-            ]
-        },
-        "secondaryMetrics" : {
-        }
-    },
-    {
-        "jmhVersion" : "1.21",
         "benchmark" : "eu.vendeli.rethis.benchmarks.RethisBenchmark.rethisSetGet",
         "mode" : "thrpt",
         "threads" : 1,
@@ -203,32 +26,32 @@
         "measurementTime" : "1000 ms",
         "measurementBatchSize" : 1,
         "primaryMetric" : {
-            "score" : 1555443.2505962842,
-            "scoreError" : 552464.7157332452,
+            "score" : 109262.84474144268,
+            "scoreError" : 67108.88928436919,
             "scoreConfidence" : [
-                1002978.5348630389,
-                2107907.9663295294
+                42153.95545707349,
+                176371.73402581186
             ],
             "scorePercentiles" : {
-                "0.0" : 1368448.5346994277,
-                "50.0" : 1563243.6950751338,
-                "90.0" : 1698006.4099118037,
-                "95.0" : 1698006.4099118037,
-                "99.0" : 1698006.4099118037,
-                "99.9" : 1698006.4099118037,
-                "99.99" : 1698006.4099118037,
-                "99.999" : 1698006.4099118037,
-                "99.9999" : 1698006.4099118037,
-                "100.0" : 1698006.4099118037
+                "0.0" : 83152.15313584292,
+                "50.0" : 108726.54316073915,
+                "90.0" : 126123.78689942558,
+                "95.0" : 126123.78689942558,
+                "99.0" : 126123.78689942558,
+                "99.9" : 126123.78689942558,
+                "99.99" : 126123.78689942558,
+                "99.999" : 126123.78689942558,
+                "99.9999" : 126123.78689942558,
+                "100.0" : 126123.78689942558
             },
             "scoreUnit" : "ops/s",
             "rawData" : [
                 [
-                    1698006.4099118037,
-                    1563243.6950751338,
-                    1688465.7026438008,
-                    1368448.5346994277,
-                    1459051.910651254
+                    126123.78689942558,
+                    104138.25294131461,
+                    108726.54316073915,
+                    124173.48756989118,
+                    83152.15313584292
                 ]
             ]
         },
