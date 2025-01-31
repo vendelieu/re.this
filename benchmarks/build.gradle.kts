@@ -26,13 +26,5 @@ dependencies {
     implementation("com.fasterxml.woodstox:woodstox-core:7.1.0")
 }
 
-/**
- * Benchmark                        Mode  Cnt        Score         Error  Units
- * JedisBenchmark.jedisSetGet      thrpt    5    14521.217 ±    3635.472  ops/s
- * KredsBenchmark.kredsSetGet      thrpt    5   846447.332 ±   48614.594  ops/s
- * LettuceBenchmark.lettuceSetGet  thrpt    5  1308911.742 ± 3984333.996  ops/s
- * RethisBenchmark.rethisSetGet    thrpt    5  1202083.400 ± 1615689.816  ops/s
- */
-
 allOpen.annotation("org.openjdk.jmh.annotations.State")
 benchmark.targets.register("main")
