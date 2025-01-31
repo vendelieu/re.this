@@ -17,7 +17,7 @@ internal data class RConnection(
     private val state = Mutex()
 
     @OptIn(InternalAPI::class, InternalIoApi::class)
-    suspend fun writeRequest(payload: Buffer): RConnection {
+    suspend fun sendRequest(payload: Buffer): RConnection {
         state.lock()
         try {
             output.writeBuffer.transferFrom(payload)
@@ -32,10 +32,10 @@ internal data class RConnection(
         return this
     }
 
-    suspend inline fun writeRequest(payload: List<Argument>, charset: Charset): RConnection =
-        writeRequest(bufferValues(payload, charset))
+    suspend inline fun sendRequest(payload: List<Argument>, charset: Charset): RConnection =
+        sendRequest(bufferValues(payload, charset))
 
-    suspend fun readResponse(): ArrayDeque<ResponseToken> = try {
+    suspend fun parseResponse(): ArrayDeque<ResponseToken> = try {
         input.parseResponse()
     } finally {
         state.unlock()

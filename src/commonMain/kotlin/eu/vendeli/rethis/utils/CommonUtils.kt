@@ -48,11 +48,11 @@ internal suspend inline fun ReThis.registerSubscription(
     val handlerJob = coScope.launch(CoLocalConn(connection)) {
         val conn = currentCoroutineContext()[CoLocalConn]!!.connection
         try {
-            conn.writeRequest(listOf(regCommand.toArg(), target.toArg()), cfg.charset)
+            conn.sendRequest(listOf(regCommand.toArg(), target.toArg()), cfg.charset)
 
             while (isActive) {
                 conn.input.awaitContent()
-                val msg = conn.readResponse().readResponseWrapped(cfg.charset)
+                val msg = conn.input.parseResponse().readResponseWrapped(cfg.charset)
                 val input = if (msg is Push) msg.value else msg.safeCast<RArray>()?.value
                 logger.debug("Handling event in $target channel subscription")
 
@@ -82,7 +82,7 @@ internal suspend inline fun ReThis.registerSubscription(
             logger.error("Caught exception in $target channel handler")
             subscriptions.eventHandler?.onException(target, e)
         } finally {
-            conn.writeRequest(listOf(unRegCommand.toArg(), target.toArg()), cfg.charset)
+            conn.sendRequest(listOf(unRegCommand.toArg(), target.toArg()), cfg.charset)
             subscriptions.unsubscribe(target)
             connection.socket.close()
         }

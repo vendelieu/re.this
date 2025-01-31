@@ -93,13 +93,13 @@ class ReThis(
 
             val connection = ctxConn
             return if (connection != null) run {
-                connection.writeRequest(pipelinedPayload).readBatchResponse(requests.size)
+                connection.sendRequest(pipelinedPayload).readBatchResponse(requests.size)
             }.map {
                 it.readResponseWrapped(cfg.charset)
             } else connectionPool
                 .use { connection ->
                     connection
-                        .writeRequest(pipelinedPayload)
+                        .sendRequest(pipelinedPayload)
                         .readBatchResponse(requests.size)
                 }.map {
                     it.readResponseWrapped(cfg.charset)
@@ -126,8 +126,8 @@ class ReThis(
         return connectionPool.use { conn ->
             logger.debug("Started transaction")
             val multiRequest = conn
-                .writeRequest(listOf("MULTI".toArg()), cfg.charset)
-                .readResponse()
+                .sendRequest(listOf("MULTI".toArg()), cfg.charset)
+                .parseResponse()
             if (!multiRequest.readResponseWrapped(cfg.charset).isOk())
                 throw ReThisException("Failed to start transaction")
 
@@ -138,8 +138,8 @@ class ReThis(
                 }.join()
             e?.also {
                 val discardRequest = conn
-                    .writeRequest(listOf("DISCARD".toArg()), cfg.charset)
-                    .readResponse()
+                    .sendRequest(listOf("DISCARD".toArg()), cfg.charset)
+                    .parseResponse()
                 if (!discardRequest.readResponseWrapped(cfg.charset).isOk())
                     throw ReThisException("Failed to cancel transaction")
                 logger.error("Transaction canceled", it)
@@ -148,8 +148,8 @@ class ReThis(
 
             logger.debug("Transaction completed")
             conn
-                .writeRequest(listOf("EXEC".toArg()), cfg.charset)
-                .readResponse()
+                .sendRequest(listOf("EXEC".toArg()), cfg.charset)
+                .parseResponse()
                 .readResponseWrapped(cfg.charset)
                 .unwrapList<RType>()
                 .also {
@@ -210,11 +210,11 @@ class ReThis(
 
             coLocalConn != null ->
                 coLocalConn.connection
-                    .writeRequest(payload, cfg.charset)
-                    .readResponse()
+                    .sendRequest(payload, cfg.charset)
+                    .parseResponse()
 
             else -> connectionPool.use { connection ->
-                coScope.async { connection.writeRequest(payload, cfg.charset).readResponse() }.await()
+                coScope.async { connection.sendRequest(payload, cfg.charset).parseResponse() }.await()
             }
         }
     }

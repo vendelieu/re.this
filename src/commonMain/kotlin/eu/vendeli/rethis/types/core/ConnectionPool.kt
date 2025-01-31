@@ -69,7 +69,7 @@ internal class ConnectionPool(
         requests++
 
         logger.trace { "Sending connection establishment requests ($requests)" }
-        conn.writeRequest(reqBuffer).readBatchResponse(requests)
+        conn.sendRequest(reqBuffer).readBatchResponse(requests)
 
         return conn
     }
