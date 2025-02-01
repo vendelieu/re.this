@@ -33,22 +33,22 @@ suspend fun ReThis.fcallRo(name: String, numKeys: Long, vararg keys: String): RT
     listOf("FCALL_RO".toArg(), name.toArg(), numKeys.toArg(), *keys.toArg()),
 )
 
-suspend fun ReThis.functionDelete(name: String): String? = execute<String>(
+suspend fun ReThis.functionDelete(name: String): Boolean = execute<String>(
     listOf("FUNCTION".toArg(), "DELETE".toArg(), name.toArg()),
-)
+) == "OK"
 
 suspend fun ReThis.functionDump(): ByteArray? = execute(
     listOf("FUNCTION".toArg(), "DUMP".toArg()),
     rawResponse = true,
 ).safeCast<RType.Raw>()?.value
 
-suspend fun ReThis.functionFlush(): String? = execute<String>(
+suspend fun ReThis.functionFlush(): Boolean = execute<String>(
     listOf("FUNCTION".toArg(), "FLUSH".toArg()),
-)
+) == "OK"
 
-suspend fun ReThis.functionKill(): String? = execute<String>(
+suspend fun ReThis.functionKill(): Boolean = execute<String>(
     listOf("FUNCTION".toArg(), "KILL".toArg()),
-)
+) == "OK"
 
 suspend fun ReThis.functionList(libraryName: String? = null, withCode: Boolean = false): List<RType> = execute(
     mutableListOf(
@@ -67,9 +67,9 @@ suspend fun ReThis.functionLoad(script: String): String? = execute<String>(
 suspend fun ReThis.functionRestore(
     serializedValue: ByteArray,
     option: FunctionRestoreOption? = null,
-): String? = execute<String>(
+): Boolean = execute<String>(
     mutableListOf("FUNCTION".toArg(), "RESTORE".toArg(), serializedValue.toArg()).writeArg(option),
-)
+) == "OK"
 
 suspend fun ReThis.functionStats(): Map<String, RType?>? = execute(
     listOf("FUNCTION".toArg(), "STATS".toArg()),
@@ -83,9 +83,9 @@ suspend fun ReThis.scriptExists(vararg shas: String): List<Boolean> = execute(
     listOf("SCRIPT".toArg(), "EXISTS".toArg(), *shas.toArg()),
 ).unwrapList<Long>().map { it == 1L }
 
-suspend fun ReThis.scriptFlush(): String? = execute<String>(
+suspend fun ReThis.scriptFlush(): Boolean = execute<String>(
     listOf("SCRIPT".toArg(), "FLUSH".toArg()),
-)
+) == "OK"
 
 suspend fun ReThis.scriptKill(): Boolean = execute<String>(
     listOf("SCRIPT".toArg(), "KILL".toArg()),

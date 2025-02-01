@@ -195,13 +195,13 @@ suspend fun ReThis.randomKey(): String? = execute<String>(
     ),
 )
 
-suspend fun ReThis.rename(key: String, newKey: String): String? = execute<String>(
+suspend fun ReThis.rename(key: String, newKey: String): Boolean = execute<String>(
     listOf(
         "RENAME".toArg(),
         key.toArg(),
         newKey.toArg(),
     ),
-)
+) == "OK"
 
 suspend fun ReThis.renameNx(key: String, newKey: String): Boolean = execute<Long>(
     listOf(
@@ -216,14 +216,14 @@ suspend fun ReThis.restore(
     ttl: Long,
     serializedValue: ByteArray,
     vararg options: RestoreOption,
-): String? = execute<String>(
+): Boolean = execute<String>(
     mutableListOf(
         "RESTORE".toArg(),
         key.toArg(),
         ttl.toArg(),
         serializedValue.toArg(),
     ).writeArg(options),
-)
+) == "OK"
 
 suspend fun ReThis.scan(
     cursor: Long,

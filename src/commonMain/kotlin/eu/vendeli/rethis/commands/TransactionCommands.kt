@@ -5,11 +5,11 @@ import eu.vendeli.rethis.types.core.RType
 import eu.vendeli.rethis.types.core.toArg
 import eu.vendeli.rethis.types.core.unwrapList
 
-suspend fun ReThis.discard(): String? = execute<String>(
+suspend fun ReThis.discard(): Boolean = execute<String>(
     listOf(
         "DISCARD".toArg(),
     ),
-)
+) == "OK"
 
 suspend fun ReThis.exec(): List<RType> = execute(
     listOf(
@@ -17,21 +17,21 @@ suspend fun ReThis.exec(): List<RType> = execute(
     ),
 ).unwrapList<RType>()
 
-suspend fun ReThis.multi(): String? = execute<String>(
+suspend fun ReThis.multi(): Boolean = execute<String>(
     listOf(
         "MULTI".toArg(),
     ),
-)
+) == "OK"
 
-suspend fun ReThis.unwatch(): String? = execute<String>(
+suspend fun ReThis.unwatch(): Boolean = execute<String>(
     listOf(
         "UNWATCH".toArg(),
     ),
-)
+) == "OK"
 
-suspend fun ReThis.watch(vararg key: String): String? = execute<String>(
+suspend fun ReThis.watch(vararg key: String): Boolean = execute<String>(
     listOf(
         "WATCH".toArg(),
         *key.toArg(),
     ),
-)
+) == "OK"

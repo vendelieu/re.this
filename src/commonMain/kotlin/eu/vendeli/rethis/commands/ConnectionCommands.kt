@@ -33,9 +33,9 @@ suspend fun ReThis.ping(message: String? = null): String? = execute<String>(
     ).writeArg(message),
 )
 
-suspend fun ReThis.select(database: Int): String? = execute<String>(
+suspend fun ReThis.select(database: Int): Boolean = execute<String>(
     listOf(
         "SELECT".toArg(),
         database.toArg(),
     ),
-)
+) == "OK"
