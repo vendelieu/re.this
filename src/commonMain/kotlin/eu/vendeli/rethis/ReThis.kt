@@ -162,39 +162,34 @@ class ReThis(
     suspend fun execute(
         payload: List<Argument>,
         rawResponse: Boolean = false,
-    ): RType = coScope
-        .async(currentCoroutineContext() + Dispatchers.IO) {
-            handleRequest(payload)
-        }.await()
+    ): RType = performRequest(payload)
         ?.readResponseWrapped(cfg.charset, rawResponse) ?: RType.Null
 
     @JvmName("executeSimple")
     internal suspend inline fun <reified T : Any> execute(
         payload: List<Argument>,
-    ): T? = coScope
-        .async(currentCoroutineContext() + Dispatchers.IO) {
-            handleRequest(payload)
-        }.await()
+    ): T? = performRequest(payload)
         ?.readSimpleResponseTyped(T::class, cfg.charset)
 
     @JvmName("executeList")
     internal suspend inline fun <reified T : Any> execute(
         payload: List<Argument>,
         isCollectionResponse: Boolean = false,
-    ): List<T>? = coScope
-        .async(currentCoroutineContext() + Dispatchers.IO) {
-            handleRequest(payload)
-        }.await()
+    ): List<T>? = performRequest(payload)
         ?.readListResponseTyped(T::class, cfg.charset)
 
     @JvmName("executeMap")
     internal suspend inline fun <reified K : Any, reified V : Any> execute(
         payload: List<Argument>,
-    ): Map<K, V?>? = coScope
+    ): Map<K, V?>? = performRequest(payload)
+        ?.readMapResponseTyped(K::class, V::class, cfg.charset)
+
+    private suspend inline fun performRequest(
+        payload: List<Argument>,
+    ): ArrayDeque<ResponseToken>? = coScope
         .async(currentCoroutineContext() + Dispatchers.IO) {
             handleRequest(payload)
         }.await()
-        ?.readMapResponseTyped(K::class, V::class, cfg.charset)
 
     private suspend fun handleRequest(
         payload: List<Argument>,
