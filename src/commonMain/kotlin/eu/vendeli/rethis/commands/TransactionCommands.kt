@@ -3,7 +3,9 @@ package eu.vendeli.rethis.commands
 import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.types.core.RType
 import eu.vendeli.rethis.types.core.toArg
+import eu.vendeli.rethis.types.core.toArgument
 import eu.vendeli.rethis.types.core.unwrapList
+import eu.vendeli.rethis.utils.execute
 
 suspend fun ReThis.discard(): Boolean = execute<String>(
     listOf(
@@ -32,6 +34,6 @@ suspend fun ReThis.unwatch(): Boolean = execute<String>(
 suspend fun ReThis.watch(vararg key: String): Boolean = execute<String>(
     listOf(
         "WATCH".toArg(),
-        *key.toArg(),
+        *key.toArgument(),
     ),
 ) == "OK"

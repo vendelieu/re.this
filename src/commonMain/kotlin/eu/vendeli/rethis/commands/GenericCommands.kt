@@ -7,23 +7,24 @@ import eu.vendeli.rethis.types.common.WaitAofResult
 import eu.vendeli.rethis.types.core.*
 import eu.vendeli.rethis.types.options.*
 import eu.vendeli.rethis.utils.safeCast
-import eu.vendeli.rethis.utils.writeArg
+import eu.vendeli.rethis.utils.writeArgument
 import kotlinx.datetime.Instant
 import kotlin.Long
 import kotlin.time.Duration
+import eu.vendeli.rethis.utils.execute
 
 suspend fun ReThis.copy(source: String, destination: String, vararg option: CopyOption): Boolean = execute<Long>(
     mutableListOf(
         "COPY".toArg(),
         source.toArg(),
         destination.toArg(),
-    ).apply { option.forEach { writeArg(it) } },
+    ).apply { option.forEach { writeArgument(it) } },
 ) == 1L
 
 suspend fun ReThis.del(vararg key: String): Long = execute<Long>(
     listOf(
         "DEL".toArg(),
-        *key.toArg(),
+        *key.toArgument(),
     ),
 ) ?: 0
 
@@ -32,13 +33,13 @@ suspend fun ReThis.dump(key: String): ByteArray? = execute(
         "DUMP".toArg(),
         key.toArg(),
     ),
-    rawResponse = true,
+    rawMarker = Unit,
 ).safeCast<RType.Raw>()?.value
 
 suspend fun ReThis.exists(vararg key: String): Long = execute<Long>(
     listOf(
         "EXISTS".toArg(),
-        *key.toArg(),
+        *key.toArgument(),
     ),
 ) ?: 0
 
@@ -47,7 +48,7 @@ suspend fun ReThis.expire(key: String, seconds: Long, option: UpdateStrategyOpti
         "EXPIRE".toArg(),
         key.toArg(),
         seconds.toArg(),
-    ).writeArg(option),
+    ).writeArgument(option),
 ) == 1L
 
 suspend fun ReThis.expireAt(key: String, unixStamp: Instant, option: UpdateStrategyOption? = null): Boolean =
@@ -56,7 +57,7 @@ suspend fun ReThis.expireAt(key: String, unixStamp: Instant, option: UpdateStrat
             "EXPIREAT".toArg(),
             key.toArg(),
             unixStamp.epochSeconds.toArg(),
-        ).writeArg(option),
+        ).writeArgument(option),
     ) == 1L
 
 suspend fun ReThis.expireTime(key: String): Long? = execute<Long>(
@@ -89,7 +90,7 @@ suspend fun ReThis.migrate(
         key.toArg(),
         destinationDb.toArg(),
         timeout.inWholeMilliseconds.toArg(),
-    ).apply { option.forEach { writeArg(it) } },
+    ).apply { option.forEach { writeArgument(it) } },
 )
 
 suspend fun ReThis.move(key: String, db: Long): Boolean = execute<Long>(
@@ -148,7 +149,7 @@ suspend fun ReThis.pExpire(
         "PEXPIRE".toArg(),
         key.toArg(),
         milliseconds.toArg(),
-    ).writeArg(option),
+    ).writeArgument(option),
 ) == 1L
 
 suspend fun ReThis.pExpireAt(
@@ -160,7 +161,7 @@ suspend fun ReThis.pExpireAt(
         "PEXPIRE".toArg(),
         key.toArg(),
         unixStampMillis.toArg(),
-    ).writeArg(option),
+    ).writeArgument(option),
 ) == 1L
 
 suspend fun ReThis.pExpireAt(
@@ -172,7 +173,7 @@ suspend fun ReThis.pExpireAt(
         "PEXPIRE".toArg(),
         key.toArg(),
         unixStamp.toEpochMilliseconds().toArg(),
-    ).writeArg(option),
+    ).writeArgument(option),
 ) == 1L
 
 suspend fun ReThis.pExpireTime(key: String): Long? = execute<Long>(
@@ -222,14 +223,14 @@ suspend fun ReThis.restore(
         key.toArg(),
         ttl.toArg(),
         serializedValue.toArg(),
-    ).writeArg(options),
+    ).writeArgument(options),
 ) == "OK"
 
 suspend fun ReThis.scan(
     cursor: Long,
     vararg option: ScanOption,
 ): ScanResult<String> {
-    val response = execute(mutableListOf("SCAN".toArg(), cursor.toArg()).apply { option.forEach { writeArg(it) } })
+    val response = execute(mutableListOf("SCAN".toArg(), cursor.toArg()).apply { option.forEach { writeArgument(it) } })
 
     val arrResponse = response.safeCast<RArray>()?.value ?: processingException { "Wrong response type" }
     val newCursor = arrResponse[0].unwrap<String>() ?: processingException { "Missing cursor in response" }
@@ -244,7 +245,7 @@ suspend fun ReThis.sort(
     key: String,
     vararg option: SortOption,
 ): List<String> = execute<String>(
-    mutableListOf("SORT".toArg(), key.toArg()).apply { option.forEach { writeArg(it) } },
+    mutableListOf("SORT".toArg(), key.toArg()).apply { option.forEach { writeArgument(it) } },
     isCollectionResponse = true,
 ) ?: emptyList()
 
@@ -254,8 +255,8 @@ suspend fun ReThis.sort(
     vararg option: SortOption,
 ): Long = execute<Long>(
     mutableListOf("SORT".toArg(), key.toArg()).apply {
-        writeArg(store)
-        option.forEach { writeArg(it) }
+        writeArgument(store)
+        option.forEach { writeArgument(it) }
     },
 ) ?: 0
 
@@ -263,13 +264,13 @@ suspend fun ReThis.sortRo(
     key: String,
     vararg option: SortRoOption,
 ): List<String> = execute(
-    mutableListOf("SORT_RO".toArg(), key.toArg()).apply { option.forEach { writeArg(it) } },
+    mutableListOf("SORT_RO".toArg(), key.toArg()).apply { option.forEach { writeArgument(it) } },
 ).unwrapList<String>()
 
 suspend fun ReThis.touch(vararg key: String): Long = execute<Long>(
     listOf(
         "TOUCH".toArg(),
-        *key.toArg(),
+        *key.toArgument(),
     ),
 ) ?: 0
 
@@ -290,7 +291,7 @@ suspend fun ReThis.type(key: String): String? = execute<String>(
 suspend fun ReThis.unlink(vararg key: String): Long = execute<Long>(
     listOf(
         "UNLINK".toArg(),
-        *key.toArg(),
+        *key.toArgument(),
     ),
 ) ?: 0
 

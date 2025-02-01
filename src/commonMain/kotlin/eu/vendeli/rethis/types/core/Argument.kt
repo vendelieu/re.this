@@ -8,7 +8,7 @@ interface VaryingArgument {
 
 interface Argument
 
-fun Any.toArg(): Argument = when (this) {
+fun Any.toArgument(): Argument = when (this) {
     is String -> toArg()
     is Long -> toArg()
     is Int -> toArg()
@@ -19,10 +19,10 @@ fun Any.toArg(): Argument = when (this) {
 }
 
 @Suppress("NOTHING_TO_INLINE")
-inline fun List<Any>.toArg(): List<Argument> = map { it.toArg() }
+inline fun List<Any>.toArgument(): List<Argument> = map { it.toArgument() }
 
 @Suppress("NOTHING_TO_INLINE")
-internal inline fun Array<out String>.toArg(): Array<StringArg> = map { it.toArg() }.toTypedArray()
+inline fun Array<out String>.toArgument(): Array<Argument> = map { it.toArgument() }.toTypedArray()
 
 @JvmInline
 internal value class StringArg(

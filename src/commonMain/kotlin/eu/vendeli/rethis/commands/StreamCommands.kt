@@ -4,17 +4,19 @@ import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.types.core.Argument
 import eu.vendeli.rethis.types.core.RType
 import eu.vendeli.rethis.types.core.toArg
+import eu.vendeli.rethis.types.core.toArgument
 import eu.vendeli.rethis.types.core.unwrapList
 import eu.vendeli.rethis.types.options.*
 import eu.vendeli.rethis.utils.response.unwrapRespIndMap
-import eu.vendeli.rethis.utils.writeArg
+import eu.vendeli.rethis.utils.writeArgument
+import eu.vendeli.rethis.utils.execute
 
 suspend fun ReThis.xAck(
     key: String,
     group: String,
     vararg id: String,
 ) = execute<Long>(
-    listOf("XACK".toArg(), key.toArg(), group.toArg(), *id.toArg()),
+    listOf("XACK".toArg(), key.toArg(), group.toArg(), *id.toArgument()),
 )
 
 suspend fun ReThis.xAdd(
@@ -27,7 +29,7 @@ suspend fun ReThis.xAdd(
     mutableListOf(
         "XADD".toArg(),
         key.toArg(),
-    ).writeArg(
+    ).writeArgument(
         nomkstream,
         trim,
         id,
@@ -51,7 +53,7 @@ suspend fun ReThis.xAutoClaim(
         consumer.toArg(),
         minIdleTime.toArg(),
         start.toArg(),
-    ).writeArg(
+    ).writeArgument(
         count?.let { "COUNT" to it },
         justID.takeIf { it }?.let { "JUSTID" },
     ),
@@ -76,8 +78,8 @@ suspend fun ReThis.xClaim(
         group.toArg(),
         consumer.toArg(),
         minIdleTime.toArg(),
-        *id.toArg(),
-    ).writeArg(
+        *id.toArgument(),
+    ).writeArgument(
         idle,
         time,
         retryCount,
@@ -88,7 +90,7 @@ suspend fun ReThis.xClaim(
 ).unwrapList<RType>()
 
 suspend fun ReThis.xDel(key: String, vararg id: String) = execute<Long>(
-    listOf("XDEL".toArg(), key.toArg(), *id.toArg()),
+    listOf("XDEL".toArg(), key.toArg(), *id.toArgument()),
 )
 
 suspend fun ReThis.xGroupCreate(
@@ -103,7 +105,7 @@ suspend fun ReThis.xGroupCreate(
         "CREATE".toArg(),
         key.toArg(),
         group.toArg(),
-    ).writeArg(
+    ).writeArgument(
         id,
         mkstream.takeIf { it }?.let { "MKSTREAM" },
         entriesRead?.let { "ENTRIESREAD" to it },
@@ -133,7 +135,7 @@ suspend fun ReThis.xGroupSetId(
         "SETID".toArg(),
         key.toArg(),
         group.toArg(),
-    ).writeArg(
+    ).writeArgument(
         id,
         "ENTRIESREAD" to entriesRead,
     ),
@@ -156,7 +158,7 @@ suspend fun ReThis.xInfoStream(
         "XINFO".toArg(),
         "STREAM".toArg(),
         key.toArg(),
-    ).writeArg(
+    ).writeArgument(
         full.takeIf { it }?.let { "FULL" },
         limit,
     ),
@@ -165,11 +167,11 @@ suspend fun ReThis.xInfoStream(
 suspend fun ReThis.xLen(key: String): Long? = execute<Long>(listOf("XLEN".toArg(), key.toArg()))
 
 suspend fun ReThis.xPending(key: String, group: String, option: XPendingOption? = null): List<RType> = execute(
-    mutableListOf("XPENDING".toArg(), key.toArg(), group.toArg()).writeArg(option),
+    mutableListOf("XPENDING".toArg(), key.toArg(), group.toArg()).writeArgument(option),
 ).unwrapList<RType>()
 
 suspend fun ReThis.xRange(key: String, start: String, end: String, limit: XOption.Limit? = null): List<RType> = execute(
-    mutableListOf("XRANGE".toArg(), key.toArg(), start.toArg(), end.toArg()).writeArg(limit),
+    mutableListOf("XRANGE".toArg(), key.toArg(), start.toArg(), end.toArg()).writeArgument(limit),
 ).unwrapList<RType>()
 
 suspend fun ReThis.xRead(
@@ -180,7 +182,7 @@ suspend fun ReThis.xRead(
 ): Map<String, RType?>? = execute(
     mutableListOf<Argument>(
         "XREAD".toArg(),
-    ).writeArg(
+    ).writeArgument(
         count,
         blockMillis?.let { "BLOCK" to it },
         "STREAMS",
@@ -203,7 +205,7 @@ suspend fun ReThis.xReadGroup(
         "GROUP".toArg(),
         group.toArg(),
         consumer.toArg(),
-    ).writeArg(
+    ).writeArgument(
         count,
         blockMillis?.let { "BLOCK" to it },
         noack.takeIf { it }?.let { "NOACK" },
@@ -219,7 +221,7 @@ suspend fun ReThis.xRevRange(
     start: String,
     limit: XOption.Limit? = null,
 ): List<RType> = execute(
-    mutableListOf("XREVRANGE".toArg(), key.toArg(), end.toArg(), start.toArg()).writeArg(limit),
+    mutableListOf("XREVRANGE".toArg(), key.toArg(), end.toArg(), start.toArg()).writeArgument(limit),
 ).unwrapList<RType>()
 
 suspend fun ReThis.xSetId(
@@ -232,7 +234,7 @@ suspend fun ReThis.xSetId(
         "XSETID".toArg(),
         key.toArg(),
         lastId.toArg(),
-    ).writeArg(
+    ).writeArgument(
         entriesAdded?.let { "ENTRIESADDED" to it },
         maxDeletedId?.let { "MAXDELETEDID" to it },
     ),
@@ -248,8 +250,8 @@ suspend fun ReThis.xTrim(
     mutableListOf(
         "XTRIM".toArg(),
         key.toArg(),
-    ).writeArg(
-        trimmingStrategy.toArg(),
+    ).writeArgument(
+        trimmingStrategy.toArgument(),
         exactement,
         threshold,
         trim,

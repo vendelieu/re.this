@@ -8,9 +8,7 @@ import eu.vendeli.rethis.types.options.GetExOption
 import eu.vendeli.rethis.types.options.LcsMode
 import eu.vendeli.rethis.types.options.MinMatchLen
 import eu.vendeli.rethis.types.options.SetOption
-import eu.vendeli.rethis.utils.cast
-import eu.vendeli.rethis.utils.safeCast
-import eu.vendeli.rethis.utils.writeArg
+import eu.vendeli.rethis.utils.*
 
 suspend fun ReThis.append(key: String, value: String): Long = execute<Long>(
     listOf(
@@ -56,7 +54,7 @@ suspend fun ReThis.getEx(
     mutableListOf(
         "GETEX".toArg(),
         key.toArg(),
-    ).writeArg(option),
+    ).writeArgument(option),
 )
 
 suspend fun ReThis.getRange(key: String, range: LongRange): String? = execute<String>(
@@ -117,7 +115,7 @@ suspend fun ReThis.lcs(
         "LCS".toArg(),
         key1.toArg(),
         key2.toArg(),
-    ).writeArg(mode),
+    ).writeArgument(mode),
 ) ?: 0
 
 suspend fun ReThis.lcs(
@@ -133,9 +131,9 @@ suspend fun ReThis.lcs(
             key1.toArg(),
             key2.toArg(),
         ).apply {
-            writeArg(mode)
-            writeArg(len)
-            if (withMatchLen) writeArg("WITHMATCHLEN")
+            writeArgument(mode)
+            writeArgument(len)
+            if (withMatchLen) writeArgument("WITHMATCHLEN")
         },
     )
 
@@ -178,10 +176,10 @@ private fun processMatches(matchesArr: List<Any>): List<List<LcsResult.LcsMatch>
         }
     }
 
-suspend fun ReThis.mget(vararg key: String): List<String?> = execute(
+suspend fun ReThis.mGet(vararg key: String): List<String?> = execute(
     listOf(
         "MGET".toArg(),
-        *key.toArg(),
+        *key.toArgument(),
     ),
     isCollectionResponse = true,
 ) ?: emptyList()
@@ -195,7 +193,7 @@ suspend fun ReThis.mset(vararg kvPair: Pair<String, String>): String? = execute<
 suspend fun ReThis.msetNx(vararg kvPair: Pair<String, String>): Boolean = execute<Long>(
     mutableListOf(
         "MSETNX".toArg(),
-    ).apply { kvPair.forEach { writeArg(it) } },
+    ).apply { kvPair.forEach { writeArgument(it) } },
 ) == 1L
 
 suspend fun ReThis.set(
@@ -207,7 +205,7 @@ suspend fun ReThis.set(
         "SET".toArg(),
         key.toArg(),
         value.toArg(),
-    ).apply { options.forEach { writeArg(it) } },
+    ).apply { options.forEach { writeArgument(it) } },
 )
 
 suspend fun ReThis.setRange(key: String, offset: Long, value: String): Long = execute<Long>(

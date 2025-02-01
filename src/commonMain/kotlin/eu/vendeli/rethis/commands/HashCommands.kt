@@ -5,21 +5,23 @@ import eu.vendeli.rethis.processingException
 import eu.vendeli.rethis.types.common.ScanResult
 import eu.vendeli.rethis.types.core.RArray
 import eu.vendeli.rethis.types.core.toArg
+import eu.vendeli.rethis.types.core.toArgument
 import eu.vendeli.rethis.types.core.unwrap
 import eu.vendeli.rethis.types.core.unwrapList
 import eu.vendeli.rethis.types.options.HScanOption
 import eu.vendeli.rethis.types.options.UpdateStrategyOption
 import eu.vendeli.rethis.utils.response.unwrapRespIndMap
 import eu.vendeli.rethis.utils.safeCast
-import eu.vendeli.rethis.utils.writeArg
+import eu.vendeli.rethis.utils.writeArgument
 import kotlinx.datetime.Instant
 import kotlin.time.Duration
+import eu.vendeli.rethis.utils.execute
 
 suspend fun ReThis.hDel(key: String, vararg field: String): Long = execute<Long>(
     listOf(
         "HDEL".toArg(),
         key.toArg(),
-        *field.toArg(),
+        *field.toArgument(),
     ),
 ) ?: 0
 
@@ -42,10 +44,10 @@ suspend fun ReThis.hExpire(
         key.toArg(),
         seconds.inWholeSeconds.toArg(),
     ).apply {
-        writeArg(updateType)
-        writeArg("FIELDS")
-        writeArg(field.size)
-        writeArg(field)
+        writeArgument(updateType)
+        writeArgument("FIELDS")
+        writeArgument(field.size)
+        writeArgument(field)
     },
 ).unwrapList()
 
@@ -60,10 +62,10 @@ suspend fun ReThis.hExpireAt(
         key.toArg(),
         instant.epochSeconds.toArg(),
     ).apply {
-        writeArg(updateType)
-        writeArg("FIELDS")
-        writeArg(field.size)
-        writeArg(field)
+        writeArgument(updateType)
+        writeArgument("FIELDS")
+        writeArgument(field.size)
+        writeArgument(field)
     },
 ).unwrapList()
 
@@ -75,9 +77,9 @@ suspend fun ReThis.hExpireTime(
         "HEXPIRETIME".toArg(),
         key.toArg(),
     ).apply {
-        writeArg("FIELDS")
-        writeArg(field.size)
-        writeArg(field)
+        writeArgument("FIELDS")
+        writeArgument(field.size)
+        writeArgument(field)
     },
 ).unwrapList()
 
@@ -133,7 +135,7 @@ suspend fun ReThis.hMGet(key: String, vararg field: String): List<String?> = exe
     listOf(
         "HMGET".toArg(),
         key.toArg(),
-        *field.toArg(),
+        *field.toArgument(),
     ),
     isCollectionResponse = true,
 ) ?: emptyList()
@@ -142,7 +144,7 @@ suspend fun ReThis.hMSet(key: String, vararg fieldValue: Pair<String, String>): 
     mutableListOf(
         "HMSET".toArg(),
         key.toArg(),
-    ).writeArg(fieldValue),
+    ).writeArgument(fieldValue),
 )
 
 suspend fun ReThis.hPersist(
@@ -153,9 +155,9 @@ suspend fun ReThis.hPersist(
         "HPERSIST".toArg(),
         key.toArg(),
     ).apply {
-        writeArg("FIELDS")
-        writeArg(field.size)
-        writeArg(field)
+        writeArgument("FIELDS")
+        writeArgument(field.size)
+        writeArgument(field)
     },
     isCollectionResponse = true,
 ) ?: emptyList()
@@ -171,10 +173,10 @@ suspend fun ReThis.hPExpire(
         key.toArg(),
         milliseconds.inWholeMilliseconds.toArg(),
     ).apply {
-        writeArg(updateType)
-        writeArg("FIELDS")
-        writeArg(field.size)
-        writeArg(field)
+        writeArgument(updateType)
+        writeArgument("FIELDS")
+        writeArgument(field.size)
+        writeArgument(field)
     },
     isCollectionResponse = true,
 ) ?: emptyList()
@@ -190,10 +192,10 @@ suspend fun ReThis.hPExpireAt(
         key.toArg(),
         instant.toEpochMilliseconds().toArg(),
     ).apply {
-        writeArg(updateType)
-        writeArg("FIELDS")
-        writeArg(field.size)
-        writeArg(field)
+        writeArgument(updateType)
+        writeArgument("FIELDS")
+        writeArgument(field.size)
+        writeArgument(field)
     },
     isCollectionResponse = true,
 ) ?: emptyList()
@@ -206,9 +208,9 @@ suspend fun ReThis.hPExpireTime(
         "HPEXPIRETIME".toArg(),
         key.toArg(),
     ).apply {
-        writeArg("FIELDS")
-        writeArg(field.size)
-        writeArg(field)
+        writeArgument("FIELDS")
+        writeArgument(field.size)
+        writeArgument(field)
     },
     isCollectionResponse = true,
 ) ?: emptyList()
@@ -221,9 +223,9 @@ suspend fun ReThis.hPTTL(
         "HPTTL".toArg(),
         key.toArg(),
     ).apply {
-        writeArg("FIELDS")
-        writeArg(field.size)
-        writeArg(field)
+        writeArgument("FIELDS")
+        writeArgument(field.size)
+        writeArgument(field)
     },
     isCollectionResponse = true,
 ) ?: emptyList()
@@ -247,7 +249,7 @@ suspend fun ReThis.hRandField(
         key.toArg(),
         count.toArg(),
     ).apply {
-        if (withValues) writeArg("WITHVALUES")
+        if (withValues) writeArgument("WITHVALUES")
     },
 )
 
@@ -256,7 +258,7 @@ suspend fun ReThis.hScan(
     cursor: Long,
     vararg option: HScanOption,
 ): ScanResult<Pair<String, String>> {
-    val response = execute(mutableListOf("HSCAN".toArg(), key.toArg(), cursor.toArg()).writeArg(option))
+    val response = execute(mutableListOf("HSCAN".toArg(), key.toArg(), cursor.toArg()).writeArgument(option))
 
     val arrResponse = response.safeCast<RArray>()?.value ?: processingException { "Wrong response type" }
     val newCursor = arrResponse[0].unwrap<String>() ?: processingException { "Missing cursor in response" }
@@ -271,14 +273,14 @@ suspend fun ReThis.hSet(key: String, vararg fieldValue: Pair<String, String>): L
     mutableListOf(
         "HSET".toArg(),
         key.toArg(),
-    ).writeArg(fieldValue),
+    ).writeArgument(fieldValue),
 )
 
 suspend fun ReThis.hSetNx(key: String, pair: Pair<String, String>): Long? = execute<Long>(
     mutableListOf(
         "HSETNX".toArg(),
         key.toArg(),
-    ).writeArg(pair),
+    ).writeArgument(pair),
 )
 
 suspend fun ReThis.hStrlen(key: String, field: String): Long = execute<Long>(
@@ -297,9 +299,9 @@ suspend fun ReThis.hTTL(
         "HTTL".toArg(),
         key.toArg(),
     ).apply {
-        writeArg("FIELDS")
-        writeArg(field.size)
-        writeArg(field)
+        writeArgument("FIELDS")
+        writeArgument(field.size)
+        writeArgument(field)
     },
     isCollectionResponse = true,
 ) ?: emptyList()

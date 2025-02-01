@@ -7,14 +7,15 @@ import eu.vendeli.rethis.types.core.*
 import eu.vendeli.rethis.types.core.unwrap
 import eu.vendeli.rethis.types.options.SScanOption
 import eu.vendeli.rethis.utils.safeCast
-import eu.vendeli.rethis.utils.writeArg
+import eu.vendeli.rethis.utils.writeArgument
 import kotlin.Long
+import eu.vendeli.rethis.utils.execute
 
 suspend fun ReThis.sAdd(key: String, vararg members: String): Long = execute<Long>(
     listOf(
         "SADD".toArg(),
         key.toArg(),
-        *members.toArg(),
+        *members.toArgument(),
     ),
 ) ?: 0
 
@@ -28,7 +29,7 @@ suspend fun ReThis.sCard(key: String): Long = execute<Long>(
 suspend fun ReThis.sDiff(vararg keys: String): Set<String> = execute<String>(
     listOf(
         "SDIFF".toArg(),
-        *keys.toArg(),
+        *keys.toArgument(),
     ),
     isCollectionResponse = true,
 )?.toSet() ?: emptySet()
@@ -37,14 +38,14 @@ suspend fun ReThis.sDiffStore(destination: String, vararg keys: String): Long = 
     listOf(
         "SDIFFSTORE".toArg(),
         destination.toArg(),
-        *keys.toArg(),
+        *keys.toArgument(),
     ),
 ) ?: 0
 
 suspend fun ReThis.sInter(vararg keys: String): Set<String> = execute<String>(
     listOf(
         "SINTER".toArg(),
-        *keys.toArg(),
+        *keys.toArgument(),
     ),
     isCollectionResponse = true,
 )?.toSet() ?: emptySet()
@@ -53,7 +54,7 @@ suspend fun ReThis.sInterStore(destination: String, vararg keys: String): Long =
     listOf(
         "SINTERSTORE".toArg(),
         destination.toArg(),
-        *keys.toArg(),
+        *keys.toArgument(),
     ),
 ) ?: 0
 
@@ -114,7 +115,7 @@ suspend fun ReThis.sRem(key: String, vararg members: String): Long = execute<Lon
     listOf(
         "SREM".toArg(),
         key.toArg(),
-        *members.toArg(),
+        *members.toArgument(),
     ),
 ) ?: 0
 
@@ -123,7 +124,7 @@ suspend fun ReThis.sScan(
     cursor: Long,
     vararg option: SScanOption,
 ): ScanResult<String> {
-    val response = execute(mutableListOf("SSCAN".toArg(), key.toArg(), cursor.toArg()).writeArg(option))
+    val response = execute(mutableListOf("SSCAN".toArg(), key.toArg(), cursor.toArg()).writeArgument(option))
 
     val arrResponse = response.safeCast<RArray>()?.value ?: processingException { "Wrong response type" }
     val newCursor = arrResponse[0].unwrap<String>() ?: processingException { "Missing cursor in response" }
@@ -137,7 +138,7 @@ suspend fun ReThis.sScan(
 suspend fun ReThis.sUnion(vararg keys: String): Set<String> = execute<String>(
     listOf(
         "SUNION".toArg(),
-        *keys.toArg(),
+        *keys.toArgument(),
     ),
     isCollectionResponse = true,
 )?.toSet() ?: emptySet()
@@ -146,7 +147,7 @@ suspend fun ReThis.sUnionStore(destination: String, vararg keys: String): Long =
     listOf(
         "SUNIONSTORE".toArg(),
         destination.toArg(),
-        *keys.toArg(),
+        *keys.toArgument(),
     ),
 ) ?: 0
 
@@ -154,9 +155,9 @@ suspend fun ReThis.sInterCard(vararg keys: String, limit: Long? = null): Long = 
     mutableListOf(
         "SINTERCARD".toArg(),
         keys.size.toArg(),
-        *keys.toArg(),
+        *keys.toArgument(),
     ).apply {
-        limit?.let { writeArg("LIMIT" to it) }
+        limit?.let { writeArgument("LIMIT" to it) }
     },
 ) ?: 0
 
@@ -164,7 +165,7 @@ suspend fun ReThis.sMisMember(key: String, vararg members: String): List<Boolean
     listOf(
         "SMISMEMBER".toArg(),
         key.toArg(),
-        *members.toArg(),
+        *members.toArgument(),
     ),
     isCollectionResponse = true,
 )?.map { it == 1L } ?: emptyList()

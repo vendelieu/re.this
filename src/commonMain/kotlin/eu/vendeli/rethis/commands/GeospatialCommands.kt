@@ -8,9 +8,10 @@ import eu.vendeli.rethis.types.options.GeoAddOption
 import eu.vendeli.rethis.types.options.Shape
 import eu.vendeli.rethis.utils.cast
 import eu.vendeli.rethis.utils.safeCast
-import eu.vendeli.rethis.utils.writeArg
+import eu.vendeli.rethis.utils.writeArgument
 import kotlinx.coroutines.delay
 import kotlin.Long
+import eu.vendeli.rethis.utils.execute
 
 suspend fun ReThis.geoAdd(
     key: String,
@@ -22,9 +23,9 @@ suspend fun ReThis.geoAdd(
         "GEOADD".toArg(),
         key.toArg(),
     ).apply {
-        writeArg(upsertMode)
-        if (ch) writeArg("CH")
-        member.forEach { writeArg(it) }
+        writeArgument(upsertMode)
+        if (ch) writeArgument("CH")
+        member.forEach { writeArgument(it) }
     },
 ) ?: 0
 
@@ -35,14 +36,14 @@ suspend fun ReThis.geoDist(key: String, member1: String, member2: String, unit: 
             key.toArg(),
             member1.toArg(),
             member2.toArg(),
-        ).writeArg(unit),
+        ).writeArgument(unit),
     ).unwrap<String?>()?.toDouble()
 
 suspend fun ReThis.geoHash(key: String, vararg members: String): List<String> = execute<String>(
     listOf(
         "GEOHASH".toArg(),
         key.toArg(),
-        *members.toArg(),
+        *members.toArgument(),
     ),
     isCollectionResponse = true,
 ) ?: emptyList()
@@ -51,7 +52,7 @@ suspend fun ReThis.geoPos(key: String, vararg members: String): List<List<GeoPos
     listOf(
         "GEOPOS".toArg(),
         key.toArg(),
-        *members.toArg(),
+        *members.toArgument(),
     ),
 ).unwrapList<RType>().map { entry ->
     entry.safeCast<RArray>()?.value?.chunked(2) {
@@ -74,14 +75,14 @@ suspend fun ReThis.geoSearch(
         "GEOSEARCH".toArg(),
         key.toArg(),
     ).apply {
-        writeArg(center)
-        writeArg(shape)
-        writeArg(sort)
-        count?.let { writeArg("COUNT" to it) }
-        if (any) writeArg("ANY")
-        if (withCoord) writeArg("WITHCOORD")
-        if (withDist) writeArg("WITHDIST")
-        if (withHash) writeArg("WITHHASH")
+        writeArgument(center)
+        writeArgument(shape)
+        writeArgument(sort)
+        count?.let { writeArgument("COUNT" to it) }
+        if (any) writeArgument("ANY")
+        if (withCoord) writeArgument("WITHCOORD")
+        if (withDist) writeArgument("WITHDIST")
+        if (withHash) writeArgument("WITHHASH")
     },
 ).unwrapList<RType>().takeIf { it.firstOrNull() is RArray }?.map {
     val el = it.cast<RArray>()
@@ -138,11 +139,11 @@ suspend fun ReThis.geoSearchStore(
         destination.toArg(),
         source.toArg(),
     ).apply {
-        writeArg(center)
-        writeArg(shape)
-        writeArg(sort)
-        count?.let { writeArg("COUNT" to it) }
-        if (any) writeArg("ANY")
-        if (storeDist) writeArg("STOREDIST")
+        writeArgument(center)
+        writeArgument(shape)
+        writeArgument(sort)
+        count?.let { writeArgument("COUNT" to it) }
+        if (any) writeArgument("ANY")
+        if (storeDist) writeArgument("STOREDIST")
     },
 ) ?: 0
