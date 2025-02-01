@@ -6,7 +6,7 @@ import eu.vendeli.rethis.commands.*
 import eu.vendeli.rethis.types.core.Int64
 import eu.vendeli.rethis.types.core.PlainString
 import eu.vendeli.rethis.types.core.RArray
-import eu.vendeli.rethis.types.core.toArg
+import eu.vendeli.rethis.types.core.toArgument
 import eu.vendeli.rethis.types.coroutine.CoLocalConn
 import eu.vendeli.rethis.utils.bufferValues
 import eu.vendeli.rethis.utils.response.readResponseWrapped
@@ -22,16 +22,16 @@ class TransactionCommandTest : ReThisTestCtx() {
     suspend fun `test EXEC command with multiple queued commands`() {
         val conn = client.connectionPool.acquire()
 
-        conn.sendRequest(listOf("MULTI".toArg()), Charsets.UTF_8)
+        conn.sendRequest(listOf("MULTI".toArgument()), Charsets.UTF_8)
         conn.parseResponse().readResponseWrapped(Charsets.UTF_8) shouldBe PlainString("OK")
 
-        conn.sendRequest(bufferValues(listOf("SET".toArg(), "test3".toArg(), "testv3".toArg()), Charsets.UTF_8))
+        conn.sendRequest(bufferValues(listOf("SET".toArgument(), "test3".toArgument(), "testv3".toArgument()), Charsets.UTF_8))
         conn.parseResponse().readResponseWrapped(Charsets.UTF_8) shouldBe PlainString("QUEUED")
 
-        conn.sendRequest(bufferValues(listOf("SET".toArg(), "test4".toArg(), "testv4".toArg()), Charsets.UTF_8))
+        conn.sendRequest(bufferValues(listOf("SET".toArgument(), "test4".toArgument(), "testv4".toArgument()), Charsets.UTF_8))
         conn.parseResponse().readResponseWrapped(Charsets.UTF_8) shouldBe PlainString("QUEUED")
 
-        conn.sendRequest(bufferValues(listOf("EXEC".toArg()), Charsets.UTF_8))
+        conn.sendRequest(bufferValues(listOf("EXEC".toArgument()), Charsets.UTF_8))
         conn.parseResponse().readResponseWrapped(Charsets.UTF_8) shouldBe RArray(
             listOf(
                 PlainString("OK"),
@@ -59,7 +59,7 @@ class TransactionCommandTest : ReThisTestCtx() {
                 client.multi()
                 client.set("testKey1", "testVal1")
                 client.set("testKey2", "testVal2")
-                conn.output.writeBuffer(bufferValues(listOf("get".toArg()), Charsets.UTF_8))
+                conn.output.writeBuffer(bufferValues(listOf("get".toArgument()), Charsets.UTF_8))
                 conn.output.flush()
                 shouldThrow<ReThisException> { client.exec() }.message shouldBe
                     "ERR wrong number of arguments for 'get' command"

@@ -2,7 +2,7 @@ package eu.vendeli.rethis.types.options
 
 import eu.vendeli.rethis.types.core.Argument
 import eu.vendeli.rethis.types.core.VaryingArgument
-import eu.vendeli.rethis.types.core.toArg
+import eu.vendeli.rethis.types.core.toArgument
 
 sealed class BitcountOption {
     class Range(
@@ -10,7 +10,7 @@ sealed class BitcountOption {
         end: Int,
     ) : BitcountOption(),
         VaryingArgument {
-        override val data: List<Argument> = listOf(start.toArg(), end.toArg())
+        override val data: List<Argument> = listOf(start.toArgument(), end.toArgument())
     }
 }
 

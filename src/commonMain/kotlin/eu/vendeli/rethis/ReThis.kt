@@ -17,7 +17,8 @@ import eu.vendeli.rethis.utils.writeRedisValue
 import io.ktor.util.logging.*
 import kotlinx.coroutines.*
 import kotlinx.io.Buffer
-import kotlin.jvm.JvmName
+import kotlinx.serialization.json.Json
+import kotlin.reflect.KClass
 
 @ReThisDSL
 class ReThis(
@@ -132,7 +133,7 @@ class ReThis(
         return connectionPool.use { conn ->
             logger.debug("Started transaction")
             val multiRequest = conn
-                .sendRequest(listOf("MULTI".toArg()), cfg.charset)
+                .sendRequest(listOf("MULTI".toArgument()), cfg.charset)
                 .parseResponse()
             if (!multiRequest.readResponseWrapped(cfg.charset).isOk())
                 throw InvalidStateException("Failed to start transaction")
@@ -144,7 +145,7 @@ class ReThis(
                 }.join()
             e?.also {
                 val discardRequest = conn
-                    .sendRequest(listOf("DISCARD".toArg()), cfg.charset)
+                    .sendRequest(listOf("DISCARD".toArgument()), cfg.charset)
                     .parseResponse()
                 if (!discardRequest.readResponseWrapped(cfg.charset).isOk())
                     throw InvalidStateException("Failed to cancel transaction")
@@ -154,7 +155,7 @@ class ReThis(
 
             logger.debug("Transaction completed")
             conn
-                .sendRequest(listOf("EXEC".toArg()), cfg.charset)
+                .sendRequest(listOf("EXEC".toArgument()), cfg.charset)
                 .parseResponse()
                 .readResponseWrapped(cfg.charset)
                 .unwrapList<RType>()
@@ -167,28 +168,35 @@ class ReThis(
     @ReThisInternal
     suspend fun execute(
         payload: List<Argument>,
-        rawResponse: Boolean = false,
+        rawMarker: Unit? = null,
     ): RType = performRequest(payload)
-        ?.readResponseWrapped(cfg.charset, rawResponse) ?: RType.Null
+        ?.readResponseWrapped(charset = cfg.charset, rawOnly = rawMarker != null) ?: RType.Null
 
-    @JvmName("executeSimple")
-    internal suspend inline fun <reified T : Any> execute(
+    @ReThisInternal
+    suspend fun <T : Any> execute(
         payload: List<Argument>,
-    ): T? = performRequest(payload)
-        ?.readSimpleResponseTyped(T::class, cfg.charset)
+        responseType: KClass<T>,
+        jsonModule: Json? = null,
+    ) = performRequest(payload)
+        ?.readSimpleResponseTyped(responseType, cfg.charset, jsonModule)
 
-    @JvmName("executeList")
-    internal suspend inline fun <reified T : Any> execute(
+    @ReThisInternal
+    suspend fun <T : Any> execute(
         payload: List<Argument>,
-        isCollectionResponse: Boolean = false,
-    ): List<T>? = performRequest(payload)
-        ?.readListResponseTyped(T::class, cfg.charset)
+        responseType: KClass<T>,
+        isCollectionResponse: Boolean = true,
+        jsonModule: Json? = null,
+    ) = performRequest(payload)
+        ?.readListResponseTyped(responseType, cfg.charset, jsonModule)
 
-    @JvmName("executeMap")
-    internal suspend inline fun <reified K : Any, reified V : Any> execute(
+    @ReThisInternal
+    suspend fun <K : Any, V : Any> execute(
         payload: List<Argument>,
-    ): Map<K, V?>? = performRequest(payload)
-        ?.readMapResponseTyped(K::class, V::class, cfg.charset)
+        keyType: KClass<K>,
+        valueType: KClass<V>,
+        jsonModule: Json? = null,
+    ) = performRequest(payload)
+        ?.readMapResponseTyped(keyType, valueType, cfg.charset, jsonModule)
 
     private suspend inline fun performRequest(
         payload: List<Argument>,

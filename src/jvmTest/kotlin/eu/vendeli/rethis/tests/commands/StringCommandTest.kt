@@ -13,17 +13,17 @@ class StringCommandTest : ReThisTestCtx() {
     suspend fun `test MGET command`() {
         client.set("testKey1", "testValue1")
         client.set("testKey2", "testValue2")
-        client.mget("testKey1", "testKey2") shouldBe listOf("testValue1", "testValue2")
+        client.mGet("testKey1", "testKey2") shouldBe listOf("testValue1", "testValue2")
     }
 
     @Test
     suspend fun `test MSET command`() {
-        client.mset("testKey3" to "testValue3", "testKey4" to "testValue4") shouldBe "OK"
+        client.mSet("testKey3" to "testValue3", "testKey4" to "testValue4") shouldBe "OK"
     }
 
     @Test
     suspend fun `test MSETNX command`() {
-        client.msetNx("testKey5" to "testValue5", "testKey6" to "testValue6").shouldBeTrue()
+        client.mSetNx("testKey5" to "testValue5", "testKey6" to "testValue6").shouldBeTrue()
     }
 
     @Test

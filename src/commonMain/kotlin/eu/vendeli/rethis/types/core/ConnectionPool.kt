@@ -55,17 +55,17 @@ internal class ConnectionPool(
 
         if (client.cfg.auth != null) client.cfg.auth?.run {
             logger.trace { "Authenticating to ${client.address}." }
-            reqBuffer.writeRedisValue(listOfNotNull("AUTH".toArg(), username?.toArg(), password.toArg()))
+            reqBuffer.writeRedisValue(listOfNotNull("AUTH".toArgument(), username?.toArgument(), password.toArgument()))
             requests++
         }
 
         client.cfg.db?.takeIf { it > 0 }?.let {
             logger.trace { "Selecting database $it to ${client.address}." }
-            reqBuffer.writeRedisValue(listOf("SELECT".toArg(), it.toArg()))
+            reqBuffer.writeRedisValue(listOf("SELECT".toArgument(), it.toArgument()))
             requests++
         }
 
-        reqBuffer.writeRedisValue(listOf("HELLO".toArg(), client.protocol.literal.toArg()))
+        reqBuffer.writeRedisValue(listOf("HELLO".toArgument(), client.protocol.literal.toArgument()))
         requests++
 
         logger.trace { "Sending connection establishment requests ($requests)" }

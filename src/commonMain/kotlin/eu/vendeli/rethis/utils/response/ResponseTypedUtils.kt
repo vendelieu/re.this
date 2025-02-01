@@ -10,14 +10,34 @@ import eu.vendeli.rethis.utils.Const.TRUE_BYTE
 import eu.vendeli.rethis.utils.safeCast
 import io.ktor.utils.io.charsets.*
 import io.ktor.utils.io.core.*
+import kotlinx.io.Source
+import kotlinx.io.readByteArray
 import kotlinx.io.readDecimalLong
 import kotlinx.io.readString
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.InternalSerializationApi
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.io.decodeFromSource
+import kotlinx.serialization.serializer
 import kotlin.reflect.KClass
+
+@Suppress("NOTHING_TO_INLINE")
+@OptIn(ExperimentalSerializationApi::class, InternalSerializationApi::class)
+private inline fun <T : Any> Source.decodeFromSource(
+    tClass: KClass<T>,
+    charset: Charset,
+    jsonModule: Json? = null,
+) = when {
+    tClass == String::class -> readText(charset)
+    jsonModule != null -> jsonModule.decodeFromSource(tClass.serializer(), this)
+    else -> readText(charset)
+}.safeCast(tClass)
 
 @Throws(RedisError::class, ResponseParsingException::class)
 internal fun <T : Any> ArrayDeque<ResponseToken>.readSimpleResponseTyped(
     tClass: KClass<T>,
     charset: Charset,
+    jsonModule: Json? = null,
 ): T? {
     if (isEmpty()) return null
     val typeToken = validatedResponseType()
@@ -26,12 +46,12 @@ internal fun <T : Any> ArrayDeque<ResponseToken>.readSimpleResponseTyped(
     val data = validatedSimpleResponse(typeToken)
 
     return when (typeToken.code) {
-        RespCode.SIMPLE_STRING -> data.readText(charset)
+        RespCode.SIMPLE_STRING -> data.decodeFromSource(tClass, charset, jsonModule)
         RespCode.SIMPLE_ERROR -> throw RedisError(data.readText(charset))
         RespCode.INTEGER -> data.readDecimalLong()
         RespCode.BULK -> {
             if (size < 0) return null
-            data.readText(charset)
+            data.decodeFromSource(tClass, charset, jsonModule)
         }
 
         RespCode.BOOLEAN -> when (val line = data.readByte()) {
@@ -55,10 +75,15 @@ internal fun <T : Any> ArrayDeque<ResponseToken>.readSimpleResponseTyped(
 
         RespCode.VERBATIM_STRING -> {
             if (size < 0) return null
-            val content = data.readText(charset)
-            val encoding = content.subSequence(0, 3)
-            val data = content.subSequence(4, size.toInt())
-            "$encoding:$data"
+            val encodingBytes = data.readByteArray(3)
+            return if (jsonModule == null) {
+                val encoding = encodingBytes.decodeToString()
+                val content = data.readText(charset)
+
+                "$encoding:$content"
+            } else {
+                data.decodeFromSource(tClass, charset, jsonModule)
+            }?.safeCast(tClass)
         }
 
         else -> null
@@ -68,6 +93,7 @@ internal fun <T : Any> ArrayDeque<ResponseToken>.readSimpleResponseTyped(
 internal fun <T : Any> ArrayDeque<ResponseToken>.readListResponseTyped(
     tClass: KClass<T>,
     charset: Charset,
+    jsonModule: Json? = null,
 ): List<T>? {
     if (isEmpty()) return null
     val typeToken = validatedResponseType()
@@ -77,7 +103,7 @@ internal fun <T : Any> ArrayDeque<ResponseToken>.readListResponseTyped(
         RespCode.ARRAY, RespCode.SET, RespCode.PUSH -> {
             if (size < 0) return null
             List(size) {
-                readSimpleResponseTyped<T>(tClass, charset)
+                readSimpleResponseTyped<T>(tClass, charset, jsonModule)
             }
         }
 
@@ -89,6 +115,7 @@ internal fun <K : Any, V : Any> ArrayDeque<ResponseToken>.readMapResponseTyped(
     kClass: KClass<K>,
     vClass: KClass<V>,
     charset: Charset,
+    jsonModule: Json? = null,
 ): Map<K, V>? {
     if (isEmpty()) return null
     val typeToken = validatedResponseType()
@@ -99,9 +126,9 @@ internal fun <K : Any, V : Any> ArrayDeque<ResponseToken>.readMapResponseTyped(
             if (size < 0) return null
             buildMap<K, V?>(size) {
                 repeat(size) {
-                    val keyData = readSimpleResponseTyped(kClass, charset)
+                    val keyData = readSimpleResponseTyped(kClass, charset, jsonModule)
                         ?: throw ResponseParsingException(message = "Invalid map key")
-                    val valueType = readSimpleResponseTyped(vClass, charset)
+                    val valueType = readSimpleResponseTyped(vClass, charset, jsonModule)
                     put(keyData, valueType)
                 }
             }

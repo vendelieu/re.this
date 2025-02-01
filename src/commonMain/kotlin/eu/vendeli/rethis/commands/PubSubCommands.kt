@@ -28,31 +28,31 @@ suspend fun ReThis.pSubscribe(
 
 suspend fun ReThis.publish(channel: String, message: String): Long = execute<Long>(
     listOf(
-        "PUBLISH".toArg(),
-        channel.toArg(),
-        message.toArg(),
+        "PUBLISH".toArgument(),
+        channel.toArgument(),
+        message.toArgument(),
     ),
 ) ?: 0
 
 suspend fun ReThis.pubSubChannels(pattern: String? = null): List<String> = execute(
     mutableListOf(
-        "PUBSUB".toArg(),
-        "CHANNELS".toArg(),
+        "PUBSUB".toArgument(),
+        "CHANNELS".toArgument(),
     ).writeArgument(pattern),
     isCollectionResponse = true,
 ) ?: emptyList()
 
 suspend fun ReThis.pubSubNumPat(): Long = execute<Long>(
     listOf(
-        "PUBSUB".toArg(),
-        "NUMPAT".toArg(),
+        "PUBSUB".toArgument(),
+        "NUMPAT".toArgument(),
     ),
 ) ?: 0
 
 suspend fun ReThis.pubSubNumSub(vararg channel: String): List<PubSubNumEntry> = execute(
     listOf(
-        "PUBSUB".toArg(),
-        "NUMSUB".toArg(),
+        "PUBSUB".toArgument(),
+        "NUMSUB".toArgument(),
         *channel.toArgument(),
     ),
 ).unwrapList<RType>().chunked(2) {
@@ -64,16 +64,16 @@ suspend fun ReThis.pubSubNumSub(vararg channel: String): List<PubSubNumEntry> = 
 
 suspend fun ReThis.pubSubShardChannels(pattern: String? = null): List<String> = execute(
     mutableListOf(
-        "PUBSUB".toArg(),
-        "SHARDCHANNELS".toArg(),
+        "PUBSUB".toArgument(),
+        "SHARDCHANNELS".toArgument(),
     ).writeArgument(pattern),
     isCollectionResponse = true,
 ) ?: emptyList()
 
 suspend fun ReThis.pubSubShardNumSub(vararg channel: String): List<PubSubNumEntry> = execute(
     listOf(
-        "PUBSUB".toArg(),
-        "SHARDNUMSUB".toArg(),
+        "PUBSUB".toArgument(),
+        "SHARDNUMSUB".toArgument(),
         *channel.toArgument(),
     ),
 ).unwrapList<RType>().chunked(2) {
@@ -88,7 +88,7 @@ suspend fun ReThis.pUnsubscribe(vararg pattern: String): RType {
     pattern.forEach { subscriptions.unsubscribe(it) }
     return execute(
         listOf(
-            "PUNSUBSCRIBE".toArg(),
+            "PUNSUBSCRIBE".toArgument(),
             *pattern.toArgument(),
         ),
     )
@@ -96,9 +96,9 @@ suspend fun ReThis.pUnsubscribe(vararg pattern: String): RType {
 
 suspend fun ReThis.sPublish(shardChannel: String, message: String): Long? = execute<Long>(
     listOf(
-        "SPUBLISH".toArg(),
-        shardChannel.toArg(),
-        message.toArg(),
+        "SPUBLISH".toArgument(),
+        shardChannel.toArgument(),
+        message.toArgument(),
     ),
 )
 
@@ -141,7 +141,7 @@ suspend fun ReThis.sUnsubscribe(vararg pattern: String): RType {
     pattern.forEach { subscriptions.unsubscribe(it) }
     return execute(
         listOf(
-            "SUNSUBSCRIBE".toArg(),
+            "SUNSUBSCRIBE".toArgument(),
             *pattern.toArgument(),
         ),
     )
@@ -152,7 +152,7 @@ suspend fun ReThis.unsubscribe(vararg pattern: String): RType {
     pattern.forEach { subscriptions.unsubscribe(it) }
     return execute(
         listOf(
-            "UNSUBSCRIBE".toArg(),
+            "UNSUBSCRIBE".toArgument(),
             *pattern.toArgument(),
         ),
     )

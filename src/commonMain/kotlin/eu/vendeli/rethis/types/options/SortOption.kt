@@ -2,14 +2,14 @@ package eu.vendeli.rethis.types.options
 
 import eu.vendeli.rethis.types.core.Argument
 import eu.vendeli.rethis.types.core.VaryingArgument
-import eu.vendeli.rethis.types.core.toArg
+import eu.vendeli.rethis.types.core.toArgument
 
 sealed class SortOption {
     class BY(
         pattern: String,
     ) : SortOption(),
         VaryingArgument {
-        override val data: List<Argument> = listOf("BY".toArg(), pattern.toArg())
+        override val data: List<Argument> = listOf("BY".toArgument(), pattern.toArgument())
     }
 
     class LIMIT(
@@ -17,14 +17,14 @@ sealed class SortOption {
         count: Long,
     ) : SortOption(),
         VaryingArgument {
-        override val data = listOf("LIMIT".toArg(), offset.toArg(), count.toArg())
+        override val data = listOf("LIMIT".toArgument(), offset.toArgument(), count.toArgument())
     }
 
     class GET(
         pattern: String,
     ) : SortOption(),
         VaryingArgument {
-        override val data: List<Argument> = listOf("GET".toArg(), pattern.toArg())
+        override val data: List<Argument> = listOf("GET".toArgument(), pattern.toArgument())
     }
 
     sealed class Order : SortOption()
@@ -37,6 +37,6 @@ sealed class SortOption {
         destination: String,
     ) : SortOption(),
         VaryingArgument {
-        override val data: List<Argument> = listOf("STORE".toArg(), destination.toArg())
+        override val data: List<Argument> = listOf("STORE".toArgument(), destination.toArgument())
     }
 }

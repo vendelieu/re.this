@@ -20,8 +20,8 @@ suspend fun ReThis.geoAdd(
     ch: Boolean = false,
 ): Long = execute<Long>(
     mutableListOf(
-        "GEOADD".toArg(),
-        key.toArg(),
+        "GEOADD".toArgument(),
+        key.toArgument(),
     ).apply {
         writeArgument(upsertMode)
         if (ch) writeArgument("CH")
@@ -32,17 +32,17 @@ suspend fun ReThis.geoAdd(
 suspend fun ReThis.geoDist(key: String, member1: String, member2: String, unit: GeoUnit? = null): Double? =
     execute(
         mutableListOf(
-            "GEODIST".toArg(),
-            key.toArg(),
-            member1.toArg(),
-            member2.toArg(),
+            "GEODIST".toArgument(),
+            key.toArgument(),
+            member1.toArgument(),
+            member2.toArgument(),
         ).writeArgument(unit),
     ).unwrap<String?>()?.toDouble()
 
 suspend fun ReThis.geoHash(key: String, vararg members: String): List<String> = execute<String>(
     listOf(
-        "GEOHASH".toArg(),
-        key.toArg(),
+        "GEOHASH".toArgument(),
+        key.toArgument(),
         *members.toArgument(),
     ),
     isCollectionResponse = true,
@@ -50,8 +50,8 @@ suspend fun ReThis.geoHash(key: String, vararg members: String): List<String> = 
 
 suspend fun ReThis.geoPos(key: String, vararg members: String): List<List<GeoPosition>?> = execute(
     listOf(
-        "GEOPOS".toArg(),
-        key.toArg(),
+        "GEOPOS".toArgument(),
+        key.toArgument(),
         *members.toArgument(),
     ),
 ).unwrapList<RType>().map { entry ->
@@ -72,8 +72,8 @@ suspend fun ReThis.geoSearch(
     sort: GeoSort? = null,
 ): List<GeoSearchResult>? = execute(
     mutableListOf(
-        "GEOSEARCH".toArg(),
-        key.toArg(),
+        "GEOSEARCH".toArgument(),
+        key.toArgument(),
     ).apply {
         writeArgument(center)
         writeArgument(shape)
@@ -135,9 +135,9 @@ suspend fun ReThis.geoSearchStore(
     storeDist: Boolean = false,
 ): Long = execute<Long>(
     mutableListOf(
-        "GEOSEARCHSTORE".toArg(),
-        destination.toArg(),
-        source.toArg(),
+        "GEOSEARCHSTORE".toArgument(),
+        destination.toArgument(),
+        source.toArgument(),
     ).apply {
         writeArgument(center)
         writeArgument(shape)

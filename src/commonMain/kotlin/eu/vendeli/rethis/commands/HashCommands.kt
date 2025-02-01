@@ -4,7 +4,6 @@ import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.processingException
 import eu.vendeli.rethis.types.common.ScanResult
 import eu.vendeli.rethis.types.core.RArray
-import eu.vendeli.rethis.types.core.toArg
 import eu.vendeli.rethis.types.core.toArgument
 import eu.vendeli.rethis.types.core.unwrap
 import eu.vendeli.rethis.types.core.unwrapList
@@ -19,17 +18,17 @@ import eu.vendeli.rethis.utils.execute
 
 suspend fun ReThis.hDel(key: String, vararg field: String): Long = execute<Long>(
     listOf(
-        "HDEL".toArg(),
-        key.toArg(),
+        "HDEL".toArgument(),
+        key.toArgument(),
         *field.toArgument(),
     ),
 ) ?: 0
 
 suspend fun ReThis.hExists(key: String, field: String): Boolean = execute<Long>(
     listOf(
-        "HEXISTS".toArg(),
-        key.toArg(),
-        field.toArg(),
+        "HEXISTS".toArgument(),
+        key.toArgument(),
+        field.toArgument(),
     ),
 ) == 1L
 
@@ -40,9 +39,9 @@ suspend fun ReThis.hExpire(
     updateType: UpdateStrategyOption? = null,
 ): List<Long> = execute(
     mutableListOf(
-        "HEXPIRE".toArg(),
-        key.toArg(),
-        seconds.inWholeSeconds.toArg(),
+        "HEXPIRE".toArgument(),
+        key.toArgument(),
+        seconds.inWholeSeconds.toArgument(),
     ).apply {
         writeArgument(updateType)
         writeArgument("FIELDS")
@@ -58,9 +57,9 @@ suspend fun ReThis.hExpireAt(
     updateType: UpdateStrategyOption? = null,
 ): List<Long> = execute(
     mutableListOf(
-        "HEXPIREAT".toArg(),
-        key.toArg(),
-        instant.epochSeconds.toArg(),
+        "HEXPIREAT".toArgument(),
+        key.toArgument(),
+        instant.epochSeconds.toArgument(),
     ).apply {
         writeArgument(updateType)
         writeArgument("FIELDS")
@@ -74,8 +73,8 @@ suspend fun ReThis.hExpireTime(
     vararg field: String,
 ): List<Long> = execute(
     mutableListOf(
-        "HEXPIRETIME".toArg(),
-        key.toArg(),
+        "HEXPIRETIME".toArgument(),
+        key.toArgument(),
     ).apply {
         writeArgument("FIELDS")
         writeArgument(field.size)
@@ -85,56 +84,56 @@ suspend fun ReThis.hExpireTime(
 
 suspend fun ReThis.hGet(key: String, field: String): String? = execute<String>(
     listOf(
-        "HGET".toArg(),
-        key.toArg(),
-        field.toArg(),
+        "HGET".toArgument(),
+        key.toArgument(),
+        field.toArgument(),
     ),
 )
 
 suspend fun ReThis.hGetAll(key: String): Map<String, String?>? = execute(
     listOf(
-        "HGETALL".toArg(),
-        key.toArg(),
+        "HGETALL".toArgument(),
+        key.toArgument(),
     ),
 ).unwrapRespIndMap()
 
 suspend fun ReThis.hIncrBy(key: String, field: String, increment: Long): Long = execute<Long>(
     listOf(
-        "HINCRBY".toArg(),
-        key.toArg(),
-        field.toArg(),
-        increment.toArg(),
+        "HINCRBY".toArgument(),
+        key.toArgument(),
+        field.toArgument(),
+        increment.toArgument(),
     ),
 ) ?: 0
 
 suspend fun ReThis.hIncrByFloat(key: String, field: String, increment: Double): Double? = execute<String>(
     listOf(
-        "HINCRBYFLOAT".toArg(),
-        key.toArg(),
-        field.toArg(),
-        increment.toArg(),
+        "HINCRBYFLOAT".toArgument(),
+        key.toArgument(),
+        field.toArgument(),
+        increment.toArgument(),
     ),
 )?.toDouble()
 
 suspend fun ReThis.hKeys(key: String): List<String> = execute(
     listOf(
-        "HKEYS".toArg(),
-        key.toArg(),
+        "HKEYS".toArgument(),
+        key.toArgument(),
     ),
     isCollectionResponse = true,
 ) ?: emptyList()
 
 suspend fun ReThis.hLen(key: String): Long = execute<Long>(
     listOf(
-        "HLEN".toArg(),
-        key.toArg(),
+        "HLEN".toArgument(),
+        key.toArgument(),
     ),
 ) ?: 0
 
 suspend fun ReThis.hMGet(key: String, vararg field: String): List<String?> = execute<String>(
     listOf(
-        "HMGET".toArg(),
-        key.toArg(),
+        "HMGET".toArgument(),
+        key.toArgument(),
         *field.toArgument(),
     ),
     isCollectionResponse = true,
@@ -142,8 +141,8 @@ suspend fun ReThis.hMGet(key: String, vararg field: String): List<String?> = exe
 
 suspend fun ReThis.hMSet(key: String, vararg fieldValue: Pair<String, String>): String? = execute<String>(
     mutableListOf(
-        "HMSET".toArg(),
-        key.toArg(),
+        "HMSET".toArgument(),
+        key.toArgument(),
     ).writeArgument(fieldValue),
 )
 
@@ -152,8 +151,8 @@ suspend fun ReThis.hPersist(
     vararg field: String,
 ): List<Long> = execute(
     mutableListOf(
-        "HPERSIST".toArg(),
-        key.toArg(),
+        "HPERSIST".toArgument(),
+        key.toArgument(),
     ).apply {
         writeArgument("FIELDS")
         writeArgument(field.size)
@@ -169,9 +168,9 @@ suspend fun ReThis.hPExpire(
     updateType: UpdateStrategyOption? = null,
 ): List<Long> = execute(
     mutableListOf(
-        "HPEXPIRE".toArg(),
-        key.toArg(),
-        milliseconds.inWholeMilliseconds.toArg(),
+        "HPEXPIRE".toArgument(),
+        key.toArgument(),
+        milliseconds.inWholeMilliseconds.toArgument(),
     ).apply {
         writeArgument(updateType)
         writeArgument("FIELDS")
@@ -188,9 +187,9 @@ suspend fun ReThis.hPExpireAt(
     updateType: UpdateStrategyOption? = null,
 ): List<Long> = execute(
     mutableListOf(
-        "HPEXPIREAT".toArg(),
-        key.toArg(),
-        instant.toEpochMilliseconds().toArg(),
+        "HPEXPIREAT".toArgument(),
+        key.toArgument(),
+        instant.toEpochMilliseconds().toArgument(),
     ).apply {
         writeArgument(updateType)
         writeArgument("FIELDS")
@@ -205,8 +204,8 @@ suspend fun ReThis.hPExpireTime(
     vararg field: String,
 ): List<Long> = execute(
     mutableListOf(
-        "HPEXPIRETIME".toArg(),
-        key.toArg(),
+        "HPEXPIRETIME".toArgument(),
+        key.toArgument(),
     ).apply {
         writeArgument("FIELDS")
         writeArgument(field.size)
@@ -220,8 +219,8 @@ suspend fun ReThis.hPTTL(
     vararg field: String,
 ): List<Long> = execute(
     mutableListOf(
-        "HPTTL".toArg(),
-        key.toArg(),
+        "HPTTL".toArgument(),
+        key.toArgument(),
     ).apply {
         writeArgument("FIELDS")
         writeArgument(field.size)
@@ -234,8 +233,8 @@ suspend fun ReThis.hRandField(
     key: String,
 ): String? = execute<String>(
     listOf(
-        "HRANDFIELD".toArg(),
-        key.toArg(),
+        "HRANDFIELD".toArgument(),
+        key.toArgument(),
     ),
 )
 
@@ -245,9 +244,9 @@ suspend fun ReThis.hRandField(
     withValues: Boolean = false,
 ): String? = execute<String>(
     mutableListOf(
-        "HRANDFIELD".toArg(),
-        key.toArg(),
-        count.toArg(),
+        "HRANDFIELD".toArgument(),
+        key.toArgument(),
+        count.toArgument(),
     ).apply {
         if (withValues) writeArgument("WITHVALUES")
     },
@@ -258,7 +257,7 @@ suspend fun ReThis.hScan(
     cursor: Long,
     vararg option: HScanOption,
 ): ScanResult<Pair<String, String>> {
-    val response = execute(mutableListOf("HSCAN".toArg(), key.toArg(), cursor.toArg()).writeArgument(option))
+    val response = execute(mutableListOf("HSCAN".toArgument(), key.toArgument(), cursor.toArgument()).writeArgument(option))
 
     val arrResponse = response.safeCast<RArray>()?.value ?: processingException { "Wrong response type" }
     val newCursor = arrResponse[0].unwrap<String>() ?: processingException { "Missing cursor in response" }
@@ -271,23 +270,23 @@ suspend fun ReThis.hScan(
 
 suspend fun ReThis.hSet(key: String, vararg fieldValue: Pair<String, String>): Long? = execute<Long>(
     mutableListOf(
-        "HSET".toArg(),
-        key.toArg(),
+        "HSET".toArgument(),
+        key.toArgument(),
     ).writeArgument(fieldValue),
 )
 
 suspend fun ReThis.hSetNx(key: String, pair: Pair<String, String>): Long? = execute<Long>(
     mutableListOf(
-        "HSETNX".toArg(),
-        key.toArg(),
+        "HSETNX".toArgument(),
+        key.toArgument(),
     ).writeArgument(pair),
 )
 
 suspend fun ReThis.hStrlen(key: String, field: String): Long = execute<Long>(
     listOf(
-        "HSTRLEN".toArg(),
-        key.toArg(),
-        field.toArg(),
+        "HSTRLEN".toArgument(),
+        key.toArgument(),
+        field.toArgument(),
     ),
 ) ?: 0
 
@@ -296,8 +295,8 @@ suspend fun ReThis.hTTL(
     vararg field: String,
 ): List<Long> = execute(
     mutableListOf(
-        "HTTL".toArg(),
-        key.toArg(),
+        "HTTL".toArgument(),
+        key.toArgument(),
     ).apply {
         writeArgument("FIELDS")
         writeArgument(field.size)
@@ -308,8 +307,8 @@ suspend fun ReThis.hTTL(
 
 suspend fun ReThis.hVals(key: String): List<String> = execute(
     listOf(
-        "HVALS".toArg(),
-        key.toArg(),
+        "HVALS".toArgument(),
+        key.toArgument(),
     ),
     isCollectionResponse = true,
 ) ?: emptyList()

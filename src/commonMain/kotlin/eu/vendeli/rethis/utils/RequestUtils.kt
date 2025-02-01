@@ -1,5 +1,7 @@
 package eu.vendeli.rethis.utils
 
+import eu.vendeli.rethis.ReThis
+import eu.vendeli.rethis.annotations.ReThisInternal
 import eu.vendeli.rethis.types.core.*
 import eu.vendeli.rethis.utils.Const.EOL
 import io.ktor.utils.io.charsets.*
@@ -7,6 +9,30 @@ import io.ktor.utils.io.core.*
 import kotlinx.io.Buffer
 import kotlinx.io.Sink
 import kotlin.jvm.JvmName
+
+@Suppress("NOTHING_TO_INLINE", "UNCHECKED_CAST")
+fun <T, R : Argument> MutableList<R>.writeArgument(value: T): MutableList<R> {
+    if (value == null) return this
+
+    when (value) {
+        is VaryingArgument -> {
+            writeArgument(value.data)
+        }
+
+        is Pair<*, *> -> {
+            value.first?.also { add(it.toArgument() as R) }
+            value.second?.also { add(it.toArgument() as R) }
+        }
+
+        else -> add(value.toArgument() as R)
+    }
+
+    return this
+}
+
+@ReThisInternal
+@Suppress("FunctionName", "ktlint:standard:function-naming")
+fun ReThis.__jsonModule() = cfg.jsonModule
 
 @Suppress("NOTHING_TO_INLINE")
 internal inline fun Buffer.writeValues(value: List<Argument>, charset: Charset) = apply {
@@ -33,47 +59,27 @@ internal fun Sink.writeRedisValue(
 }
 
 @Suppress("NOTHING_TO_INLINE")
-internal inline fun <T, R : Argument> MutableList<R>.writeArg(value: List<T>): MutableList<R> {
+internal inline fun <T, R : Argument> MutableList<R>.writeArgument(value: List<T>): MutableList<R> {
     if (isEmpty()) return this
 
-    value.forEach { writeArg(it) }
+    value.forEach { writeArgument(it) }
     return this
 }
 
 @JvmName("writeArgArray")
 @Suppress("NOTHING_TO_INLINE")
-internal inline fun <T, R : Argument> MutableList<R>.writeArg(vararg value: T): MutableList<R> {
+internal inline fun <T, R : Argument> MutableList<R>.writeArgument(vararg value: T): MutableList<R> {
     if (isEmpty()) return this
 
-    value.forEach { writeArg(it) }
+    value.forEach { writeArgument(it) }
     return this
 }
 
 @Suppress("NOTHING_TO_INLINE")
-internal inline fun <T, R : Argument> MutableList<R>.writeArg(value: Array<T>): MutableList<R> {
+internal inline fun <T, R : Argument> MutableList<R>.writeArgument(value: Array<T>): MutableList<R> {
     if (isEmpty()) return this
 
-    value.forEach { writeArg(it) }
-    return this
-}
-
-@Suppress("NOTHING_TO_INLINE", "UNCHECKED_CAST")
-internal fun <T, R : Argument> MutableList<R>.writeArg(value: T): MutableList<R> {
-    if (value == null) return this
-
-    when (value) {
-        is VaryingArgument -> {
-            writeArg(value.data)
-        }
-
-        is Pair<*, *> -> {
-            value.first?.also { add(it.toArg() as R) }
-            value.second?.also { add(it.toArg() as R) }
-        }
-
-        else -> add(value.toArg() as R)
-    }
-
+    value.forEach { writeArgument(it) }
     return this
 }
 

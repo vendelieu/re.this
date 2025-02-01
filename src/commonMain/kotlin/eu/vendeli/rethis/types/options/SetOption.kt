@@ -1,7 +1,7 @@
 package eu.vendeli.rethis.types.options
 
 import eu.vendeli.rethis.types.core.VaryingArgument
-import eu.vendeli.rethis.types.core.toArg
+import eu.vendeli.rethis.types.core.toArgument
 import kotlinx.datetime.Instant
 import kotlin.time.Duration
 
@@ -11,28 +11,28 @@ sealed class SetExpire : SetOption() {
         seconds: Duration,
     ) : SetExpire(),
         VaryingArgument {
-        override val data = listOf("EX".toArg(), seconds.inWholeSeconds.toArg())
+        override val data = listOf("EX".toArgument(), seconds.inWholeSeconds.toArgument())
     }
 
     class PX(
         milliseconds: Duration,
     ) : SetExpire(),
         VaryingArgument {
-        override val data = listOf("PX".toArg(), milliseconds.inWholeMilliseconds.toArg())
+        override val data = listOf("PX".toArgument(), milliseconds.inWholeMilliseconds.toArgument())
     }
 
     class EXAT(
         instant: Instant,
     ) : SetExpire(),
         VaryingArgument {
-        override val data = listOf("EXAT".toArg(), instant.epochSeconds.toArg())
+        override val data = listOf("EXAT".toArgument(), instant.epochSeconds.toArgument())
     }
 
     class PXAT(
         instant: Instant,
     ) : SetExpire(),
         VaryingArgument {
-        override val data = listOf("PXAT".toArg(), instant.toEpochMilliseconds().toArg())
+        override val data = listOf("PXAT".toArgument(), instant.toEpochMilliseconds().toArgument())
     }
 
     data object KEEPTTL : SetExpire()

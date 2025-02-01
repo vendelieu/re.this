@@ -3,6 +3,7 @@
 package eu.vendeli.rethis.utils
 
 import eu.vendeli.rethis.ReThis
+import eu.vendeli.rethis.annotations.ReThisInternal
 import eu.vendeli.rethis.types.core.*
 import eu.vendeli.rethis.types.coroutine.CoLocalConn
 import eu.vendeli.rethis.utils.response.parseResponse
@@ -12,6 +13,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlin.coroutines.CoroutineContext
+import kotlin.jvm.JvmName
 import kotlin.reflect.KClass
 
 fun RType.isOk() = unwrap<String>() == "OK"
@@ -36,6 +38,25 @@ private inline fun String?.isEqTo(other: String) = if (this != null) {
     false
 }
 
+@ReThisInternal
+@JvmName("executeSimple")
+suspend inline fun <reified T : Any> ReThis.execute(
+    payload: List<Argument>,
+): T? = execute(payload, T::class)
+
+@ReThisInternal
+@JvmName("executeList")
+suspend inline fun <reified T : Any> ReThis.execute(
+    payload: List<Argument>,
+    isCollectionResponse: Boolean = false,
+): List<T>? = execute(payload, T::class, isCollectionResponse)
+
+@ReThisInternal
+@JvmName("executeMap")
+suspend inline fun <reified K : Any, reified V : Any> ReThis.execute(
+    payload: List<Argument>,
+): Map<K, V?>? = execute(payload, K::class, V::class)
+
 internal suspend inline fun <reified T : CoroutineContext.Element> takeFromCoCtx(element: CoroutineContext.Key<T>): T? =
     currentCoroutineContext()[element]
 
@@ -50,7 +71,7 @@ internal suspend inline fun ReThis.registerSubscription(
     val handlerJob = coScope.launch(CoLocalConn(connection)) {
         val conn = currentCoroutineContext()[CoLocalConn]!!.connection
         try {
-            conn.sendRequest(listOf(regCommand.toArg(), target.toArg()), cfg.charset)
+            conn.sendRequest(listOf(regCommand.toArgument(), target.toArgument()), cfg.charset)
 
             while (isActive) {
                 conn.input.awaitContent()
@@ -84,7 +105,7 @@ internal suspend inline fun ReThis.registerSubscription(
             logger.error("Caught exception in $target channel handler")
             subscriptions.eventHandler?.onException(target, e)
         } finally {
-            conn.sendRequest(listOf(unRegCommand.toArg(), target.toArg()), cfg.charset)
+            conn.sendRequest(listOf(unRegCommand.toArgument(), target.toArgument()), cfg.charset)
             subscriptions.unsubscribe(target)
             connection.socket.close()
         }

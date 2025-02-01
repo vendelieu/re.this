@@ -1,7 +1,7 @@
 package eu.vendeli.rethis.types.options
 
 import eu.vendeli.rethis.types.core.VaryingArgument
-import eu.vendeli.rethis.types.core.toArg
+import eu.vendeli.rethis.types.core.toArgument
 
 sealed class ZRangeOption {
     sealed class Type : ZRangeOption()
@@ -13,6 +13,6 @@ sealed class ZRangeOption {
         count: Long,
     ) : ZRangeOption(),
         VaryingArgument {
-        override val data = listOf("LIMIT".toArg(), offset.toArg(), count.toArg())
+        override val data = listOf("LIMIT".toArgument(), offset.toArgument(), count.toArgument())
     }
 }
