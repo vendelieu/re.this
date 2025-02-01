@@ -6,6 +6,7 @@ import io.ktor.utils.io.charsets.*
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
+import kotlinx.serialization.json.Json
 
 /**
  * A configuration class for the client.
@@ -49,6 +50,19 @@ data class ClientConfiguration(
      */
     fun socket(block: SocketConfiguration.() -> Unit) {
         socketConfiguration.block()
+    }
+
+    @Suppress("ktlint:standard:backing-property-naming")
+    private var _jsonModule: Json? = null
+    internal val jsonModule by lazy { _jsonModule ?: Json.Default }
+
+    /**
+     * Configures the JSON serializer module.
+     *
+     * @param module The JSON module to use for serializing and deserializing objects.
+     */
+    fun jsonModule(module: Json) {
+        _jsonModule = module
     }
 }
 

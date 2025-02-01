@@ -3,10 +3,10 @@ package eu.vendeli.rethis.tests.utils
 import com.ionspin.kotlin.bignum.integer.BigInteger
 import com.ionspin.kotlin.bignum.integer.toBigInteger
 import eu.vendeli.rethis.ReThisTestCtx
-import eu.vendeli.rethis.utils.parseResponse
-import eu.vendeli.rethis.utils.readListResponseTyped
-import eu.vendeli.rethis.utils.readMapResponseTyped
-import eu.vendeli.rethis.utils.readSimpleResponseTyped
+import eu.vendeli.rethis.utils.response.parseResponse
+import eu.vendeli.rethis.utils.response.readListResponseTyped
+import eu.vendeli.rethis.utils.response.readMapResponseTyped
+import eu.vendeli.rethis.utils.response.readSimpleResponseTyped
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.shouldBe

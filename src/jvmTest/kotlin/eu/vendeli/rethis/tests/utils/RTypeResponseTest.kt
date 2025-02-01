@@ -3,8 +3,8 @@ package eu.vendeli.rethis.tests.utils
 import com.ionspin.kotlin.bignum.integer.toBigInteger
 import eu.vendeli.rethis.ReThisTestCtx
 import eu.vendeli.rethis.types.core.*
-import eu.vendeli.rethis.utils.parseResponse
-import eu.vendeli.rethis.utils.readResponseWrapped
+import eu.vendeli.rethis.utils.response.parseResponse
+import eu.vendeli.rethis.utils.response.readResponseWrapped
 import eu.vendeli.rethis.utils.safeCast
 import io.kotest.matchers.shouldBe
 import io.ktor.utils.io.*

@@ -3,9 +3,8 @@ package eu.vendeli.rethis.commands
 import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.types.core.RType
 import eu.vendeli.rethis.types.core.toArg
-import eu.vendeli.rethis.utils.unwrapRespIndMap
+import eu.vendeli.rethis.utils.response.unwrapRespIndMap
 import eu.vendeli.rethis.utils.writeArg
-import io.ktor.utils.io.core.*
 
 suspend fun ReThis.hello(
     proto: Int = 3,

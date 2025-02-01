@@ -9,8 +9,8 @@ import eu.vendeli.rethis.types.core.unwrap
 import eu.vendeli.rethis.types.core.unwrapList
 import eu.vendeli.rethis.types.options.HScanOption
 import eu.vendeli.rethis.types.options.UpdateStrategyOption
+import eu.vendeli.rethis.utils.response.unwrapRespIndMap
 import eu.vendeli.rethis.utils.safeCast
-import eu.vendeli.rethis.utils.unwrapRespIndMap
 import eu.vendeli.rethis.utils.writeArg
 import kotlinx.datetime.Instant
 import kotlin.time.Duration

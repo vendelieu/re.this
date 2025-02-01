@@ -12,8 +12,8 @@ import eu.vendeli.rethis.types.options.ZAggregate
 import eu.vendeli.rethis.types.options.ZPopCommonOption
 import eu.vendeli.rethis.types.options.ZRangeOption
 import eu.vendeli.rethis.utils.cast
+import eu.vendeli.rethis.utils.response.unwrapRespIndMap
 import eu.vendeli.rethis.utils.safeCast
-import eu.vendeli.rethis.utils.unwrapRespIndMap
 import eu.vendeli.rethis.utils.writeArg
 
 suspend fun ReThis.bzMPop(

@@ -3,7 +3,7 @@ package eu.vendeli.rethis.tests.commands
 import eu.vendeli.rethis.ReThisException
 import eu.vendeli.rethis.ReThisTestCtx
 import eu.vendeli.rethis.commands.*
-import eu.vendeli.rethis.exception
+import eu.vendeli.rethis.processingException
 import eu.vendeli.rethis.types.common.PubSubNumEntry
 import eu.vendeli.rethis.types.core.BulkString
 import eu.vendeli.rethis.types.core.Int64
@@ -161,7 +161,7 @@ class PubSubCommandTest : ReThisTestCtx() {
         client.subscriptions.isActive("testChannel") shouldBe true
 
         client.pSubscribe("testCh*") { _, m ->
-            exception { "test" }
+            processingException { "test" }
         }
         client.subscriptions.isActive("testCh*") shouldBe true
 

@@ -5,6 +5,8 @@ package eu.vendeli.rethis.utils
 import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.types.core.*
 import eu.vendeli.rethis.types.coroutine.CoLocalConn
+import eu.vendeli.rethis.utils.response.parseResponse
+import eu.vendeli.rethis.utils.response.readResponseWrapped
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive

@@ -9,7 +9,7 @@ import eu.vendeli.rethis.types.core.RArray
 import eu.vendeli.rethis.types.core.toArg
 import eu.vendeli.rethis.types.coroutine.CoLocalConn
 import eu.vendeli.rethis.utils.bufferValues
-import eu.vendeli.rethis.utils.readResponseWrapped
+import eu.vendeli.rethis.utils.response.readResponseWrapped
 import io.kotest.assertions.throwables.shouldNotThrowAny
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.collections.shouldHaveSize

@@ -1,7 +1,7 @@
 package eu.vendeli.rethis.types.core
 
 import eu.vendeli.rethis.utils.bufferValues
-import eu.vendeli.rethis.utils.parseResponse
+import eu.vendeli.rethis.utils.response.parseResponse
 import io.ktor.network.sockets.*
 import io.ktor.utils.io.*
 import io.ktor.utils.io.charsets.*
