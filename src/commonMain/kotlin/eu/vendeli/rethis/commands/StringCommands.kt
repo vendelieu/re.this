@@ -1,7 +1,7 @@
 package eu.vendeli.rethis.commands
 
 import eu.vendeli.rethis.ReThis
-import eu.vendeli.rethis.exception
+import eu.vendeli.rethis.processingException
 import eu.vendeli.rethis.types.common.LcsResult
 import eu.vendeli.rethis.types.core.*
 import eu.vendeli.rethis.types.options.GetExOption
@@ -148,14 +148,14 @@ suspend fun ReThis.lcs(
             }
 
             Pair(
-                mapResponse["matches"]?.safeCast<RArray>()?.value ?: exception {
+                mapResponse["matches"]?.safeCast<RArray>()?.value ?: processingException {
                     "Missing 'matches' field"
                 },
                 mapResponse["len"]?.unwrap<Long>() ?: 0L,
             )
         }
 
-        else -> exception { "Wrong response type" }
+        else -> processingException { "Wrong response type" }
     }
 
     return LcsResult(processMatches(matches), totalLength)
@@ -173,7 +173,7 @@ private fun processMatches(matchesArr: List<Any>): List<List<LcsResult.LcsMatch>
                 val end = range[1].unwrap<Long>() ?: 0L
                 LcsResult.LcsMatch(start = start, end = end, length = length)
             } else {
-                exception { "Unexpected match type" }
+                processingException { "Unexpected match type" }
             }
         }
     }

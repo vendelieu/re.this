@@ -1,8 +1,8 @@
 package eu.vendeli.rethis.utils
 
 import com.ionspin.kotlin.bignum.integer.BigInteger
-import eu.vendeli.rethis.ReThisException
-import eu.vendeli.rethis.exception
+import eu.vendeli.rethis.RedisError
+import eu.vendeli.rethis.ResponseParsingException
 import eu.vendeli.rethis.types.core.*
 import eu.vendeli.rethis.types.core.RType.Error
 import eu.vendeli.rethis.types.core.ResponseToken.Code
@@ -11,7 +11,6 @@ import eu.vendeli.rethis.utils.Const.CARRIAGE_RETURN_BYTE
 import eu.vendeli.rethis.utils.Const.FALSE_BYTE
 import eu.vendeli.rethis.utils.Const.NEWLINE_BYTE
 import eu.vendeli.rethis.utils.Const.TRUE_BYTE
-import io.ktor.network.sockets.*
 import io.ktor.utils.io.*
 import io.ktor.utils.io.charsets.*
 import io.ktor.utils.io.core.*
@@ -97,7 +96,7 @@ private suspend inline fun ByteReadChannel.readLineCRLF(): kotlinx.io.Buffer {
                 break
             } else {
                 buffer.writeByte(CARRIAGE_RETURN_BYTE)
-                buffer.writeByte(NEWLINE_BYTE)
+                buffer.writeByte(nextByte)
                 continue
             }
         }
@@ -114,26 +113,27 @@ internal inline fun <reified L, reified R> RType.unwrapRespIndMap(): Map<L, R?>?
 @Suppress("NOTHING_TO_INLINE")
 private inline fun ArrayDeque<ResponseToken>.validatedResponseType(): Code {
     val typeToken = removeFirst()
-    if (typeToken !is Code) exception {
-        "Invalid response structure, wrong head token, expected type token but given $typeToken"
-    }
+    if (typeToken !is Code) throw ResponseParsingException(
+        message = "Invalid response structure, wrong head token, expected type token but given $typeToken",
+    )
     return typeToken
 }
 
+@Throws(ResponseParsingException::class)
 @Suppress("NOTHING_TO_INLINE")
 private inline fun ArrayDeque<ResponseToken>.validatedSimpleResponse(codeToken: Code): Source {
-    if (!codeToken.code.isSimple) exception {
-        "Wrong response type, expected simple type, given ${codeToken.code}"
-    }
+    if (!codeToken.code.isSimple) throw ResponseParsingException(
+        message = "Wrong response type, expected simple type, given ${codeToken.code}",
+    )
 
-    if (codeToken.code != RespCode.NULL && isEmpty()) exception {
-        "Invalid response structure, expected data token, given $codeToken"
-    }
+    if (codeToken.code != RespCode.NULL && isEmpty()) throw ResponseParsingException(
+        message = "Invalid response structure, expected data token, given $codeToken",
+    )
     val dataToken = removeFirst()
 
-    if (dataToken !is Data) exception {
-        "Invalid response structure, expected data token, given $dataToken"
-    }
+    if (dataToken !is Data) throw ResponseParsingException(
+        message = "Invalid response structure, expected data token, given $dataToken",
+    )
 
     return dataToken.buffer
 }
@@ -219,7 +219,7 @@ private fun ArrayDeque<ResponseToken>.readSimpleResponseWrapped(
         RespCode.BOOLEAN -> when (data.readByte()) {
             TRUE_BYTE -> Bool(true)
             FALSE_BYTE -> Bool(false)
-            else -> exception { "Invalid boolean format" }
+            else -> throw ResponseParsingException("Invalid boolean format")
         }
 
         RespCode.DOUBLE -> F64(data.readString().toDouble())
@@ -227,11 +227,11 @@ private fun ArrayDeque<ResponseToken>.readSimpleResponseWrapped(
         RespCode.BIG_NUMBER -> try {
             BigNumber(BigInteger.parseString(data.readText(charset)))
         } catch (e: NumberFormatException) {
-            exception(e) { "Invalid BigInteger format" }
+            throw ResponseParsingException("Invalid BigInteger format", e)
         }
 
         RespCode.BULK_ERROR -> {
-            if (size < 0) exception { "Invalid bulk error size: $size" }
+            if (size < 0) throw ResponseParsingException("Invalid bulk error size: $size")
             Error(data.readText(charset))
         }
 
@@ -243,14 +243,14 @@ private fun ArrayDeque<ResponseToken>.readSimpleResponseWrapped(
             VerbatimString(encoding.toString(), data.toString())
         }
 
-        RespCode.ARRAY, RespCode.SET, RespCode.PUSH, RespCode.MAP, RespCode.ATTRIBUTE -> exception {
-            "Invalid response type for simple response: ${typeToken.code}"
-        }
+        RespCode.ARRAY, RespCode.SET, RespCode.PUSH, RespCode.MAP, RespCode.ATTRIBUTE ->
+            throw ResponseParsingException(message = "Invalid response type for simple response: ${typeToken.code}")
     }
 }
 
 // Typed response parsing
 
+@Throws(RedisError::class, ResponseParsingException::class)
 internal fun <T : Any> ArrayDeque<ResponseToken>.readSimpleResponseTyped(
     tClass: KClass<T>,
     charset: Charset,
@@ -263,7 +263,7 @@ internal fun <T : Any> ArrayDeque<ResponseToken>.readSimpleResponseTyped(
 
     return when (typeToken.code) {
         RespCode.SIMPLE_STRING -> data.readText(charset)
-        RespCode.SIMPLE_ERROR -> throw ReThisException(data.readText(charset))
+        RespCode.SIMPLE_ERROR -> throw RedisError(data.readText(charset))
         RespCode.INTEGER -> data.readDecimalLong()
         RespCode.BULK -> {
             if (size < 0) return null
@@ -273,7 +273,7 @@ internal fun <T : Any> ArrayDeque<ResponseToken>.readSimpleResponseTyped(
         RespCode.BOOLEAN -> when (val line = data.readByte()) {
             TRUE_BYTE -> true
             FALSE_BYTE -> false
-            else -> exception { "Invalid boolean format: $line" }
+            else -> throw ResponseParsingException(message = "Invalid boolean format: $line")
         }
 
         RespCode.DOUBLE -> data.readString().toDouble()
@@ -281,12 +281,12 @@ internal fun <T : Any> ArrayDeque<ResponseToken>.readSimpleResponseTyped(
         RespCode.BIG_NUMBER -> try {
             BigInteger.parseString(data.readText(charset))
         } catch (e: NumberFormatException) {
-            exception(e) { "Invalid BigInteger format" }
+            throw ResponseParsingException(message = "Invalid BigInteger format", cause = e)
         }
 
         RespCode.BULK_ERROR -> {
-            if (size < 0) exception { "Invalid bulk error size: $size" }
-            throw ReThisException(data.readText(charset))
+            if (size < 0) throw ResponseParsingException(message = "Invalid bulk error size: $size")
+            throw RedisError(message = data.readText(charset), isBulk = true)
         }
 
         RespCode.VERBATIM_STRING -> {
@@ -335,7 +335,8 @@ internal fun <K : Any, V : Any> ArrayDeque<ResponseToken>.readMapResponseTyped(
             if (size < 0) return null
             buildMap<K, V?>(size) {
                 repeat(size) {
-                    val keyData = readSimpleResponseTyped(kClass, charset) ?: exception { "Invalid map key" }
+                    val keyData = readSimpleResponseTyped(kClass, charset)
+                        ?: throw ResponseParsingException(message = "Invalid map key")
                     val valueType = readSimpleResponseTyped(vClass, charset)
                     put(keyData, valueType)
                 }

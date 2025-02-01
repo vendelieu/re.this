@@ -1,7 +1,7 @@
 package eu.vendeli.rethis.commands
 
 import eu.vendeli.rethis.ReThis
-import eu.vendeli.rethis.exception
+import eu.vendeli.rethis.processingException
 import eu.vendeli.rethis.types.common.ScanResult
 import eu.vendeli.rethis.types.core.*
 import eu.vendeli.rethis.types.core.unwrap
@@ -125,11 +125,11 @@ suspend fun ReThis.sScan(
 ): ScanResult<String> {
     val response = execute(mutableListOf("SSCAN".toArg(), key.toArg(), cursor.toArg()).writeArg(option))
 
-    val arrResponse = response.safeCast<RArray>()?.value ?: exception { "Wrong response type" }
-    val newCursor = arrResponse[0].unwrap<String>() ?: exception { "Missing cursor in response" }
+    val arrResponse = response.safeCast<RArray>()?.value ?: processingException { "Wrong response type" }
+    val newCursor = arrResponse[0].unwrap<String>() ?: processingException { "Missing cursor in response" }
 
-    val membersArray = arrResponse[1].safeCast<RArray>()?.value ?: exception { "Missing members in response" }
-    val members = membersArray.map { it.unwrap<String>() ?: exception { "Invalid member format" } }
+    val membersArray = arrResponse[1].safeCast<RArray>()?.value ?: processingException { "Missing members in response" }
+    val members = membersArray.map { it.unwrap<String>() ?: processingException { "Invalid member format" } }
 
     return ScanResult(cursor = newCursor, keys = members)
 }

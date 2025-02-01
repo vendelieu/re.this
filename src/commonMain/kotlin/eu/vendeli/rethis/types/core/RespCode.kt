@@ -1,6 +1,6 @@
 package eu.vendeli.rethis.types.core
 
-import eu.vendeli.rethis.exception
+import eu.vendeli.rethis.ResponseParsingException
 import eu.vendeli.rethis.types.core.RespCode.entries
 
 internal enum class RespCode(
@@ -34,8 +34,10 @@ internal enum class RespCode(
 
     companion object {
         private val EntryMap = entries.associate { it.code to it }
-        fun fromCode(code: Byte): RespCode = EntryMap[code] ?: exception {
-            "No suitable message type found - ${code.toInt().toChar()}"
-        }
+
+        @Throws(ResponseParsingException::class)
+        fun fromCode(code: Byte): RespCode = EntryMap[code] ?: throw ResponseParsingException(
+            message = "No suitable message type found - ${code.toInt().toChar()}",
+        )
     }
 }

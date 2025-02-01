@@ -1,7 +1,7 @@
 package eu.vendeli.rethis.types.core
 
 import com.ionspin.kotlin.bignum.integer.BigInteger
-import eu.vendeli.rethis.ReThisException
+import eu.vendeli.rethis.RedisError
 import io.ktor.util.logging.*
 
 private val logger = KtorSimpleLogger("eu.vendeli.rethis.InputParser")
@@ -11,9 +11,9 @@ sealed class RType {
 
     data object Null : RType()
     data class Error(
-        val exception: ReThisException,
+        val exception: RedisError,
     ) : RType() {
-        constructor(message: String) : this(ReThisException(message))
+        constructor(message: String) : this(RedisError(message))
     }
 
     class Raw internal constructor(

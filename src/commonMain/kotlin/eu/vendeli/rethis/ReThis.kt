@@ -129,7 +129,7 @@ class ReThis(
                 .sendRequest(listOf("MULTI".toArg()), cfg.charset)
                 .parseResponse()
             if (!multiRequest.readResponseWrapped(cfg.charset).isOk())
-                throw ReThisException("Failed to start transaction")
+                throw InvalidStateException("Failed to start transaction")
 
             var e: Throwable? = null
             coScope
@@ -141,7 +141,7 @@ class ReThis(
                     .sendRequest(listOf("DISCARD".toArg()), cfg.charset)
                     .parseResponse()
                 if (!discardRequest.readResponseWrapped(cfg.charset).isOk())
-                    throw ReThisException("Failed to cancel transaction")
+                    throw InvalidStateException("Failed to cancel transaction")
                 logger.error("Transaction canceled", it)
                 throw it
             }

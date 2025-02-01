@@ -1,7 +1,7 @@
 package eu.vendeli.rethis.wrappers
 
+import eu.vendeli.rethis.InvalidStateException
 import eu.vendeli.rethis.ReThis
-import eu.vendeli.rethis.ReThisException
 import eu.vendeli.rethis.commands.*
 import kotlinx.coroutines.runBlocking
 
@@ -77,5 +77,5 @@ private inline fun Pair<String, String>.toMapEntry(
 
 @Suppress("NOTHING_TO_INLINE")
 private inline fun updateValue(client: ReThis, bucket: String, pair: Pair<String, String>) = runBlocking {
-    client.hMSet(bucket, pair) ?: throw ReThisException("Error occurred while updating entry")
+    client.hMSet(bucket, pair) ?: throw InvalidStateException("Error occurred while updating entry")
 }

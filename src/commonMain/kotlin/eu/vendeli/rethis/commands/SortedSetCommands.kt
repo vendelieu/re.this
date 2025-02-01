@@ -1,7 +1,7 @@
 package eu.vendeli.rethis.commands
 
 import eu.vendeli.rethis.ReThis
-import eu.vendeli.rethis.exception
+import eu.vendeli.rethis.processingException
 import eu.vendeli.rethis.types.common.MPopResult
 import eu.vendeli.rethis.types.common.ScanResult
 import eu.vendeli.rethis.types.common.ZMember
@@ -406,10 +406,10 @@ suspend fun ReThis.zScan(
             writeArg(count)
         },
     )
-    val arrResponse = response.safeCast<RArray>()?.value ?: exception { "Wrong response type" }
-    val newCursor = arrResponse[0].unwrap<String>() ?: exception { "Missing cursor in response" }
+    val arrResponse = response.safeCast<RArray>()?.value ?: processingException { "Wrong response type" }
+    val newCursor = arrResponse[0].unwrap<String>() ?: processingException { "Missing cursor in response" }
 
-    val keysArray = arrResponse[1].safeCast<RArray>()?.value ?: exception { "Missing keys in response" }
+    val keysArray = arrResponse[1].safeCast<RArray>()?.value ?: processingException { "Missing keys in response" }
     val keys = keysArray.chunked(2) { it.first().unwrap<String>()!! to it.last().unwrap<String>()!! }
 
     return ScanResult(cursor = newCursor, keys = keys)

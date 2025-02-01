@@ -1,7 +1,7 @@
 package eu.vendeli.rethis.commands
 
 import eu.vendeli.rethis.ReThis
-import eu.vendeli.rethis.exception
+import eu.vendeli.rethis.processingException
 import eu.vendeli.rethis.types.common.ScanResult
 import eu.vendeli.rethis.types.common.WaitAofResult
 import eu.vendeli.rethis.types.core.*
@@ -231,11 +231,11 @@ suspend fun ReThis.scan(
 ): ScanResult<String> {
     val response = execute(mutableListOf("SCAN".toArg(), cursor.toArg()).apply { option.forEach { writeArg(it) } })
 
-    val arrResponse = response.safeCast<RArray>()?.value ?: exception { "Wrong response type" }
-    val newCursor = arrResponse[0].unwrap<String>() ?: exception { "Missing cursor in response" }
+    val arrResponse = response.safeCast<RArray>()?.value ?: processingException { "Wrong response type" }
+    val newCursor = arrResponse[0].unwrap<String>() ?: processingException { "Missing cursor in response" }
 
-    val keysArray = arrResponse[1].safeCast<RArray>()?.value ?: exception { "Missing keys in response" }
-    val keys = keysArray.map { it.unwrap<String>() ?: exception { "Invalid key format" } }
+    val keysArray = arrResponse[1].safeCast<RArray>()?.value ?: processingException { "Missing keys in response" }
+    val keys = keysArray.map { it.unwrap<String>() ?: processingException { "Invalid key format" } }
 
     return ScanResult(cursor = newCursor, keys = keys)
 }
