@@ -23,7 +23,7 @@ class SortedSetCommandTest2 : ReThisTestCtx() {
     suspend fun `test ZREVRANK command`() {
         client.zAdd("testSet37", ZMember("testValue37", 1.0))
 
-        client.zRevrank("testSet37", "testValue37") shouldBe 0L
+        client.zRevRank("testSet37", "testValue37") shouldBe 0L
     }
 
     @Test
@@ -59,7 +59,7 @@ class SortedSetCommandTest2 : ReThisTestCtx() {
     @Test
     suspend fun `test ZINCRBY command`() {
         client.zAdd("testSet15", ZMember("testValue15", 1.0))
-        client.zIncrby("testSet15", "testValue15", 1.0) shouldBe 2.0
+        client.zIncrBy("testSet15", "testValue15", 1.0) shouldBe 2.0
     }
 
     @Test

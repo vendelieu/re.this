@@ -2,36 +2,37 @@ package eu.vendeli.rethis.commands
 
 import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.types.core.RType
-import eu.vendeli.rethis.types.core.toArg
+import eu.vendeli.rethis.types.core.toArgument
 import eu.vendeli.rethis.types.core.unwrapList
+import eu.vendeli.rethis.utils.execute
 
-suspend fun ReThis.discard(): String? = execute<String>(
+suspend fun ReThis.discard(): Boolean = execute<String>(
     listOf(
-        "DISCARD".toArg(),
+        "DISCARD".toArgument(),
     ),
-)
+) == "OK"
 
 suspend fun ReThis.exec(): List<RType> = execute(
     listOf(
-        "EXEC".toArg(),
+        "EXEC".toArgument(),
     ),
 ).unwrapList<RType>()
 
-suspend fun ReThis.multi(): String? = execute<String>(
+suspend fun ReThis.multi(): Boolean = execute<String>(
     listOf(
-        "MULTI".toArg(),
+        "MULTI".toArgument(),
     ),
-)
+) == "OK"
 
-suspend fun ReThis.unwatch(): String? = execute<String>(
+suspend fun ReThis.unwatch(): Boolean = execute<String>(
     listOf(
-        "UNWATCH".toArg(),
+        "UNWATCH".toArgument(),
     ),
-)
+) == "OK"
 
-suspend fun ReThis.watch(vararg key: String): String? = execute<String>(
+suspend fun ReThis.watch(vararg key: String): Boolean = execute<String>(
     listOf(
-        "WATCH".toArg(),
-        *key.toArg(),
+        "WATCH".toArgument(),
+        *key.toArgument(),
     ),
-)
+) == "OK"

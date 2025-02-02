@@ -3,13 +3,18 @@
 package eu.vendeli.rethis.utils
 
 import eu.vendeli.rethis.ReThis
+import eu.vendeli.rethis.annotations.ReThisInternal
 import eu.vendeli.rethis.types.core.*
 import eu.vendeli.rethis.types.coroutine.CoLocalConn
+import eu.vendeli.rethis.utils.response.parseResponse
+import eu.vendeli.rethis.utils.response.readResponseWrapped
+import io.ktor.util.reflect.*
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlin.coroutines.CoroutineContext
+import kotlin.jvm.JvmName
 import kotlin.reflect.KClass
 
 fun RType.isOk() = unwrap<String>() == "OK"
@@ -27,12 +32,35 @@ internal inline fun <T> Any.safeCast(): T? = this as? T
 internal inline fun <T : Any> Any.safeCast(clazz: KClass<T>): T? =
     if (this::class == clazz) this as T else null
 
+@Suppress("UNCHECKED_CAST", "NOTHING_TO_INLINE")
+internal inline fun <T : Any> Any.safeCast(typeInfo: TypeInfo): T? =
+    if (typeInfo.type.isInstance(this)) this as T else null
+
 @Suppress("NOTHING_TO_INLINE")
 private inline fun String?.isEqTo(other: String) = if (this != null) {
     compareTo(other.lowercase()) == 0
 } else {
     false
 }
+
+@ReThisInternal
+@JvmName("executeSimple")
+suspend inline fun <reified T : Any> ReThis.execute(
+    payload: List<Argument>,
+): T? = execute(payload, typeInfo<T>())
+
+@ReThisInternal
+@JvmName("executeList")
+suspend inline fun <reified T : Any> ReThis.execute(
+    payload: List<Argument>,
+    isCollectionResponse: Boolean = false,
+): List<T>? = execute(payload, typeInfo<T>(), isCollectionResponse)
+
+@ReThisInternal
+@JvmName("executeMap")
+suspend inline fun <reified K : Any, reified V : Any> ReThis.execute(
+    payload: List<Argument>,
+): Map<K, V?>? = execute(payload, typeInfo<K>(), typeInfo<V>())
 
 internal suspend inline fun <reified T : CoroutineContext.Element> takeFromCoCtx(element: CoroutineContext.Key<T>): T? =
     currentCoroutineContext()[element]
@@ -48,11 +76,11 @@ internal suspend inline fun ReThis.registerSubscription(
     val handlerJob = coScope.launch(CoLocalConn(connection)) {
         val conn = currentCoroutineContext()[CoLocalConn]!!.connection
         try {
-            conn.sendRequest(bufferValues(listOf(regCommand.toArg(), target.toArg()), cfg.charset))
+            conn.sendRequest(listOf(regCommand.toArgument(), target.toArgument()), cfg.charset)
 
             while (isActive) {
                 conn.input.awaitContent()
-                val msg = conn.parseResponse().readResponseWrapped(cfg.charset)
+                val msg = conn.input.parseResponse().readResponseWrapped(cfg.charset)
                 val input = if (msg is Push) msg.value else msg.safeCast<RArray>()?.value
                 logger.debug("Handling event in $target channel subscription")
 
@@ -82,7 +110,7 @@ internal suspend inline fun ReThis.registerSubscription(
             logger.error("Caught exception in $target channel handler")
             subscriptions.eventHandler?.onException(target, e)
         } finally {
-            conn.sendRequest(bufferValues(listOf(unRegCommand.toArg(), target.toArg()), cfg.charset))
+            conn.sendRequest(listOf(unRegCommand.toArgument(), target.toArgument()), cfg.charset)
             subscriptions.unsubscribe(target)
             connection.socket.close()
         }

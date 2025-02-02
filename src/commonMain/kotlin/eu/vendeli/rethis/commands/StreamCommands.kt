@@ -3,18 +3,19 @@ package eu.vendeli.rethis.commands
 import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.types.core.Argument
 import eu.vendeli.rethis.types.core.RType
-import eu.vendeli.rethis.types.core.toArg
+import eu.vendeli.rethis.types.core.toArgument
 import eu.vendeli.rethis.types.core.unwrapList
 import eu.vendeli.rethis.types.options.*
-import eu.vendeli.rethis.utils.unwrapRespIndMap
-import eu.vendeli.rethis.utils.writeArg
+import eu.vendeli.rethis.utils.response.unwrapRespIndMap
+import eu.vendeli.rethis.utils.writeArgument
+import eu.vendeli.rethis.utils.execute
 
 suspend fun ReThis.xAck(
     key: String,
     group: String,
     vararg id: String,
 ) = execute<Long>(
-    listOf("XACK".toArg(), key.toArg(), group.toArg(), *id.toArg()),
+    listOf("XACK".toArgument(), key.toArgument(), group.toArgument(), *id.toArgument()),
 )
 
 suspend fun ReThis.xAdd(
@@ -25,9 +26,9 @@ suspend fun ReThis.xAdd(
     vararg entry: Pair<String, String>,
 ) = execute<String>(
     mutableListOf(
-        "XADD".toArg(),
-        key.toArg(),
-    ).writeArg(
+        "XADD".toArgument(),
+        key.toArgument(),
+    ).writeArgument(
         nomkstream,
         trim,
         id,
@@ -45,13 +46,13 @@ suspend fun ReThis.xAutoClaim(
     justID: Boolean = false,
 ) = execute(
     mutableListOf(
-        "XAUTOCLAIM".toArg(),
-        key.toArg(),
-        group.toArg(),
-        consumer.toArg(),
-        minIdleTime.toArg(),
-        start.toArg(),
-    ).writeArg(
+        "XAUTOCLAIM".toArgument(),
+        key.toArgument(),
+        group.toArgument(),
+        consumer.toArgument(),
+        minIdleTime.toArgument(),
+        start.toArgument(),
+    ).writeArgument(
         count?.let { "COUNT" to it },
         justID.takeIf { it }?.let { "JUSTID" },
     ),
@@ -71,13 +72,13 @@ suspend fun ReThis.xClaim(
     lastId: XClaimOption.LastId? = null,
 ) = execute(
     mutableListOf(
-        "XCLAIM".toArg(),
-        key.toArg(),
-        group.toArg(),
-        consumer.toArg(),
-        minIdleTime.toArg(),
-        *id.toArg(),
-    ).writeArg(
+        "XCLAIM".toArgument(),
+        key.toArgument(),
+        group.toArgument(),
+        consumer.toArgument(),
+        minIdleTime.toArgument(),
+        *id.toArgument(),
+    ).writeArgument(
         idle,
         time,
         retryCount,
@@ -88,7 +89,7 @@ suspend fun ReThis.xClaim(
 ).unwrapList<RType>()
 
 suspend fun ReThis.xDel(key: String, vararg id: String) = execute<Long>(
-    listOf("XDEL".toArg(), key.toArg(), *id.toArg()),
+    listOf("XDEL".toArgument(), key.toArgument(), *id.toArgument()),
 )
 
 suspend fun ReThis.xGroupCreate(
@@ -99,11 +100,11 @@ suspend fun ReThis.xGroupCreate(
     entriesRead: Long? = null,
 ): Boolean = execute<String>(
     mutableListOf(
-        "XGROUP".toArg(),
-        "CREATE".toArg(),
-        key.toArg(),
-        group.toArg(),
-    ).writeArg(
+        "XGROUP".toArgument(),
+        "CREATE".toArgument(),
+        key.toArgument(),
+        group.toArgument(),
+    ).writeArgument(
         id,
         mkstream.takeIf { it }?.let { "MKSTREAM" },
         entriesRead?.let { "ENTRIESREAD" to it },
@@ -111,15 +112,27 @@ suspend fun ReThis.xGroupCreate(
 ) == "OK"
 
 suspend fun ReThis.xGroupCreateConsumer(key: String, group: String, consumer: String): Long? = execute<Long>(
-    listOf("XGROUP".toArg(), "CREATECONSUMER".toArg(), key.toArg(), group.toArg(), consumer.toArg()),
+    listOf(
+        "XGROUP".toArgument(),
+        "CREATECONSUMER".toArgument(),
+        key.toArgument(),
+        group.toArgument(),
+        consumer.toArgument(),
+    ),
 )
 
 suspend fun ReThis.xGroupDelConsumer(key: String, group: String, consumer: String): Long? = execute<Long>(
-    listOf("XGROUP".toArg(), "DELCONSUMER".toArg(), key.toArg(), group.toArg(), consumer.toArg()),
+    listOf(
+        "XGROUP".toArgument(),
+        "DELCONSUMER".toArgument(),
+        key.toArgument(),
+        group.toArgument(),
+        consumer.toArgument(),
+    ),
 )
 
 suspend fun ReThis.xGroupDestroy(key: String, group: String): Long? = execute<Long>(
-    listOf("XGROUP".toArg(), "DESTROY".toArg(), key.toArg(), group.toArg()),
+    listOf("XGROUP".toArgument(), "DESTROY".toArgument(), key.toArgument(), group.toArgument()),
 )
 
 suspend fun ReThis.xGroupSetId(
@@ -129,22 +142,22 @@ suspend fun ReThis.xGroupSetId(
     entriesRead: Long? = null,
 ): Boolean = execute<String>(
     mutableListOf(
-        "XGROUP".toArg(),
-        "SETID".toArg(),
-        key.toArg(),
-        group.toArg(),
-    ).writeArg(
+        "XGROUP".toArgument(),
+        "SETID".toArgument(),
+        key.toArgument(),
+        group.toArgument(),
+    ).writeArgument(
         id,
         "ENTRIESREAD" to entriesRead,
     ),
 ) == "OK"
 
 suspend fun ReThis.xInfoConsumers(key: String, group: String): List<RType> = execute(
-    listOf("XINFO".toArg(), "CONSUMERS".toArg(), key.toArg(), group.toArg()),
+    listOf("XINFO".toArgument(), "CONSUMERS".toArgument(), key.toArgument(), group.toArgument()),
 ).unwrapList<RType>()
 
 suspend fun ReThis.xInfoGroups(key: String): List<RType> = execute(
-    listOf("XINFO".toArg(), "GROUPS".toArg(), key.toArg()),
+    listOf("XINFO".toArgument(), "GROUPS".toArgument(), key.toArgument()),
 ).unwrapList<RType>()
 
 suspend fun ReThis.xInfoStream(
@@ -153,23 +166,23 @@ suspend fun ReThis.xInfoStream(
     limit: XOption.Limit? = null,
 ): Map<String, RType?> = execute(
     mutableListOf(
-        "XINFO".toArg(),
-        "STREAM".toArg(),
-        key.toArg(),
-    ).writeArg(
+        "XINFO".toArgument(),
+        "STREAM".toArgument(),
+        key.toArgument(),
+    ).writeArgument(
         full.takeIf { it }?.let { "FULL" },
         limit,
     ),
 ).unwrapRespIndMap<String, RType>() ?: emptyMap()
 
-suspend fun ReThis.xLen(key: String): Long? = execute<Long>(listOf("XLEN".toArg(), key.toArg()))
+suspend fun ReThis.xLen(key: String): Long? = execute<Long>(listOf("XLEN".toArgument(), key.toArgument()))
 
 suspend fun ReThis.xPending(key: String, group: String, option: XPendingOption? = null): List<RType> = execute(
-    mutableListOf("XPENDING".toArg(), key.toArg(), group.toArg()).writeArg(option),
+    mutableListOf("XPENDING".toArgument(), key.toArgument(), group.toArgument()).writeArgument(option),
 ).unwrapList<RType>()
 
 suspend fun ReThis.xRange(key: String, start: String, end: String, limit: XOption.Limit? = null): List<RType> = execute(
-    mutableListOf("XRANGE".toArg(), key.toArg(), start.toArg(), end.toArg()).writeArg(limit),
+    mutableListOf("XRANGE".toArgument(), key.toArgument(), start.toArgument(), end.toArgument()).writeArgument(limit),
 ).unwrapList<RType>()
 
 suspend fun ReThis.xRead(
@@ -179,8 +192,8 @@ suspend fun ReThis.xRead(
     blockMillis: Long? = null,
 ): Map<String, RType?>? = execute(
     mutableListOf<Argument>(
-        "XREAD".toArg(),
-    ).writeArg(
+        "XREAD".toArgument(),
+    ).writeArgument(
         count,
         blockMillis?.let { "BLOCK" to it },
         "STREAMS",
@@ -199,11 +212,11 @@ suspend fun ReThis.xReadGroup(
     ids: List<String>,
 ): Map<String, RType?>? = execute(
     mutableListOf<Argument>(
-        "XREADGROUP".toArg(),
-        "GROUP".toArg(),
-        group.toArg(),
-        consumer.toArg(),
-    ).writeArg(
+        "XREADGROUP".toArgument(),
+        "GROUP".toArgument(),
+        group.toArgument(),
+        consumer.toArgument(),
+    ).writeArgument(
         count,
         blockMillis?.let { "BLOCK" to it },
         noack.takeIf { it }?.let { "NOACK" },
@@ -219,7 +232,12 @@ suspend fun ReThis.xRevRange(
     start: String,
     limit: XOption.Limit? = null,
 ): List<RType> = execute(
-    mutableListOf("XREVRANGE".toArg(), key.toArg(), end.toArg(), start.toArg()).writeArg(limit),
+    mutableListOf(
+        "XREVRANGE".toArgument(),
+        key.toArgument(),
+        end.toArgument(),
+        start.toArgument(),
+    ).writeArgument(limit),
 ).unwrapList<RType>()
 
 suspend fun ReThis.xSetId(
@@ -229,10 +247,10 @@ suspend fun ReThis.xSetId(
     maxDeletedId: String? = null,
 ): Boolean = execute<String>(
     mutableListOf(
-        "XSETID".toArg(),
-        key.toArg(),
-        lastId.toArg(),
-    ).writeArg(
+        "XSETID".toArgument(),
+        key.toArgument(),
+        lastId.toArgument(),
+    ).writeArgument(
         entriesAdded?.let { "ENTRIESADDED" to it },
         maxDeletedId?.let { "MAXDELETEDID" to it },
     ),
@@ -246,10 +264,10 @@ suspend fun ReThis.xTrim(
     trim: XOption.Limit? = null,
 ) = execute<Long>(
     mutableListOf(
-        "XTRIM".toArg(),
-        key.toArg(),
-    ).writeArg(
-        trimmingStrategy.toArg(),
+        "XTRIM".toArgument(),
+        key.toArgument(),
+    ).writeArgument(
+        trimmingStrategy.toArgument(),
         exactement,
         threshold,
         trim,

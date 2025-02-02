@@ -1,8 +1,11 @@
 package eu.vendeli.rethis.benchmarks
 
+import com.redis.testcontainers.RedisContainer
 import kotlinx.benchmark.*
+import kotlinx.coroutines.DelicateCoroutinesApi
 import org.openjdk.jmh.annotations.Fork
 import org.openjdk.jmh.annotations.Timeout
+import org.testcontainers.utility.DockerImageName
 import redis.clients.jedis.JedisPooled
 import java.util.concurrent.TimeUnit
 
@@ -15,20 +18,30 @@ import java.util.concurrent.TimeUnit
 class JedisBenchmark {
     private lateinit var jedis: JedisPooled
 
+    private val redis = RedisContainer(
+        DockerImageName.parse("redis:7.4.0"),
+    )
+
     @Setup
     fun setup() {
-        jedis = JedisPooled("localhost", 6379)
+        redis.start()
+        jedis = JedisPooled(redis.host, redis.firstMappedPort)
         jedis.ping()
     }
 
     @TearDown
     fun tearDown() {
+        redis.stop()
         jedis.close()
     }
 
     @Benchmark
+    @OptIn(DelicateCoroutinesApi::class)
     fun jedisSetGet(bh: Blackhole) {
-        bh.consume(jedis.set("key", "value"))
-        bh.consume(jedis.get("key"))
+        val randInt = (1..10_000).random()
+
+        bh.consume(jedis.set("keyJedis$randInt", "value$randInt"))
+        val value = jedis.get("keyJedis$randInt")
+        assert(value == "value$randInt")
     }
 }

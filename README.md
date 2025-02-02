@@ -35,23 +35,20 @@ a [benchmark](https://github.com/vendelieu/re.this/tree/master/benchmarks/src/ma
 comparing popular library solutions (more is better):
 
 ```javascript
-Benchmark                        Mode  Cnt        Score        Error  Units
-JedisBenchmark.jedisSetGet      thrpt    5    31393.802 ±   5501.760  ops/s
-KredsBenchmark.kredsSetGet      thrpt    5  1051938.506 ± 344626.183  ops/s
-LettuceBenchmark.lettuceSetGet  thrpt    5    19780.976 ±   1544.416  ops/s
-RethisBenchmark.rethisSetGet    thrpt    5  1555443.251 ± 552464.716  ops/s
+Benchmark                        Mode  Cnt        Score         Error  Units
+JedisBenchmark.jedisSetGet      thrpt    5    15726.989 ±    1939.998  ops/s
+KredsBenchmark.kredsSetGet      thrpt    5   839860.900 ±   28180.928  ops/s
+LettuceBenchmark.lettuceSetGet  thrpt    5  1380333.188 ± 6181093.607  ops/s
+RethisBenchmark.rethisSetGet    thrpt    5  1452718.508 ± 1341935.933  ops/s
 ```
 
 <details>
   <summary>Details</summary>
 
-* `Jedis` (Pooled) gives roughly the same results inside the coroutine as outside.
+* `Jedis` (Pooled) inside coroutines starts to fail to cope with the thread pool and starts throwing errors.
 * `Kreds` with the `.use {}` approach gives worse results.
-* The most interesting thing happens with `Lettuce` it gives excellent results (almost as `Re.This`, sometimes really
-  near)
-  if you use its asynchronous client on top of coroutines, but in this case the Heap dies in seconds (goes out of memory).
-  And if swap gc (but still using coroutines) to zgc it gives same performance as `kreds` but now without the memory
-  problems.
+* `Lettuce` gives similar performance, the difference is ~100k ops more or less, but it takes an order of magnitude more
+  RAM and starts to freeze because of this.
 
 </details>
 

@@ -16,14 +16,14 @@ class RestoreCommandTest : ReThisTestCtx() {
         client.set("testKey1", "testVal").shouldNotBeNull()
         val keyDump = client.dump("testKey1").shouldNotBeNull()
         client.del("testKey1")
-        client.restore("testKey1", 0L, keyDump) shouldBe "OK"
+        client.restore("testKey1", 0L, keyDump) shouldBe true
     }
 
     @Test
     suspend fun `test RESTORE command with REPLACE option`() {
         client.set("testKey2", "testVal").shouldNotBeNull()
         val keyDump = client.dump("testKey2").shouldNotBeNull()
-        client.restore("testKey2", 10L, keyDump, RestoreOption.REPLACE) shouldBe "OK"
+        client.restore("testKey2", 10L, keyDump, RestoreOption.REPLACE) shouldBe true
     }
 
     @Test
@@ -31,7 +31,7 @@ class RestoreCommandTest : ReThisTestCtx() {
         client.set("testKey3", "testVal").shouldNotBeNull()
         val keyDump = client.dump("testKey3").shouldNotBeNull()
         client.del("testKey3")
-        client.restore("testKey3", 10L, keyDump, RestoreOption.ABSTTL) shouldBe "OK"
+        client.restore("testKey3", 10L, keyDump, RestoreOption.ABSTTL) shouldBe true
     }
 
     @Test
@@ -39,7 +39,7 @@ class RestoreCommandTest : ReThisTestCtx() {
         client.set("testKey4", "testVal").shouldNotBeNull()
         val keyDump = client.dump("testKey4").shouldNotBeNull()
         client.del("testKey4")
-        client.restore("testKey4", 10L, keyDump, RestoreOption.IDLETIME(10.seconds)) shouldBe "OK"
+        client.restore("testKey4", 10L, keyDump, RestoreOption.IDLETIME(10.seconds)) shouldBe true
     }
 
     @Test
@@ -47,6 +47,6 @@ class RestoreCommandTest : ReThisTestCtx() {
         client.set("testKey5", "testVal").shouldNotBeNull()
         val keyDump = client.dump("testKey5").shouldNotBeNull()
         client.del("testKey5")
-        client.restore("testKey5", 10L, keyDump, RestoreOption.FREQ(10L)) shouldBe "OK"
+        client.restore("testKey5", 10L, keyDump, RestoreOption.FREQ(10L)) shouldBe true
     }
 }

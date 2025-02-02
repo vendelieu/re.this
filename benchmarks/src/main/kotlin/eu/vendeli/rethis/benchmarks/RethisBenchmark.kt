@@ -1,5 +1,6 @@
 package eu.vendeli.rethis.benchmarks
 
+import com.redis.testcontainers.RedisContainer
 import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.commands.get
 import eu.vendeli.rethis.commands.ping
@@ -9,6 +10,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import org.openjdk.jmh.annotations.*
 import org.openjdk.jmh.infra.Blackhole
+import org.testcontainers.utility.DockerImageName
 import java.util.concurrent.TimeUnit
 
 @DelicateCoroutinesApi
@@ -20,23 +22,31 @@ import java.util.concurrent.TimeUnit
 @Fork(1, jvmArgsAppend = ["-Xms12g", "-Xmx12g", "-Xss2m", "-XX:MaxMetaspaceSize=1g"])
 class RethisBenchmark {
     private lateinit var rethis: ReThis
+    private val redis = RedisContainer(
+        DockerImageName.parse("redis:7.4.0"),
+    )
 
     @Setup
     fun setup() {
-        rethis = ReThis("localhost", 6379)
+        redis.start()
+        rethis = ReThis(redis.host, redis.firstMappedPort)
         GlobalScope.launch { rethis.ping("test") }
     }
 
     @TearDown
     fun tearDown() {
+        redis.stop()
         rethis.disconnect()
     }
 
     @Benchmark
     fun rethisSetGet(bh: Blackhole) {
+        val randInt = (1..10_000).random()
+
         GlobalScope.launch {
-            bh.consume(rethis.set("key", "value"))
-            bh.consume(rethis.get("key"))
+            bh.consume(rethis.set("keyReThis$randInt", "value$randInt"))
+            val value = rethis.get("keyReThis$randInt")
+            assert(value == "value$randInt")
         }
     }
 }

@@ -2,7 +2,7 @@ package eu.vendeli.rethis.types.options
 
 import eu.vendeli.rethis.types.core.Argument
 import eu.vendeli.rethis.types.core.VaryingArgument
-import eu.vendeli.rethis.types.core.toArg
+import eu.vendeli.rethis.types.core.toArgument
 
 sealed class BitfieldOption {
     class GET(
@@ -10,14 +10,14 @@ sealed class BitfieldOption {
         offset: Long,
     ) : BitfieldOption(),
         VaryingArgument {
-        override val data: List<Argument> = listOf("GET".toArg(), encoding.toArg(), offset.toArg())
+        override val data: List<Argument> = listOf("GET".toArgument(), encoding.toArgument(), offset.toArgument())
     }
 
     class OVERFLOW(
         type: Type,
     ) : BitfieldOption(),
         VaryingArgument {
-        override val data: List<Argument> = listOf("OVERFLOW".toArg(), type.name.toArg())
+        override val data: List<Argument> = listOf("OVERFLOW".toArgument(), type.name.toArgument())
 
         enum class Type { WRAP, SAT, FAIL }
     }
@@ -28,7 +28,8 @@ sealed class BitfieldOption {
         value: Long,
     ) : BitfieldOption(),
         VaryingArgument {
-        override val data: List<Argument> = listOf("SET".toArg(), encoding.toArg(), offset.toArg(), value.toArg())
+        override val data: List<Argument> =
+            listOf("SET".toArgument(), encoding.toArgument(), offset.toArgument(), value.toArgument())
     }
 
     class INCRBY(
@@ -38,6 +39,6 @@ sealed class BitfieldOption {
     ) : BitfieldOption(),
         VaryingArgument {
         override val data: List<Argument> =
-            listOf("INCRBY".toArg(), encoding.toArg(), offset.toArg(), increment.toArg())
+            listOf("INCRBY".toArgument(), encoding.toArgument(), offset.toArgument(), increment.toArgument())
     }
 }

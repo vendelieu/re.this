@@ -16,7 +16,7 @@ class HashCommandTest : ReThisTestCtx() {
 
     @Test
     suspend fun `test HMSET command`() {
-        client.hMSet("testKey13", "testField13" to "testValue13") shouldBe "OK"
+        client.hMSet("testKey13", "testField13" to "testValue13") shouldBe true
     }
 
     @Test

@@ -1,7 +1,7 @@
 package eu.vendeli.rethis.types.options
 
 import eu.vendeli.rethis.types.core.VaryingArgument
-import eu.vendeli.rethis.types.core.toArg
+import eu.vendeli.rethis.types.core.toArgument
 
 sealed class LPosOption {
     sealed class CommonOption : LPosOption()
@@ -10,20 +10,20 @@ sealed class LPosOption {
         rank: Long,
     ) : CommonOption(),
         VaryingArgument {
-        override val data = listOf("RANK".toArg(), rank.toArg())
+        override val data = listOf("RANK".toArgument(), rank.toArgument())
     }
 
     class MaxLen(
         maxLen: Long,
     ) : CommonOption(),
         VaryingArgument {
-        override val data = listOf("MAXLEN".toArg(), maxLen.toArg())
+        override val data = listOf("MAXLEN".toArgument(), maxLen.toArgument())
     }
 
     class Count(
         count: Long,
     ) : LPosOption(),
         VaryingArgument {
-        override val data = listOf("COUNT".toArg(), count.toArg())
+        override val data = listOf("COUNT".toArgument(), count.toArgument())
     }
 }

@@ -7,6 +7,7 @@ plugins {
     alias(libs.plugins.ktlinter)
     alias(libs.plugins.kotlin.binvalid)
     alias(libs.plugins.kover)
+    alias(libs.plugins.kotlin.serde)
     dokka
     publish
 }
@@ -21,6 +22,7 @@ configureKotlin {
         commonMain.dependencies {
             implementation(libs.ktor.network)
             implementation(libs.kotlinx.io.core)
+            implementation(libs.serde.json.io)
 
             api(libs.ktor.network.tls)
             api(libs.bignum)

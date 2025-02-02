@@ -62,7 +62,7 @@ class ScriptCommandTest : ReThisTestCtx() {
     suspend fun `test FUNCTION DELETE command`() {
         val script = "#!lua name=mylib3\n redis.register_function('myfunc3', function(keys, args) return args[1] end)"
         client.functionLoad(script).shouldNotBeNull()
-        client.functionDelete("mylib3") shouldBe "OK"
+        client.functionDelete("mylib3") shouldBe true
     }
 
     @Test
@@ -78,7 +78,7 @@ class ScriptCommandTest : ReThisTestCtx() {
 
     @Test
     suspend fun `test FUNCTION FLUSH command`() {
-        client.functionFlush() shouldBe "OK"
+        client.functionFlush() shouldBe true
     }
 
     @Test
@@ -99,7 +99,7 @@ class ScriptCommandTest : ReThisTestCtx() {
             client.fcall("fun10", 0)
         }
         delay(100)
-        client.functionKill() shouldBe "OK"
+        client.functionKill() shouldBe true
     }
 
     @Test
@@ -122,7 +122,7 @@ class ScriptCommandTest : ReThisTestCtx() {
         val dump = client.functionDump().shouldNotBeNull()
         client.functionFlush()
         delay(100)
-        client.functionRestore(dump) shouldBe "OK"
+        client.functionRestore(dump) shouldBe true
     }
 
     @Test
@@ -134,7 +134,7 @@ class ScriptCommandTest : ReThisTestCtx() {
 
     @Test
     suspend fun `test SCRIPT DEBUG command`() {
-        client.scriptDebug("SYNC") shouldBe "OK"
+        client.scriptDebug("SYNC") shouldBe true
     }
 
     @Test
@@ -146,7 +146,7 @@ class ScriptCommandTest : ReThisTestCtx() {
 
     @Test
     suspend fun `test SCRIPT FLUSH command`() {
-        client.scriptFlush() shouldBe "OK"
+        client.scriptFlush() shouldBe true
     }
 
     @Test

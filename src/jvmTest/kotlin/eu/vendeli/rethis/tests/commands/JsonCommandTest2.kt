@@ -2,6 +2,7 @@ package eu.vendeli.rethis.tests.commands
 
 import eu.vendeli.rethis.ReThisTestCtx
 import eu.vendeli.rethis.commands.*
+import eu.vendeli.rethis.types.common.JsonEntry
 import eu.vendeli.rethis.types.core.Int64
 import eu.vendeli.rethis.types.core.PlainString
 import io.kotest.matchers.shouldBe
@@ -10,13 +11,13 @@ class JsonCommandTest2 : ReThisTestCtx(true) {
     @Test
     suspend fun `test JSON_MGET command`() {
         client.jsonSet("testKey13", ".", "[1, 2, 3]")
-        client.jsonMGet("testKey13", ".") shouldBe listOf("[1,2,3]")
+        client.jsonMGet(key = arrayOf("testKey13"), path = ".") shouldBe listOf("[1,2,3]")
     }
 
     @Test
     suspend fun `test JSON_MSET command`() {
         client.jsonSet("testKey14", ".", "[1, 2, 3]")
-        client.jsonMSet("testKey14", ".", "[4, 5, 6]") shouldBe "OK"
+        client.jsonMSet(JsonEntry("testKey14", ".", "[4, 5, 6]")) shouldBe true
     }
 
     @Test

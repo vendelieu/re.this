@@ -2,6 +2,8 @@ package eu.vendeli.rethis.tests.commands
 
 import eu.vendeli.rethis.ReThisTestCtx
 import eu.vendeli.rethis.commands.*
+import eu.vendeli.rethis.types.core.unwrapList
+import io.kotest.matchers.collections.shouldBeIn
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import kotlin.time.Duration.Companion.seconds
@@ -24,6 +26,23 @@ class HashCommandTest2 : ReThisTestCtx() {
         client.hSet("testKey19", "testField19" to "testValue19")
 
         client.hRandField("testKey19") shouldBe "testField19"
+    }
+
+    @Test
+    suspend fun `test HRANDFIELD command with count and withValues option`() {
+        client.hSet("testKey20", "field1" to "value1", "field2" to "value2", "field3" to "value3")
+
+        val fields = client.hRandField("testKey20", 2, true)
+        fields.shouldNotBeNull()
+        fields.size shouldBe 2
+
+        val allFields = listOf("field1", "field2", "field3")
+        val allValues = listOf("value1", "value2", "value3")
+
+        fields[0].unwrapList<String>().first() shouldBeIn allFields
+        fields[0].unwrapList<String>().last() shouldBeIn allValues
+        fields[1].unwrapList<String>().first() shouldBeIn allFields
+        fields[1].unwrapList<String>().last() shouldBeIn allValues
     }
 
     @Test

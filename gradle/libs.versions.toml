@@ -1,11 +1,12 @@
 [versions]
 ktor = "3.0.3"
 
-kotlin = "2.1.0"
+kotlin = "2.1.10"
 coroutines = "1.10.1"
 io = "0.6.0"
 datetime = "0.6.1"
 bignum = "0.3.10"
+kotlinx-serialization = "1.8.0"
 
 dokka = "2.0.0"
 kotlinter = "5.0.1"
@@ -23,6 +24,7 @@ kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.
 ktor-network = { module = "io.ktor:ktor-network", version.ref = "ktor" }
 ktor-network-tls = { module = "io.ktor:ktor-network-tls", version.ref = "ktor" }
 bignum = { module = "com.ionspin.kotlin:bignum", version.ref = "bignum" }
+serde-json-io = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json-io", version.ref = "kotlinx-serialization" }
 
 coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
 dokka = { module = "org.jetbrains.dokka:dokka-gradle-plugin", version.ref = "dokka" }
@@ -40,3 +42,4 @@ ktlinter = { id = "org.jmailen.kotlinter", version.ref = "kotlinter" }
 deteKT = { id = "io.gitlab.arturbosch.detekt", version.ref = "deteKT" }
 kover = { id = "org.jetbrains.kotlinx.kover", version.ref = "kover" }
 kotlin-binvalid = { id = "org.jetbrains.kotlinx.binary-compatibility-validator", version.ref = "binvalid" }
+kotlin-serde = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }

@@ -5,15 +5,20 @@ import eu.vendeli.rethis.annotations.ReThisInternal
 import eu.vendeli.rethis.types.core.*
 import eu.vendeli.rethis.types.coroutine.CoLocalConn
 import eu.vendeli.rethis.types.coroutine.CoPipelineCtx
-import eu.vendeli.rethis.utils.*
 import eu.vendeli.rethis.utils.Const.DEFAULT_HOST
 import eu.vendeli.rethis.utils.Const.DEFAULT_PORT
-import io.ktor.network.sockets.*
+import eu.vendeli.rethis.utils.isOk
+import eu.vendeli.rethis.utils.response.readListResponseTyped
+import eu.vendeli.rethis.utils.response.readMapResponseTyped
+import eu.vendeli.rethis.utils.response.readResponseWrapped
+import eu.vendeli.rethis.utils.response.readSimpleResponseTyped
+import eu.vendeli.rethis.utils.takeFromCoCtx
+import eu.vendeli.rethis.utils.writeRedisValue
 import io.ktor.util.logging.*
-import io.ktor.utils.io.*
+import io.ktor.util.reflect.*
 import kotlinx.coroutines.*
 import kotlinx.io.Buffer
-import kotlin.jvm.JvmName
+import kotlinx.serialization.json.Json
 
 @ReThisDSL
 class ReThis(
@@ -73,7 +78,7 @@ class ReThis(
 
     suspend fun pipeline(block: suspend ReThis.() -> Unit): List<RType> {
         val pipelineCtx = takeFromCoCtx(CoPipelineCtx)
-        var ctxConn: Connection? = null
+        var ctxConn: RConnection? = null
         if (pipelineCtx == null) {
             val requests = mutableListOf<List<Argument>>()
             logger.info("Pipeline started")
@@ -94,17 +99,15 @@ class ReThis(
             logger.debug("Executing pipelined request\nRequest payload: $requests")
 
             val connection = ctxConn
-            return if (connection != null) runBlocking {
-                connection.sendRequest(pipelinedPayload)
-                requests.map { connection.parseResponse() }
+            return if (connection != null) run {
+                connection.sendRequest(pipelinedPayload).readBatchResponse(requests.size)
             }.map {
                 it.readResponseWrapped(cfg.charset)
             } else connectionPool
                 .use { connection ->
-                    runBlocking {
-                        connection.sendRequest(pipelinedPayload)
-                        requests.map { connection.parseResponse() }
-                    }
+                    connection
+                        .sendRequest(pipelinedPayload)
+                        .readBatchResponse(requests.size)
                 }.map {
                     it.readResponseWrapped(cfg.charset)
                 }.also {
@@ -130,10 +133,10 @@ class ReThis(
         return connectionPool.use { conn ->
             logger.debug("Started transaction")
             val multiRequest = conn
-                .sendRequest(listOf("MULTI".toArg()))
+                .sendRequest(listOf("MULTI".toArgument()), cfg.charset)
                 .parseResponse()
             if (!multiRequest.readResponseWrapped(cfg.charset).isOk())
-                throw ReThisException("Failed to start transaction")
+                throw InvalidStateException("Failed to start transaction")
 
             var e: Throwable? = null
             coScope
@@ -142,17 +145,17 @@ class ReThis(
                 }.join()
             e?.also {
                 val discardRequest = conn
-                    .sendRequest(listOf("DISCARD".toArg()))
+                    .sendRequest(listOf("DISCARD".toArgument()), cfg.charset)
                     .parseResponse()
                 if (!discardRequest.readResponseWrapped(cfg.charset).isOk())
-                    throw ReThisException("Failed to cancel transaction")
+                    throw InvalidStateException("Failed to cancel transaction")
                 logger.error("Transaction canceled", it)
                 throw it
             }
 
             logger.debug("Transaction completed")
             conn
-                .sendRequest(listOf("EXEC".toArg()))
+                .sendRequest(listOf("EXEC".toArgument()), cfg.charset)
                 .parseResponse()
                 .readResponseWrapped(cfg.charset)
                 .unwrapList<RType>()
@@ -165,40 +168,43 @@ class ReThis(
     @ReThisInternal
     suspend fun execute(
         payload: List<Argument>,
-        rawResponse: Boolean = false,
-    ): RType = coScope
-        .async(currentCoroutineContext() + Dispatchers.IO) {
-            handleRequest(payload)
-        }.await()
-        ?.readResponseWrapped(cfg.charset, rawResponse) ?: RType.Null
+        rawMarker: Unit? = null,
+    ): RType = performRequest(payload)
+        ?.readResponseWrapped(charset = cfg.charset, rawOnly = rawMarker != null) ?: RType.Null
 
-    @JvmName("executeSimple")
-    internal suspend inline fun <reified T : Any> execute(
+    @ReThisInternal
+    suspend fun <T : Any> execute(
         payload: List<Argument>,
-    ): T? = coScope
-        .async(currentCoroutineContext() + Dispatchers.IO) {
-            handleRequest(payload)
-        }.await()
-        ?.readSimpleResponseTyped(T::class, cfg.charset)
+        responseType: TypeInfo,
+        jsonModule: Json? = null,
+    ) = performRequest(payload)
+        ?.readSimpleResponseTyped<T>(responseType, cfg.charset, jsonModule)
 
-    @JvmName("executeList")
-    internal suspend inline fun <reified T : Any> execute(
+    @ReThisInternal
+    suspend fun <T : Any> execute(
         payload: List<Argument>,
-        isCollectionResponse: Boolean = false,
-    ): List<T>? = coScope
-        .async(currentCoroutineContext() + Dispatchers.IO) {
-            handleRequest(payload)
-        }.await()
-        ?.readListResponseTyped(T::class, cfg.charset)
+        responseType: TypeInfo,
+        isCollectionResponse: Boolean = true,
+        jsonModule: Json? = null,
+    ) = performRequest(payload)
+        ?.readListResponseTyped<T>(responseType, cfg.charset, jsonModule)
 
-    @JvmName("executeMap")
-    internal suspend inline fun <reified K : Any, reified V : Any> execute(
+    @ReThisInternal
+    suspend fun <K : Any, V : Any> execute(
         payload: List<Argument>,
-    ): Map<K, V?>? = coScope
+        keyType: TypeInfo,
+        valueType: TypeInfo,
+        jsonModule: Json? = null,
+    ) = performRequest(payload)
+        ?.readMapResponseTyped<K, V>(keyType, valueType, cfg.charset, jsonModule)
+
+    private suspend inline fun performRequest(
+        payload: List<Argument>,
+    ): ArrayDeque<ResponseToken>? = coScope
         .async(currentCoroutineContext() + Dispatchers.IO) {
+            logger.trace { "Performing request with payload $payload" }
             handleRequest(payload)
         }.await()
-        ?.readMapResponseTyped(K::class, V::class, cfg.charset)
 
     private suspend fun handleRequest(
         payload: List<Argument>,
@@ -212,21 +218,14 @@ class ReThis(
                 null
             }
 
-            coLocalConn != null -> runBlocking {
+            coLocalConn != null ->
                 coLocalConn.connection
-                    .sendRequest(payload)
+                    .sendRequest(payload, cfg.charset)
                     .parseResponse()
-            }
 
             else -> connectionPool.use { connection ->
-                runBlocking { connection.sendRequest(payload).parseResponse() }
+                coScope.async { connection.sendRequest(payload, cfg.charset).parseResponse() }.await()
             }
         }
-    }
-
-    private suspend fun Connection.sendRequest(payload: List<Argument>): Connection = apply {
-        logger.trace { "Sending request with such payload $payload" }
-        output.writeBuffer(bufferValues(payload, cfg.charset))
-        output.flush()
     }
 }
