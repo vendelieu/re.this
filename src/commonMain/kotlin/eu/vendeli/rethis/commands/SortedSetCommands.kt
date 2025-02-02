@@ -137,7 +137,7 @@ suspend fun ReThis.zDiffStore(destination: String, vararg keys: String): Long = 
     },
 ) ?: 0
 
-suspend fun ReThis.zIncrby(key: String, member: String, increment: Double): Double = execute<Double>(
+suspend fun ReThis.zIncrBy(key: String, member: String, increment: Double): Double = execute<Double>(
     listOf(
         "ZINCRBY".toArgument(),
         key.toArgument(),
@@ -200,7 +200,7 @@ suspend fun ReThis.zLexCount(key: String, min: String, max: String): Long = exec
     ),
 ) ?: 0
 
-suspend fun ReThis.zMpop(
+suspend fun ReThis.zMPop(
     modifier: ZPopCommonOption,
     vararg keys: String,
     count: Long? = null,
@@ -217,7 +217,7 @@ suspend fun ReThis.zMpop(
     MPopResult(name = item.first().unwrap<String>()!!, poppedElements = item.last().unwrapSet<String>().toList())
 }
 
-suspend fun ReThis.zMscore(key: String, vararg members: String): List<Double?> = execute(
+suspend fun ReThis.zMScore(key: String, vararg members: String): List<Double?> = execute(
     listOf(
         "ZMSCORE".toArgument(),
         key.toArgument(),
@@ -226,7 +226,7 @@ suspend fun ReThis.zMscore(key: String, vararg members: String): List<Double?> =
     isCollectionResponse = true,
 ) ?: emptyList()
 
-suspend fun ReThis.zPopmax(key: String, count: Long? = null): List<MPopResult> = execute(
+suspend fun ReThis.zPopMax(key: String, count: Long? = null): List<MPopResult> = execute(
     mutableListOf(
         "ZPOPMAX".toArgument(),
         key.toArgument(),
@@ -235,14 +235,14 @@ suspend fun ReThis.zPopmax(key: String, count: Long? = null): List<MPopResult> =
     MPopResult(name = item.first().unwrap<String>()!!, poppedElements = item.last().unwrapSet<String>().toList())
 }
 
-suspend fun ReThis.zPopmin(key: String): Map<String, Double?> = execute(
+suspend fun ReThis.zPopMin(key: String): Map<String, Double?> = execute(
     listOfNotNull(
         "ZPOPMIN".toArgument(),
         key.toArgument(),
     ),
 ).unwrapRespIndMap<String, Double>() ?: emptyMap()
 
-suspend fun ReThis.zPopmin(key: String, count: Long): List<List<ZMember>> = execute(
+suspend fun ReThis.zPopMin(key: String, count: Long): List<List<ZMember>> = execute(
     listOfNotNull(
         "ZPOPMIN".toArgument(),
         key.toArgument(),
@@ -254,14 +254,14 @@ suspend fun ReThis.zPopmin(key: String, count: Long): List<List<ZMember>> = exec
     }
 }
 
-suspend fun ReThis.zRandmember(key: String): String? = execute<String>(
+suspend fun ReThis.zRandMember(key: String): String? = execute<String>(
     listOf(
         "ZRANDMEMBER".toArgument(),
         key.toArgument(),
     ),
 )
 
-suspend fun ReThis.zRandmember(
+suspend fun ReThis.zRandMember(
     key: String,
     count: Long,
 ): List<String> = execute<String>(
@@ -273,7 +273,7 @@ suspend fun ReThis.zRandmember(
     isCollectionResponse = true,
 ) ?: emptyList()
 
-suspend fun ReThis.zRandmember(
+suspend fun ReThis.zRandMember(
     key: String,
     count: Long,
     withScores: Boolean = false,
@@ -383,7 +383,7 @@ suspend fun ReThis.zRemRangeByScore(key: String, min: Double, max: Double): Long
     ),
 ) ?: 0
 
-suspend fun ReThis.zRevrank(key: String, member: String): Long? = execute(
+suspend fun ReThis.zRevRank(key: String, member: String): Long? = execute(
     listOf(
         "ZREVRANK".toArgument(),
         key.toArgument(),

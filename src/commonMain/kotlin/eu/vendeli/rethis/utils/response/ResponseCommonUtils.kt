@@ -40,7 +40,7 @@ internal inline fun ArrayDeque<ResponseToken>.validatedResponseType(): Code {
 @Suppress("NOTHING_TO_INLINE")
 internal inline fun ArrayDeque<ResponseToken>.validatedSimpleResponse(codeToken: Code): Source {
     if (!codeToken.code.isSimple) throw ResponseParsingException(
-        message = "Wrong response type, expected simple type, given ${codeToken.code}",
+        message = "Wrong response type, expected simple type, given ${codeToken.code}\nResponse: $this",
     )
 
     if (codeToken.code != RespCode.NULL && isEmpty()) throw ResponseParsingException(

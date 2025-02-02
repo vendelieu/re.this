@@ -124,7 +124,8 @@ suspend fun ReThis.sScan(
     cursor: Long,
     vararg option: SScanOption,
 ): ScanResult<String> {
-    val response = execute(mutableListOf("SSCAN".toArgument(), key.toArgument(), cursor.toArgument()).writeArgument(option))
+    val response =
+        execute(mutableListOf("SSCAN".toArgument(), key.toArgument(), cursor.toArgument()).writeArgument(option))
 
     val arrResponse = response.safeCast<RArray>()?.value ?: processingException { "Wrong response type" }
     val newCursor = arrResponse[0].unwrap<String>() ?: processingException { "Missing cursor in response" }

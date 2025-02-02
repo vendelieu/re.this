@@ -2,7 +2,9 @@ package eu.vendeli.rethis.tests.commands
 
 import eu.vendeli.rethis.ReThisTestCtx
 import eu.vendeli.rethis.commands.*
+import eu.vendeli.rethis.types.core.BulkString
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeTypeOf
 
 class JsonCommandTest : ReThisTestCtx(true) {
     @Test
@@ -32,7 +34,7 @@ class JsonCommandTest : ReThisTestCtx(true) {
     @Test
     suspend fun `test JSON_ARRPOP command`() {
         client.jsonSet("testKey5", ".", "[1, 2, 3]")
-        client.jsonArrPop("testKey5", ".") shouldBe "3"
+        client.jsonArrPop("testKey5", ".").shouldBeTypeOf<BulkString>().value shouldBe "3"
     }
 
     @Test
@@ -69,6 +71,6 @@ class JsonCommandTest : ReThisTestCtx(true) {
     @Test
     suspend fun `test JSON_MERGE command`() {
         client.jsonSet("testKey12", ".", "[1, 2, 3]")
-        client.jsonMerge("testKey12", ".", "[4, 5, 6]") shouldBe "OK"
+        client.jsonMerge("testKey12", ".", "[4, 5, 6]") shouldBe true
     }
 }

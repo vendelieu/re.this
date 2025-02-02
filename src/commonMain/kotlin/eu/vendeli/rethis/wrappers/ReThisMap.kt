@@ -1,6 +1,5 @@
 package eu.vendeli.rethis.wrappers
 
-import eu.vendeli.rethis.InvalidStateException
 import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.commands.*
 import kotlinx.coroutines.runBlocking
@@ -33,7 +32,7 @@ class ReThisMap(
             client.hVals(bucket).toMutableList()
         }
 
-    override fun put(key: String, value: String): String = updateValue(client, bucket, key to value)
+    override fun put(key: String, value: String): String = updateValue(client, bucket, key to value).let { value }
 
     override fun get(key: String): String? = runBlocking {
         client.hGet(bucket, key)
@@ -72,10 +71,10 @@ private inline fun Pair<String, String>.toMapEntry(
     override val key: String get() = first
     override val value: String get() = second
 
-    override fun setValue(newValue: String): String = updateValue(client, bucket, key to newValue)
+    override fun setValue(newValue: String): String = updateValue(client, bucket, key to newValue).let { newValue }
 }
 
 @Suppress("NOTHING_TO_INLINE")
 private inline fun updateValue(client: ReThis, bucket: String, pair: Pair<String, String>) = runBlocking {
-    client.hMSet(bucket, pair) ?: throw InvalidStateException("Error occurred while updating entry")
+    client.hMSet(bucket, pair)
 }

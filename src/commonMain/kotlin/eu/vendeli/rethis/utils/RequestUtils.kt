@@ -30,6 +30,31 @@ fun <T, R : Argument> MutableList<R>.writeArgument(value: T): MutableList<R> {
     return this
 }
 
+@Suppress("NOTHING_TO_INLINE")
+inline fun <T, R : Argument> MutableList<R>.writeArgument(value: List<T>): MutableList<R> {
+    if (isEmpty()) return this
+
+    value.forEach { writeArgument(it) }
+    return this
+}
+
+@JvmName("writeArgArray")
+@Suppress("NOTHING_TO_INLINE")
+inline fun <T, R : Argument> MutableList<R>.writeArgument(vararg value: T): MutableList<R> {
+    if (isEmpty()) return this
+
+    value.forEach { writeArgument(it) }
+    return this
+}
+
+@Suppress("NOTHING_TO_INLINE")
+inline fun <T, R : Argument> MutableList<R>.writeArgument(value: Array<T>): MutableList<R> {
+    if (isEmpty()) return this
+
+    value.forEach { writeArgument(it) }
+    return this
+}
+
 @ReThisInternal
 @Suppress("FunctionName", "ktlint:standard:function-naming")
 fun ReThis.__jsonModule() = cfg.jsonModule
@@ -56,31 +81,6 @@ internal fun Sink.writeRedisValue(
         is DoubleArg -> writeByteArray(data.value.toString().toByteArray(charset))
         is BaArg -> writeByteArray(data.value)
     }
-}
-
-@Suppress("NOTHING_TO_INLINE")
-internal inline fun <T, R : Argument> MutableList<R>.writeArgument(value: List<T>): MutableList<R> {
-    if (isEmpty()) return this
-
-    value.forEach { writeArgument(it) }
-    return this
-}
-
-@JvmName("writeArgArray")
-@Suppress("NOTHING_TO_INLINE")
-internal inline fun <T, R : Argument> MutableList<R>.writeArgument(vararg value: T): MutableList<R> {
-    if (isEmpty()) return this
-
-    value.forEach { writeArgument(it) }
-    return this
-}
-
-@Suppress("NOTHING_TO_INLINE")
-internal inline fun <T, R : Argument> MutableList<R>.writeArgument(value: Array<T>): MutableList<R> {
-    if (isEmpty()) return this
-
-    value.forEach { writeArgument(it) }
-    return this
 }
 
 private fun <T : List<*>> Sink.writeListValue(

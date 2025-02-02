@@ -18,5 +18,10 @@ abstract class ReThisTestCtx(
         start()
     }
 
-    protected val client = ReThis(redis.host, redis.firstMappedPort)
+    private var rethis: ReThis = ReThis(redis.host, redis.firstMappedPort)
+    protected val client get() = rethis
+
+    protected fun resetClient(new: ReThis) {
+        rethis = new
+    }
 }

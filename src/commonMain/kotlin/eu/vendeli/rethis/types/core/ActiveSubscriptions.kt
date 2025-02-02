@@ -16,7 +16,6 @@ class ActiveSubscriptions {
 
     fun unsubscribeAll(): Boolean {
         jobs.forEach { unsubscribe(it.key) }
-        jobs.clear()
         return jobs.isEmpty()
     }
 

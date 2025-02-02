@@ -38,5 +38,6 @@ class BYBOX(
     unit: GeoUnit,
 ) : Shape(),
     VaryingArgument {
-    override val data = listOf("BYBOX".toArgument(), width.toArgument(), height.toArgument(), unit.toString().toArgument())
+    override val data =
+        listOf("BYBOX".toArgument(), width.toArgument(), height.toArgument(), unit.toString().toArgument())
 }

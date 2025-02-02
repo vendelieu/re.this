@@ -55,7 +55,7 @@ class ConnectionCommandsTest : ReThisTestCtx() {
     @Test
     fun `test SELECT command with valid database index`() = runTest {
         val response = client.select(0)
-        response shouldBe "OK"
+        response shouldBe true
     }
 
     @Test

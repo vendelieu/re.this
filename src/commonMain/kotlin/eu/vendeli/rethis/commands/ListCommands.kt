@@ -181,7 +181,8 @@ suspend fun ReThis.rPop(key: String): String? =
     execute<String>(listOf("RPOP".toArgument(), key.toArgument()))
 
 suspend fun ReThis.rPop(key: String, count: Long): List<String> =
-    execute(listOf("RPOP".toArgument(), key.toArgument(), count.toArgument()), isCollectionResponse = true) ?: emptyList()
+    execute(listOf("RPOP".toArgument(), key.toArgument(), count.toArgument()), isCollectionResponse = true)
+        ?: emptyList()
 
 suspend fun ReThis.rPush(key: String, vararg elements: String): Long? =
     execute<Long>(listOf("RPUSH".toArgument(), key.toArgument(), *elements.toArgument()))

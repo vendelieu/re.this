@@ -8,6 +8,7 @@ import eu.vendeli.rethis.types.core.*
 import eu.vendeli.rethis.types.coroutine.CoLocalConn
 import eu.vendeli.rethis.utils.response.parseResponse
 import eu.vendeli.rethis.utils.response.readResponseWrapped
+import io.ktor.util.reflect.*
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
@@ -31,6 +32,10 @@ internal inline fun <T> Any.safeCast(): T? = this as? T
 internal inline fun <T : Any> Any.safeCast(clazz: KClass<T>): T? =
     if (this::class == clazz) this as T else null
 
+@Suppress("UNCHECKED_CAST", "NOTHING_TO_INLINE")
+internal inline fun <T : Any> Any.safeCast(typeInfo: TypeInfo): T? =
+    if (typeInfo.type.isInstance(this)) this as T else null
+
 @Suppress("NOTHING_TO_INLINE")
 private inline fun String?.isEqTo(other: String) = if (this != null) {
     compareTo(other.lowercase()) == 0
@@ -42,20 +47,20 @@ private inline fun String?.isEqTo(other: String) = if (this != null) {
 @JvmName("executeSimple")
 suspend inline fun <reified T : Any> ReThis.execute(
     payload: List<Argument>,
-): T? = execute(payload, T::class)
+): T? = execute(payload, typeInfo<T>())
 
 @ReThisInternal
 @JvmName("executeList")
 suspend inline fun <reified T : Any> ReThis.execute(
     payload: List<Argument>,
     isCollectionResponse: Boolean = false,
-): List<T>? = execute(payload, T::class, isCollectionResponse)
+): List<T>? = execute(payload, typeInfo<T>(), isCollectionResponse)
 
 @ReThisInternal
 @JvmName("executeMap")
 suspend inline fun <reified K : Any, reified V : Any> ReThis.execute(
     payload: List<Argument>,
-): Map<K, V?>? = execute(payload, K::class, V::class)
+): Map<K, V?>? = execute(payload, typeInfo<K>(), typeInfo<V>())
 
 internal suspend inline fun <reified T : CoroutineContext.Element> takeFromCoCtx(element: CoroutineContext.Key<T>): T? =
     currentCoroutineContext()[element]

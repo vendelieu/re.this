@@ -34,50 +34,50 @@ class SortedSetCommandTest : ReThisTestCtx() {
     @Test
     suspend fun `test ZMPOP command`() {
         client.zAdd("testSet24", ZMember("testValue24", 1.0))
-        client.zMpop(ZPopCommonOption.MIN, "testSet24") shouldBe listOf(MPopResult("testSet24", listOf()))
+        client.zMPop(ZPopCommonOption.MIN, "testSet24") shouldBe listOf(MPopResult("testSet24", listOf()))
     }
 
     @Test
     suspend fun `test ZMSCORE command`() {
         client.zAdd("testSet25", ZMember("testValue25", 1.0))
-        client.zMscore("testSet25", "testValue25") shouldBe listOf(1.0)
+        client.zMScore("testSet25", "testValue25") shouldBe listOf(1.0)
     }
 
     @Test
     suspend fun `test ZPOPMAX command`() {
         client.zAdd("testSet26", ZMember("testValue26", 1.0))
-        client.zPopmax("testSet26") shouldBe listOf(MPopResult("testValue26", listOf()))
+        client.zPopMax("testSet26") shouldBe listOf(MPopResult("testValue26", listOf()))
     }
 
     @Test
     suspend fun `test ZPOPMIN command`() {
         client.zAdd("testSet27", ZMember("testValue27", 1.0))
 
-        client.zPopmin("testSet27") shouldContain ("testValue27" to 1.0)
+        client.zPopMin("testSet27") shouldContain ("testValue27" to 1.0)
     }
 
     @Test
     suspend fun `test ZPOPMIN command with count`() {
         client.zAdd("testSet27", ZMember("testValue27", 1.0))
-        client.zPopmin("testSet27", 2) shouldBe listOf(listOf(ZMember("testValue27", 1.0)))
+        client.zPopMin("testSet27", 2) shouldBe listOf(listOf(ZMember("testValue27", 1.0)))
     }
 
     @Test
     suspend fun `test ZRANDMEMBER command`() {
         client.zAdd("testSet28", ZMember("testValue28", 1.0))
-        client.zRandmember("testSet28") shouldBe "testValue28"
+        client.zRandMember("testSet28") shouldBe "testValue28"
     }
 
     @Test
     suspend fun `test ZRANDMEMBER command with count`() {
         client.zAdd("testSet28", ZMember("testValue28", 1.0))
-        client.zRandmember("testSet28", 1) shouldBe listOf("testValue28")
+        client.zRandMember("testSet28", 1) shouldBe listOf("testValue28")
     }
 
     @Test
     suspend fun `test ZRANDMEMBER command with count + scores`() {
         client.zAdd("testSet28", ZMember("testValue28", 1.0))
-        client.zRandmember("testSet28", 1, true) shouldBe listOf(listOf(ZMember("testValue28", 1.0)))
+        client.zRandMember("testSet28", 1, true) shouldBe listOf(listOf(ZMember("testValue28", 1.0)))
     }
 
     @Test

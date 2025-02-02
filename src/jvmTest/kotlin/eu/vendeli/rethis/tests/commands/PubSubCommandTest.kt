@@ -1,6 +1,6 @@
 package eu.vendeli.rethis.tests.commands
 
-import eu.vendeli.rethis.ReThisException
+import eu.vendeli.rethis.DataProcessingException
 import eu.vendeli.rethis.ReThisTestCtx
 import eu.vendeli.rethis.commands.*
 import eu.vendeli.rethis.processingException
@@ -32,20 +32,20 @@ class PubSubCommandTest : ReThisTestCtx() {
     @Test
     suspend fun `test PUBSUB CHANNELS command`() {
         client.subscribe("testChannel2") { _, _ -> println("test") }
-        delay(100)
-        client.pubSubChannels() shouldBe listOf("testChannel2")
+        delay(200)
+        client.pubSubChannels() shouldBe listOf("testChannel2", "testChannel")
     }
 
     @Test
     suspend fun `test PUBSUB NUMPAT command`() {
         client.pSubscribe("testP*") { _, _ -> println("test") }
-        delay(100)
-        client.pubSubNumPat() shouldBe 1L
+        delay(200)
+        client.pubSubNumPat() shouldBe 2L
     }
 
     @Test
     suspend fun `test PUBSUB NUMSUB command`() {
-        client.pubSubNumSub("testChannel") shouldBe listOf(PubSubNumEntry("testChannel", 0))
+        client.pubSubNumSub("testChannel") shouldBe listOf(PubSubNumEntry("testChannel", 1))
     }
 
     @Test
@@ -173,6 +173,6 @@ class PubSubCommandTest : ReThisTestCtx() {
 
         onSub shouldBeGreaterThan 0
         onUnsub shouldBe 0
-        caughtEx.shouldNotBeNull().shouldBeTypeOf<ReThisException>().shouldHaveMessage("test")
+        caughtEx.shouldNotBeNull().shouldBeTypeOf<DataProcessingException>().shouldHaveMessage("test")
     }
 }

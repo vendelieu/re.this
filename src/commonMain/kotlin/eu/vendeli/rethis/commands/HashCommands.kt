@@ -4,17 +4,18 @@ import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.processingException
 import eu.vendeli.rethis.types.common.ScanResult
 import eu.vendeli.rethis.types.core.RArray
+import eu.vendeli.rethis.types.core.RType
 import eu.vendeli.rethis.types.core.toArgument
 import eu.vendeli.rethis.types.core.unwrap
 import eu.vendeli.rethis.types.core.unwrapList
 import eu.vendeli.rethis.types.options.HScanOption
 import eu.vendeli.rethis.types.options.UpdateStrategyOption
+import eu.vendeli.rethis.utils.execute
 import eu.vendeli.rethis.utils.response.unwrapRespIndMap
 import eu.vendeli.rethis.utils.safeCast
 import eu.vendeli.rethis.utils.writeArgument
 import kotlinx.datetime.Instant
 import kotlin.time.Duration
-import eu.vendeli.rethis.utils.execute
 
 suspend fun ReThis.hDel(key: String, vararg field: String): Long = execute<Long>(
     listOf(
@@ -139,12 +140,12 @@ suspend fun ReThis.hMGet(key: String, vararg field: String): List<String?> = exe
     isCollectionResponse = true,
 ) ?: emptyList()
 
-suspend fun ReThis.hMSet(key: String, vararg fieldValue: Pair<String, String>): String? = execute<String>(
+suspend fun ReThis.hMSet(key: String, vararg fieldValue: Pair<String, String>): Boolean = execute<String>(
     mutableListOf(
         "HMSET".toArgument(),
         key.toArgument(),
     ).writeArgument(fieldValue),
-)
+) == "OK"
 
 suspend fun ReThis.hPersist(
     key: String,
@@ -242,7 +243,7 @@ suspend fun ReThis.hRandField(
     key: String,
     count: Long,
     withValues: Boolean = false,
-): String? = execute<String>(
+): List<RType> = execute(
     mutableListOf(
         "HRANDFIELD".toArgument(),
         key.toArgument(),
@@ -250,14 +251,15 @@ suspend fun ReThis.hRandField(
     ).apply {
         if (withValues) writeArgument("WITHVALUES")
     },
-)
+).unwrapList()
 
 suspend fun ReThis.hScan(
     key: String,
     cursor: Long,
     vararg option: HScanOption,
 ): ScanResult<Pair<String, String>> {
-    val response = execute(mutableListOf("HSCAN".toArgument(), key.toArgument(), cursor.toArgument()).writeArgument(option))
+    val response =
+        execute(mutableListOf("HSCAN".toArgument(), key.toArgument(), cursor.toArgument()).writeArgument(option))
 
     val arrResponse = response.safeCast<RArray>()?.value ?: processingException { "Wrong response type" }
     val newCursor = arrResponse[0].unwrap<String>() ?: processingException { "Missing cursor in response" }

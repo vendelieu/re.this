@@ -1,12 +1,13 @@
 package eu.vendeli.rethis.commands
 
 import eu.vendeli.rethis.ReThis
+import eu.vendeli.rethis.types.common.JsonEntry
 import eu.vendeli.rethis.types.core.RType
 import eu.vendeli.rethis.types.core.toArgument
 import eu.vendeli.rethis.types.core.unwrapList
 import eu.vendeli.rethis.types.options.UpsertMode
-import eu.vendeli.rethis.utils.writeArgument
 import eu.vendeli.rethis.utils.execute
+import eu.vendeli.rethis.utils.writeArgument
 
 suspend fun ReThis.jsonArrAppend(key: String, path: String, vararg values: String): Long? = execute<Long>(
     listOf("JSON.ARRAPPEND".toArgument(), key.toArgument(), path.toArgument(), *values.toArgument()),
@@ -17,14 +18,20 @@ suspend fun ReThis.jsonArrIndex(key: String, path: String, value: String): Long?
 )
 
 suspend fun ReThis.jsonArrInsert(key: String, path: String, index: Long, vararg values: String): Long? = execute<Long>(
-    listOf("JSON.ARRINSERT".toArgument(), key.toArgument(), path.toArgument(), index.toArgument(), *values.toArgument()),
+    listOf(
+        "JSON.ARRINSERT".toArgument(),
+        key.toArgument(),
+        path.toArgument(),
+        index.toArgument(),
+        *values.toArgument(),
+    ),
 )
 
 suspend fun ReThis.jsonArrLen(key: String, path: String): Long? = execute<Long>(
     listOf("JSON.ARRLEN".toArgument(), key.toArgument(), path.toArgument()),
 )
 
-suspend fun ReThis.jsonArrPop(key: String, path: String, index: Long? = null): String? = execute<String>(
+suspend fun ReThis.jsonArrPop(key: String, path: String, index: Long? = null): RType? = execute(
     mutableListOf("JSON.ARRPOP".toArgument(), key.toArgument(), path.toArgument()).writeArgument(index),
 )
 
@@ -48,18 +55,18 @@ suspend fun ReThis.jsonGet(key: String, path: String? = null): String? = execute
     mutableListOf("JSON.GET".toArgument(), key.toArgument()).writeArgument(path),
 )
 
-suspend fun ReThis.jsonMerge(key: String, path: String, value: String): String? = execute<String>(
+suspend fun ReThis.jsonMerge(key: String, path: String, value: String): Boolean = execute<String>(
     listOf("JSON.MERGE".toArgument(), key.toArgument(), path.toArgument(), value.toArgument()),
-)
+) == "OK"
 
-suspend fun ReThis.jsonMGet(key: String, vararg paths: String): List<String?> = execute(
-    listOf("JSON.MGET".toArgument(), key.toArgument(), *paths.toArgument()),
+suspend fun ReThis.jsonMGet(path: String, vararg key: String): List<String?> = execute(
+    listOf("JSON.MGET".toArgument(), *key.toArgument(), path.toArgument()),
     isCollectionResponse = true,
 ) ?: emptyList()
 
-suspend fun ReThis.jsonMSet(key: String, path: String, value: String): String? = execute<String>(
-    listOf("JSON.MSET".toArgument(), key.toArgument(), path.toArgument(), value.toArgument()),
-)
+suspend fun ReThis.jsonMSet(vararg entry: JsonEntry): Boolean = execute<String>(
+    mutableListOf("JSON.MSET".toArgument()).writeArgument(entry),
+) == "OK"
 
 suspend fun ReThis.jsonNumIncrBy(key: String, path: String, increment: Long): List<Long?> = execute<Long>(
     listOf("JSON.NUMINCRBY".toArgument(), key.toArgument(), path.toArgument(), increment.toArgument()),
@@ -91,7 +98,9 @@ suspend fun ReThis.jsonSet(
     value: String,
     upsertMode: UpsertMode? = null,
 ): String? = execute<String>(
-    mutableListOf("JSON.SET".toArgument(), key.toArgument(), path.toArgument(), value.toArgument()).writeArgument(upsertMode),
+    mutableListOf("JSON.SET".toArgument(), key.toArgument(), path.toArgument(), value.toArgument()).writeArgument(
+        upsertMode,
+    ),
 )
 
 suspend fun ReThis.jsonStrAppend(key: String, value: String, path: String? = null): Long? = execute<Long>(

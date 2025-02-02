@@ -28,7 +28,8 @@ sealed class BitfieldOption {
         value: Long,
     ) : BitfieldOption(),
         VaryingArgument {
-        override val data: List<Argument> = listOf("SET".toArgument(), encoding.toArgument(), offset.toArgument(), value.toArgument())
+        override val data: List<Argument> =
+            listOf("SET".toArgument(), encoding.toArgument(), offset.toArgument(), value.toArgument())
     }
 
     class INCRBY(

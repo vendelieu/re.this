@@ -15,10 +15,10 @@ import eu.vendeli.rethis.utils.response.readSimpleResponseTyped
 import eu.vendeli.rethis.utils.takeFromCoCtx
 import eu.vendeli.rethis.utils.writeRedisValue
 import io.ktor.util.logging.*
+import io.ktor.util.reflect.*
 import kotlinx.coroutines.*
 import kotlinx.io.Buffer
 import kotlinx.serialization.json.Json
-import kotlin.reflect.KClass
 
 @ReThisDSL
 class ReThis(
@@ -175,33 +175,34 @@ class ReThis(
     @ReThisInternal
     suspend fun <T : Any> execute(
         payload: List<Argument>,
-        responseType: KClass<T>,
+        responseType: TypeInfo,
         jsonModule: Json? = null,
     ) = performRequest(payload)
-        ?.readSimpleResponseTyped(responseType, cfg.charset, jsonModule)
+        ?.readSimpleResponseTyped<T>(responseType, cfg.charset, jsonModule)
 
     @ReThisInternal
     suspend fun <T : Any> execute(
         payload: List<Argument>,
-        responseType: KClass<T>,
+        responseType: TypeInfo,
         isCollectionResponse: Boolean = true,
         jsonModule: Json? = null,
     ) = performRequest(payload)
-        ?.readListResponseTyped(responseType, cfg.charset, jsonModule)
+        ?.readListResponseTyped<T>(responseType, cfg.charset, jsonModule)
 
     @ReThisInternal
     suspend fun <K : Any, V : Any> execute(
         payload: List<Argument>,
-        keyType: KClass<K>,
-        valueType: KClass<V>,
+        keyType: TypeInfo,
+        valueType: TypeInfo,
         jsonModule: Json? = null,
     ) = performRequest(payload)
-        ?.readMapResponseTyped(keyType, valueType, cfg.charset, jsonModule)
+        ?.readMapResponseTyped<K, V>(keyType, valueType, cfg.charset, jsonModule)
 
     private suspend inline fun performRequest(
         payload: List<Argument>,
     ): ArrayDeque<ResponseToken>? = coScope
         .async(currentCoroutineContext() + Dispatchers.IO) {
+            logger.trace { "Performing request with payload $payload" }
             handleRequest(payload)
         }.await()
 

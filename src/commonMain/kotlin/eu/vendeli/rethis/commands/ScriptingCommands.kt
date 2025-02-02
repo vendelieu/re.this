@@ -76,9 +76,9 @@ suspend fun ReThis.functionStats(): Map<String, RType?>? = execute(
     listOf("FUNCTION".toArgument(), "STATS".toArgument()),
 ).unwrapRespIndMap()
 
-suspend fun ReThis.scriptDebug(mode: String): String? = execute<String>(
+suspend fun ReThis.scriptDebug(mode: String): Boolean = execute<String>(
     listOf("SCRIPT".toArgument(), "DEBUG".toArgument(), mode.toArgument()),
-)
+) == "OK"
 
 suspend fun ReThis.scriptExists(vararg shas: String): List<Boolean> = execute(
     listOf("SCRIPT".toArgument(), "EXISTS".toArgument(), *shas.toArgument()),

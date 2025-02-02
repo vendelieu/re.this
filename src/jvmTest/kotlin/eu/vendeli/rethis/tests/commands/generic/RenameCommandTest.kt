@@ -10,6 +10,6 @@ class RenameCommandTest : ReThisTestCtx() {
     @Test
     suspend fun `test RENAME command`() {
         client.set("testKey", "testVal").shouldNotBeNull()
-        client.rename("testKey", "newKey2") shouldBe "OK"
+        client.rename("testKey", "newKey2") shouldBe true
     }
 }

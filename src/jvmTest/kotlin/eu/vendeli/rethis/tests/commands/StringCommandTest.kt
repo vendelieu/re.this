@@ -18,7 +18,7 @@ class StringCommandTest : ReThisTestCtx() {
 
     @Test
     suspend fun `test MSET command`() {
-        client.mSet("testKey3" to "testValue3", "testKey4" to "testValue4") shouldBe "OK"
+        client.mSet("testKey3" to "testValue3", "testKey4" to "testValue4") shouldBe true
     }
 
     @Test

@@ -25,10 +25,14 @@ class TransactionCommandTest : ReThisTestCtx() {
         conn.sendRequest(listOf("MULTI".toArgument()), Charsets.UTF_8)
         conn.parseResponse().readResponseWrapped(Charsets.UTF_8) shouldBe PlainString("OK")
 
-        conn.sendRequest(bufferValues(listOf("SET".toArgument(), "test3".toArgument(), "testv3".toArgument()), Charsets.UTF_8))
+        conn.sendRequest(
+            bufferValues(listOf("SET".toArgument(), "test3".toArgument(), "testv3".toArgument()), Charsets.UTF_8),
+        )
         conn.parseResponse().readResponseWrapped(Charsets.UTF_8) shouldBe PlainString("QUEUED")
 
-        conn.sendRequest(bufferValues(listOf("SET".toArgument(), "test4".toArgument(), "testv4".toArgument()), Charsets.UTF_8))
+        conn.sendRequest(
+            bufferValues(listOf("SET".toArgument(), "test4".toArgument(), "testv4".toArgument()), Charsets.UTF_8),
+        )
         conn.parseResponse().readResponseWrapped(Charsets.UTF_8) shouldBe PlainString("QUEUED")
 
         conn.sendRequest(bufferValues(listOf("EXEC".toArgument()), Charsets.UTF_8))

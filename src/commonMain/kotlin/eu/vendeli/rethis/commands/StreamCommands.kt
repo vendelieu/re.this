@@ -112,11 +112,23 @@ suspend fun ReThis.xGroupCreate(
 ) == "OK"
 
 suspend fun ReThis.xGroupCreateConsumer(key: String, group: String, consumer: String): Long? = execute<Long>(
-    listOf("XGROUP".toArgument(), "CREATECONSUMER".toArgument(), key.toArgument(), group.toArgument(), consumer.toArgument()),
+    listOf(
+        "XGROUP".toArgument(),
+        "CREATECONSUMER".toArgument(),
+        key.toArgument(),
+        group.toArgument(),
+        consumer.toArgument(),
+    ),
 )
 
 suspend fun ReThis.xGroupDelConsumer(key: String, group: String, consumer: String): Long? = execute<Long>(
-    listOf("XGROUP".toArgument(), "DELCONSUMER".toArgument(), key.toArgument(), group.toArgument(), consumer.toArgument()),
+    listOf(
+        "XGROUP".toArgument(),
+        "DELCONSUMER".toArgument(),
+        key.toArgument(),
+        group.toArgument(),
+        consumer.toArgument(),
+    ),
 )
 
 suspend fun ReThis.xGroupDestroy(key: String, group: String): Long? = execute<Long>(
@@ -220,7 +232,12 @@ suspend fun ReThis.xRevRange(
     start: String,
     limit: XOption.Limit? = null,
 ): List<RType> = execute(
-    mutableListOf("XREVRANGE".toArgument(), key.toArgument(), end.toArgument(), start.toArgument()).writeArgument(limit),
+    mutableListOf(
+        "XREVRANGE".toArgument(),
+        key.toArgument(),
+        end.toArgument(),
+        start.toArgument(),
+    ).writeArgument(limit),
 ).unwrapList<RType>()
 
 suspend fun ReThis.xSetId(
