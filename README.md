@@ -45,13 +45,10 @@ RethisBenchmark.rethisSetGet    thrpt    5  1452718.508 ± 1341935.933  ops/s
 <details>
   <summary>Details</summary>
 
-* `Jedis` (Pooled) gives roughly the same results inside the coroutine as outside.
+* `Jedis` (Pooled) inside coroutines starts to fail to cope with the thread pool and starts throwing errors.
 * `Kreds` with the `.use {}` approach gives worse results.
-* The most interesting thing happens with `Lettuce` it gives excellent results (almost as `Re.This`, sometimes really
-  near)
-  if you use its asynchronous client on top of coroutines, but in this case the Heap dies in seconds (goes out of memory).
-  And if swap gc (but still using coroutines) to zgc it gives same performance as `kreds` but now without the memory
-  problems.
+* `Lettuce` gives similar performance, the difference is ~100k ops more or less, but it takes an order of magnitude more
+  RAM and starts to freeze because of this.
 
 </details>
 

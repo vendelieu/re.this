@@ -1,3 +1,18 @@
+public final class eu/vendeli/rethis/DataProcessingException : eu/vendeli/rethis/ReThisException {
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/String;Ljava/lang/Throwable;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/Throwable;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun getCause ()Ljava/lang/Throwable;
+	public fun getMessage ()Ljava/lang/String;
+}
+
+public final class eu/vendeli/rethis/InvalidStateException : eu/vendeli/rethis/ReThisException {
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/String;)V
+	public synthetic fun <init> (Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun getMessage ()Ljava/lang/String;
+}
+
 public final class eu/vendeli/rethis/ReThis {
 	public fun <init> ()V
 	public fun <init> (Leu/vendeli/rethis/types/core/Address;Leu/vendeli/rethis/types/core/RespVer;Lkotlin/jvm/functions/Function1;)V
@@ -5,8 +20,14 @@ public final class eu/vendeli/rethis/ReThis {
 	public fun <init> (Ljava/lang/String;ILeu/vendeli/rethis/types/core/RespVer;Lkotlin/jvm/functions/Function1;)V
 	public synthetic fun <init> (Ljava/lang/String;ILeu/vendeli/rethis/types/core/RespVer;Lkotlin/jvm/functions/Function1;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun disconnect ()V
-	public final fun execute (Ljava/util/List;ZLkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public static synthetic fun execute$default (Leu/vendeli/rethis/ReThis;Ljava/util/List;ZLkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public final fun execute (Ljava/util/List;Lio/ktor/util/reflect/TypeInfo;Lio/ktor/util/reflect/TypeInfo;Lkotlinx/serialization/json/Json;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun execute (Ljava/util/List;Lio/ktor/util/reflect/TypeInfo;Lkotlinx/serialization/json/Json;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun execute (Ljava/util/List;Lio/ktor/util/reflect/TypeInfo;ZLkotlinx/serialization/json/Json;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun execute (Ljava/util/List;Lkotlin/Unit;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun execute$default (Leu/vendeli/rethis/ReThis;Ljava/util/List;Lio/ktor/util/reflect/TypeInfo;Lio/ktor/util/reflect/TypeInfo;Lkotlinx/serialization/json/Json;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public static synthetic fun execute$default (Leu/vendeli/rethis/ReThis;Ljava/util/List;Lio/ktor/util/reflect/TypeInfo;Lkotlinx/serialization/json/Json;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public static synthetic fun execute$default (Leu/vendeli/rethis/ReThis;Ljava/util/List;Lio/ktor/util/reflect/TypeInfo;ZLkotlinx/serialization/json/Json;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public static synthetic fun execute$default (Leu/vendeli/rethis/ReThis;Ljava/util/List;Lkotlin/Unit;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
 	public final fun getProtocol ()Leu/vendeli/rethis/types/core/RespVer;
 	public final fun getSubscriptions ()Leu/vendeli/rethis/types/core/ActiveSubscriptions;
 	public final fun isDisconnected ()Z
@@ -16,7 +37,23 @@ public final class eu/vendeli/rethis/ReThis {
 	public final fun transaction (Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
-public final class eu/vendeli/rethis/ReThisException : java/lang/RuntimeException {
+public class eu/vendeli/rethis/ReThisException : java/lang/RuntimeException {
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/String;Ljava/lang/Throwable;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/Throwable;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun getCause ()Ljava/lang/Throwable;
+	public fun getMessage ()Ljava/lang/String;
+}
+
+public final class eu/vendeli/rethis/RedisError : eu/vendeli/rethis/ReThisException {
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/String;Z)V
+	public synthetic fun <init> (Ljava/lang/String;ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun getMessage ()Ljava/lang/String;
+	public final fun isBulk ()Z
+}
+
+public final class eu/vendeli/rethis/ResponseParsingException : eu/vendeli/rethis/ReThisException {
 	public fun <init> ()V
 	public fun <init> (Ljava/lang/String;Ljava/lang/Throwable;)V
 	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/Throwable;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
@@ -163,7 +200,7 @@ public final class eu/vendeli/rethis/commands/JsonCommandsKt {
 	public static final fun jsonGet (Leu/vendeli/rethis/ReThis;Ljava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static synthetic fun jsonGet$default (Leu/vendeli/rethis/ReThis;Ljava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
 	public static final fun jsonMGet (Leu/vendeli/rethis/ReThis;Ljava/lang/String;[Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public static final fun jsonMSet (Leu/vendeli/rethis/ReThis;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static final fun jsonMSet (Leu/vendeli/rethis/ReThis;[Leu/vendeli/rethis/types/common/JsonEntry;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static final fun jsonMerge (Leu/vendeli/rethis/ReThis;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static final fun jsonNumIncrBy (Leu/vendeli/rethis/ReThis;Ljava/lang/String;Ljava/lang/String;JLkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static final fun jsonNumMultBy (Leu/vendeli/rethis/ReThis;Ljava/lang/String;Ljava/lang/String;JLkotlin/coroutines/Continuation;)Ljava/lang/Object;
@@ -291,7 +328,7 @@ public final class eu/vendeli/rethis/commands/SortedSetCommandsKt {
 	public static final fun zDiff (Leu/vendeli/rethis/ReThis;[Ljava/lang/String;ZLkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static synthetic fun zDiff$default (Leu/vendeli/rethis/ReThis;[Ljava/lang/String;ZLkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
 	public static final fun zDiffStore (Leu/vendeli/rethis/ReThis;Ljava/lang/String;[Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public static final fun zIncrby (Leu/vendeli/rethis/ReThis;Ljava/lang/String;Ljava/lang/String;DLkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static final fun zIncrBy (Leu/vendeli/rethis/ReThis;Ljava/lang/String;Ljava/lang/String;DLkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static final fun zInter (Leu/vendeli/rethis/ReThis;[Ljava/lang/String;Ljava/util/List;Leu/vendeli/rethis/types/options/ZAggregate;ZLkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static synthetic fun zInter$default (Leu/vendeli/rethis/ReThis;[Ljava/lang/String;Ljava/util/List;Leu/vendeli/rethis/types/options/ZAggregate;ZLkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
 	public static final fun zInterCard (Leu/vendeli/rethis/ReThis;[Ljava/lang/String;Ljava/lang/Long;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
@@ -299,17 +336,17 @@ public final class eu/vendeli/rethis/commands/SortedSetCommandsKt {
 	public static final fun zInterStore (Leu/vendeli/rethis/ReThis;Ljava/lang/String;[Ljava/lang/String;Ljava/util/List;Leu/vendeli/rethis/types/options/ZAggregate;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static synthetic fun zInterStore$default (Leu/vendeli/rethis/ReThis;Ljava/lang/String;[Ljava/lang/String;Ljava/util/List;Leu/vendeli/rethis/types/options/ZAggregate;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
 	public static final fun zLexCount (Leu/vendeli/rethis/ReThis;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public static final fun zMpop (Leu/vendeli/rethis/ReThis;Leu/vendeli/rethis/types/options/ZPopCommonOption;[Ljava/lang/String;Ljava/lang/Long;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public static synthetic fun zMpop$default (Leu/vendeli/rethis/ReThis;Leu/vendeli/rethis/types/options/ZPopCommonOption;[Ljava/lang/String;Ljava/lang/Long;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
-	public static final fun zMscore (Leu/vendeli/rethis/ReThis;Ljava/lang/String;[Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public static final fun zPopmax (Leu/vendeli/rethis/ReThis;Ljava/lang/String;Ljava/lang/Long;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public static synthetic fun zPopmax$default (Leu/vendeli/rethis/ReThis;Ljava/lang/String;Ljava/lang/Long;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
-	public static final fun zPopmin (Leu/vendeli/rethis/ReThis;Ljava/lang/String;JLkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public static final fun zPopmin (Leu/vendeli/rethis/ReThis;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public static final fun zRandmember (Leu/vendeli/rethis/ReThis;Ljava/lang/String;JLkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public static final fun zRandmember (Leu/vendeli/rethis/ReThis;Ljava/lang/String;JZLkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public static final fun zRandmember (Leu/vendeli/rethis/ReThis;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public static synthetic fun zRandmember$default (Leu/vendeli/rethis/ReThis;Ljava/lang/String;JZLkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public static final fun zMPop (Leu/vendeli/rethis/ReThis;Leu/vendeli/rethis/types/options/ZPopCommonOption;[Ljava/lang/String;Ljava/lang/Long;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun zMPop$default (Leu/vendeli/rethis/ReThis;Leu/vendeli/rethis/types/options/ZPopCommonOption;[Ljava/lang/String;Ljava/lang/Long;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public static final fun zMScore (Leu/vendeli/rethis/ReThis;Ljava/lang/String;[Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static final fun zPopMax (Leu/vendeli/rethis/ReThis;Ljava/lang/String;Ljava/lang/Long;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun zPopMax$default (Leu/vendeli/rethis/ReThis;Ljava/lang/String;Ljava/lang/Long;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public static final fun zPopMin (Leu/vendeli/rethis/ReThis;Ljava/lang/String;JLkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static final fun zPopMin (Leu/vendeli/rethis/ReThis;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static final fun zRandMember (Leu/vendeli/rethis/ReThis;Ljava/lang/String;JLkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static final fun zRandMember (Leu/vendeli/rethis/ReThis;Ljava/lang/String;JZLkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static final fun zRandMember (Leu/vendeli/rethis/ReThis;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun zRandMember$default (Leu/vendeli/rethis/ReThis;Ljava/lang/String;JZLkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
 	public static final fun zRange (Leu/vendeli/rethis/ReThis;Ljava/lang/String;JJLeu/vendeli/rethis/types/options/ZRangeOption$Type;ZLeu/vendeli/rethis/types/options/ZRangeOption$LIMIT;ZLkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static synthetic fun zRange$default (Leu/vendeli/rethis/ReThis;Ljava/lang/String;JJLeu/vendeli/rethis/types/options/ZRangeOption$Type;ZLeu/vendeli/rethis/types/options/ZRangeOption$LIMIT;ZLkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
 	public static final fun zRangeStore (Leu/vendeli/rethis/ReThis;Ljava/lang/String;Ljava/lang/String;JJLeu/vendeli/rethis/types/options/ZRangeOption$Type;ZLjava/lang/Long;Ljava/lang/Long;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
@@ -319,7 +356,7 @@ public final class eu/vendeli/rethis/commands/SortedSetCommandsKt {
 	public static final fun zRemRangeByLex (Leu/vendeli/rethis/ReThis;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static final fun zRemRangeByRank (Leu/vendeli/rethis/ReThis;Ljava/lang/String;JJLkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static final fun zRemRangeByScore (Leu/vendeli/rethis/ReThis;Ljava/lang/String;DDLkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public static final fun zRevrank (Leu/vendeli/rethis/ReThis;Ljava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static final fun zRevRank (Leu/vendeli/rethis/ReThis;Ljava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static final fun zScan (Leu/vendeli/rethis/ReThis;Ljava/lang/String;JLjava/lang/String;Ljava/lang/Long;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static synthetic fun zScan$default (Leu/vendeli/rethis/ReThis;Ljava/lang/String;JLjava/lang/String;Ljava/lang/Long;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
 	public static final fun zScore (Leu/vendeli/rethis/ReThis;Ljava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
@@ -383,9 +420,9 @@ public final class eu/vendeli/rethis/commands/StringCommandsKt {
 	public static final fun lcs (Leu/vendeli/rethis/ReThis;Ljava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static synthetic fun lcs$default (Leu/vendeli/rethis/ReThis;Ljava/lang/String;Ljava/lang/String;Leu/vendeli/rethis/types/options/LcsMode$IDX;Leu/vendeli/rethis/types/options/MinMatchLen;ZLkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
 	public static synthetic fun lcs$default (Leu/vendeli/rethis/ReThis;Ljava/lang/String;Ljava/lang/String;Leu/vendeli/rethis/types/options/LcsMode$LEN;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
-	public static final fun mget (Leu/vendeli/rethis/ReThis;[Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public static final fun mset (Leu/vendeli/rethis/ReThis;[Lkotlin/Pair;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public static final fun msetNx (Leu/vendeli/rethis/ReThis;[Lkotlin/Pair;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static final fun mGet (Leu/vendeli/rethis/ReThis;[Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static final fun mSet (Leu/vendeli/rethis/ReThis;[Lkotlin/Pair;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static final fun mSetNx (Leu/vendeli/rethis/ReThis;[Lkotlin/Pair;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static final fun set (Leu/vendeli/rethis/ReThis;Ljava/lang/String;Ljava/lang/String;[Leu/vendeli/rethis/types/options/SetOption;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static final fun setRange (Leu/vendeli/rethis/ReThis;Ljava/lang/String;JLjava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static final fun strlen (Leu/vendeli/rethis/ReThis;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
@@ -468,6 +505,11 @@ public final class eu/vendeli/rethis/types/common/GeoUnit : java/lang/Enum {
 	public fun toString ()Ljava/lang/String;
 	public static fun valueOf (Ljava/lang/String;)Leu/vendeli/rethis/types/common/GeoUnit;
 	public static fun values ()[Leu/vendeli/rethis/types/common/GeoUnit;
+}
+
+public final class eu/vendeli/rethis/types/common/JsonEntry : eu/vendeli/rethis/types/core/VaryingArgument {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
+	public fun getData ()Ljava/util/List;
 }
 
 public final class eu/vendeli/rethis/types/common/LcsResult {
@@ -711,8 +753,14 @@ public abstract interface class eu/vendeli/rethis/types/core/Argument {
 }
 
 public final class eu/vendeli/rethis/types/core/ArgumentKt {
-	public static final fun toArg (Ljava/lang/Object;)Leu/vendeli/rethis/types/core/Argument;
-	public static final fun toArg (Ljava/util/List;)Ljava/util/List;
+	public static final fun toArgument (D)D
+	public static final fun toArgument (I)I
+	public static final fun toArgument (J)J
+	public static final fun toArgument (Ljava/lang/Object;)Leu/vendeli/rethis/types/core/Argument;
+	public static final fun toArgument (Ljava/lang/String;)Ljava/lang/String;
+	public static final fun toArgument (Ljava/util/List;)Ljava/util/List;
+	public static final fun toArgument ([B)[B
+	public static final fun toArgument ([Ljava/lang/String;)[Leu/vendeli/rethis/types/core/Argument;
 }
 
 public final class eu/vendeli/rethis/types/core/AuthConfiguration {
@@ -798,6 +846,7 @@ public final class eu/vendeli/rethis/types/core/ClientConfiguration {
 	public final fun getDb ()Ljava/lang/Integer;
 	public final fun getTlsConfig ()Lio/ktor/network/tls/TLSConfig;
 	public fun hashCode ()I
+	public final fun jsonModule (Lkotlinx/serialization/json/Json;)V
 	public final fun setCharset (Ljava/nio/charset/Charset;)V
 	public final fun setDb (Ljava/lang/Integer;)V
 	public final fun setTlsConfig (Lio/ktor/network/tls/TLSConfig;)V
@@ -967,13 +1016,13 @@ public abstract class eu/vendeli/rethis/types/core/RType {
 }
 
 public final class eu/vendeli/rethis/types/core/RType$Error : eu/vendeli/rethis/types/core/RType {
-	public fun <init> (Leu/vendeli/rethis/ReThisException;)V
+	public fun <init> (Leu/vendeli/rethis/RedisError;)V
 	public fun <init> (Ljava/lang/String;)V
-	public final fun component1 ()Leu/vendeli/rethis/ReThisException;
-	public final fun copy (Leu/vendeli/rethis/ReThisException;)Leu/vendeli/rethis/types/core/RType$Error;
-	public static synthetic fun copy$default (Leu/vendeli/rethis/types/core/RType$Error;Leu/vendeli/rethis/ReThisException;ILjava/lang/Object;)Leu/vendeli/rethis/types/core/RType$Error;
+	public final fun component1 ()Leu/vendeli/rethis/RedisError;
+	public final fun copy (Leu/vendeli/rethis/RedisError;)Leu/vendeli/rethis/types/core/RType$Error;
+	public static synthetic fun copy$default (Leu/vendeli/rethis/types/core/RType$Error;Leu/vendeli/rethis/RedisError;ILjava/lang/Object;)Leu/vendeli/rethis/types/core/RType$Error;
 	public fun equals (Ljava/lang/Object;)Z
-	public final fun getException ()Leu/vendeli/rethis/ReThisException;
+	public final fun getException ()Leu/vendeli/rethis/RedisError;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -1032,6 +1081,20 @@ public final class eu/vendeli/rethis/types/core/SocketConfiguration {
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class eu/vendeli/rethis/types/core/StringArg : eu/vendeli/rethis/types/core/Argument {
+	public static final synthetic fun box-impl (Ljava/lang/String;)Leu/vendeli/rethis/types/core/StringArg;
+	public static fun constructor-impl (Ljava/lang/String;)Ljava/lang/String;
+	public fun equals (Ljava/lang/Object;)Z
+	public static fun equals-impl (Ljava/lang/String;Ljava/lang/Object;)Z
+	public static final fun equals-impl0 (Ljava/lang/String;Ljava/lang/String;)Z
+	public final fun getValue ()Ljava/lang/String;
+	public fun hashCode ()I
+	public static fun hashCode-impl (Ljava/lang/String;)I
+	public fun toString ()Ljava/lang/String;
+	public static fun toString-impl (Ljava/lang/String;)Ljava/lang/String;
+	public final synthetic fun unbox-impl ()Ljava/lang/String;
+}
+
 public abstract interface class eu/vendeli/rethis/types/core/SubscriptionEventHandler {
 	public abstract fun onException (Ljava/lang/String;Ljava/lang/Exception;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun onSubscribe (Ljava/lang/String;JLkotlin/coroutines/Continuation;)Ljava/lang/Object;
@@ -1069,28 +1132,6 @@ public final class eu/vendeli/rethis/types/core/VerbatimString : eu/vendeli/reth
 	public fun getValue ()Ljava/lang/String;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
-}
-
-public final class eu/vendeli/rethis/types/coroutine/CoLocalConn : kotlin/coroutines/AbstractCoroutineContextElement, kotlin/coroutines/CoroutineContext$Element {
-	public static final field Key Leu/vendeli/rethis/types/coroutine/CoLocalConn$Key;
-	public fun <init> (Lio/ktor/network/sockets/Connection;)V
-	public final fun getConnection ()Lio/ktor/network/sockets/Connection;
-	public fun getKey ()Leu/vendeli/rethis/types/coroutine/CoLocalConn$Key;
-	public synthetic fun getKey ()Lkotlin/coroutines/CoroutineContext$Key;
-}
-
-public final class eu/vendeli/rethis/types/coroutine/CoLocalConn$Key : kotlin/coroutines/CoroutineContext$Key {
-}
-
-public final class eu/vendeli/rethis/types/coroutine/CoPipelineCtx : kotlin/coroutines/AbstractCoroutineContextElement, kotlin/coroutines/CoroutineContext$Element {
-	public static final field Key Leu/vendeli/rethis/types/coroutine/CoPipelineCtx$Key;
-	public fun <init> (Ljava/util/List;)V
-	public fun getKey ()Leu/vendeli/rethis/types/coroutine/CoPipelineCtx$Key;
-	public synthetic fun getKey ()Lkotlin/coroutines/CoroutineContext$Key;
-	public final fun getPipelinedRequests ()Ljava/util/List;
-}
-
-public final class eu/vendeli/rethis/types/coroutine/CoPipelineCtx$Key : kotlin/coroutines/CoroutineContext$Key {
 }
 
 public final class eu/vendeli/rethis/types/options/Approximate : eu/vendeli/rethis/types/options/Exactement {
@@ -1817,6 +1858,19 @@ public abstract class eu/vendeli/rethis/types/options/ZRangeOption$Type : eu/ven
 
 public final class eu/vendeli/rethis/utils/CommonUtilsKt {
 	public static final fun isOk (Leu/vendeli/rethis/types/core/RType;)Z
+}
+
+public final class eu/vendeli/rethis/utils/RTypeUtilsKt {
+	public static final fun unwrap (Leu/vendeli/rethis/types/core/RType;Lkotlin/reflect/KClass;)Ljava/lang/Object;
+	public static final fun unwrapType (Leu/vendeli/rethis/types/core/RType;Lkotlin/reflect/KClass;)Ljava/lang/Object;
+}
+
+public final class eu/vendeli/rethis/utils/RequestUtilsKt {
+	public static final fun __jsonModule (Leu/vendeli/rethis/ReThis;)Lkotlinx/serialization/json/Json;
+	public static final fun writeArgArray (Ljava/util/List;[Ljava/lang/Object;)Ljava/util/List;
+	public static final fun writeArgument (Ljava/util/List;Ljava/lang/Object;)Ljava/util/List;
+	public static final fun writeArgument (Ljava/util/List;Ljava/util/List;)Ljava/util/List;
+	public static final fun writeArgument (Ljava/util/List;[Ljava/lang/Object;)Ljava/util/List;
 }
 
 public final class eu/vendeli/rethis/wrappers/ReThisMap : kotlin/collections/AbstractMutableMap {

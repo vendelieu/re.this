@@ -1,5 +1,9 @@
 # Re.this Changelog
 
+## 0.2.8
+
+* Add experimental serialization support.
+
 ## 0.2.7
 
 * Try to fix jvm package.

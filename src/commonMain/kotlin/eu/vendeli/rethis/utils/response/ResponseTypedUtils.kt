@@ -80,14 +80,14 @@ internal fun <T : Any> ArrayDeque<ResponseToken>.readSimpleResponseTyped(
             if (size < 0) return null
             val encodingBytes = data.readByteArray(3)
             data.readByte() // skip : byte
-            return if (jsonModule == null) {
+            if (jsonModule == null) {
                 val encoding = encodingBytes.decodeToString()
                 val content = data.readText(charset)
 
                 "$encoding:$content"
             } else {
                 data.decode(typeInfo, charset, jsonModule)
-            }?.safeCast(typeInfo)
+            }
         }
 
         else -> null
