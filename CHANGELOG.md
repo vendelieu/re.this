@@ -12,6 +12,7 @@
 
 * Added `RType.unwrap` function to unwrap RType.
 * Improved List nullable responses parsing.
+* Changed artifactId from `re.this` to `rethis` to avoid building problems at some platforms.
 
 ## 0.2.5
 

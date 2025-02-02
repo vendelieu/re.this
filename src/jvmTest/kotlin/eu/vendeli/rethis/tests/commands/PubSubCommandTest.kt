@@ -9,7 +9,7 @@ import eu.vendeli.rethis.types.core.BulkString
 import eu.vendeli.rethis.types.core.Int64
 import eu.vendeli.rethis.types.core.Push
 import eu.vendeli.rethis.types.core.SubscriptionEventHandler
-import io.kotest.matchers.collections.shouldBeIn
+import io.kotest.matchers.collections.shouldNotBeEmpty
 import io.kotest.matchers.comparables.shouldBeGreaterThan
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
@@ -34,7 +34,7 @@ class PubSubCommandTest : ReThisTestCtx() {
     suspend fun `test PUBSUB CHANNELS command`() {
         client.subscribe("testChannel2") { _, _ -> println("test") }
         delay(200)
-        client.pubSubChannels().shouldNotBeNull()
+        client.pubSubChannels().shouldNotBeEmpty()
     }
 
     @Test
