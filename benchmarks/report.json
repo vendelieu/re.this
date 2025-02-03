@@ -1,7 +1,7 @@
 [
     {
         "jmhVersion" : "1.21",
-        "benchmark" : "eu.vendeli.rethis.benchmarks.RethisBenchmark.rethisSetGet",
+        "benchmark" : "eu.vendeli.rethis.benchmarks.JedisBenchmark.jedisSetGet",
         "mode" : "thrpt",
         "threads" : 1,
         "forks" : 1,
@@ -11,7 +11,7 @@
             "-Duser.country=US",
             "-Duser.language=en",
             "-Duser.variant",
-            "-Xms500m",
+            "-Xms12g",
             "-Xmx12g",
             "-Xss2m",
             "-XX:MaxMetaspaceSize=1g"
@@ -26,32 +26,209 @@
         "measurementTime" : "1000 ms",
         "measurementBatchSize" : 1,
         "primaryMetric" : {
-            "score" : 109262.84474144268,
-            "scoreError" : 67108.88928436919,
+            "score" : 15726.988779646781,
+            "scoreError" : 1939.9981705030168,
             "scoreConfidence" : [
-                42153.95545707349,
-                176371.73402581186
+                13786.990609143764,
+                17666.986950149796
             ],
             "scorePercentiles" : {
-                "0.0" : 83152.15313584292,
-                "50.0" : 108726.54316073915,
-                "90.0" : 126123.78689942558,
-                "95.0" : 126123.78689942558,
-                "99.0" : 126123.78689942558,
-                "99.9" : 126123.78689942558,
-                "99.99" : 126123.78689942558,
-                "99.999" : 126123.78689942558,
-                "99.9999" : 126123.78689942558,
-                "100.0" : 126123.78689942558
+                "0.0" : 15372.423465739048,
+                "50.0" : 15599.184239355354,
+                "90.0" : 16609.557210812884,
+                "95.0" : 16609.557210812884,
+                "99.0" : 16609.557210812884,
+                "99.9" : 16609.557210812884,
+                "99.99" : 16609.557210812884,
+                "99.999" : 16609.557210812884,
+                "99.9999" : 16609.557210812884,
+                "100.0" : 16609.557210812884
             },
             "scoreUnit" : "ops/s",
             "rawData" : [
                 [
-                    126123.78689942558,
-                    104138.25294131461,
-                    108726.54316073915,
-                    124173.48756989118,
-                    83152.15313584292
+                    15611.288881127748,
+                    15442.490101198871,
+                    15372.423465739048,
+                    16609.557210812884,
+                    15599.184239355354
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.21",
+        "benchmark" : "eu.vendeli.rethis.benchmarks.KredsBenchmark.kredsSetGet",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 1,
+        "jvm" : "/home/vendelieu/.jdks/azul-21.0.4/bin/java",
+        "jvmArgs" : [
+            "-Dfile.encoding=UTF-8",
+            "-Duser.country=US",
+            "-Duser.language=en",
+            "-Duser.variant",
+            "-Xms12g",
+            "-Xmx12g",
+            "-Xss2m",
+            "-XX:MaxMetaspaceSize=1g"
+        ],
+        "jdkVersion" : "21.0.4",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "21.0.4+7-LTS",
+        "warmupIterations" : 2,
+        "warmupTime" : "1000 ms",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "1000 ms",
+        "measurementBatchSize" : 1,
+        "primaryMetric" : {
+            "score" : 839860.8996612927,
+            "scoreError" : 28180.92799178335,
+            "scoreConfidence" : [
+                811679.9716695093,
+                868041.827653076
+            ],
+            "scorePercentiles" : {
+                "0.0" : 830535.9000848006,
+                "50.0" : 837527.9207054375,
+                "90.0" : 848408.0713877481,
+                "95.0" : 848408.0713877481,
+                "99.0" : 848408.0713877481,
+                "99.9" : 848408.0713877481,
+                "99.99" : 848408.0713877481,
+                "99.999" : 848408.0713877481,
+                "99.9999" : 848408.0713877481,
+                "100.0" : 848408.0713877481
+            },
+            "scoreUnit" : "ops/s",
+            "rawData" : [
+                [
+                    837527.9207054375,
+                    836728.5258125965,
+                    830535.9000848006,
+                    846104.0803158806,
+                    848408.0713877481
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.21",
+        "benchmark" : "eu.vendeli.rethis.benchmarks.LettuceBenchmark.lettuceSetGet",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 1,
+        "jvm" : "/home/vendelieu/.jdks/azul-21.0.4/bin/java",
+        "jvmArgs" : [
+            "-Dfile.encoding=UTF-8",
+            "-Duser.country=US",
+            "-Duser.language=en",
+            "-Duser.variant",
+            "-Xms12g",
+            "-Xmx12g",
+            "-Xss2m",
+            "-XX:MaxMetaspaceSize=1g"
+        ],
+        "jdkVersion" : "21.0.4",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "21.0.4+7-LTS",
+        "warmupIterations" : 2,
+        "warmupTime" : "1000 ms",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "1000 ms",
+        "measurementBatchSize" : 1,
+        "primaryMetric" : {
+            "score" : 1380333.188066156,
+            "scoreError" : 6181093.607227963,
+            "scoreConfidence" : [
+                -4800760.419161808,
+                7561426.795294119
+            ],
+            "scorePercentiles" : {
+                "0.0" : 14373.7961988482,
+                "50.0" : 430277.194467646,
+                "90.0" : 3582405.2756772395,
+                "95.0" : 3582405.2756772395,
+                "99.0" : 3582405.2756772395,
+                "99.9" : 3582405.2756772395,
+                "99.99" : 3582405.2756772395,
+                "99.999" : 3582405.2756772395,
+                "99.9999" : 3582405.2756772395,
+                "100.0" : 3582405.2756772395
+            },
+            "scoreUnit" : "ops/s",
+            "rawData" : [
+                [
+                    2595479.4783812338,
+                    3582405.2756772395,
+                    279130.1956058124,
+                    14373.7961988482,
+                    430277.194467646
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.21",
+        "benchmark" : "eu.vendeli.rethis.benchmarks.RethisBenchmark.rethisSetGet",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 1,
+        "jvm" : "/home/vendelieu/.jdks/azul-21.0.4/bin/java",
+        "jvmArgs" : [
+            "-Dfile.encoding=UTF-8",
+            "-Duser.country=US",
+            "-Duser.language=en",
+            "-Duser.variant",
+            "-Xms12g",
+            "-Xmx12g",
+            "-Xss2m",
+            "-XX:MaxMetaspaceSize=1g"
+        ],
+        "jdkVersion" : "21.0.4",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "21.0.4+7-LTS",
+        "warmupIterations" : 2,
+        "warmupTime" : "1000 ms",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "1000 ms",
+        "measurementBatchSize" : 1,
+        "primaryMetric" : {
+            "score" : 1452718.5077546318,
+            "scoreError" : 1341935.9327286524,
+            "scoreConfidence" : [
+                110782.57502597943,
+                2794654.440483284
+            ],
+            "scorePercentiles" : {
+                "0.0" : 956542.6462258053,
+                "50.0" : 1477393.2015581273,
+                "90.0" : 1869051.7252201173,
+                "95.0" : 1869051.7252201173,
+                "99.0" : 1869051.7252201173,
+                "99.9" : 1869051.7252201173,
+                "99.99" : 1869051.7252201173,
+                "99.999" : 1869051.7252201173,
+                "99.9999" : 1869051.7252201173,
+                "100.0" : 1869051.7252201173
+            },
+            "scoreUnit" : "ops/s",
+            "rawData" : [
+                [
+                    1659390.1950222743,
+                    956542.6462258053,
+                    1477393.2015581273,
+                    1301214.7707468346,
+                    1869051.7252201173
                 ]
             ]
         },

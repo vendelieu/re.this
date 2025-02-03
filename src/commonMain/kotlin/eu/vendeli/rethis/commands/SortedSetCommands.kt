@@ -2,20 +2,18 @@ package eu.vendeli.rethis.commands
 
 import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.processingException
-import eu.vendeli.rethis.types.common.MPopResult
-import eu.vendeli.rethis.types.common.ScanResult
-import eu.vendeli.rethis.types.common.ZMember
-import eu.vendeli.rethis.types.common.ZPopResult
-import eu.vendeli.rethis.types.core.*
+import eu.vendeli.rethis.types.common.RArray
+import eu.vendeli.rethis.types.common.RType
+import eu.vendeli.rethis.types.common.toArgument
 import eu.vendeli.rethis.types.options.UpdateStrategyOption
 import eu.vendeli.rethis.types.options.ZAggregate
 import eu.vendeli.rethis.types.options.ZPopCommonOption
 import eu.vendeli.rethis.types.options.ZRangeOption
-import eu.vendeli.rethis.utils.cast
-import eu.vendeli.rethis.utils.response.unwrapRespIndMap
-import eu.vendeli.rethis.utils.safeCast
-import eu.vendeli.rethis.utils.writeArgument
-import eu.vendeli.rethis.utils.execute
+import eu.vendeli.rethis.types.response.MPopResult
+import eu.vendeli.rethis.types.response.ScanResult
+import eu.vendeli.rethis.types.response.ZMember
+import eu.vendeli.rethis.types.response.ZPopResult
+import eu.vendeli.rethis.utils.*
 
 suspend fun ReThis.bzMPop(
     timeout: Double,
@@ -240,7 +238,7 @@ suspend fun ReThis.zPopMin(key: String): Map<String, Double?> = execute(
         "ZPOPMIN".toArgument(),
         key.toArgument(),
     ),
-).unwrapRespIndMap<String, Double>() ?: emptyMap()
+).unwrapRESPAgnosticMap<String, Double>() ?: emptyMap()
 
 suspend fun ReThis.zPopMin(key: String, count: Long): List<List<ZMember>> = execute(
     listOfNotNull(

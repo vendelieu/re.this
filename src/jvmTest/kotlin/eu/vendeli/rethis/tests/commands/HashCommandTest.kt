@@ -2,7 +2,7 @@ package eu.vendeli.rethis.tests.commands
 
 import eu.vendeli.rethis.ReThisTestCtx
 import eu.vendeli.rethis.commands.*
-import eu.vendeli.rethis.types.common.ScanResult
+import eu.vendeli.rethis.types.response.ScanResult
 import io.kotest.matchers.shouldBe
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds

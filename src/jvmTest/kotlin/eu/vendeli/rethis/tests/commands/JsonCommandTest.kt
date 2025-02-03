@@ -2,7 +2,7 @@ package eu.vendeli.rethis.tests.commands
 
 import eu.vendeli.rethis.ReThisTestCtx
 import eu.vendeli.rethis.commands.*
-import eu.vendeli.rethis.types.core.BulkString
+import eu.vendeli.rethis.types.common.BulkString
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeTypeOf
 

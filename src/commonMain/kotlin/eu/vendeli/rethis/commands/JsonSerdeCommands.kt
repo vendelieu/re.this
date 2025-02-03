@@ -1,7 +1,7 @@
 package eu.vendeli.rethis.commands
 
 import eu.vendeli.rethis.ReThis
-import eu.vendeli.rethis.types.core.toArgument
+import eu.vendeli.rethis.types.common.toArgument
 import eu.vendeli.rethis.types.options.UpsertMode
 import eu.vendeli.rethis.utils.__jsonModule
 import eu.vendeli.rethis.utils.execute

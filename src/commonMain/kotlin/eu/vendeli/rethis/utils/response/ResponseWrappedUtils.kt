@@ -2,9 +2,23 @@ package eu.vendeli.rethis.utils.response
 
 import com.ionspin.kotlin.bignum.integer.BigInteger
 import eu.vendeli.rethis.ResponseParsingException
-import eu.vendeli.rethis.types.core.*
-import eu.vendeli.rethis.types.core.RType.Error
-import eu.vendeli.rethis.types.core.ResponseToken.Code
+import eu.vendeli.rethis.types.common.BigNumber
+import eu.vendeli.rethis.types.common.Bool
+import eu.vendeli.rethis.types.common.BulkString
+import eu.vendeli.rethis.types.common.F64
+import eu.vendeli.rethis.types.common.Int64
+import eu.vendeli.rethis.types.common.PlainString
+import eu.vendeli.rethis.types.common.Push
+import eu.vendeli.rethis.types.common.RArray
+import eu.vendeli.rethis.types.common.RMap
+import eu.vendeli.rethis.types.common.RPrimitive
+import eu.vendeli.rethis.types.common.RSet
+import eu.vendeli.rethis.types.common.RType
+import eu.vendeli.rethis.types.common.RespCode
+import eu.vendeli.rethis.types.common.ResponseToken
+import eu.vendeli.rethis.types.common.RType.Error
+import eu.vendeli.rethis.types.common.ResponseToken.Code
+import eu.vendeli.rethis.types.common.VerbatimString
 import eu.vendeli.rethis.utils.Const.FALSE_BYTE
 import eu.vendeli.rethis.utils.Const.TRUE_BYTE
 import io.ktor.utils.io.charsets.*

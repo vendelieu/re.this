@@ -5,7 +5,7 @@ import eu.vendeli.rethis.commands.jsonArrPop
 import eu.vendeli.rethis.commands.jsonGet
 import eu.vendeli.rethis.commands.jsonMGet
 import eu.vendeli.rethis.commands.jsonSet
-import eu.vendeli.rethis.types.core.RArray
+import eu.vendeli.rethis.types.common.RArray
 import eu.vendeli.rethis.utils.__jsonModule
 import eu.vendeli.rethis.utils.unwrap
 import io.kotest.matchers.collections.shouldHaveSize
@@ -64,7 +64,7 @@ class JsonSerdeCommandsTest : ReThisTestCtx(true) {
 
         // Pop from nested array
         client.jsonArrPop(key, "$.users").shouldBeTypeOf<RArray>().value.shouldNotBeNull().first().let {
-            client.__jsonModule().decodeFromString<User>(it.unwrap(String::class)!!)
+            client.__jsonModule().decodeFromString<User>(it.unwrap<String>()!!)
         } shouldBe User(5, "Eve")
         client.jsonGet<NestedUserList>(key) shouldBe NestedUserList(
             users = listOf(User(4, "David")),

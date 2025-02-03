@@ -1,7 +1,7 @@
 package eu.vendeli.rethis.types.options
 
-import eu.vendeli.rethis.types.core.VaryingArgument
-import eu.vendeli.rethis.types.core.toArgument
+import eu.vendeli.rethis.types.common.VaryingArgument
+import eu.vendeli.rethis.types.common.toArgument
 
 sealed class CopyOption {
     class DB(

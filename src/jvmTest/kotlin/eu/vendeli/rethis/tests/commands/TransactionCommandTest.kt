@@ -3,10 +3,10 @@ package eu.vendeli.rethis.tests.commands
 import eu.vendeli.rethis.ReThisException
 import eu.vendeli.rethis.ReThisTestCtx
 import eu.vendeli.rethis.commands.*
-import eu.vendeli.rethis.types.core.Int64
-import eu.vendeli.rethis.types.core.PlainString
-import eu.vendeli.rethis.types.core.RArray
-import eu.vendeli.rethis.types.core.toArgument
+import eu.vendeli.rethis.types.common.Int64
+import eu.vendeli.rethis.types.common.PlainString
+import eu.vendeli.rethis.types.common.RArray
+import eu.vendeli.rethis.types.common.toArgument
 import eu.vendeli.rethis.types.coroutine.CoLocalConn
 import eu.vendeli.rethis.utils.bufferValues
 import eu.vendeli.rethis.utils.response.readResponseWrapped

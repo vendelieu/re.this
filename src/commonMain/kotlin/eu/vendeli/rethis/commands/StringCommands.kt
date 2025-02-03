@@ -2,8 +2,11 @@ package eu.vendeli.rethis.commands
 
 import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.processingException
-import eu.vendeli.rethis.types.common.LcsResult
-import eu.vendeli.rethis.types.core.*
+import eu.vendeli.rethis.types.common.Int64
+import eu.vendeli.rethis.types.common.RArray
+import eu.vendeli.rethis.types.common.RMap
+import eu.vendeli.rethis.types.common.toArgument
+import eu.vendeli.rethis.types.response.LcsResult
 import eu.vendeli.rethis.types.options.GetExOption
 import eu.vendeli.rethis.types.options.LcsMode
 import eu.vendeli.rethis.types.options.MinMatchLen

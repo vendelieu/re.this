@@ -2,7 +2,15 @@ package eu.vendeli.rethis.utils
 
 import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.annotations.ReThisInternal
-import eu.vendeli.rethis.types.core.*
+import eu.vendeli.rethis.types.common.Argument
+import eu.vendeli.rethis.types.common.BaArg
+import eu.vendeli.rethis.types.common.DoubleArg
+import eu.vendeli.rethis.types.common.IntArg
+import eu.vendeli.rethis.types.common.LongArg
+import eu.vendeli.rethis.types.common.RespCode
+import eu.vendeli.rethis.types.common.StringArg
+import eu.vendeli.rethis.types.common.VaryingArgument
+import eu.vendeli.rethis.types.common.toArgument
 import eu.vendeli.rethis.utils.Const.EOL
 import io.ktor.utils.io.charsets.*
 import io.ktor.utils.io.core.*

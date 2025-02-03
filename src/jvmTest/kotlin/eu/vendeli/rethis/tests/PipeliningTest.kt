@@ -4,9 +4,9 @@ import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.ReThisTestCtx
 import eu.vendeli.rethis.commands.get
 import eu.vendeli.rethis.commands.set
-import eu.vendeli.rethis.types.core.BulkString
-import eu.vendeli.rethis.types.core.PlainString
-import eu.vendeli.rethis.types.core.RespVer
+import eu.vendeli.rethis.types.common.BulkString
+import eu.vendeli.rethis.types.common.PlainString
+import eu.vendeli.rethis.types.common.RespVer
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
 

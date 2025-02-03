@@ -1,12 +1,17 @@
 package eu.vendeli.rethis.utils.response
 
 import eu.vendeli.rethis.ResponseParsingException
-import eu.vendeli.rethis.types.core.*
-import eu.vendeli.rethis.types.core.ResponseToken.Code
-import eu.vendeli.rethis.types.core.ResponseToken.Data
+import eu.vendeli.rethis.types.common.RArray
+import eu.vendeli.rethis.types.common.RType
+import eu.vendeli.rethis.types.common.RespCode
+import eu.vendeli.rethis.types.common.ResponseToken
+import eu.vendeli.rethis.types.common.ResponseToken.Code
+import eu.vendeli.rethis.types.common.ResponseToken.Data
 import eu.vendeli.rethis.utils.Const.CARRIAGE_RETURN_BYTE
 import eu.vendeli.rethis.utils.Const.NEWLINE_BYTE
 import eu.vendeli.rethis.utils.cast
+import eu.vendeli.rethis.utils.unwrap
+import eu.vendeli.rethis.utils.unwrapMap
 import io.ktor.utils.io.*
 import kotlinx.io.Source
 import kotlinx.io.readDecimalLong
@@ -21,11 +26,6 @@ internal suspend fun ByteReadChannel.parseResponse(): ArrayDeque<ResponseToken> 
 
     return response
 }
-
-internal inline fun <reified L, reified R> RType.unwrapRespIndMap(): Map<L, R?>? =
-    if (this is RArray) cast<RArray>().value.chunked(2).associate {
-        it.first().unwrap<L>()!! to it.last().unwrap<R>()
-    } else unwrapMap<L, R>()
 
 @Suppress("NOTHING_TO_INLINE")
 internal inline fun ArrayDeque<ResponseToken>.validatedResponseType(): Code {

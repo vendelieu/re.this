@@ -4,7 +4,11 @@ package eu.vendeli.rethis.utils
 
 import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.annotations.ReThisInternal
-import eu.vendeli.rethis.types.core.*
+import eu.vendeli.rethis.types.interfaces.SubscriptionHandler
+import eu.vendeli.rethis.types.common.Argument
+import eu.vendeli.rethis.types.common.Push
+import eu.vendeli.rethis.types.common.RArray
+import eu.vendeli.rethis.types.common.toArgument
 import eu.vendeli.rethis.types.coroutine.CoLocalConn
 import eu.vendeli.rethis.utils.response.parseResponse
 import eu.vendeli.rethis.utils.response.readResponseWrapped
@@ -15,33 +19,9 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlin.coroutines.CoroutineContext
 import kotlin.jvm.JvmName
-import kotlin.reflect.KClass
-
-fun RType.isOk() = unwrap<String>() == "OK"
-
-@Suppress("UNCHECKED_CAST", "NOTHING_TO_INLINE")
-internal inline fun <T> Any.cast(): T = this as T
-
-@Suppress("UNCHECKED_CAST", "NOTHING_TO_INLINE")
-internal inline fun <T : Any> Any.cast(clazz: KClass<T>): T = this as T
-
-@Suppress("UNCHECKED_CAST", "NOTHING_TO_INLINE")
-internal inline fun <T> Any.safeCast(): T? = this as? T
-
-@Suppress("UNCHECKED_CAST", "NOTHING_TO_INLINE")
-internal inline fun <T : Any> Any.safeCast(clazz: KClass<T>): T? =
-    if (this::class == clazz) this as T else null
-
-@Suppress("UNCHECKED_CAST", "NOTHING_TO_INLINE")
-internal inline fun <T : Any> Any.safeCast(typeInfo: TypeInfo): T? =
-    if (typeInfo.type.isInstance(this)) this as T else null
 
 @Suppress("NOTHING_TO_INLINE")
-private inline fun String?.isEqTo(other: String) = if (this != null) {
-    compareTo(other.lowercase()) == 0
-} else {
-    false
-}
+private inline fun String?.isEqTo(other: String) = this != null && compareTo(other.lowercase()) == 0
 
 @ReThisInternal
 @JvmName("executeSimple")

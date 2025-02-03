@@ -1,10 +1,10 @@
 package eu.vendeli.rethis.commands
 
 import eu.vendeli.rethis.ReThis
-import eu.vendeli.rethis.types.core.RType
-import eu.vendeli.rethis.types.core.toArgument
-import eu.vendeli.rethis.types.core.unwrapList
+import eu.vendeli.rethis.types.common.RType
+import eu.vendeli.rethis.types.common.toArgument
 import eu.vendeli.rethis.utils.execute
+import eu.vendeli.rethis.utils.unwrapList
 
 suspend fun ReThis.discard(): Boolean = execute<String>(
     listOf(

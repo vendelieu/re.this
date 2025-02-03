@@ -1,12 +1,12 @@
 package eu.vendeli.rethis.commands
 
 import eu.vendeli.rethis.ReThis
-import eu.vendeli.rethis.types.common.JsonEntry
-import eu.vendeli.rethis.types.core.RType
-import eu.vendeli.rethis.types.core.toArgument
-import eu.vendeli.rethis.types.core.unwrapList
+import eu.vendeli.rethis.types.response.JsonEntry
+import eu.vendeli.rethis.types.common.RType
+import eu.vendeli.rethis.types.common.toArgument
 import eu.vendeli.rethis.types.options.UpsertMode
 import eu.vendeli.rethis.utils.execute
+import eu.vendeli.rethis.utils.unwrapList
 import eu.vendeli.rethis.utils.writeArgument
 
 suspend fun ReThis.jsonArrAppend(key: String, path: String, vararg values: String): Long? = execute<Long>(

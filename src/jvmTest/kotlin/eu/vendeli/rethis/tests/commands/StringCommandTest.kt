@@ -2,7 +2,7 @@ package eu.vendeli.rethis.tests.commands
 
 import eu.vendeli.rethis.ReThisTestCtx
 import eu.vendeli.rethis.commands.*
-import eu.vendeli.rethis.types.common.LcsResult
+import eu.vendeli.rethis.types.response.LcsResult
 import eu.vendeli.rethis.types.options.LcsMode
 import eu.vendeli.rethis.types.options.MinMatchLen
 import io.kotest.matchers.booleans.shouldBeTrue

@@ -1,9 +1,9 @@
 package eu.vendeli.rethis.types.options
 
-import eu.vendeli.rethis.types.common.GeoUnit
-import eu.vendeli.rethis.types.core.Argument
-import eu.vendeli.rethis.types.core.VaryingArgument
-import eu.vendeli.rethis.types.core.toArgument
+import eu.vendeli.rethis.types.response.GeoUnit
+import eu.vendeli.rethis.types.common.Argument
+import eu.vendeli.rethis.types.common.VaryingArgument
+import eu.vendeli.rethis.types.common.toArgument
 
 sealed class GeoSearchOption
 
