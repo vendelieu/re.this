@@ -1,17 +1,12 @@
 package eu.vendeli.rethis.utils.response
 
 import eu.vendeli.rethis.ResponseParsingException
-import eu.vendeli.rethis.types.common.RArray
-import eu.vendeli.rethis.types.common.RType
 import eu.vendeli.rethis.types.common.RespCode
 import eu.vendeli.rethis.types.common.ResponseToken
 import eu.vendeli.rethis.types.common.ResponseToken.Code
 import eu.vendeli.rethis.types.common.ResponseToken.Data
 import eu.vendeli.rethis.utils.Const.CARRIAGE_RETURN_BYTE
 import eu.vendeli.rethis.utils.Const.NEWLINE_BYTE
-import eu.vendeli.rethis.utils.cast
-import eu.vendeli.rethis.utils.unwrap
-import eu.vendeli.rethis.utils.unwrapMap
 import io.ktor.utils.io.*
 import kotlinx.io.Source
 import kotlinx.io.readDecimalLong

@@ -81,7 +81,6 @@ internal fun Sink.writeRedisValue(
 ): Sink = apply {
     when (data) {
         is List<*> -> writeListValue(data, charset)
-        is Array<*> -> writeArrayValue(data, charset)
 
         is StringArg -> writeByteArray(data.value.toByteArray(charset))
         is LongArg -> writeByteArray(data.value.toString().toByteArray(charset))
@@ -99,16 +98,6 @@ private fun <T : List<*>> Sink.writeListValue(
     append(value.size.toString())
     appendEOL()
 
-    for (item in value) writeRedisValue(item, charset)
-}
-
-private fun Sink.writeArrayValue(
-    value: Array<*>,
-    charset: Charset = Charsets.UTF_8,
-) {
-    append(RespCode.ARRAY)
-    append(value.size.toString())
-    appendEOL()
     for (item in value) writeRedisValue(item, charset)
 }
 

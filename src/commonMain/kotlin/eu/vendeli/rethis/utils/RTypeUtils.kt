@@ -67,9 +67,15 @@ inline fun <reified K, reified V> RType.unwrapMap(): Map<K, V?>? = run {
     }
 }
 
-internal inline fun <reified L, reified R> RType.unwrapRESPAgnosticMap(): Map<L, R?>? = run {
+/**
+ * Unwrap RESP map.
+ *
+ * It can be either an array with pair values from RESP 2,
+ * or a map from RESP 3.
+ */
+inline fun <reified L, reified R> RType.unwrapRESPAgnosticMap(): Map<L, R?>? = run {
     handleEx()
-    if (this is RArray) cast<RArray>().value.chunked(2).associate {
+    if (this is RArray) value.chunked(2).associate {
         it.first().unwrap<L>()!! to it.last().unwrap<R>()
     } else unwrapMap<L, R>()
 }

@@ -599,22 +599,6 @@ final class eu.vendeli.rethis.types.response/PubSubNumEntry { // eu.vendeli.reth
     final fun toString(): kotlin/String // eu.vendeli.rethis.types.response/PubSubNumEntry.toString|toString(){}[0]
 }
 
-final class eu.vendeli.rethis.types.response/SortedSetEntry { // eu.vendeli.rethis.types.response/SortedSetEntry|null[0]
-    constructor <init>(kotlin/String, kotlin/Double) // eu.vendeli.rethis.types.response/SortedSetEntry.<init>|<init>(kotlin.String;kotlin.Double){}[0]
-
-    final val member // eu.vendeli.rethis.types.response/SortedSetEntry.member|{}member[0]
-        final fun <get-member>(): kotlin/String // eu.vendeli.rethis.types.response/SortedSetEntry.member.<get-member>|<get-member>(){}[0]
-    final val score // eu.vendeli.rethis.types.response/SortedSetEntry.score|{}score[0]
-        final fun <get-score>(): kotlin/Double // eu.vendeli.rethis.types.response/SortedSetEntry.score.<get-score>|<get-score>(){}[0]
-
-    final fun component1(): kotlin/String // eu.vendeli.rethis.types.response/SortedSetEntry.component1|component1(){}[0]
-    final fun component2(): kotlin/Double // eu.vendeli.rethis.types.response/SortedSetEntry.component2|component2(){}[0]
-    final fun copy(kotlin/String = ..., kotlin/Double = ...): eu.vendeli.rethis.types.response/SortedSetEntry // eu.vendeli.rethis.types.response/SortedSetEntry.copy|copy(kotlin.String;kotlin.Double){}[0]
-    final fun equals(kotlin/Any?): kotlin/Boolean // eu.vendeli.rethis.types.response/SortedSetEntry.equals|equals(kotlin.Any?){}[0]
-    final fun hashCode(): kotlin/Int // eu.vendeli.rethis.types.response/SortedSetEntry.hashCode|hashCode(){}[0]
-    final fun toString(): kotlin/String // eu.vendeli.rethis.types.response/SortedSetEntry.toString|toString(){}[0]
-}
-
 final class eu.vendeli.rethis.types.response/WaitAofResult { // eu.vendeli.rethis.types.response/WaitAofResult|null[0]
     constructor <init>(kotlin/Long, kotlin/Long) // eu.vendeli.rethis.types.response/WaitAofResult.<init>|<init>(kotlin.Long;kotlin.Long){}[0]
 
@@ -1570,6 +1554,7 @@ final inline fun <#A: kotlin/Any?, #B: eu.vendeli.rethis.types.common/Argument> 
 final inline fun <#A: kotlin/Any?, #B: eu.vendeli.rethis.types.common/Argument> (kotlin.collections/MutableList<#B>).eu.vendeli.rethis.utils/writeArgument(kotlin/Array<#A>): kotlin.collections/MutableList<#B> // eu.vendeli.rethis.utils/writeArgument|writeArgument@kotlin.collections.MutableList<0:1>(kotlin.Array<0:0>){0§<kotlin.Any?>;1§<eu.vendeli.rethis.types.common.Argument>}[0]
 final inline fun <#A: kotlin/Any?, #B: eu.vendeli.rethis.types.common/Argument> (kotlin.collections/MutableList<#B>).eu.vendeli.rethis.utils/writeArgument(kotlin/Array<out #A>...): kotlin.collections/MutableList<#B> // eu.vendeli.rethis.utils/writeArgument|writeArgument@kotlin.collections.MutableList<0:1>(kotlin.Array<out|0:0>...){0§<kotlin.Any?>;1§<eu.vendeli.rethis.types.common.Argument>}[0]
 final inline fun <#A: reified kotlin/Any?, #B: reified kotlin/Any?> (eu.vendeli.rethis.types.common/RType).eu.vendeli.rethis.utils/unwrapMap(): kotlin.collections/Map<#A, #B?>? // eu.vendeli.rethis.utils/unwrapMap|unwrapMap@eu.vendeli.rethis.types.common.RType(){0§<kotlin.Any?>;1§<kotlin.Any?>}[0]
+final inline fun <#A: reified kotlin/Any?, #B: reified kotlin/Any?> (eu.vendeli.rethis.types.common/RType).eu.vendeli.rethis.utils/unwrapRESPAgnosticMap(): kotlin.collections/Map<#A, #B?>? // eu.vendeli.rethis.utils/unwrapRESPAgnosticMap|unwrapRESPAgnosticMap@eu.vendeli.rethis.types.common.RType(){0§<kotlin.Any?>;1§<kotlin.Any?>}[0]
 final inline fun <#A: reified kotlin/Any?> (eu.vendeli.rethis.types.common/RType).eu.vendeli.rethis.utils/unwrap(): #A? // eu.vendeli.rethis.utils/unwrap|unwrap@eu.vendeli.rethis.types.common.RType(){0§<kotlin.Any?>}[0]
 final inline fun <#A: reified kotlin/Any?> (eu.vendeli.rethis.types.common/RType).eu.vendeli.rethis.utils/unwrapList(): kotlin.collections/List<#A> // eu.vendeli.rethis.utils/unwrapList|unwrapList@eu.vendeli.rethis.types.common.RType(){0§<kotlin.Any?>}[0]
 final inline fun <#A: reified kotlin/Any?> (eu.vendeli.rethis.types.common/RType).eu.vendeli.rethis.utils/unwrapSet(): kotlin.collections/Set<#A> // eu.vendeli.rethis.utils/unwrapSet|unwrapSet@eu.vendeli.rethis.types.common.RType(){0§<kotlin.Any?>}[0]
