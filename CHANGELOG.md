@@ -1,5 +1,10 @@
 # Re.this Changelog
 
+## [Unreleased]
+
+* Reorganized project structure (some imports may break).
+* Moved more tools for work with `RType` into user space.
+
 ## 0.2.8
 
 * Add experimental serialization support.

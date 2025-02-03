@@ -21,7 +21,7 @@ import kotlin.coroutines.CoroutineContext
 import kotlin.jvm.JvmName
 
 @Suppress("NOTHING_TO_INLINE")
-private inline fun String?.isEqTo(other: String) = this != null && compareTo(other.lowercase()) == 0
+private inline infix fun String?.isEqualTo(other: String) = this != null && compareTo(other.lowercase()) == 0
 
 @ReThisInternal
 @JvmName("executeSimple")
@@ -66,13 +66,13 @@ internal suspend inline fun ReThis.registerSubscription(
 
                 val inputType = input?.firstOrNull()?.value?.safeCast<String>()
                 when {
-                    inputType.isEqTo(regCommand) -> {
+                    inputType isEqualTo regCommand -> {
                         val targetCh = input?.getOrNull(1)?.unwrap<String>() ?: target
                         val subscribers = input?.lastOrNull()?.unwrap<Long>() ?: 0L
                         subscriptions.eventHandler?.onSubscribe(targetCh, subscribers)
                     }
 
-                    inputType.isEqTo(unRegCommand) -> {
+                    inputType isEqualTo unRegCommand -> {
                         val targetCh = input?.getOrNull(1)?.unwrap<String>() ?: target
                         val subscribers = input?.lastOrNull()?.unwrap<Long>() ?: 0L
                         subscriptions.eventHandler?.onUnsubscribe(targetCh, subscribers)
