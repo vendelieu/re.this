@@ -1763,6 +1763,10 @@ public final class eu/vendeli/rethis/types/response/ZPopResult {
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class eu/vendeli/rethis/utils/CommonUtilsKt {
+	public static final fun __jsonModule (Leu/vendeli/rethis/ReThis;)Lkotlinx/serialization/json/Json;
+}
+
 public final class eu/vendeli/rethis/utils/RTypeUtilsKt {
 	public static final fun get__ParserLogger (Leu/vendeli/rethis/types/common/RType;)Lorg/slf4j/Logger;
 	public static final fun handleEx (Leu/vendeli/rethis/types/common/RType;)Leu/vendeli/rethis/types/common/RType;
@@ -1770,7 +1774,6 @@ public final class eu/vendeli/rethis/utils/RTypeUtilsKt {
 }
 
 public final class eu/vendeli/rethis/utils/RequestUtilsKt {
-	public static final fun __jsonModule (Leu/vendeli/rethis/ReThis;)Lkotlinx/serialization/json/Json;
 	public static final fun writeArgArray (Ljava/util/List;[Ljava/lang/Object;)Ljava/util/List;
 	public static final fun writeArgument (Ljava/util/List;Ljava/lang/Object;)Ljava/util/List;
 	public static final fun writeArgument (Ljava/util/List;Ljava/util/List;)Ljava/util/List;

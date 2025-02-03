@@ -1,16 +1,6 @@
 package eu.vendeli.rethis.utils
 
-import eu.vendeli.rethis.ReThis
-import eu.vendeli.rethis.annotations.ReThisInternal
-import eu.vendeli.rethis.types.common.Argument
-import eu.vendeli.rethis.types.common.BaArg
-import eu.vendeli.rethis.types.common.DoubleArg
-import eu.vendeli.rethis.types.common.IntArg
-import eu.vendeli.rethis.types.common.LongArg
-import eu.vendeli.rethis.types.common.RespCode
-import eu.vendeli.rethis.types.common.StringArg
-import eu.vendeli.rethis.types.common.VaryingArgument
-import eu.vendeli.rethis.types.common.toArgument
+import eu.vendeli.rethis.types.common.*
 import eu.vendeli.rethis.utils.Const.EOL
 import io.ktor.utils.io.charsets.*
 import io.ktor.utils.io.core.*
@@ -62,10 +52,6 @@ inline fun <T, R : Argument> MutableList<R>.writeArgument(value: Array<T>): Muta
     value.forEach { writeArgument(it) }
     return this
 }
-
-@ReThisInternal
-@Suppress("FunctionName", "ktlint:standard:function-naming")
-fun ReThis.__jsonModule() = cfg.jsonModule
 
 @Suppress("NOTHING_TO_INLINE")
 internal inline fun Buffer.writeValues(value: List<Argument>, charset: Charset) = apply {

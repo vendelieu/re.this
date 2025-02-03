@@ -42,6 +42,10 @@ suspend inline fun <reified K : Any, reified V : Any> ReThis.execute(
     payload: List<Argument>,
 ): Map<K, V?>? = execute(payload, typeInfo<K>(), typeInfo<V>())
 
+@ReThisInternal
+@Suppress("FunctionName", "ktlint:standard:function-naming")
+fun ReThis.__jsonModule() = cfg.jsonModule
+
 internal suspend inline fun <reified T : CoroutineContext.Element> takeFromCoCtx(element: CoroutineContext.Key<T>): T? =
     currentCoroutineContext()[element]
 
