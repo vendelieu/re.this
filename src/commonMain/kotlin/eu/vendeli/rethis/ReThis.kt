@@ -147,8 +147,8 @@ class ReThis(
         return connectionPool.use { conn ->
             logger.debug("Started transaction")
             val multiRequest = conn
-                .sendRequest(listOf("MULTI".toArgument()), cfg.charset)
-                .parseResponse()
+                .exchangeData(listOf("MULTI".toArgument()), cfg.charset)
+
             if (!multiRequest.readResponseWrapped(cfg.charset).isOk())
                 throw InvalidStateException("Failed to start transaction")
 
@@ -159,8 +159,8 @@ class ReThis(
                 }.join()
             e?.also {
                 val discardRequest = conn
-                    .sendRequest(listOf("DISCARD".toArgument()), cfg.charset)
-                    .parseResponse()
+                    .exchangeData(listOf("DISCARD".toArgument()), cfg.charset)
+
                 if (!discardRequest.readResponseWrapped(cfg.charset).isOk())
                     throw InvalidStateException("Failed to cancel transaction")
                 logger.error("Transaction canceled", it)
@@ -169,8 +169,7 @@ class ReThis(
 
             logger.debug("Transaction completed")
             conn
-                .sendRequest(listOf("EXEC".toArgument()), cfg.charset)
-                .parseResponse()
+                .exchangeData(listOf("EXEC".toArgument()), cfg.charset)
                 .readResponseWrapped(cfg.charset)
                 .unwrapList<RType>()
                 .also {
@@ -234,11 +233,10 @@ class ReThis(
 
             coLocalConn != null ->
                 coLocalConn.connection
-                    .sendRequest(payload, cfg.charset)
-                    .parseResponse()
+                    .exchangeData(payload, cfg.charset)
 
             else -> connectionPool.use { connection ->
-                coScope.async { connection.sendRequest(payload, cfg.charset).parseResponse() }.await()
+                coScope.async { connection.exchangeData(payload, cfg.charset) }.await()
             }
         }
     }

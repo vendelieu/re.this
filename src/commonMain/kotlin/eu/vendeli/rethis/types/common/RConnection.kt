@@ -46,6 +46,9 @@ internal data class RConnection(
     } finally {
         state.unlock()
     }
+
+    suspend inline fun exchangeData(payload: List<Argument>, charset: Charset): ArrayDeque<ResponseToken> =
+        sendRequest(payload, charset).parseResponse()
 }
 
 internal fun Socket.rConnection(): RConnection = RConnection(this, openReadChannel(), openWriteChannel())

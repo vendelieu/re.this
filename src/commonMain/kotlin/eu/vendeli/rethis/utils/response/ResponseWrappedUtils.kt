@@ -2,23 +2,9 @@ package eu.vendeli.rethis.utils.response
 
 import com.ionspin.kotlin.bignum.integer.BigInteger
 import eu.vendeli.rethis.ResponseParsingException
-import eu.vendeli.rethis.types.common.BigNumber
-import eu.vendeli.rethis.types.common.Bool
-import eu.vendeli.rethis.types.common.BulkString
-import eu.vendeli.rethis.types.common.F64
-import eu.vendeli.rethis.types.common.Int64
-import eu.vendeli.rethis.types.common.PlainString
-import eu.vendeli.rethis.types.common.Push
-import eu.vendeli.rethis.types.common.RArray
-import eu.vendeli.rethis.types.common.RMap
-import eu.vendeli.rethis.types.common.RPrimitive
-import eu.vendeli.rethis.types.common.RSet
-import eu.vendeli.rethis.types.common.RType
-import eu.vendeli.rethis.types.common.RespCode
-import eu.vendeli.rethis.types.common.ResponseToken
+import eu.vendeli.rethis.types.common.*
 import eu.vendeli.rethis.types.common.RType.Error
 import eu.vendeli.rethis.types.common.ResponseToken.Code
-import eu.vendeli.rethis.types.common.VerbatimString
 import eu.vendeli.rethis.utils.Const.FALSE_BYTE
 import eu.vendeli.rethis.utils.Const.TRUE_BYTE
 import io.ktor.utils.io.charsets.*
@@ -124,10 +110,10 @@ private fun ArrayDeque<ResponseToken>.readSimpleResponseWrapped(
 
         RespCode.VERBATIM_STRING -> {
             if (size < 0) return RType.Null
+            val encoding = data.readByteArray(3).decodeToString()
+            data.readByte() // skip ':' byte
             val content = data.readText(charset)
-            val encoding = content.subSequence(0, 3)
-            val data = content.subSequence(4, size.toInt())
-            VerbatimString(encoding.toString(), data.toString())
+            VerbatimString(encoding, content)
         }
 
         RespCode.ARRAY, RespCode.SET, RespCode.PUSH, RespCode.MAP, RespCode.ATTRIBUTE ->
