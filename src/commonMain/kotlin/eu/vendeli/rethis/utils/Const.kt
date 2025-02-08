@@ -13,4 +13,7 @@ internal object Const {
 
     val NEWLINE_BYTE = '\n'.code.toByte()
     val CARRIAGE_RETURN_BYTE = '\r'.code.toByte()
+
 }
+
+const val REDIS_JSON_ROOT_PATH = "$"

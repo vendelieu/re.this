@@ -3,6 +3,7 @@ package eu.vendeli.rethis.commands
 import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.types.core.toArgument
 import eu.vendeli.rethis.types.options.UpsertMode
+import eu.vendeli.rethis.utils.REDIS_JSON_ROOT_PATH
 import eu.vendeli.rethis.utils.__jsonModule
 import eu.vendeli.rethis.utils.execute
 import eu.vendeli.rethis.utils.writeArgument
@@ -23,7 +24,7 @@ suspend inline fun <reified T : Any> ReThis.jsonMGet(path: String, vararg key: S
 
 suspend inline fun <reified T : Any> ReThis.jsonSet(
     key: String,
-    path: String,
+    path: String = REDIS_JSON_ROOT_PATH,
     value: T,
     upsertMode: UpsertMode? = null,
 ): String? = execute<String>(

@@ -29,6 +29,16 @@ class JsonSerdeCommandsTest : ReThisTestCtx(true) {
     )
 
     @Test
+    suspend fun `test json set with default path`() {
+        val key = "defaultPathKey"
+        val user = User(794, "Sam")
+
+        client.jsonSet(key, value = user)
+
+        client.jsonGet<User>(key) shouldBe user
+    }
+
+    @Test
     suspend fun `test heterogeneous structures using wrapper objects`() {
         val key = "mixedKey"
         val data = MixedData(
