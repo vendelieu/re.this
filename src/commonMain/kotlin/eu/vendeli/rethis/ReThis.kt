@@ -2,21 +2,8 @@ package eu.vendeli.rethis
 
 import eu.vendeli.rethis.annotations.ReThisDSL
 import eu.vendeli.rethis.annotations.ReThisInternal
-import eu.vendeli.rethis.core.ActiveSubscriptions
-import eu.vendeli.rethis.core.AuthConfiguration
-import eu.vendeli.rethis.core.ClientConfiguration
-import eu.vendeli.rethis.core.ConnectionPool
-import eu.vendeli.rethis.core.use
-import eu.vendeli.rethis.types.common.Address
-import eu.vendeli.rethis.types.common.Argument
-import eu.vendeli.rethis.types.common.Host
-import eu.vendeli.rethis.types.common.RConnection
-import eu.vendeli.rethis.types.common.RType
-import eu.vendeli.rethis.types.common.RespVer
-import eu.vendeli.rethis.types.common.ResponseToken
-import eu.vendeli.rethis.types.common.Url
-import eu.vendeli.rethis.types.common.toArgument
-import eu.vendeli.rethis.utils.unwrapList
+import eu.vendeli.rethis.core.*
+import eu.vendeli.rethis.types.common.*
 import eu.vendeli.rethis.types.coroutine.CoLocalConn
 import eu.vendeli.rethis.types.coroutine.CoPipelineCtx
 import eu.vendeli.rethis.utils.Const.DEFAULT_HOST
@@ -27,6 +14,7 @@ import eu.vendeli.rethis.utils.response.readMapResponseTyped
 import eu.vendeli.rethis.utils.response.readResponseWrapped
 import eu.vendeli.rethis.utils.response.readSimpleResponseTyped
 import eu.vendeli.rethis.utils.takeFromCoCtx
+import eu.vendeli.rethis.utils.unwrapList
 import eu.vendeli.rethis.utils.writeRedisValue
 import io.ktor.util.logging.*
 import io.ktor.util.reflect.*
@@ -113,15 +101,20 @@ class ReThis(
             logger.debug("Executing pipelined request\nRequest payload: $requests")
 
             val connection = ctxConn
-            return if (connection != null) run {
-                connection.sendRequest(pipelinedPayload).readBatchResponse(requests.size)
-            }.map {
-                it.readResponseWrapped(cfg.charset)
-            } else connectionPool
+            return if (connection != null) coScope
+                .async {
+                    connection.sendRequest(pipelinedPayload).readBatchResponse(requests.size)
+                }.await()
+                .map {
+                    it.readResponseWrapped(cfg.charset)
+                } else connectionPool
                 .use { connection ->
-                    connection
-                        .sendRequest(pipelinedPayload)
-                        .readBatchResponse(requests.size)
+                    coScope
+                        .async {
+                            connection
+                                .sendRequest(pipelinedPayload)
+                                .readBatchResponse(requests.size)
+                        }.await()
                 }.map {
                     it.readResponseWrapped(cfg.charset)
                 }.also {
@@ -168,8 +161,11 @@ class ReThis(
             }
 
             logger.debug("Transaction completed")
-            conn
-                .exchangeData(listOf("EXEC".toArgument()), cfg.charset)
+            coScope
+                .async {
+                    conn
+                        .exchangeData(listOf("EXEC".toArgument()), cfg.charset)
+                }.await()
                 .readResponseWrapped(cfg.charset)
                 .unwrapList<RType>()
                 .also {
