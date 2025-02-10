@@ -4,7 +4,7 @@ ktor = "3.0.3"
 kotlin = "2.1.10"
 coroutines = "1.10.1"
 io = "0.6.0"
-datetime = "0.6.1"
+datetime = "0.6.2"
 bignum = "0.3.10"
 kotlinx-serialization = "1.8.0"
 
