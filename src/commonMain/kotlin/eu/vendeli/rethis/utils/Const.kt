@@ -11,6 +11,9 @@ internal object Const {
     val TRUE_BYTE: Byte = 't'.code.toByte()
     val FALSE_BYTE: Byte = 'f'.code.toByte()
 
-    val NEWLINE_BYTE: Byte = '\n'.code.toByte()
-    val CARRIAGE_RETURN_BYTE: Byte = '\r'.code.toByte()
+
+    val NEWLINE_BYTE = '\n'.code.toByte()
+    val CARRIAGE_RETURN_BYTE = '\r'.code.toByte()
 }
+
+const val REDIS_JSON_ROOT_PATH = "$"
