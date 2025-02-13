@@ -1,10 +1,10 @@
 package eu.vendeli.rethis.tests.commands
 
 import eu.vendeli.rethis.commands.*
-import eu.vendeli.rethis.types.common.MPopResult
-import eu.vendeli.rethis.types.common.PopResult
+import eu.vendeli.rethis.types.response.MPopResult
+import eu.vendeli.rethis.types.response.PopResult
 import eu.vendeli.rethis.types.options.LInsertPlace
-import eu.vendeli.rethis.types.common.MoveDirection
+import eu.vendeli.rethis.types.response.MoveDirection
 import eu.vendeli.rethis.ReThisTestCtx
 import io.kotest.matchers.shouldBe
 

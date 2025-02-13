@@ -2,18 +2,13 @@ package eu.vendeli.rethis.commands
 
 import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.processingException
-import eu.vendeli.rethis.types.common.ScanResult
-import eu.vendeli.rethis.types.core.RArray
-import eu.vendeli.rethis.types.core.RType
-import eu.vendeli.rethis.types.core.toArgument
-import eu.vendeli.rethis.types.core.unwrap
-import eu.vendeli.rethis.types.core.unwrapList
+import eu.vendeli.rethis.types.common.RArray
+import eu.vendeli.rethis.types.common.RType
+import eu.vendeli.rethis.types.common.toArgument
 import eu.vendeli.rethis.types.options.HScanOption
 import eu.vendeli.rethis.types.options.UpdateStrategyOption
-import eu.vendeli.rethis.utils.execute
-import eu.vendeli.rethis.utils.response.unwrapRespIndMap
-import eu.vendeli.rethis.utils.safeCast
-import eu.vendeli.rethis.utils.writeArgument
+import eu.vendeli.rethis.types.response.ScanResult
+import eu.vendeli.rethis.utils.*
 import kotlinx.datetime.Instant
 import kotlin.time.Duration
 
@@ -96,7 +91,7 @@ suspend fun ReThis.hGetAll(key: String): Map<String, String?>? = execute(
         "HGETALL".toArgument(),
         key.toArgument(),
     ),
-).unwrapRespIndMap()
+).unwrapRESPAgnosticMap()
 
 suspend fun ReThis.hIncrBy(key: String, field: String, increment: Long): Long = execute<Long>(
     listOf(

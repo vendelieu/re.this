@@ -1,14 +1,14 @@
 package eu.vendeli.rethis.commands
 
 import eu.vendeli.rethis.ReThis
-import eu.vendeli.rethis.types.core.Argument
-import eu.vendeli.rethis.types.core.RType
-import eu.vendeli.rethis.types.core.toArgument
-import eu.vendeli.rethis.types.core.unwrapList
+import eu.vendeli.rethis.types.common.Argument
+import eu.vendeli.rethis.types.common.RType
+import eu.vendeli.rethis.types.common.toArgument
 import eu.vendeli.rethis.types.options.*
-import eu.vendeli.rethis.utils.response.unwrapRespIndMap
-import eu.vendeli.rethis.utils.writeArgument
 import eu.vendeli.rethis.utils.execute
+import eu.vendeli.rethis.utils.unwrapList
+import eu.vendeli.rethis.utils.unwrapRESPAgnosticMap
+import eu.vendeli.rethis.utils.writeArgument
 
 suspend fun ReThis.xAck(
     key: String,
@@ -173,7 +173,7 @@ suspend fun ReThis.xInfoStream(
         full.takeIf { it }?.let { "FULL" },
         limit,
     ),
-).unwrapRespIndMap<String, RType>() ?: emptyMap()
+).unwrapRESPAgnosticMap<String, RType>() ?: emptyMap()
 
 suspend fun ReThis.xLen(key: String): Long? = execute<Long>(listOf("XLEN".toArgument(), key.toArgument()))
 
@@ -200,7 +200,7 @@ suspend fun ReThis.xRead(
         *keys.toTypedArray(),
         *ids.toTypedArray(),
     ),
-).unwrapRespIndMap<String, RType>()
+).unwrapRESPAgnosticMap<String, RType>()
 
 suspend fun ReThis.xReadGroup(
     group: String,
@@ -224,7 +224,7 @@ suspend fun ReThis.xReadGroup(
         *keys.toTypedArray(),
         *ids.toTypedArray(),
     ),
-).unwrapRespIndMap<String, RType>()
+).unwrapRESPAgnosticMap<String, RType>()
 
 suspend fun ReThis.xRevRange(
     key: String,

@@ -3,7 +3,7 @@ package eu.vendeli.rethis.tests.cases
 import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.ReThisTestCtx
 import eu.vendeli.rethis.commands.*
-import eu.vendeli.rethis.types.core.RType
+import eu.vendeli.rethis.types.common.RType
 import io.kotest.matchers.shouldBe
 import io.ktor.util.collections.*
 import kotlinx.coroutines.*

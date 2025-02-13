@@ -2,9 +2,9 @@ package eu.vendeli.rethis.tests.commands
 
 import eu.vendeli.rethis.ReThisTestCtx
 import eu.vendeli.rethis.commands.*
-import eu.vendeli.rethis.types.common.JsonEntry
-import eu.vendeli.rethis.types.core.Int64
-import eu.vendeli.rethis.types.core.PlainString
+import eu.vendeli.rethis.types.response.JsonEntry
+import eu.vendeli.rethis.types.common.Int64
+import eu.vendeli.rethis.types.common.PlainString
 import io.kotest.matchers.shouldBe
 
 class JsonCommandTest2 : ReThisTestCtx(true) {

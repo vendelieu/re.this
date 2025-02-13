@@ -2,7 +2,7 @@ package eu.vendeli.rethis.tests.commands
 
 import eu.vendeli.rethis.ReThisTestCtx
 import eu.vendeli.rethis.commands.*
-import eu.vendeli.rethis.types.core.RType
+import eu.vendeli.rethis.types.common.RType
 import eu.vendeli.rethis.types.options.MAXLEN
 import eu.vendeli.rethis.types.options.XAddOption
 import eu.vendeli.rethis.types.options.XId

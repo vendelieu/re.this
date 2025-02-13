@@ -2,14 +2,15 @@ package eu.vendeli.rethis.commands
 
 import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.processingException
-import eu.vendeli.rethis.types.common.ScanResult
-import eu.vendeli.rethis.types.core.*
-import eu.vendeli.rethis.types.core.unwrap
+import eu.vendeli.rethis.types.common.RArray
+import eu.vendeli.rethis.types.common.toArgument
+import eu.vendeli.rethis.types.response.ScanResult
 import eu.vendeli.rethis.types.options.SScanOption
 import eu.vendeli.rethis.utils.safeCast
 import eu.vendeli.rethis.utils.writeArgument
 import kotlin.Long
 import eu.vendeli.rethis.utils.execute
+import eu.vendeli.rethis.utils.unwrap
 
 suspend fun ReThis.sAdd(key: String, vararg members: String): Long = execute<Long>(
     listOf(

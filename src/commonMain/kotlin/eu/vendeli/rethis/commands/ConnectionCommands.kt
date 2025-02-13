@@ -1,11 +1,11 @@
 package eu.vendeli.rethis.commands
 
 import eu.vendeli.rethis.ReThis
-import eu.vendeli.rethis.types.core.RType
-import eu.vendeli.rethis.types.core.toArgument
-import eu.vendeli.rethis.utils.response.unwrapRespIndMap
+import eu.vendeli.rethis.types.common.RType
+import eu.vendeli.rethis.types.common.toArgument
 import eu.vendeli.rethis.utils.writeArgument
 import eu.vendeli.rethis.utils.execute
+import eu.vendeli.rethis.utils.unwrapRESPAgnosticMap
 
 suspend fun ReThis.hello(
     proto: Int = 3,
@@ -25,7 +25,7 @@ suspend fun ReThis.hello(
             writeArgument(it)
         }
     },
-).unwrapRespIndMap()
+).unwrapRESPAgnosticMap()
 
 suspend fun ReThis.ping(message: String? = null): String? = execute<String>(
     mutableListOf(

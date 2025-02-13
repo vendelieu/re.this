@@ -2,8 +2,8 @@ package eu.vendeli.rethis.tests.commands
 
 import eu.vendeli.rethis.ReThisTestCtx
 import eu.vendeli.rethis.commands.*
-import eu.vendeli.rethis.types.core.BulkString
-import eu.vendeli.rethis.types.core.RArray
+import eu.vendeli.rethis.types.common.BulkString
+import eu.vendeli.rethis.types.common.RArray
 import io.kotest.assertions.throwables.shouldNotThrowAny
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe

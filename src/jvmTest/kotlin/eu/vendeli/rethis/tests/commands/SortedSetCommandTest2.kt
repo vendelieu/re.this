@@ -2,8 +2,8 @@ package eu.vendeli.rethis.tests.commands
 
 import eu.vendeli.rethis.ReThisTestCtx
 import eu.vendeli.rethis.commands.*
-import eu.vendeli.rethis.types.common.ZMember
-import eu.vendeli.rethis.types.common.ZPopResult
+import eu.vendeli.rethis.types.response.ZMember
+import eu.vendeli.rethis.types.response.ZPopResult
 import io.kotest.matchers.shouldBe
 
 class SortedSetCommandTest2 : ReThisTestCtx() {

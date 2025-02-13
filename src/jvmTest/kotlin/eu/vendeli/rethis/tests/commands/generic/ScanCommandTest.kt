@@ -2,7 +2,7 @@ package eu.vendeli.rethis.tests.commands.generic
 
 import eu.vendeli.rethis.commands.scan
 import eu.vendeli.rethis.commands.set
-import eu.vendeli.rethis.types.common.ScanResult
+import eu.vendeli.rethis.types.response.ScanResult
 import eu.vendeli.rethis.types.options.ScanOption
 import eu.vendeli.rethis.ReThisTestCtx
 import io.kotest.matchers.collections.shouldContain

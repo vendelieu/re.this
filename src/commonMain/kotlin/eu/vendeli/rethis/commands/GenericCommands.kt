@@ -2,9 +2,11 @@ package eu.vendeli.rethis.commands
 
 import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.processingException
-import eu.vendeli.rethis.types.common.ScanResult
-import eu.vendeli.rethis.types.common.WaitAofResult
-import eu.vendeli.rethis.types.core.*
+import eu.vendeli.rethis.types.common.RArray
+import eu.vendeli.rethis.types.common.RType
+import eu.vendeli.rethis.types.common.toArgument
+import eu.vendeli.rethis.types.response.ScanResult
+import eu.vendeli.rethis.types.response.WaitAofResult
 import eu.vendeli.rethis.types.options.*
 import eu.vendeli.rethis.utils.safeCast
 import eu.vendeli.rethis.utils.writeArgument
@@ -12,6 +14,8 @@ import kotlinx.datetime.Instant
 import kotlin.Long
 import kotlin.time.Duration
 import eu.vendeli.rethis.utils.execute
+import eu.vendeli.rethis.utils.unwrap
+import eu.vendeli.rethis.utils.unwrapList
 
 suspend fun ReThis.copy(source: String, destination: String, vararg option: CopyOption): Boolean = execute<Long>(
     mutableListOf(

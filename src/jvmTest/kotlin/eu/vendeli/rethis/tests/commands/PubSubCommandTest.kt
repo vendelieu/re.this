@@ -4,11 +4,11 @@ import eu.vendeli.rethis.DataProcessingException
 import eu.vendeli.rethis.ReThisTestCtx
 import eu.vendeli.rethis.commands.*
 import eu.vendeli.rethis.processingException
-import eu.vendeli.rethis.types.common.PubSubNumEntry
-import eu.vendeli.rethis.types.core.BulkString
-import eu.vendeli.rethis.types.core.Int64
-import eu.vendeli.rethis.types.core.Push
-import eu.vendeli.rethis.types.core.SubscriptionEventHandler
+import eu.vendeli.rethis.types.response.PubSubNumEntry
+import eu.vendeli.rethis.types.common.BulkString
+import eu.vendeli.rethis.types.common.Int64
+import eu.vendeli.rethis.types.common.Push
+import eu.vendeli.rethis.types.interfaces.SubscriptionEventHandler
 import io.kotest.matchers.collections.shouldNotBeEmpty
 import io.kotest.matchers.comparables.shouldBeGreaterThan
 import io.kotest.matchers.nulls.shouldNotBeNull
