@@ -47,15 +47,19 @@
         </button>
         <div class="navigation-controls--break ui-kit_mobile-only"></div>
         <div class="library-version" id="library-version">
-0.2.8        </div>
+0.2.9        </div>
         <div class="navigation-controls">
         <div class="filter-section filter-section_loading" id="filter-section">
                 <button class="platform-tag platform-selector common-like" data-active=""
                         data-filter=":/commonMain">common</button>
+                <button class="platform-tag platform-selector js-like" data-active=""
+                        data-filter=":/jsMain">js</button>
                 <button class="platform-tag platform-selector jvm-like" data-active=""
                         data-filter=":/jvmMain">jvm</button>
                 <button class="platform-tag platform-selector common-like" data-active=""
                         data-filter=":/nativeMain">native</button>
+                <button class="platform-tag platform-selector wasm-like" data-active=""
+                        data-filter=":/wasmJsMain">wasmJs</button>
             <div class="dropdown filter-section--dropdown" data-role="dropdown" id="filter-section-dropdown">
                 <button class="button button_dropdown filter-section--dropdown-toggle" role="combobox"
                         data-role="dropdown-toggle"
@@ -78,6 +82,14 @@
                                 common
                             </label>
                         </li>
+                        <li role="option" class="dropdown--option platform-selector-option js-like" tabindex="0">
+                            <label class="checkbox">
+                                <input type="checkbox" class="checkbox--input" id=":/jsMain"
+                                       data-filter=":/jsMain"/>
+                                <span class="checkbox--icon"></span>
+                                js
+                            </label>
+                        </li>
                         <li role="option" class="dropdown--option platform-selector-option jvm-like" tabindex="0">
                             <label class="checkbox">
                                 <input type="checkbox" class="checkbox--input" id=":/jvmMain"
@@ -92,6 +104,14 @@
                                        data-filter=":/nativeMain"/>
                                 <span class="checkbox--icon"></span>
                                 native
+                            </label>
+                        </li>
+                        <li role="option" class="dropdown--option platform-selector-option wasm-like" tabindex="0">
+                            <label class="checkbox">
+                                <input type="checkbox" class="checkbox--input" id=":/wasmJsMain"
+                                       data-filter=":/wasmJsMain"/>
+                                <span class="checkbox--icon"></span>
+                                wasmJs
                             </label>
                         </li>
                 </ul>
@@ -127,7 +147,7 @@
                 </div>
             </div>
             <div id="main">
-<div class="main-content" id="content" pageIds="re.this::////PointingToDeclaration//814332267">
+<div class="main-content" id="content" pageIds="re.this::////PointingToDeclaration//210890768">
   <div class="breadcrumbs"></div>
   <div class="cover ">
     <h1 class="cover"><span>re.</span><wbr></wbr><span>this</span></h1>
@@ -187,13 +207,13 @@
         <div></div>
       </div>
     </div>
-<a data-name="153435664%2FPackages%2F1558683979" anchor-label="eu.vendeli.rethis.types.common" id="153435664%2FPackages%2F1558683979" data-filterable-set=":/commonMain"></a>
+<a data-name="-1217710609%2FPackages%2F1558683979" anchor-label="eu.vendeli.rethis.core" id="-1217710609%2FPackages%2F1558683979" data-filterable-set=":/commonMain"></a>
     <div class="table-row" data-filterable-current=":/commonMain" data-filterable-set=":/commonMain">
       <div>
         <div class="main-subrow ">
           <div class=""><span class="inline-flex">
-              <div><a href="re.this/eu.vendeli.rethis.types.common/index.html">eu.vendeli.rethis.types.common</a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="153435664%2FPackages%2F1558683979"></span>
+              <div><a href="re.this/eu.vendeli.rethis.core/index.html">eu.vendeli.rethis.core</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1217710609%2FPackages%2F1558683979"></span>
                 <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
               </span></span></div>
           <div class="pull-right">
@@ -205,20 +225,40 @@
         <div></div>
       </div>
     </div>
-<a data-name="-161927292%2FPackages%2F814332267" anchor-label="eu.vendeli.rethis.types.core" id="-161927292%2FPackages%2F814332267" data-filterable-set=":/commonMain,:/jvmMain,:/nativeMain"></a>
-    <div class="table-row" data-filterable-current=":/commonMain,:/jvmMain,:/nativeMain" data-filterable-set=":/commonMain,:/jvmMain,:/nativeMain">
+<a data-name="153435664%2FPackages%2F210890768" anchor-label="eu.vendeli.rethis.types.common" id="153435664%2FPackages%2F210890768" data-filterable-set=":/commonMain,:/jsMain,:/jvmMain,:/nativeMain,:/wasmJsMain"></a>
+    <div class="table-row" data-filterable-current=":/commonMain,:/jsMain,:/jvmMain,:/nativeMain,:/wasmJsMain" data-filterable-set=":/commonMain,:/jsMain,:/jvmMain,:/nativeMain,:/wasmJsMain">
       <div>
         <div class="main-subrow ">
           <div class=""><span class="inline-flex">
-              <div><a href="re.this/eu.vendeli.rethis.types.core/index.html">eu.vendeli.rethis.types.core</a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-161927292%2FPackages%2F814332267"></span>
+              <div><a href="re.this/eu.vendeli.rethis.types.common/index.html">eu.vendeli.rethis.types.common</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="153435664%2FPackages%2F210890768"></span>
                 <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
               </span></span></div>
           <div class="pull-right">
             <div class="platform-tags no-gutters">
               <div class="platform-tag common-like">common</div>
+              <div class="platform-tag js-like">js</div>
               <div class="platform-tag jvm-like">jvm</div>
               <div class="platform-tag common-like">native</div>
+              <div class="platform-tag wasm-like">wasmJs</div>
+            </div>
+          </div>
+        </div>
+        <div></div>
+      </div>
+    </div>
+<a data-name="-720021441%2FPackages%2F1558683979" anchor-label="eu.vendeli.rethis.types.interfaces" id="-720021441%2FPackages%2F1558683979" data-filterable-set=":/commonMain"></a>
+    <div class="table-row" data-filterable-current=":/commonMain" data-filterable-set=":/commonMain">
+      <div>
+        <div class="main-subrow ">
+          <div class=""><span class="inline-flex">
+              <div><a href="re.this/eu.vendeli.rethis.types.interfaces/index.html">eu.vendeli.rethis.types.interfaces</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-720021441%2FPackages%2F1558683979"></span>
+                <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+              </span></span></div>
+          <div class="pull-right">
+            <div class="platform-tags no-gutters">
+              <div class="platform-tag common-like">common</div>
             </div>
           </div>
         </div>
@@ -243,18 +283,40 @@
         <div></div>
       </div>
     </div>
-<a data-name="-1969635867%2FPackages%2F1558683979" anchor-label="eu.vendeli.rethis.utils" id="-1969635867%2FPackages%2F1558683979" data-filterable-set=":/commonMain"></a>
+<a data-name="733844518%2FPackages%2F1558683979" anchor-label="eu.vendeli.rethis.types.response" id="733844518%2FPackages%2F1558683979" data-filterable-set=":/commonMain"></a>
     <div class="table-row" data-filterable-current=":/commonMain" data-filterable-set=":/commonMain">
       <div>
         <div class="main-subrow ">
           <div class=""><span class="inline-flex">
-              <div><a href="re.this/eu.vendeli.rethis.utils/index.html">eu.vendeli.rethis.utils</a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1969635867%2FPackages%2F1558683979"></span>
+              <div><a href="re.this/eu.vendeli.rethis.types.response/index.html">eu.vendeli.rethis.types.response</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="733844518%2FPackages%2F1558683979"></span>
                 <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
               </span></span></div>
           <div class="pull-right">
             <div class="platform-tags no-gutters">
               <div class="platform-tag common-like">common</div>
+            </div>
+          </div>
+        </div>
+        <div></div>
+      </div>
+    </div>
+<a data-name="-1969635867%2FPackages%2F210890768" anchor-label="eu.vendeli.rethis.utils" id="-1969635867%2FPackages%2F210890768" data-filterable-set=":/commonMain,:/jsMain,:/jvmMain,:/nativeMain,:/wasmJsMain"></a>
+    <div class="table-row" data-filterable-current=":/commonMain,:/jsMain,:/jvmMain,:/nativeMain,:/wasmJsMain" data-filterable-set=":/commonMain,:/jsMain,:/jvmMain,:/nativeMain,:/wasmJsMain">
+      <div>
+        <div class="main-subrow ">
+          <div class=""><span class="inline-flex">
+              <div><a href="re.this/eu.vendeli.rethis.utils/index.html">eu.vendeli.rethis.utils</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1969635867%2FPackages%2F210890768"></span>
+                <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+              </span></span></div>
+          <div class="pull-right">
+            <div class="platform-tags no-gutters">
+              <div class="platform-tag common-like">common</div>
+              <div class="platform-tag js-like">js</div>
+              <div class="platform-tag jvm-like">jvm</div>
+              <div class="platform-tag common-like">native</div>
+              <div class="platform-tag wasm-like">wasmJs</div>
             </div>
           </div>
         </div>
