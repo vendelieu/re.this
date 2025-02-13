@@ -1,6 +1,6 @@
 package eu.vendeli.rethis.types.coroutine
 
-import eu.vendeli.rethis.types.core.RConnection
+import eu.vendeli.rethis.types.common.RConnection
 import kotlin.coroutines.AbstractCoroutineContextElement
 import kotlin.coroutines.CoroutineContext
 

@@ -1,14 +1,10 @@
 package eu.vendeli.rethis.commands
 
 import eu.vendeli.rethis.ReThis
-import eu.vendeli.rethis.types.core.RType
-import eu.vendeli.rethis.types.core.toArgument
-import eu.vendeli.rethis.types.core.unwrapList
+import eu.vendeli.rethis.types.common.RType
+import eu.vendeli.rethis.types.common.toArgument
 import eu.vendeli.rethis.types.options.FunctionRestoreOption
-import eu.vendeli.rethis.utils.response.unwrapRespIndMap
-import eu.vendeli.rethis.utils.safeCast
-import eu.vendeli.rethis.utils.writeArgument
-import eu.vendeli.rethis.utils.execute
+import eu.vendeli.rethis.utils.*
 
 suspend fun ReThis.eval(script: String, numKeys: Long, vararg keys: String): RType = execute(
     listOf("EVAL".toArgument(), script.toArgument(), numKeys.toArgument(), *keys.toArgument()),
@@ -74,7 +70,7 @@ suspend fun ReThis.functionRestore(
 
 suspend fun ReThis.functionStats(): Map<String, RType?>? = execute(
     listOf("FUNCTION".toArgument(), "STATS".toArgument()),
-).unwrapRespIndMap()
+).unwrapRESPAgnosticMap()
 
 suspend fun ReThis.scriptDebug(mode: String): Boolean = execute<String>(
     listOf("SCRIPT".toArgument(), "DEBUG".toArgument(), mode.toArgument()),

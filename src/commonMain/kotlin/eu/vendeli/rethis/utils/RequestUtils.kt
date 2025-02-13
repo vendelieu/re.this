@@ -1,8 +1,6 @@
 package eu.vendeli.rethis.utils
 
-import eu.vendeli.rethis.ReThis
-import eu.vendeli.rethis.annotations.ReThisInternal
-import eu.vendeli.rethis.types.core.*
+import eu.vendeli.rethis.types.common.*
 import eu.vendeli.rethis.utils.Const.EOL
 import io.ktor.utils.io.charsets.*
 import io.ktor.utils.io.core.*
@@ -55,10 +53,6 @@ inline fun <T, R : Argument> MutableList<R>.writeArgument(value: Array<T>): Muta
     return this
 }
 
-@ReThisInternal
-@Suppress("FunctionName", "ktlint:standard:function-naming")
-fun ReThis.__jsonModule() = cfg.jsonModule
-
 @Suppress("NOTHING_TO_INLINE")
 internal inline fun Buffer.writeValues(value: List<Argument>, charset: Charset) = apply {
     writeRedisValue(value, charset)
@@ -73,7 +67,6 @@ internal fun Sink.writeRedisValue(
 ): Sink = apply {
     when (data) {
         is List<*> -> writeListValue(data, charset)
-        is Array<*> -> writeArrayValue(data, charset)
 
         is StringArg -> writeByteArray(data.value.toByteArray(charset))
         is LongArg -> writeByteArray(data.value.toString().toByteArray(charset))
@@ -91,16 +84,6 @@ private fun <T : List<*>> Sink.writeListValue(
     append(value.size.toString())
     appendEOL()
 
-    for (item in value) writeRedisValue(item, charset)
-}
-
-private fun Sink.writeArrayValue(
-    value: Array<*>,
-    charset: Charset = Charsets.UTF_8,
-) {
-    append(RespCode.ARRAY)
-    append(value.size.toString())
-    appendEOL()
     for (item in value) writeRedisValue(item, charset)
 }
 

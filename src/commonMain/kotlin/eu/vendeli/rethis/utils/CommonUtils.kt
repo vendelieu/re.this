@@ -4,44 +4,22 @@ package eu.vendeli.rethis.utils
 
 import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.annotations.ReThisInternal
-import eu.vendeli.rethis.types.core.*
+import eu.vendeli.rethis.types.common.Argument
+import eu.vendeli.rethis.types.common.Push
+import eu.vendeli.rethis.types.common.RArray
+import eu.vendeli.rethis.types.common.toArgument
 import eu.vendeli.rethis.types.coroutine.CoLocalConn
+import eu.vendeli.rethis.types.interfaces.SubscriptionHandler
 import eu.vendeli.rethis.utils.response.parseResponse
 import eu.vendeli.rethis.utils.response.readResponseWrapped
 import io.ktor.util.reflect.*
-import kotlinx.coroutines.currentCoroutineContext
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.isActive
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 import kotlin.jvm.JvmName
-import kotlin.reflect.KClass
 
-fun RType.isOk() = unwrap<String>() == "OK"
+expect val Dispatchers.IO_OR_UNCONFINED: CoroutineDispatcher
 
-@Suppress("UNCHECKED_CAST", "NOTHING_TO_INLINE")
-internal inline fun <T> Any.cast(): T = this as T
-
-@Suppress("UNCHECKED_CAST", "NOTHING_TO_INLINE")
-internal inline fun <T : Any> Any.cast(clazz: KClass<T>): T = this as T
-
-@Suppress("UNCHECKED_CAST", "NOTHING_TO_INLINE")
-internal inline fun <T> Any.safeCast(): T? = this as? T
-
-@Suppress("UNCHECKED_CAST", "NOTHING_TO_INLINE")
-internal inline fun <T : Any> Any.safeCast(clazz: KClass<T>): T? =
-    if (this::class == clazz) this as T else null
-
-@Suppress("UNCHECKED_CAST", "NOTHING_TO_INLINE")
-internal inline fun <T : Any> Any.safeCast(typeInfo: TypeInfo): T? =
-    if (typeInfo.type.isInstance(this)) this as T else null
-
-@Suppress("NOTHING_TO_INLINE")
-private inline fun String?.isEqTo(other: String) = if (this != null) {
-    compareTo(other.lowercase()) == 0
-} else {
-    false
-}
+expect fun <T> coRunBlocking(block: suspend CoroutineScope.() -> T): T
 
 @ReThisInternal
 @JvmName("executeSimple")
@@ -61,6 +39,10 @@ suspend inline fun <reified T : Any> ReThis.execute(
 suspend inline fun <reified K : Any, reified V : Any> ReThis.execute(
     payload: List<Argument>,
 ): Map<K, V?>? = execute(payload, typeInfo<K>(), typeInfo<V>())
+
+@ReThisInternal
+@Suppress("FunctionName", "ktlint:standard:function-naming")
+fun ReThis.__jsonModule() = cfg.jsonModule
 
 internal suspend inline fun <reified T : CoroutineContext.Element> takeFromCoCtx(element: CoroutineContext.Key<T>): T? =
     currentCoroutineContext()[element]
@@ -86,13 +68,13 @@ internal suspend inline fun ReThis.registerSubscription(
 
                 val inputType = input?.firstOrNull()?.value?.safeCast<String>()
                 when {
-                    inputType.isEqTo(regCommand) -> {
+                    inputType isEqualTo regCommand -> {
                         val targetCh = input?.getOrNull(1)?.unwrap<String>() ?: target
                         val subscribers = input?.lastOrNull()?.unwrap<Long>() ?: 0L
                         subscriptions.eventHandler?.onSubscribe(targetCh, subscribers)
                     }
 
-                    inputType.isEqTo(unRegCommand) -> {
+                    inputType isEqualTo unRegCommand -> {
                         val targetCh = input?.getOrNull(1)?.unwrap<String>() ?: target
                         val subscribers = input?.lastOrNull()?.unwrap<Long>() ?: 0L
                         subscriptions.eventHandler?.onUnsubscribe(targetCh, subscribers)
@@ -118,3 +100,6 @@ internal suspend inline fun ReThis.registerSubscription(
 
     subscriptions.jobs[target] = handlerJob
 }
+
+@Suppress("NOTHING_TO_INLINE")
+private inline infix fun String?.isEqualTo(other: String) = this != null && compareTo(other.lowercase()) == 0

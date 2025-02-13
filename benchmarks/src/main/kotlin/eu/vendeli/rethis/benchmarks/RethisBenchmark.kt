@@ -8,6 +8,7 @@ import eu.vendeli.rethis.commands.set
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import org.openjdk.jmh.annotations.*
 import org.openjdk.jmh.infra.Blackhole
 import org.testcontainers.utility.DockerImageName
@@ -36,7 +37,7 @@ class RethisBenchmark {
     @TearDown
     fun tearDown() {
         redis.stop()
-        rethis.disconnect()
+        runBlocking { rethis.disconnect() }
     }
 
     @Benchmark

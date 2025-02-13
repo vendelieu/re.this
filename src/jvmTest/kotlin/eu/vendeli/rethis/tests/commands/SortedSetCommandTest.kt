@@ -2,10 +2,10 @@ package eu.vendeli.rethis.tests.commands
 
 import eu.vendeli.rethis.ReThisTestCtx
 import eu.vendeli.rethis.commands.*
-import eu.vendeli.rethis.types.common.MPopResult
-import eu.vendeli.rethis.types.common.ScanResult
-import eu.vendeli.rethis.types.common.ZMember
-import eu.vendeli.rethis.types.common.ZPopResult
+import eu.vendeli.rethis.types.response.MPopResult
+import eu.vendeli.rethis.types.response.ScanResult
+import eu.vendeli.rethis.types.response.ZMember
+import eu.vendeli.rethis.types.response.ZPopResult
 import eu.vendeli.rethis.types.options.ZPopCommonOption
 import io.kotest.matchers.maps.shouldContain
 import io.kotest.matchers.shouldBe

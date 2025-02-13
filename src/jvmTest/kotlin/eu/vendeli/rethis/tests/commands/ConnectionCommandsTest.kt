@@ -5,7 +5,7 @@ import eu.vendeli.rethis.ReThisTestCtx
 import eu.vendeli.rethis.commands.hello
 import eu.vendeli.rethis.commands.ping
 import eu.vendeli.rethis.commands.select
-import eu.vendeli.rethis.types.core.Int64
+import eu.vendeli.rethis.types.common.Int64
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.ints.shouldBeGreaterThan
 import io.kotest.matchers.nulls.shouldNotBeNull

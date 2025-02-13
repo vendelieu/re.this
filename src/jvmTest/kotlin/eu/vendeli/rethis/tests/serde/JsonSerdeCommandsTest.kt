@@ -5,7 +5,7 @@ import eu.vendeli.rethis.commands.jsonArrPop
 import eu.vendeli.rethis.commands.jsonGet
 import eu.vendeli.rethis.commands.jsonMGet
 import eu.vendeli.rethis.commands.jsonSet
-import eu.vendeli.rethis.types.core.RArray
+import eu.vendeli.rethis.types.common.RArray
 import eu.vendeli.rethis.utils.__jsonModule
 import eu.vendeli.rethis.utils.unwrap
 import io.kotest.matchers.collections.shouldHaveSize
@@ -29,6 +29,16 @@ class JsonSerdeCommandsTest : ReThisTestCtx(true) {
     )
 
     @Test
+    suspend fun `test json set with default path`() {
+        val key = "defaultPathKey"
+        val user = User(794, "Sam")
+
+        client.jsonSet(key, value = user)
+
+        client.jsonGet<User>(key) shouldBe user
+    }
+
+    @Test
     suspend fun `test heterogeneous structures using wrapper objects`() {
         val key = "mixedKey"
         val data = MixedData(
@@ -37,7 +47,7 @@ class JsonSerdeCommandsTest : ReThisTestCtx(true) {
             number = 3.14,
         )
 
-        client.jsonSet(key, "$", data)
+        client.jsonSet(key, data)
 
         // Access individual fields with proper types
         client.jsonGet<String>(key, "$.str") shouldBe "[\"test\"]"
@@ -60,11 +70,11 @@ class JsonSerdeCommandsTest : ReThisTestCtx(true) {
             ),
         )
 
-        client.jsonSet(key, "$", data)
+        client.jsonSet(key, data)
 
         // Pop from nested array
         client.jsonArrPop(key, "$.users").shouldBeTypeOf<RArray>().value.shouldNotBeNull().first().let {
-            client.__jsonModule().decodeFromString<User>(it.unwrap(String::class)!!)
+            client.__jsonModule().decodeFromString<User>(it.unwrap<String>()!!)
         } shouldBe User(5, "Eve")
         client.jsonGet<NestedUserList>(key) shouldBe NestedUserList(
             users = listOf(User(4, "David")),
@@ -85,8 +95,8 @@ class JsonSerdeCommandsTest : ReThisTestCtx(true) {
             "jey" to User(4, "Jey"),
         )
 
-        client.jsonSet(key, "$", data)
-        client.jsonSet(key2, "$", data2)
+        client.jsonSet(key, data)
+        client.jsonSet(key2, data2)
 
         // Query multiple paths with proper types
         val results = client.jsonMGet<List<Int>>(

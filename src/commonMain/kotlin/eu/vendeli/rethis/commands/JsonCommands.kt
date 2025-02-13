@@ -1,12 +1,13 @@
 package eu.vendeli.rethis.commands
 
 import eu.vendeli.rethis.ReThis
-import eu.vendeli.rethis.types.common.JsonEntry
-import eu.vendeli.rethis.types.core.RType
-import eu.vendeli.rethis.types.core.toArgument
-import eu.vendeli.rethis.types.core.unwrapList
+import eu.vendeli.rethis.types.response.JsonEntry
+import eu.vendeli.rethis.types.common.RType
+import eu.vendeli.rethis.types.common.toArgument
 import eu.vendeli.rethis.types.options.UpsertMode
+import eu.vendeli.rethis.utils.REDIS_JSON_ROOT_PATH
 import eu.vendeli.rethis.utils.execute
+import eu.vendeli.rethis.utils.unwrapList
 import eu.vendeli.rethis.utils.writeArgument
 
 suspend fun ReThis.jsonArrAppend(key: String, path: String, vararg values: String): Long? = execute<Long>(
@@ -94,8 +95,8 @@ suspend fun ReThis.jsonResp(key: String, path: String? = null): List<RType> = ex
 
 suspend fun ReThis.jsonSet(
     key: String,
-    path: String,
     value: String,
+    path: String = REDIS_JSON_ROOT_PATH,
     upsertMode: UpsertMode? = null,
 ): String? = execute<String>(
     mutableListOf("JSON.SET".toArgument(), key.toArgument(), path.toArgument(), value.toArgument()).writeArgument(

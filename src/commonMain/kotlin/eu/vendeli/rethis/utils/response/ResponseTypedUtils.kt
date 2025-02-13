@@ -3,8 +3,8 @@ package eu.vendeli.rethis.utils.response
 import com.ionspin.kotlin.bignum.integer.BigInteger
 import eu.vendeli.rethis.RedisError
 import eu.vendeli.rethis.ResponseParsingException
-import eu.vendeli.rethis.types.core.RespCode
-import eu.vendeli.rethis.types.core.ResponseToken
+import eu.vendeli.rethis.types.common.RespCode
+import eu.vendeli.rethis.types.common.ResponseToken
 import eu.vendeli.rethis.utils.Const.FALSE_BYTE
 import eu.vendeli.rethis.utils.Const.TRUE_BYTE
 import eu.vendeli.rethis.utils.safeCast

@@ -2,7 +2,7 @@ package eu.vendeli.rethis.tests.commands
 
 import eu.vendeli.rethis.ReThisTestCtx
 import eu.vendeli.rethis.commands.*
-import eu.vendeli.rethis.types.common.*
+import eu.vendeli.rethis.types.response.*
 import eu.vendeli.rethis.types.options.BYBOX
 import eu.vendeli.rethis.types.options.BYRADIUS
 import eu.vendeli.rethis.types.options.FROMLONLAT

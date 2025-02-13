@@ -2,6 +2,7 @@ import org.gradle.api.Project
 import org.gradle.kotlin.dsl.assign
 import org.gradle.kotlin.dsl.configure
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 
@@ -22,12 +23,23 @@ fun Project.configureKotlin(block: KotlinMultiplatformExtension.() -> Unit) {
                 compileTaskProvider.configure {
                     compilerOptions {
                         jvmTarget = JvmTarget.fromTarget("$jvmTargetVer")
-                        freeCompilerArgs = listOf("-Xjsr305=strict", "-opt-in=eu.vendeli.rethis.annotations.ReThisInternal")
+                        freeCompilerArgs = listOf(
+                            "-Xjsr305=strict",
+                            "-opt-in=eu.vendeli.rethis.annotations.ReThisInternal",
+                        )
                     }
                 }
             }
         }
         jvmToolchain(jvmTargetVer)
+
+        js { nodejs() }
+
+        @OptIn(ExperimentalWasmDsl::class)
+        wasmJs {
+            nodejs()
+            d8()
+        }
 
         mingwX64()
 

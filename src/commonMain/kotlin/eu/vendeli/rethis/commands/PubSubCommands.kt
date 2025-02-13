@@ -1,13 +1,17 @@
 package eu.vendeli.rethis.commands
 
 import eu.vendeli.rethis.ReThis
-import eu.vendeli.rethis.types.common.ChannelSubscription
-import eu.vendeli.rethis.types.common.PubSubNumEntry
-import eu.vendeli.rethis.types.core.*
+import eu.vendeli.rethis.types.interfaces.SubscriptionHandler
+import eu.vendeli.rethis.types.common.RType
+import eu.vendeli.rethis.types.common.toArgument
+import eu.vendeli.rethis.types.response.ChannelSubscription
+import eu.vendeli.rethis.types.response.PubSubNumEntry
 import eu.vendeli.rethis.utils.registerSubscription
 import eu.vendeli.rethis.utils.writeArgument
 import kotlin.Long
 import eu.vendeli.rethis.utils.execute
+import eu.vendeli.rethis.utils.unwrap
+import eu.vendeli.rethis.utils.unwrapList
 
 suspend fun ReThis.pSubscribe(vararg subscription: ChannelSubscription) = subscription.forEach {
     pSubscribe(it.channel, it.handler)

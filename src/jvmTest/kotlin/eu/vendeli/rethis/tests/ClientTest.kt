@@ -33,7 +33,7 @@ class ClientTest : ReThisTestCtx() {
     }
 
     @Test
-    fun `client shutdown test`() {
+    suspend fun `client shutdown test`() {
         client.shutdown()
         client.rootJob.isCancelled shouldBe true
     }

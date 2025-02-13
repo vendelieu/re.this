@@ -2,9 +2,9 @@ package eu.vendeli.rethis.utils.response
 
 import com.ionspin.kotlin.bignum.integer.BigInteger
 import eu.vendeli.rethis.ResponseParsingException
-import eu.vendeli.rethis.types.core.*
-import eu.vendeli.rethis.types.core.RType.Error
-import eu.vendeli.rethis.types.core.ResponseToken.Code
+import eu.vendeli.rethis.types.common.*
+import eu.vendeli.rethis.types.common.RType.Error
+import eu.vendeli.rethis.types.common.ResponseToken.Code
 import eu.vendeli.rethis.utils.Const.FALSE_BYTE
 import eu.vendeli.rethis.utils.Const.TRUE_BYTE
 import io.ktor.utils.io.charsets.*
@@ -110,10 +110,10 @@ private fun ArrayDeque<ResponseToken>.readSimpleResponseWrapped(
 
         RespCode.VERBATIM_STRING -> {
             if (size < 0) return RType.Null
+            val encoding = data.readByteArray(3).decodeToString()
+            data.readByte() // skip ':' byte
             val content = data.readText(charset)
-            val encoding = content.subSequence(0, 3)
-            val data = content.subSequence(4, size.toInt())
-            VerbatimString(encoding.toString(), data.toString())
+            VerbatimString(encoding, content)
         }
 
         RespCode.ARRAY, RespCode.SET, RespCode.PUSH, RespCode.MAP, RespCode.ATTRIBUTE ->

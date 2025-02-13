@@ -1,15 +1,19 @@
 package eu.vendeli.rethis.commands
 
 import eu.vendeli.rethis.ReThis
-import eu.vendeli.rethis.types.common.MPopResult
-import eu.vendeli.rethis.types.common.MoveDirection
-import eu.vendeli.rethis.types.common.PopResult
-import eu.vendeli.rethis.types.core.*
+import eu.vendeli.rethis.types.common.RArray
+import eu.vendeli.rethis.types.common.RType
+import eu.vendeli.rethis.types.common.toArgument
+import eu.vendeli.rethis.types.response.MPopResult
+import eu.vendeli.rethis.types.response.MoveDirection
+import eu.vendeli.rethis.types.response.PopResult
 import eu.vendeli.rethis.types.options.LInsertPlace
 import eu.vendeli.rethis.types.options.LPosOption
 import eu.vendeli.rethis.utils.cast
 import eu.vendeli.rethis.utils.writeArgument
 import eu.vendeli.rethis.utils.execute
+import eu.vendeli.rethis.utils.unwrap
+import eu.vendeli.rethis.utils.unwrapList
 
 suspend fun ReThis.blMove(
     source: String,

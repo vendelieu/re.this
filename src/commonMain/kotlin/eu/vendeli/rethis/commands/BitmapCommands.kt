@@ -1,7 +1,7 @@
 package eu.vendeli.rethis.commands
 
 import eu.vendeli.rethis.ReThis
-import eu.vendeli.rethis.types.core.toArgument
+import eu.vendeli.rethis.types.common.toArgument
 import eu.vendeli.rethis.types.options.BitOpOption
 import eu.vendeli.rethis.types.options.BitcountOption
 import eu.vendeli.rethis.types.options.BitfieldOption

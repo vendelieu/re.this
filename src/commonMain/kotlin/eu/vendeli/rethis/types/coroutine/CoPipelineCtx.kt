@@ -1,6 +1,6 @@
 package eu.vendeli.rethis.types.coroutine
 
-import eu.vendeli.rethis.types.core.Argument
+import eu.vendeli.rethis.types.common.Argument
 import kotlin.coroutines.AbstractCoroutineContextElement
 import kotlin.coroutines.CoroutineContext
 

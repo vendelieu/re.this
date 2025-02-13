@@ -2,16 +2,17 @@ package eu.vendeli.rethis.commands
 
 import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.types.common.*
-import eu.vendeli.rethis.types.core.*
 import eu.vendeli.rethis.types.options.CenterPoint
 import eu.vendeli.rethis.types.options.GeoAddOption
 import eu.vendeli.rethis.types.options.Shape
+import eu.vendeli.rethis.types.response.*
 import eu.vendeli.rethis.utils.cast
+import eu.vendeli.rethis.utils.execute
 import eu.vendeli.rethis.utils.safeCast
+import eu.vendeli.rethis.utils.unwrap
+import eu.vendeli.rethis.utils.unwrapList
 import eu.vendeli.rethis.utils.writeArgument
 import kotlinx.coroutines.delay
-import kotlin.Long
-import eu.vendeli.rethis.utils.execute
 
 suspend fun ReThis.geoAdd(
     key: String,

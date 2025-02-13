@@ -1,7 +1,7 @@
 package eu.vendeli.rethis.tests.commands
 
 import eu.vendeli.rethis.commands.*
-import eu.vendeli.rethis.types.core.PlainString
+import eu.vendeli.rethis.types.common.PlainString
 import eu.vendeli.rethis.ReThisTestCtx
 import io.kotest.matchers.shouldBe
 
