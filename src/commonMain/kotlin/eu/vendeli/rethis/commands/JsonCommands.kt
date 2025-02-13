@@ -95,8 +95,8 @@ suspend fun ReThis.jsonResp(key: String, path: String? = null): List<RType> = ex
 
 suspend fun ReThis.jsonSet(
     key: String,
-    path: String = REDIS_JSON_ROOT_PATH,
     value: String,
+    path: String = REDIS_JSON_ROOT_PATH,
     upsertMode: UpsertMode? = null,
 ): String? = execute<String>(
     mutableListOf("JSON.SET".toArgument(), key.toArgument(), path.toArgument(), value.toArgument()).writeArgument(

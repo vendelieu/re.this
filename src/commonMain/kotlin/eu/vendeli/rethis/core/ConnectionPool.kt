@@ -4,6 +4,7 @@ import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.types.common.RConnection
 import eu.vendeli.rethis.types.common.rConnection
 import eu.vendeli.rethis.types.common.toArgument
+import eu.vendeli.rethis.utils.IO_OR_UNCONFINED
 import eu.vendeli.rethis.utils.writeRedisValue
 import io.ktor.network.selector.*
 import io.ktor.network.sockets.*
@@ -78,7 +79,7 @@ internal class ConnectionPool(
     }
 
     @Suppress("OPT_IN_USAGE")
-    fun prepare() = poolScope.launch(Dispatchers.IO) {
+    fun prepare() = poolScope.launch(Dispatchers.IO_OR_UNCONFINED) {
         logger.info("Filling ConnectionPool with connections (${client.cfg.connectionConfiguration.poolSize})")
         if (connections.isEmpty) repeat(client.cfg.connectionConfiguration.poolSize) {
             launch { connections.trySend(createConn()) }
@@ -91,7 +92,7 @@ internal class ConnectionPool(
         handle(connection)
     }
 
-    private fun handle(connection: RConnection) = poolScope.launch(Dispatchers.IO) {
+    private fun handle(connection: RConnection) = poolScope.launch(Dispatchers.IO_OR_UNCONFINED) {
         logger.trace { "Releasing connection ${connection.socket}" }
         if (connection.input.isClosedForRead) { // connection is corrupted
             logger.warn("Connection ${connection.socket} is corrupted, refilling")
@@ -135,7 +136,7 @@ internal class ConnectionPool(
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    fun disconnect() = runBlocking {
+    suspend fun disconnect() {
         logger.debug("Disconnecting from Redis")
         while (!connections.isEmpty) {
             connections.receive().socket.close()

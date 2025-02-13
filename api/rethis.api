@@ -19,7 +19,7 @@ public final class eu/vendeli/rethis/ReThis {
 	public synthetic fun <init> (Leu/vendeli/rethis/types/common/Address;Leu/vendeli/rethis/types/common/RespVer;Lkotlin/jvm/functions/Function1;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun <init> (Ljava/lang/String;ILeu/vendeli/rethis/types/common/RespVer;Lkotlin/jvm/functions/Function1;)V
 	public synthetic fun <init> (Ljava/lang/String;ILeu/vendeli/rethis/types/common/RespVer;Lkotlin/jvm/functions/Function1;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public final fun disconnect ()V
+	public final fun disconnect (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public final fun execute (Ljava/util/List;Lio/ktor/util/reflect/TypeInfo;Lio/ktor/util/reflect/TypeInfo;Lkotlinx/serialization/json/Json;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public final fun execute (Ljava/util/List;Lio/ktor/util/reflect/TypeInfo;Lkotlinx/serialization/json/Json;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public final fun execute (Ljava/util/List;Lio/ktor/util/reflect/TypeInfo;ZLkotlinx/serialization/json/Json;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
@@ -33,7 +33,7 @@ public final class eu/vendeli/rethis/ReThis {
 	public final fun isDisconnected ()Z
 	public final fun pipeline (Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public final fun reconnect ()V
-	public final fun shutdown ()V
+	public final fun shutdown (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public final fun transaction (Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
@@ -1765,6 +1765,15 @@ public final class eu/vendeli/rethis/types/response/ZPopResult {
 
 public final class eu/vendeli/rethis/utils/CommonUtilsKt {
 	public static final fun __jsonModule (Leu/vendeli/rethis/ReThis;)Lkotlinx/serialization/json/Json;
+}
+
+public final class eu/vendeli/rethis/utils/CommonUtils_jvmKt {
+	public static final fun coRunBlocking (Lkotlin/jvm/functions/Function2;)Ljava/lang/Object;
+	public static final fun getIO_OR_UNCONFINED (Lkotlinx/coroutines/Dispatchers;)Lkotlinx/coroutines/CoroutineDispatcher;
+}
+
+public final class eu/vendeli/rethis/utils/ConstKt {
+	public static final field REDIS_JSON_ROOT_PATH Ljava/lang/String;
 }
 
 public final class eu/vendeli/rethis/utils/RTypeUtilsKt {

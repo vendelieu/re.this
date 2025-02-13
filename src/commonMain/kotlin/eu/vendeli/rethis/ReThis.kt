@@ -6,16 +6,13 @@ import eu.vendeli.rethis.core.*
 import eu.vendeli.rethis.types.common.*
 import eu.vendeli.rethis.types.coroutine.CoLocalConn
 import eu.vendeli.rethis.types.coroutine.CoPipelineCtx
+import eu.vendeli.rethis.utils.*
 import eu.vendeli.rethis.utils.Const.DEFAULT_HOST
 import eu.vendeli.rethis.utils.Const.DEFAULT_PORT
-import eu.vendeli.rethis.utils.isOk
 import eu.vendeli.rethis.utils.response.readListResponseTyped
 import eu.vendeli.rethis.utils.response.readMapResponseTyped
 import eu.vendeli.rethis.utils.response.readResponseWrapped
 import eu.vendeli.rethis.utils.response.readSimpleResponseTyped
-import eu.vendeli.rethis.utils.takeFromCoCtx
-import eu.vendeli.rethis.utils.unwrapList
-import eu.vendeli.rethis.utils.writeRedisValue
 import io.ktor.util.logging.*
 import io.ktor.util.reflect.*
 import kotlinx.coroutines.*
@@ -68,12 +65,12 @@ class ReThis(
     val subscriptions = ActiveSubscriptions()
     val isDisconnected: Boolean get() = connectionPool.isEmpty
 
-    fun disconnect() = connectionPool.disconnect()
+    suspend fun disconnect() = connectionPool.disconnect()
     fun reconnect() {
         if (connectionPool.isEmpty) connectionPool.prepare()
     }
 
-    fun shutdown() = runBlocking {
+    suspend fun shutdown() {
         disconnect()
         rootJob.cancelAndJoin()
     }
@@ -210,7 +207,7 @@ class ReThis(
     private suspend inline fun performRequest(
         payload: List<Argument>,
     ): ArrayDeque<ResponseToken>? = coScope
-        .async(currentCoroutineContext() + Dispatchers.IO) {
+        .async(currentCoroutineContext() + Dispatchers.IO_OR_UNCONFINED) {
             logger.trace { "Performing request with payload $payload" }
             handleRequest(payload)
         }.await()

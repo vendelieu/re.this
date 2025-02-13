@@ -4,24 +4,22 @@ package eu.vendeli.rethis.utils
 
 import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.annotations.ReThisInternal
-import eu.vendeli.rethis.types.interfaces.SubscriptionHandler
 import eu.vendeli.rethis.types.common.Argument
 import eu.vendeli.rethis.types.common.Push
 import eu.vendeli.rethis.types.common.RArray
 import eu.vendeli.rethis.types.common.toArgument
 import eu.vendeli.rethis.types.coroutine.CoLocalConn
+import eu.vendeli.rethis.types.interfaces.SubscriptionHandler
 import eu.vendeli.rethis.utils.response.parseResponse
 import eu.vendeli.rethis.utils.response.readResponseWrapped
 import io.ktor.util.reflect.*
-import kotlinx.coroutines.currentCoroutineContext
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.isActive
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 import kotlin.jvm.JvmName
 
-@Suppress("NOTHING_TO_INLINE")
-private inline infix fun String?.isEqualTo(other: String) = this != null && compareTo(other.lowercase()) == 0
+expect val Dispatchers.IO_OR_UNCONFINED: CoroutineDispatcher
+
+expect fun <T> coRunBlocking(block: suspend CoroutineScope.() -> T): T
 
 @ReThisInternal
 @JvmName("executeSimple")
@@ -102,3 +100,6 @@ internal suspend inline fun ReThis.registerSubscription(
 
     subscriptions.jobs[target] = handlerJob
 }
+
+@Suppress("NOTHING_TO_INLINE")
+private inline infix fun String?.isEqualTo(other: String) = this != null && compareTo(other.lowercase()) == 0

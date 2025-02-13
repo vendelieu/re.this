@@ -151,6 +151,8 @@ Re.This supports the following targets:
 * MacOS (macosArm64, macosX64)
 * TvOS (tvosArm64, tvosSimulatorArm64, tvosX64)
 * WatchOS (watchosArm32, watchosArm64, watchosSimulatorArm64, watchosX64)
+* Js (nodejs)
+* WasmJs (nodejs, d8)
 
 There are plans to add nodejs support.
 

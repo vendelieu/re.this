@@ -2,14 +2,14 @@ package eu.vendeli.rethis.wrappers
 
 import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.commands.*
-import kotlinx.coroutines.runBlocking
+import eu.vendeli.rethis.utils.coRunBlocking
 
 class ReThisMap(
     private val client: ReThis,
     private val bucket: String,
 ) : AbstractMutableMap<String, String>() {
     override val entries: MutableSet<MutableMap.MutableEntry<String, String>>
-        get() = runBlocking {
+        get() = coRunBlocking {
             client
                 .hGetAll(bucket)
                 ?.entries
@@ -19,40 +19,40 @@ class ReThisMap(
         }
 
     override val keys: MutableSet<String>
-        get() = runBlocking {
+        get() = coRunBlocking {
             client.hKeys(bucket).toMutableSet()
         }
 
     override val size: Int
-        get() = runBlocking {
+        get() = coRunBlocking {
             client.hLen(bucket).toInt()
         }
     override val values: MutableCollection<String>
-        get() = runBlocking {
+        get() = coRunBlocking {
             client.hVals(bucket).toMutableList()
         }
 
     override fun put(key: String, value: String): String = updateValue(client, bucket, key to value).let { value }
 
-    override fun get(key: String): String? = runBlocking {
+    override fun get(key: String): String? = coRunBlocking {
         client.hGet(bucket, key)
     }
 
-    override fun containsKey(key: String): Boolean = runBlocking {
+    override fun containsKey(key: String): Boolean = coRunBlocking {
         client.hExists(bucket, key)
     }
 
-    override fun clear(): Unit = runBlocking {
+    override fun clear(): Unit = coRunBlocking {
         client.hDel(bucket, *keys.toTypedArray())
     }
 
     override fun isEmpty(): Boolean = size == 0
 
-    override fun putAll(from: Map<out String, String>): Unit = runBlocking {
+    override fun putAll(from: Map<out String, String>): Unit = coRunBlocking {
         client.hSet(bucket, *from.entries.map { it.toPair() }.toTypedArray())
     }
 
-    override fun remove(key: String): String? = runBlocking {
+    override fun remove(key: String): String? = coRunBlocking {
         client.hDel(bucket, key)
         null
     }
@@ -75,6 +75,6 @@ private inline fun Pair<String, String>.toMapEntry(
 }
 
 @Suppress("NOTHING_TO_INLINE")
-private inline fun updateValue(client: ReThis, bucket: String, pair: Pair<String, String>) = runBlocking {
+private inline fun updateValue(client: ReThis, bucket: String, pair: Pair<String, String>) = coRunBlocking {
     client.hMSet(bucket, pair)
 }

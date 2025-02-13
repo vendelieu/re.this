@@ -1,5 +1,6 @@
 // Klib ABI Dump
-// Targets: [androidNativeArm32, androidNativeArm64, androidNativeX64, androidNativeX86, iosArm64, iosSimulatorArm64, iosX64, linuxArm64, linuxX64, macosArm64, macosX64, mingwX64, tvosArm64, tvosSimulatorArm64, tvosX64, watchosArm32, watchosArm64, watchosSimulatorArm64, watchosX64]
+// Targets: [androidNativeArm32, androidNativeArm64, androidNativeX64, androidNativeX86, iosArm64, iosSimulatorArm64, iosX64, js, linuxArm64, linuxX64, macosArm64, macosX64, mingwX64, tvosArm64, tvosSimulatorArm64, tvosX64, wasmJs, watchosArm32, watchosArm64, watchosSimulatorArm64, watchosX64]
+// Alias: native => [androidNativeArm32, androidNativeArm64, androidNativeX64, androidNativeX86, iosArm64, iosSimulatorArm64, iosX64, linuxArm64, linuxX64, macosArm64, macosX64, mingwX64, tvosArm64, tvosSimulatorArm64, tvosX64, watchosArm32, watchosArm64, watchosSimulatorArm64, watchosX64]
 // Rendering settings:
 // - Signature version: 2
 // - Show manifest properties: true
@@ -350,12 +351,6 @@ final class eu.vendeli.rethis.types.common/RSet : eu.vendeli.rethis.types.common
     final fun equals(kotlin/Any?): kotlin/Boolean // eu.vendeli.rethis.types.common/RSet.equals|equals(kotlin.Any?){}[0]
     final fun hashCode(): kotlin/Int // eu.vendeli.rethis.types.common/RSet.hashCode|hashCode(){}[0]
     final fun toString(): kotlin/String // eu.vendeli.rethis.types.common/RSet.toString|toString(){}[0]
-}
-
-final class eu.vendeli.rethis.types.common/UnixSocket : eu.vendeli.rethis.types.common/Address { // eu.vendeli.rethis.types.common/UnixSocket|null[0]
-    constructor <init>(kotlin/String) // eu.vendeli.rethis.types.common/UnixSocket.<init>|<init>(kotlin.String){}[0]
-
-    final fun toString(): kotlin/String // eu.vendeli.rethis.types.common/UnixSocket.toString|toString(){}[0]
 }
 
 final class eu.vendeli.rethis.types.common/Url : eu.vendeli.rethis.types.common/Address { // eu.vendeli.rethis.types.common/Url|null[0]
@@ -714,14 +709,14 @@ final class eu.vendeli.rethis/ReThis { // eu.vendeli.rethis/ReThis|null[0]
     final val subscriptions // eu.vendeli.rethis/ReThis.subscriptions|{}subscriptions[0]
         final fun <get-subscriptions>(): eu.vendeli.rethis.core/ActiveSubscriptions // eu.vendeli.rethis/ReThis.subscriptions.<get-subscriptions>|<get-subscriptions>(){}[0]
 
-    final fun disconnect() // eu.vendeli.rethis/ReThis.disconnect|disconnect(){}[0]
     final fun reconnect() // eu.vendeli.rethis/ReThis.reconnect|reconnect(){}[0]
-    final fun shutdown() // eu.vendeli.rethis/ReThis.shutdown|shutdown(){}[0]
     final suspend fun <#A1: kotlin/Any, #B1: kotlin/Any> execute(kotlin.collections/List<eu.vendeli.rethis.types.common/Argument>, io.ktor.util.reflect/TypeInfo, io.ktor.util.reflect/TypeInfo, kotlinx.serialization.json/Json? = ...): kotlin.collections/Map<#A1, #B1>? // eu.vendeli.rethis/ReThis.execute|execute(kotlin.collections.List<eu.vendeli.rethis.types.common.Argument>;io.ktor.util.reflect.TypeInfo;io.ktor.util.reflect.TypeInfo;kotlinx.serialization.json.Json?){0§<kotlin.Any>;1§<kotlin.Any>}[0]
     final suspend fun <#A1: kotlin/Any> execute(kotlin.collections/List<eu.vendeli.rethis.types.common/Argument>, io.ktor.util.reflect/TypeInfo, kotlin/Boolean = ..., kotlinx.serialization.json/Json? = ...): kotlin.collections/List<#A1>? // eu.vendeli.rethis/ReThis.execute|execute(kotlin.collections.List<eu.vendeli.rethis.types.common.Argument>;io.ktor.util.reflect.TypeInfo;kotlin.Boolean;kotlinx.serialization.json.Json?){0§<kotlin.Any>}[0]
     final suspend fun <#A1: kotlin/Any> execute(kotlin.collections/List<eu.vendeli.rethis.types.common/Argument>, io.ktor.util.reflect/TypeInfo, kotlinx.serialization.json/Json? = ...): #A1? // eu.vendeli.rethis/ReThis.execute|execute(kotlin.collections.List<eu.vendeli.rethis.types.common.Argument>;io.ktor.util.reflect.TypeInfo;kotlinx.serialization.json.Json?){0§<kotlin.Any>}[0]
+    final suspend fun disconnect() // eu.vendeli.rethis/ReThis.disconnect|disconnect(){}[0]
     final suspend fun execute(kotlin.collections/List<eu.vendeli.rethis.types.common/Argument>, kotlin/Unit? = ...): eu.vendeli.rethis.types.common/RType // eu.vendeli.rethis/ReThis.execute|execute(kotlin.collections.List<eu.vendeli.rethis.types.common.Argument>;kotlin.Unit?){}[0]
     final suspend fun pipeline(kotlin.coroutines/SuspendFunction1<eu.vendeli.rethis/ReThis, kotlin/Unit>): kotlin.collections/List<eu.vendeli.rethis.types.common/RType> // eu.vendeli.rethis/ReThis.pipeline|pipeline(kotlin.coroutines.SuspendFunction1<eu.vendeli.rethis.ReThis,kotlin.Unit>){}[0]
+    final suspend fun shutdown() // eu.vendeli.rethis/ReThis.shutdown|shutdown(){}[0]
     final suspend fun transaction(kotlin.coroutines/SuspendFunction1<eu.vendeli.rethis/ReThis, kotlin/Unit>): kotlin.collections/List<eu.vendeli.rethis.types.common/RType> // eu.vendeli.rethis/ReThis.transaction|transaction(kotlin.coroutines.SuspendFunction1<eu.vendeli.rethis.ReThis,kotlin.Unit>){}[0]
 }
 
@@ -1533,6 +1528,11 @@ final object eu.vendeli.rethis.types.options/WITHMATCHLEN : eu.vendeli.rethis.ty
     final fun toString(): kotlin/String // eu.vendeli.rethis.types.options/WITHMATCHLEN.toString|toString(){}[0]
 }
 
+final const val eu.vendeli.rethis.utils/REDIS_JSON_ROOT_PATH // eu.vendeli.rethis.utils/REDIS_JSON_ROOT_PATH|{}REDIS_JSON_ROOT_PATH[0]
+    final fun <get-REDIS_JSON_ROOT_PATH>(): kotlin/String // eu.vendeli.rethis.utils/REDIS_JSON_ROOT_PATH.<get-REDIS_JSON_ROOT_PATH>|<get-REDIS_JSON_ROOT_PATH>(){}[0]
+
+final val eu.vendeli.rethis.utils/IO_OR_UNCONFINED // eu.vendeli.rethis.utils/IO_OR_UNCONFINED|@kotlinx.coroutines.Dispatchers{}IO_OR_UNCONFINED[0]
+    final fun (kotlinx.coroutines/Dispatchers).<get-IO_OR_UNCONFINED>(): kotlinx.coroutines/CoroutineDispatcher // eu.vendeli.rethis.utils/IO_OR_UNCONFINED.<get-IO_OR_UNCONFINED>|<get-IO_OR_UNCONFINED>@kotlinx.coroutines.Dispatchers(){}[0]
 final val eu.vendeli.rethis.utils/__ParserLogger // eu.vendeli.rethis.utils/__ParserLogger|@eu.vendeli.rethis.types.common.RType{}__ParserLogger[0]
     final fun (eu.vendeli.rethis.types.common/RType).<get-__ParserLogger>(): io.ktor.util.logging/Logger // eu.vendeli.rethis.utils/__ParserLogger.<get-__ParserLogger>|<get-__ParserLogger>@eu.vendeli.rethis.types.common.RType(){}[0]
 
@@ -1542,6 +1542,7 @@ final fun (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.wrappers/Hash(kotlin/Stri
 final fun (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.wrappers/Set(kotlin/String): eu.vendeli.rethis.wrappers/ReThisSet // eu.vendeli.rethis.wrappers/Set|Set@eu.vendeli.rethis.ReThis(kotlin.String){}[0]
 final fun (kotlin/String).eu.vendeli.rethis.types.common/toArgument(): eu.vendeli.rethis.types.common/StringArg // eu.vendeli.rethis.types.common/toArgument|toArgument@kotlin.String(){}[0]
 final fun <#A: kotlin/Any?, #B: eu.vendeli.rethis.types.common/Argument> (kotlin.collections/MutableList<#B>).eu.vendeli.rethis.utils/writeArgument(#A): kotlin.collections/MutableList<#B> // eu.vendeli.rethis.utils/writeArgument|writeArgument@kotlin.collections.MutableList<0:1>(0:0){0§<kotlin.Any?>;1§<eu.vendeli.rethis.types.common.Argument>}[0]
+final fun <#A: kotlin/Any?> eu.vendeli.rethis.utils/coRunBlocking(kotlin.coroutines/SuspendFunction1<kotlinx.coroutines/CoroutineScope, #A>): #A // eu.vendeli.rethis.utils/coRunBlocking|coRunBlocking(kotlin.coroutines.SuspendFunction1<kotlinx.coroutines.CoroutineScope,0:0>){0§<kotlin.Any?>}[0]
 final inline fun (eu.vendeli.rethis.types.common/RType).eu.vendeli.rethis.utils/handleEx(): eu.vendeli.rethis.types.common/RType // eu.vendeli.rethis.utils/handleEx|handleEx@eu.vendeli.rethis.types.common.RType(){}[0]
 final inline fun (kotlin.collections/List<kotlin/Any>).eu.vendeli.rethis.types.common/toArgument(): kotlin.collections/List<eu.vendeli.rethis.types.common/Argument> // eu.vendeli.rethis.types.common/toArgument|toArgument@kotlin.collections.List<kotlin.Any>(){}[0]
 final inline fun (kotlin/Any).eu.vendeli.rethis.types.common/toArgument(): eu.vendeli.rethis.types.common/Argument // eu.vendeli.rethis.types.common/toArgument|toArgument@kotlin.Any(){}[0]
@@ -1656,7 +1657,7 @@ final suspend fun (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.commands/jsonNumM
 final suspend fun (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.commands/jsonObjKeys(kotlin/String, kotlin/String): kotlin.collections/List<kotlin/String> // eu.vendeli.rethis.commands/jsonObjKeys|jsonObjKeys@eu.vendeli.rethis.ReThis(kotlin.String;kotlin.String){}[0]
 final suspend fun (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.commands/jsonObjLen(kotlin/String, kotlin/String): kotlin.collections/List<kotlin/Long?> // eu.vendeli.rethis.commands/jsonObjLen|jsonObjLen@eu.vendeli.rethis.ReThis(kotlin.String;kotlin.String){}[0]
 final suspend fun (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.commands/jsonResp(kotlin/String, kotlin/String? = ...): kotlin.collections/List<eu.vendeli.rethis.types.common/RType> // eu.vendeli.rethis.commands/jsonResp|jsonResp@eu.vendeli.rethis.ReThis(kotlin.String;kotlin.String?){}[0]
-final suspend fun (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.commands/jsonSet(kotlin/String, kotlin/String, kotlin/String, eu.vendeli.rethis.types.options/UpsertMode? = ...): kotlin/String? // eu.vendeli.rethis.commands/jsonSet|jsonSet@eu.vendeli.rethis.ReThis(kotlin.String;kotlin.String;kotlin.String;eu.vendeli.rethis.types.options.UpsertMode?){}[0]
+final suspend fun (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.commands/jsonSet(kotlin/String, kotlin/String, kotlin/String = ..., eu.vendeli.rethis.types.options/UpsertMode? = ...): kotlin/String? // eu.vendeli.rethis.commands/jsonSet|jsonSet@eu.vendeli.rethis.ReThis(kotlin.String;kotlin.String;kotlin.String;eu.vendeli.rethis.types.options.UpsertMode?){}[0]
 final suspend fun (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.commands/jsonStrAppend(kotlin/String, kotlin/String, kotlin/String? = ...): kotlin/Long? // eu.vendeli.rethis.commands/jsonStrAppend|jsonStrAppend@eu.vendeli.rethis.ReThis(kotlin.String;kotlin.String;kotlin.String?){}[0]
 final suspend fun (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.commands/jsonStrLen(kotlin/String, kotlin/String): kotlin/Long? // eu.vendeli.rethis.commands/jsonStrLen|jsonStrLen@eu.vendeli.rethis.ReThis(kotlin.String;kotlin.String){}[0]
 final suspend fun (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.commands/jsonToggle(kotlin/String, kotlin/String): kotlin.collections/List<kotlin/Long> // eu.vendeli.rethis.commands/jsonToggle|jsonToggle@eu.vendeli.rethis.ReThis(kotlin.String;kotlin.String){}[0]
@@ -1827,7 +1828,7 @@ final suspend inline fun <#A: reified kotlin/Any> (eu.vendeli.rethis/ReThis).eu.
 final suspend inline fun <#A: reified kotlin/Any> (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.commands/hVals(kotlin/String): kotlin.collections/List<#A> // eu.vendeli.rethis.commands/hVals|hVals@eu.vendeli.rethis.ReThis(kotlin.String){0§<kotlin.Any>}[0]
 final suspend inline fun <#A: reified kotlin/Any> (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.commands/jsonGet(kotlin/String, kotlin/String? = ...): #A? // eu.vendeli.rethis.commands/jsonGet|jsonGet@eu.vendeli.rethis.ReThis(kotlin.String;kotlin.String?){0§<kotlin.Any>}[0]
 final suspend inline fun <#A: reified kotlin/Any> (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.commands/jsonMGet(kotlin/String, kotlin/Array<out kotlin/String>...): kotlin.collections/List<#A?> // eu.vendeli.rethis.commands/jsonMGet|jsonMGet@eu.vendeli.rethis.ReThis(kotlin.String;kotlin.Array<out|kotlin.String>...){0§<kotlin.Any>}[0]
-final suspend inline fun <#A: reified kotlin/Any> (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.commands/jsonSet(kotlin/String, kotlin/String, #A, eu.vendeli.rethis.types.options/UpsertMode? = ...): kotlin/String? // eu.vendeli.rethis.commands/jsonSet|jsonSet@eu.vendeli.rethis.ReThis(kotlin.String;kotlin.String;0:0;eu.vendeli.rethis.types.options.UpsertMode?){0§<kotlin.Any>}[0]
+final suspend inline fun <#A: reified kotlin/Any> (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.commands/jsonSet(kotlin/String, #A, kotlin/String = ..., eu.vendeli.rethis.types.options/UpsertMode? = ...): kotlin/String? // eu.vendeli.rethis.commands/jsonSet|jsonSet@eu.vendeli.rethis.ReThis(kotlin.String;0:0;kotlin.String;eu.vendeli.rethis.types.options.UpsertMode?){0§<kotlin.Any>}[0]
 final suspend inline fun <#A: reified kotlin/Any> (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.commands/lcs(kotlin/String, kotlin/String): #A? // eu.vendeli.rethis.commands/lcs|lcs@eu.vendeli.rethis.ReThis(kotlin.String;kotlin.String){0§<kotlin.Any>}[0]
 final suspend inline fun <#A: reified kotlin/Any> (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.commands/mGet(kotlin/Array<out kotlin/String>...): kotlin.collections/List<#A?> // eu.vendeli.rethis.commands/mGet|mGet@eu.vendeli.rethis.ReThis(kotlin.Array<out|kotlin.String>...){0§<kotlin.Any>}[0]
 final suspend inline fun <#A: reified kotlin/Any> (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.utils/execute(kotlin.collections/List<eu.vendeli.rethis.types.common/Argument>): #A? // eu.vendeli.rethis.utils/execute|execute@eu.vendeli.rethis.ReThis(kotlin.collections.List<eu.vendeli.rethis.types.common.Argument>){0§<kotlin.Any>}[0]
@@ -1836,3 +1837,10 @@ final suspend inline fun <#A: reified kotlin/Any?> (eu.vendeli.rethis/ReThis).eu
 final suspend inline fun <#A: reified kotlin/Any?> (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.commands/hSet(kotlin/String, kotlin/Array<out kotlin/Pair<kotlin/String, #A>>...): kotlin/Long? // eu.vendeli.rethis.commands/hSet|hSet@eu.vendeli.rethis.ReThis(kotlin.String;kotlin.Array<out|kotlin.Pair<kotlin.String,0:0>>...){0§<kotlin.Any?>}[0]
 final suspend inline fun <#A: reified kotlin/Any?> (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.commands/mSet(kotlin/Array<out kotlin/Pair<kotlin/String, #A>>...): kotlin/Boolean // eu.vendeli.rethis.commands/mSet|mSet@eu.vendeli.rethis.ReThis(kotlin.Array<out|kotlin.Pair<kotlin.String,0:0>>...){0§<kotlin.Any?>}[0]
 final suspend inline fun <#A: reified kotlin/Any?> (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.commands/set(kotlin/String, #A): kotlin/Boolean // eu.vendeli.rethis.commands/set|set@eu.vendeli.rethis.ReThis(kotlin.String;0:0){0§<kotlin.Any?>}[0]
+
+// Targets: [native]
+final class eu.vendeli.rethis.types.common/UnixSocket : eu.vendeli.rethis.types.common/Address { // eu.vendeli.rethis.types.common/UnixSocket|null[0]
+    constructor <init>(kotlin/String) // eu.vendeli.rethis.types.common/UnixSocket.<init>|<init>(kotlin.String){}[0]
+
+    final fun toString(): kotlin/String // eu.vendeli.rethis.types.common/UnixSocket.toString|toString(){}[0]
+}

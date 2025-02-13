@@ -24,8 +24,8 @@ suspend inline fun <reified T : Any> ReThis.jsonMGet(path: String, vararg key: S
 
 suspend inline fun <reified T : Any> ReThis.jsonSet(
     key: String,
-    path: String = REDIS_JSON_ROOT_PATH,
     value: T,
+    path: String = REDIS_JSON_ROOT_PATH,
     upsertMode: UpsertMode? = null,
 ): String? = execute<String>(
     mutableListOf(
