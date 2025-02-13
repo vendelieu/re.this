@@ -42,7 +42,7 @@ class PubSubCommandTest : ReThisTestCtx() {
     suspend fun `test PUBSUB NUMPAT command`() {
         client.pSubscribe("testP*") { _, _ -> println("test") }
         delay(200)
-        client.pubSubNumPat() shouldNotBeGreaterThan 0
+        client.pubSubNumPat() shouldBeGreaterThan 0
     }
 
     @Test
