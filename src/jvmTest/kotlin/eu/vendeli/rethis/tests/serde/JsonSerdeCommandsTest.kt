@@ -47,7 +47,7 @@ class JsonSerdeCommandsTest : ReThisTestCtx(true) {
             number = 3.14,
         )
 
-        client.jsonSet(key, "$", data)
+        client.jsonSet(key, data)
 
         // Access individual fields with proper types
         client.jsonGet<String>(key, "$.str") shouldBe "[\"test\"]"
@@ -70,7 +70,7 @@ class JsonSerdeCommandsTest : ReThisTestCtx(true) {
             ),
         )
 
-        client.jsonSet(key, "$", data)
+        client.jsonSet(key, data)
 
         // Pop from nested array
         client.jsonArrPop(key, "$.users").shouldBeTypeOf<RArray>().value.shouldNotBeNull().first().let {
@@ -95,8 +95,8 @@ class JsonSerdeCommandsTest : ReThisTestCtx(true) {
             "jey" to User(4, "Jey"),
         )
 
-        client.jsonSet(key, "$", data)
-        client.jsonSet(key2, "$", data2)
+        client.jsonSet(key, data)
+        client.jsonSet(key2, data2)
 
         // Query multiple paths with proper types
         val results = client.jsonMGet<List<Int>>(
