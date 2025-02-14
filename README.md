@@ -154,8 +154,6 @@ Re.This supports the following targets:
 * Js (nodejs)
 * WasmJs (nodejs, d8)
 
-There are plans to add nodejs support.
-
 # Compatibility
 
 Re.This is compatible with:
