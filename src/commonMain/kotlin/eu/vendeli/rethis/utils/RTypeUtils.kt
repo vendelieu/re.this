@@ -24,7 +24,7 @@ inline fun <reified T> RType.unwrap(): T? = run {
         this is VerbatimString -> if (T::class == String::class) value as T else null
         this is BulkString -> if (T::class == String::class) value as T else null
         else -> {
-            __ParserLogger.debug("Wrong unwrapping [common] method used for $this")
+            __ParserLogger.warn("Wrong unwrapping [common] method used for $this")
             null
         }
     }
@@ -38,7 +38,7 @@ inline fun <reified T> RType.unwrapList(): List<T> {
             i.unwrap<T>()?.let { response.add(it) }
         }
     } else {
-        __ParserLogger.debug("Wrong unwrapping [list] method used for $this")
+        __ParserLogger.warn("Wrong unwrapping [list] method used for $this")
     }
     return response.toList()
 }
@@ -51,7 +51,7 @@ inline fun <reified T> RType.unwrapSet(): Set<T> {
             i.unwrap<T>()?.let { response.add(it) }
         }
     } else {
-        __ParserLogger.debug("Wrong unwrapping [set] method used for $this")
+        __ParserLogger.warn("Wrong unwrapping [set] method used for $this")
     }
     return response.toSet()
 }
@@ -63,7 +63,10 @@ inline fun <reified K, reified V> RType.unwrapMap(): Map<K, V?>? = run {
             key.unwrap<K>()!! to value?.unwrap<V>()
         }
 
-        else -> null
+        else -> {
+            __ParserLogger.warn("Wrong unwrapping [map] method used for $this")
+            null
+        }
     }
 }
 
