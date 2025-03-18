@@ -16,7 +16,7 @@ binvalid = "0.17.0"
 kover = "0.9.1"
 
 kotest = "5.9.1"
-logback = "1.5.17"
+logback = "1.5.18"
 
 [libraries]
 kotlinx-io-core = { module = "org.jetbrains.kotlinx:kotlinx-io-core", version.ref = "io" }
