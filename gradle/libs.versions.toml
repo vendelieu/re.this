@@ -1,7 +1,7 @@
 [versions]
-ktor = "3.1.1"
+ktor = "3.1.2"
 
-kotlin = "2.1.10"
+kotlin = "2.1.20"
 coroutines = "1.10.1"
 io = "0.7.0"
 datetime = "0.6.2"
