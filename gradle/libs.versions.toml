@@ -2,7 +2,7 @@
 ktor = "3.1.2"
 
 kotlin = "2.1.20"
-coroutines = "1.10.1"
+coroutines = "1.10.2"
 io = "0.7.0"
 datetime = "0.6.2"
 bignum = "0.3.10"
