@@ -1,6 +1,6 @@
 plugins {
     kotlin("jvm")
-    kotlin("plugin.allopen") version "2.1.20"
+    kotlin("plugin.allopen") version "2.1.21"
     id("org.jetbrains.kotlinx.benchmark") version "0.4.13"
 }
 
