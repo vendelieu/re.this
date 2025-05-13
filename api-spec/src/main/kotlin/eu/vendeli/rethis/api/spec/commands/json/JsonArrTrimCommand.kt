@@ -1,0 +1,18 @@
+package eu.vendeli.rethis.api.spec.commands.json
+
+import eu.vendeli.rethis.api.spec.common.annotations.RedisCommand
+import eu.vendeli.rethis.api.spec.common.annotations.RedisKey
+import eu.vendeli.rethis.api.spec.common.types.CommandRequest
+import eu.vendeli.rethis.api.spec.common.types.RedisCommandSpec
+import eu.vendeli.rethis.api.spec.common.types.RedisOperation
+import eu.vendeli.rethis.api.spec.common.types.RespCode
+
+@RedisCommand("JSON.ARRTRIM", RedisOperation.WRITE, [RespCode.INTEGER])
+fun interface JsonArrTrimCommand : RedisCommandSpec<Long> {
+    suspend fun encode(
+        @RedisKey key: String,
+        path: String,
+        start: Long,
+        stop: Long
+    ): CommandRequest<String>
+}

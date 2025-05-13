@@ -18,12 +18,19 @@ kover = "0.9.1"
 kotest = "5.9.1"
 logback = "1.5.18"
 
+ksp = "2.1.20-2.0.1"
+poet = "2.1.0"
+autoservice-annotations = "1.1.1"
+autoservice-ksp = "1.2.0"
+
 [libraries]
 kotlinx-io-core = { module = "org.jetbrains.kotlinx:kotlinx-io-core", version.ref = "io" }
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "datetime" }
 ktor-network = { module = "io.ktor:ktor-network", version.ref = "ktor" }
 ktor-network-tls = { module = "io.ktor:ktor-network-tls", version.ref = "ktor" }
+ktor-utils = { module = "io.ktor:ktor-utils", version.ref = "ktor" }
 bignum = { module = "com.ionspin.kotlin:bignum", version.ref = "bignum" }
+serde-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
 serde-json-io = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json-io", version.ref = "kotlinx-serialization" }
 
 coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
@@ -37,9 +44,17 @@ test-kotest-junit5 = { module = "io.kotest:kotest-runner-junit5", version.ref = 
 test-kotest-assertions = { module = "io.kotest:kotest-assertions-core", version.ref = "kotest" }
 logback = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
 
+autoService-annotations = { module = "com.google.auto.service:auto-service-annotations", version.ref = "autoservice-annotations" }
+autoService-ksp = { module = "dev.zacsweers.autoservice:auto-service-ksp", version.ref = "autoservice-ksp" }
+ksp = { module = "com.google.devtools.ksp:symbol-processing-api", version.ref = "ksp" }
+poet = { module = "com.squareup:kotlinpoet", version.ref = "poet" }
+poet-ksp = { module = "com.squareup:kotlinpoet-ksp", version.ref = "poet" }
+ksp-plugin = { module = "com.google.devtools.ksp:com.google.devtools.ksp.gradle.plugin", version.ref = "ksp" }
+
 [plugins]
 ktlinter = { id = "org.jmailen.kotlinter", version.ref = "kotlinter" }
 deteKT = { id = "io.gitlab.arturbosch.detekt", version.ref = "deteKT" }
 kover = { id = "org.jetbrains.kotlinx.kover", version.ref = "kover" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 kotlin-binvalid = { id = "org.jetbrains.kotlinx.binary-compatibility-validator", version.ref = "binvalid" }
 kotlin-serde = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }

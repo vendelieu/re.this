@@ -1,0 +1,17 @@
+package eu.vendeli.rethis.api.spec.commands.generic
+
+import eu.vendeli.rethis.api.spec.common.annotations.RedisCommand
+import eu.vendeli.rethis.api.spec.common.annotations.RedisKey
+import eu.vendeli.rethis.api.spec.common.request.SortRoOption
+import eu.vendeli.rethis.api.spec.common.types.CommandRequest
+import eu.vendeli.rethis.api.spec.common.types.RedisCommandSpec
+import eu.vendeli.rethis.api.spec.common.types.RedisOperation
+import eu.vendeli.rethis.api.spec.common.types.RespCode
+
+@RedisCommand("SORT_RO", RedisOperation.READ, [RespCode.ARRAY], extensions = [SortRoOption::class])
+fun interface SortRoCommand : RedisCommandSpec<List<String>> {
+    suspend fun encode(
+        @RedisKey key: String,
+        vararg option: SortRoOption
+    ): CommandRequest<String>
+}

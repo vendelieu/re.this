@@ -1,0 +1,12 @@
+package eu.vendeli.rethis.api.spec.commands.cluster
+
+import eu.vendeli.rethis.api.spec.common.annotations.RedisCommand
+import eu.vendeli.rethis.api.spec.common.types.CommandRequest
+import eu.vendeli.rethis.api.spec.common.types.RedisCommandSpec
+import eu.vendeli.rethis.api.spec.common.types.RedisOperation
+import eu.vendeli.rethis.api.spec.common.types.RespCode
+
+@RedisCommand("CLUSTER SLOTS", RedisOperation.READ, [RespCode.ARRAY])
+fun interface ClusterSlotsCommand : RedisCommandSpec<List<List<Any>>> {
+    suspend fun encode(): CommandRequest<Nothing>
+}

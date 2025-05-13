@@ -18,7 +18,6 @@ fun Project.configureKotlin(block: KotlinMultiplatformExtension.() -> Unit) {
 
         val jvmTargetVer = 17
         jvm {
-            withJava()
             compilations.all {
                 compileTaskProvider.configure {
                     compilerOptions {
@@ -73,5 +72,4 @@ fun Project.configureKotlin(block: KotlinMultiplatformExtension.() -> Unit) {
     }
 
     disablePublicationTasksIfNeeded()
-    disableUnreachableTasks()
 }
