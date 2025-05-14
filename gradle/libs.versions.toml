@@ -11,7 +11,7 @@ kotlinx-serialization = "1.8.1"
 dokka = "2.0.0"
 kotlinter = "5.0.2"
 deteKT = "1.23.8"
-publisher = "0.31.0"
+publisher = "0.32.0"
 binvalid = "0.17.0"
 kover = "0.9.1"
 
