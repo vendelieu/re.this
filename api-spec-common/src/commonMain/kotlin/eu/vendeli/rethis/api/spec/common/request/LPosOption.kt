@@ -7,17 +7,17 @@ sealed class LPosOption {
     @RedisOptionContainer
     sealed class CommonOption : LPosOption()
 
-    @RedisOption.Name("RANK")
+    @RedisOption.Token("RANK")
     class Rank(
         val rank: Long,
     ) : CommonOption()
 
-    @RedisOption.Name("MAXLEN")
+    @RedisOption.Token("MAXLEN")
     class MaxLen(
         val maxLen: Long,
     ) : CommonOption()
 
-    @RedisOption.Name("COUNT")
+    @RedisOption.Token("COUNT")
     class Count(
         val count: Long,
     ) : LPosOption()

@@ -2,6 +2,7 @@ package eu.vendeli.rethis.api.spec.commands.geospatial
 
 import eu.vendeli.rethis.api.spec.common.annotations.RedisCommand
 import eu.vendeli.rethis.api.spec.common.annotations.RedisKey
+import eu.vendeli.rethis.api.spec.common.annotations.RedisOption
 import eu.vendeli.rethis.api.spec.common.annotations.RedisOptional
 import eu.vendeli.rethis.api.spec.common.request.CenterPoint
 import eu.vendeli.rethis.api.spec.common.request.Shape
@@ -21,6 +22,6 @@ fun interface GeoSearchStoreCommand : RedisCommandSpec<Long> {
         @RedisOptional sort: GeoSort?,
         @RedisOptional count: Long?,
         @RedisOptional any: Boolean?,
-        @RedisOptional storedist: Boolean?
+        @RedisOptional @RedisOption.Token("STOREDIST") storedist: Boolean?
     ): CommandRequest<List<String>>
 }

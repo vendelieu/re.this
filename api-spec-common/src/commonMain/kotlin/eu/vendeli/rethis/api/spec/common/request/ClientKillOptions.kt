@@ -1,27 +1,29 @@
 package eu.vendeli.rethis.api.spec.common.request
 
 import eu.vendeli.rethis.api.spec.common.annotations.RedisOption
+import eu.vendeli.rethis.api.spec.common.annotations.RedisOptionContainer
 import kotlinx.datetime.Instant
 
+@RedisOptionContainer
 sealed class ClientKillOptions {
-    @RedisOption.Name("ADDR")
+    @RedisOption.Token("ADDR")
     data class Address(val ip: String, val port: Int) : ClientKillOptions()
 
-    @RedisOption.Name("LADDR")
+    @RedisOption.Token("LADDR")
     data class LAddr(val ip: String, val port: Int) : ClientKillOptions()
 
-    @RedisOption.Name("ID")
+    @RedisOption.Token("ID")
     data class Id(val clientId: Long) : ClientKillOptions()
 
-    @RedisOption.Name("TYPE")
+    @RedisOption.Token("TYPE")
     data class Type(val connectionType: String) : ClientKillOptions()
 
-    @RedisOption.Name("USER")
+    @RedisOption.Token("USER")
     data class User(val username: String) : ClientKillOptions()
 
-    @RedisOption.Name("SKIPME")
+    @RedisOption.Token("SKIPME")
     data class SkipMe(val yes: Boolean) : ClientKillOptions()
 
-    @RedisOption.Name("MAXAGE")
+    @RedisOption.Token("MAXAGE")
     data class MaxAge(val instant: Instant) : ClientKillOptions()
 }

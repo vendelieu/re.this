@@ -3,14 +3,14 @@ package eu.vendeli.rethis.api.spec.common.request
 import eu.vendeli.rethis.api.spec.common.annotations.RedisOption
 
 sealed class HScanOption {
-    @RedisOption.Name("MATCH")
+    @RedisOption.Token("MATCH")
     class Match(
-        pattern: String,
+        val pattern: String,
     ) : HScanOption()
 
-    @RedisOption.Name("COUNT")
+    @RedisOption.Token("COUNT")
     class Count(
-        count: Long,
+        val count: Long,
     ) : HScanOption()
 
     @RedisOption

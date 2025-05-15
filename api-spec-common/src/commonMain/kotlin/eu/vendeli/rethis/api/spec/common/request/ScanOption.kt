@@ -3,17 +3,17 @@ package eu.vendeli.rethis.api.spec.common.request
 import eu.vendeli.rethis.api.spec.common.annotations.RedisOption
 
 sealed class ScanOption {
-    @RedisOption.Name("MATCH")
+    @RedisOption.Token("MATCH")
     class Match(
         val pattern: String,
     ) : ScanOption()
 
-    @RedisOption.Name("COUNT")
+    @RedisOption.Token("COUNT")
     class Count(
         val count: Long,
     ) : ScanOption()
 
-    @RedisOption.Name("TYPE")
+    @RedisOption.Token("TYPE")
     class Type(
         val type: String,
     ) : ScanOption()

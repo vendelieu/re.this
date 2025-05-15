@@ -10,6 +10,6 @@ import eu.vendeli.rethis.api.spec.common.types.RespCode
 fun interface ZDiffCommand : RedisCommandSpec<List<String>> {
     suspend fun encode(
         @RedisMeta.WithSizeParam("numkeys") @RedisKey vararg key: String,
-        @RedisOptional @RedisOption.Name("WITHSCORES") withscores: Boolean?,
+        @RedisOptional @RedisOption.Token("WITHSCORES") withscores: Boolean?,
     ): CommandRequest<List<String>>
 }

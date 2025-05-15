@@ -3,11 +3,12 @@ package eu.vendeli.rethis.api.spec.common.request
 import eu.vendeli.rethis.api.spec.common.annotations.RedisOption
 import eu.vendeli.rethis.api.spec.common.annotations.RedisOptionContainer
 
+@RedisOptionContainer
 sealed class XAddOption {
     @RedisOption
     data object NOMKSTREAM : XAddOption()
 
-    @RedisOption.SkipName
+    @RedisOption
     class Trim(
         val strategy: TrimmingStrategy,
         val exactement: Exactement? = null,
@@ -18,11 +19,11 @@ sealed class XAddOption {
     @RedisOptionContainer
     sealed class Identifier : XAddOption()
 
-    @RedisOption.SkipName
+    @RedisOption
     class Id(
         val id: String,
     ) : Identifier()
 
-    @RedisOption.Name("*")
+    @RedisOption.Token("*")
     data object Asterisk : Identifier()
 }

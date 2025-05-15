@@ -12,6 +12,7 @@ internal class SpecTreeBuilder(private val raw: List<CommandArgument>) {
             arg.arguments.map { toNode(it, parentNode) },
             arg.optional,
             arg.multiple,
+            arg.token,
             parentNode
         )
         "block" -> SpecNode.Block(

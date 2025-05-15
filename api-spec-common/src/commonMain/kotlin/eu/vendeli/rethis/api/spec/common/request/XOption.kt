@@ -4,7 +4,7 @@ import eu.vendeli.rethis.api.spec.common.annotations.RedisOption
 import eu.vendeli.rethis.api.spec.common.annotations.RedisOptionContainer
 
 sealed class XOption {
-    @RedisOption.Name("LIMIT")
+    @RedisOption.Token("LIMIT")
     class Limit(
         val count: Long,
     ) : XOption()
@@ -22,19 +22,19 @@ data object MINID : TrimmingStrategy()
 @RedisOptionContainer
 sealed class Exactement : XOption()
 
-@RedisOption.Name("=")
+@RedisOption.Token("=")
 data object Equal : Exactement()
 
-@RedisOption.Name("~")
+@RedisOption.Token("~")
 data object Approximate : Exactement()
 
 @RedisOptionContainer
 sealed class XId : XOption() {
-    @RedisOption.SkipName
+    @RedisOption
     class Id(
         val id: String,
     ) : XId()
 
-    @RedisOption.Name("$")
+    @RedisOption.Token("$")
     data object LastEntry : XId()
 }

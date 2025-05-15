@@ -8,10 +8,10 @@ import eu.vendeli.rethis.api.spec.common.types.RedisCommandSpec
 import eu.vendeli.rethis.api.spec.common.types.RedisOperation
 import eu.vendeli.rethis.api.spec.common.types.RespCode
 
-@RedisCommand("BITFIELD_RO", RedisOperation.READ, [RespCode.ARRAY], extensions = [BitfieldOption.GET::class])
+@RedisCommand("BITFIELD_RO", RedisOperation.READ, [RespCode.ARRAY], extensions = [BitfieldOption.Get::class])
 fun interface BitfieldRoCommand : RedisCommandSpec<List<Long>> {
     suspend fun encode(
         @RedisKey key: String,
-        vararg options: BitfieldOption.GET
+        vararg options: BitfieldOption.Get
     ): CommandRequest<String>
 }

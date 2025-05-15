@@ -18,7 +18,7 @@ import eu.vendeli.rethis.api.spec.common.types.RespCode
 fun interface XAddCommand : RedisCommandSpec<String> {
     suspend fun encode(
         @RedisKey key: String,
-        @RedisOptional nomkstream: XAddOption.NOMKSTREAM?,
+        @RedisOptional nomkstream: Boolean?,
         @RedisOptional trim: XAddOption.Trim?,
         id: XAddOption.Identifier,
         vararg entry: Pair<String, String>,

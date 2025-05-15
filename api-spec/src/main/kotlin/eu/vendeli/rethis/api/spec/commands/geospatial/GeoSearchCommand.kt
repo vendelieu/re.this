@@ -2,6 +2,7 @@ package eu.vendeli.rethis.api.spec.commands.geospatial
 
 import eu.vendeli.rethis.api.spec.common.annotations.RedisCommand
 import eu.vendeli.rethis.api.spec.common.annotations.RedisKey
+import eu.vendeli.rethis.api.spec.common.annotations.RedisOption
 import eu.vendeli.rethis.api.spec.common.annotations.RedisOptional
 import eu.vendeli.rethis.api.spec.common.request.CenterPoint
 import eu.vendeli.rethis.api.spec.common.request.Shape
@@ -23,9 +24,9 @@ fun interface GeoSearchCommand : RedisCommandSpec<List<GeoSearchResult>> {
         @RedisKey key: String,
         center: CenterPoint,
         shape: Shape,
-        @RedisOptional withCoord: Boolean?,
-        @RedisOptional withDist: Boolean?,
-        @RedisOptional withHash: Boolean?,
+        @RedisOptional @RedisOption.Token("WITHCOORD") withCoord: Boolean?,
+        @RedisOptional @RedisOption.Token("WITHDIST") withDist: Boolean?,
+        @RedisOptional @RedisOption.Token("WITHHASH") withHash: Boolean?,
         @RedisOptional count: Long?,
         @RedisOptional any: Boolean?,
         @RedisOptional sort: GeoSort?,

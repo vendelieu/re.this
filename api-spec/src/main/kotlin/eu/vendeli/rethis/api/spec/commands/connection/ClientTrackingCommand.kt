@@ -1,6 +1,7 @@
 package eu.vendeli.rethis.api.spec.commands.connection
 
 import eu.vendeli.rethis.api.spec.common.annotations.RedisCommand
+import eu.vendeli.rethis.api.spec.common.annotations.RedisOptional
 import eu.vendeli.rethis.api.spec.common.request.ClientStandby
 import eu.vendeli.rethis.api.spec.common.request.ClientTrackingMode
 import eu.vendeli.rethis.api.spec.common.types.CommandRequest
@@ -17,6 +18,6 @@ import eu.vendeli.rethis.api.spec.common.types.RespCode
 fun interface ClientTrackingCommand : RedisCommandSpec<Boolean> {
     suspend fun encode(
         mode: ClientStandby,
-        vararg options: ClientTrackingMode,
+        @RedisOptional vararg options: ClientTrackingMode,
     ): CommandRequest<Nothing>
 }

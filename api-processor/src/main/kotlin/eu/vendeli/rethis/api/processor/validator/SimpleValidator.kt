@@ -1,6 +1,7 @@
 package eu.vendeli.rethis.api.processor.validator
 
 import com.squareup.kotlinpoet.ksp.toClassName
+import eu.vendeli.rethis.api.processor.type.LibSpecNode
 import eu.vendeli.rethis.api.processor.type.SpecNode
 import eu.vendeli.rethis.api.processor.type.SpecNodeVisitor
 import eu.vendeli.rethis.api.processor.type.ValidationContext
@@ -10,15 +11,13 @@ import eu.vendeli.rethis.api.spec.common.annotations.RedisOptional
 internal object SimpleValidator : SpecNodeVisitor {
     override fun visitSimple(node: SpecNode.Simple, ctx: ValidationContext) {
         val param = ctx.findParam(node.name) ?: return
-        val pType = param.type.resolve()
+        val pType = param.symbol.type.resolve()
+        val contextualOptional = checkContextualOptionality(param)
 
-        if (node.optional && !param.isVararg && !pType.isMarkedNullable)
-            ctx.reportError("${node.name}: should be nullable")
+        if (node.optional && !contextualOptional)
+            ctx.reportError("${node.name}: should be optional (marked with @RedisOptional and nullable or vararg)")
 
-        if (node.optional && !param.hasAnnotation<RedisOptional>())
-            ctx.reportError("${node.name}: should be annotated with @RedisOptional")
-
-        if (node.multiple && !param.isVararg && !pType.isCollection())
+        if (node.multiple && !param.symbol.isVararg && !pType.isCollection())
             ctx.reportError("${node.name}: should be vararg or Collection")
 
         val expected = node.type.specTypeNormalization()
@@ -26,6 +25,15 @@ internal object SimpleValidator : SpecNodeVisitor {
         if (expected != actual)
             ctx.reportError("${node.name}: expected type '$expected', found '$actual'")
         ctx.markProcessed(node.name)
+    }
+
+    private tailrec fun checkContextualOptionality(node: LibSpecNode?): Boolean = when {
+        node is LibSpecNode.ParameterNode &&
+            node.symbol.hasAnnotation<RedisOptional>() && (node.symbol.isVararg || node.symbol.type.resolve().isMarkedNullable)
+            -> true
+
+        node == null -> false
+        else -> checkContextualOptionality(node.parent)
     }
 
     override fun visitPureToken(node: SpecNode.PureToken, ctx: ValidationContext) {}

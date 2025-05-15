@@ -1,25 +1,28 @@
 package eu.vendeli.rethis.api.spec.common.request
 
 import eu.vendeli.rethis.api.spec.common.annotations.RedisOption
+import eu.vendeli.rethis.api.spec.common.annotations.RedisOptionContainer
+import kotlinx.datetime.Instant
 
+@RedisOptionContainer
 sealed class XClaimOption {
-    @RedisOption.Name("IDLE")
+    @RedisOption.Token("IDLE")
     class Idle(
         val ms: Long,
     ) : XClaimOption()
 
-    @RedisOption.Name("TIME")
+    @RedisOption.Token("TIME")
     class Time(
-        val unixTimeMillis: Long,
+        val unixTimeMilliseconds: Instant,
     ) : XClaimOption()
 
-    @RedisOption.Name("RETRYCOUNT")
+    @RedisOption.Token("RETRYCOUNT")
     class RetryCount(
         val count: Long,
     ) : XClaimOption()
 
-    @RedisOption.Name("LASTID")
+    @RedisOption.Token("LASTID")
     class LastId(
-        val id: String,
+        val lastid: String,
     ) : XClaimOption()
 }

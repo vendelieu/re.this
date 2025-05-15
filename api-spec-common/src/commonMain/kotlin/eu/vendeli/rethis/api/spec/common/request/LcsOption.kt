@@ -13,10 +13,7 @@ sealed class LcsMode : LcsOptions() {
     data object IDX : LcsMode()
 }
 
-@RedisOption.Name("MINMATCHLEN")
+@RedisOption.Token("MINMATCHLEN")
 class MinMatchLen(
-    val length: Long,
+    val minMatchLen: Long,
 ) : LcsOptions()
-
-@RedisOption
-data object WITHMATCHLEN : LcsOptions()

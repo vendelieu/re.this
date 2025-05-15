@@ -16,18 +16,18 @@ sealed class MigrateOption {
     @RedisOptionContainer
     sealed class Authorization : MigrateOption()
 
-    @RedisOption
+    @RedisOption.Token("AUTH")
     class AUTH(
         password: String,
     ) : Authorization()
 
-    @RedisOption.Name("AUTH")
+    @RedisOption.Token("AUTH")
     class AUTH2(
         username: String,
         password: String,
     ) : Authorization()
 
-    @RedisOption
+    @RedisOption.Token("KEYS")
     class KEYS(
         vararg key: String,
     ) : MigrateOption()

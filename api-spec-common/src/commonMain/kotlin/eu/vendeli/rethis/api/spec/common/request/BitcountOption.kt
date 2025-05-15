@@ -2,14 +2,12 @@ package eu.vendeli.rethis.api.spec.common.request
 
 import eu.vendeli.rethis.api.spec.common.annotations.RedisOption
 
-sealed class BitcountOption {
+sealed class BitcountOption
 
-}
-
-@RedisOption.SkipName
+@RedisOption
 class Range(
-    start: Int,
-    end: Int,
+    start: Long,
+    end: Long,
 ) : BitcountOption()
 
 @RedisOption

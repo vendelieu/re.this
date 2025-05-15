@@ -5,30 +5,30 @@ import eu.vendeli.rethis.api.spec.common.annotations.RedisOptionContainer
 
 @RedisOptionContainer
 sealed class BitfieldOption {
-    @RedisOption
-    class GET(
-        encoding: String,
-        offset: Long,
+    @RedisOption.Token("GET")
+    class Get(
+        val encoding: String,
+        val offset: Long,
     ) : BitfieldOption()
 
-    @RedisOption
-    class OVERFLOW(
-        type: Type,
+    @RedisOption.Token("OVERFLOW")
+    class Overflow(
+        val type: Type,
     ) : BitfieldOption() {
         enum class Type { WRAP, SAT, FAIL }
     }
 
-    @RedisOption
-    class SET(
-        encoding: String,
-        offset: Long,
-        value: Long,
+    @RedisOption.Token("SET")
+    class Set(
+        val encoding: String,
+        val offset: Long,
+        val value: Long,
     ) : BitfieldOption()
 
-    @RedisOption
-    class INCRBY(
-        encoding: String,
-        offset: Long,
-        increment: Long,
+    @RedisOption.Token("INCRBY")
+    class IncreaseBy(
+        val encoding: String,
+        val offset: Long,
+        val increment: Long,
     ) : BitfieldOption()
 }

@@ -204,16 +204,6 @@ internal class RedisSpecValidator(
     }
 
 
-    private val stdTypes = setOf(
-        "kotlin.String",
-        "kotlin.Long",
-        "kotlin.Double",
-        "kotlin.Boolean",
-        "kotlin.LongRange",
-        "kotlin.time.Duration",
-        "kotlinx.datetime.Instant",
-    )
-
     private fun validateExtensions(
         a: KSAnnotation,
         f: KSFunctionDeclaration,
@@ -226,7 +216,7 @@ internal class RedisSpecValidator(
 
         f.parameters.forEach { p ->
             val extType = p.type.resolve().declaration.qualifiedName?.asString()!!
-            if (extType !in stdTypes && extType !in extensions) {
+            if (extType !in stdTypes.values && extType !in extensions) {
                 errors += "Parameter '${p.name?.asString()}' has type '$extType' which is not in extensions"
             }
         }

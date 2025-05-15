@@ -13,6 +13,6 @@ import eu.vendeli.rethis.api.spec.common.types.RespCode
 fun interface ClientListCommand : RedisCommandSpec<String> {
     suspend fun encode(
         @RedisOptional type: ClientType?,
-        @RedisOptional @RedisOption.Name("ID") vararg clientId: Long,
+        @RedisOptional @RedisOption.Token("ID") vararg clientId: Long,
     ): CommandRequest<Nothing>
 }

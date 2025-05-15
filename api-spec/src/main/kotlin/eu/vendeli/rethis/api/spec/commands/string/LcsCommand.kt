@@ -7,7 +7,7 @@ import eu.vendeli.rethis.api.spec.common.types.RedisCommandSpec
 import eu.vendeli.rethis.api.spec.common.types.RedisOperation
 import eu.vendeli.rethis.api.spec.common.types.RespCode
 
-@RedisCommand("LCS", RedisOperation.READ, [RespCode.SIMPLE_STRING])
+@RedisCommand("LCS", RedisOperation.READ, [RespCode.BULK])
 fun interface LcsCommand : RedisCommandSpec<String> {
     suspend fun encode(
         @RedisKey key1: String,

@@ -1,8 +1,6 @@
 package eu.vendeli.rethis.api.processor.validator
 
 import com.google.devtools.ksp.KspExperimental
-import com.google.devtools.ksp.getAnnotationsByType
-import com.google.devtools.ksp.isAnnotationPresent
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import eu.vendeli.rethis.api.processor.type.SpecNode
 import eu.vendeli.rethis.api.processor.type.SpecNodeVisitor
@@ -22,16 +20,14 @@ internal object BlockValidator : SpecNodeVisitor {
             return
         }
 
-        val decl = param.type.resolve().declaration.safeCast<KSClassDeclaration>()
+        val decl = param.symbol.type.resolve().declaration.safeCast<KSClassDeclaration>()
             ?: return ctx.reportError("${node.name}: block not a class")
 
         if (node.token != null) {
+            if (!ctx.isTokenPresent(node.token)) ctx.reportError("Token ${node.token} is not present")
             val ann = decl.getAnnotation<RedisOption.Name>()?.get("name") ?: decl.simpleName.asString()
             if (ann != node.token) ctx.reportError("${node.name}: @Name mismatch '${node.token}'")
         }
-//        else if (!decl.hasAnnotation<RedisOption.SkipName>()) { // todo check why false pos
-//            ctx.reportError("${node.name}: missing @SkipName")
-//        } // todo turn back when fixed bug in ksp
     }
 
     override fun visitSimple(node: SpecNode.Simple, ctx: ValidationContext) {}

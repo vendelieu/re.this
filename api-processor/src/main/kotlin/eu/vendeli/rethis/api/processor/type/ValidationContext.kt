@@ -1,7 +1,6 @@
 package eu.vendeli.rethis.api.processor.type
 
 import com.google.devtools.ksp.symbol.KSFunctionDeclaration
-import com.google.devtools.ksp.symbol.KSValueParameter
 import eu.vendeli.rethis.api.processor.utils.NameNormalizer
 
 internal data class ValidationContext(
@@ -11,13 +10,16 @@ internal data class ValidationContext(
     val errors: MutableList<String>,
     val processed: MutableList<String>,
 ) {
-    fun findParam(name: String): KSValueParameter? {
-        val norm = NameNormalizer.normalizeParam(name)
-        return func.parameters.firstOrNull { it.name?.asString() == norm }
+    val paramTree = SpecTreeBuilder.build(func)
+
+    fun findParam(name: String): LibSpecNode.ParameterNode? {
+        val normalizedName = NameNormalizer.normalizeParam(name)
+        return paramTree.findParameterByName(normalizedName)
     }
 
+    fun isTokenPresent(name: String): Boolean = paramTree.findTokenByName(name) != null
+
     fun markProcessed(name: String) {
-//        processed += NameNormalizer.normalizeParam(name)
         processed += name
     }
 
