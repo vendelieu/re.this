@@ -12,6 +12,6 @@ fun interface FailoverCommand : RedisCommandSpec<Boolean> {
     suspend fun encode(
         @RedisOptional timeout: Long?,
         @RedisOptional force: Boolean?,
-        @RedisOptional abort: Boolean?
+        @RedisOptional abort: Boolean?,
     ): CommandRequest<Nothing>
 }

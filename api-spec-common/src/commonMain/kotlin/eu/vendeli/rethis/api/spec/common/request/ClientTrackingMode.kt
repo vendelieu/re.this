@@ -29,9 +29,8 @@ sealed class ClientTrackingMode {
 
     @RedisMeta.OrderPriority(2)
     @RedisMeta.CustomCodec(decoder = ClientTrackingPrefixesDecoder::class)
-    @RedisMeta.Ignore
     @RedisOption.Token("PREFIX")
-    class Prefixes(vararg prefix: String) : ClientTrackingMode()
+    class Prefixes(vararg val prefix: String) : ClientTrackingMode()
 }
 
 @RedisOptionContainer

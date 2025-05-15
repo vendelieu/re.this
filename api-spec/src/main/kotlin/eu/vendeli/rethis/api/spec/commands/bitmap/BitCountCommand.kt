@@ -3,7 +3,6 @@ package eu.vendeli.rethis.api.spec.commands.bitmap
 import eu.vendeli.rethis.api.spec.common.annotations.RedisCommand
 import eu.vendeli.rethis.api.spec.common.annotations.RedisKey
 import eu.vendeli.rethis.api.spec.common.annotations.RedisOptional
-import eu.vendeli.rethis.api.spec.common.request.BitcountOption
 import eu.vendeli.rethis.api.spec.common.request.BitmapDataType
 import eu.vendeli.rethis.api.spec.common.request.Range
 import eu.vendeli.rethis.api.spec.common.types.CommandRequest

@@ -8,7 +8,6 @@ import eu.vendeli.rethis.api.spec.common.types.CommandRequest
 import eu.vendeli.rethis.api.spec.common.types.RType
 import eu.vendeli.rethis.api.spec.common.types.RedisCommandSpec
 import eu.vendeli.rethis.api.spec.common.types.RedisOperation
-import eu.vendeli.rethis.api.spec.common.types.RespCode
 
 @RedisCommand("FCALL_RO", RedisOperation.READ, [])
 fun interface FcallRoCommand : RedisCommandSpec<RType> {

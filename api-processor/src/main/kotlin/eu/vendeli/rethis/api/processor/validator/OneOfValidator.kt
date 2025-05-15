@@ -13,6 +13,10 @@ internal object OneOfValidator : SpecNodeVisitor {
         ctx.markProcessed(node.specName)
         val param = ctx.findParam(node.specName) ?: return
         val allTokens = node.options.all { it is SpecNode.PureToken }
+
+        if (node.token != null && !ctx.isTokenPresent(node.token)) {
+            ctx.reportError("Oneof token ${node.token} is not present")
+        }
         if (allTokens) {
             PureTokenValidator.visitPureToken(
                 SpecNode.PureToken(
@@ -22,10 +26,6 @@ internal object OneOfValidator : SpecNodeVisitor {
                 ctx,
             )
             return
-        }
-
-        if (node.token != null && ctx.isTokenPresent(node.token)) {
-            ctx.reportError("Oneof token ${node.token} is not present")
         }
 
         val decl = param.symbol.type.resolve().declaration as? KSClassDeclaration

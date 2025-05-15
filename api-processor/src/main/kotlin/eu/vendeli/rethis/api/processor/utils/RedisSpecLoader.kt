@@ -2,7 +2,7 @@ package eu.vendeli.rethis.api.processor.utils
 
 import eu.vendeli.rethis.api.processor.type.RedisCommandApiSpec
 import eu.vendeli.rethis.api.processor.type.RedisCommandFullSpec
-import io.ktor.util.logging.KtorSimpleLogger
+import io.ktor.util.logging.*
 import kotlinx.serialization.json.Json
 import java.net.URI
 import java.net.http.HttpClient

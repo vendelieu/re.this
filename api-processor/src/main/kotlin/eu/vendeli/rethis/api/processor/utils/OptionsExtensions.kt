@@ -9,7 +9,6 @@ import com.squareup.kotlinpoet.FunSpec
 import com.squareup.kotlinpoet.ksp.toTypeName
 import eu.vendeli.rethis.api.spec.common.annotations.RedisOption
 import kotlinx.io.Buffer
-import kotlin.sequences.forEach
 
 internal fun FileSpec.Builder.generateOptionEncoders(
     optionContainer: KSClassDeclaration?,

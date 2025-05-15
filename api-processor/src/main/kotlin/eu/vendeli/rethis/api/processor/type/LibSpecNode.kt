@@ -1,12 +1,8 @@
 package eu.vendeli.rethis.api.processor.type
 
 import com.google.devtools.ksp.symbol.*
-import eu.vendeli.rethis.api.processor.utils.getAnnotation
-import eu.vendeli.rethis.api.processor.utils.hasAnnotation
-import eu.vendeli.rethis.api.processor.utils.isDataObject
-import eu.vendeli.rethis.api.processor.utils.tokenName
+import eu.vendeli.rethis.api.processor.utils.*
 import eu.vendeli.rethis.api.spec.common.annotations.RedisOption
-import eu.vendeli.rethis.api.spec.common.annotations.RedisOptionContainer
 
 sealed class LibSpecNode {
     open val parent: LibSpecNode? = null
@@ -56,73 +52,68 @@ fun LibSpecNode.findTokenByName(token: String, root: LibSpecNode = this): LibSpe
 object SpecTreeBuilder {
     fun build(function: KSFunctionDeclaration): LibSpecNode.ContainerNode {
         val root = LibSpecNode.ContainerNode(parent = null, symbol = function)
-        function.parameters.forEach { root.children += buildNode(it, root) }
+        function.parameters.forEach { handleValueParam(it, root) }
         return root
     }
 
-    private fun buildNode(
+    // 1. Handle a value parameter
+    private fun handleValueParam(
         param: KSValueParameter,
         parent: LibSpecNode,
-    ): LibSpecNode {
-        // 1. Determine effective name override
-        val effectiveName = param.getAnnotation<RedisOption.Name>()?.get("name") ?: param.name!!.asString()
+    ) {
+        // Determine name override or default
+        val name = param.effectiveName()
 
-        // 2. Possibly wrap in parameter-level token
-        var currentParent: LibSpecNode = parent
-        param.getAnnotation<RedisOption.Token>()?.get("name")?.let { tokenName ->
-            val tokNode = LibSpecNode.TokenNode(parent = currentParent, name = tokenName)
-            currentParent.children += tokNode
-            currentParent = tokNode
-        }
+        // Wrap in TokenNode if annotated
+        val currentParent = param.preserveToken(parent)
+        val node = LibSpecNode.ParameterNode(currentParent, name, param)
+        currentParent.children += node
 
-        // 3. Inspect type
+        // If the parameter type is a class, recurse
         val decl = param.type.resolve().declaration as? KSClassDeclaration
+        if (decl?.qualifiedName?.getQualifier()?.startsWith("kotlin") == false) handleClassDecl(decl, node)
+    }
 
-        currentParent = LibSpecNode.ParameterNode(currentParent, effectiveName, param)
+    // 2. Handle a class declaration (sealed, token, or plain)
+    private fun handleClassDecl(
+        decl: KSClassDeclaration,
+        parent: LibSpecNode,
+    ) {
+        val currentParent = decl.preserveToken(parent)
 
-        return when {
-            // A. Sealed hierarchy container
-            decl != null && decl.hasAnnotation<RedisOptionContainer>() -> {
-                val container = LibSpecNode.ContainerNode(currentParent, decl)
-                currentParent.children += container
+        when {
+            // Sealed container: iterate subclasses
+            decl.isSealed() -> {
                 decl.declarations.filterIsInstance<KSClassDeclaration>().forEach { sub ->
-                    // Enum or data object -> simple token
-                    if (sub.classKind == ClassKind.ENUM_ENTRY || sub.isDataObject()) {
-                        container.children += LibSpecNode.TokenNode(container, sub.tokenName())
-                    } else {
-                        // Treat subclass constructor parameters as fresh parameters
-                        sub.primaryConstructor?.parameters?.forEach { p ->
-                            container.children += buildNode(p, container)
-                        }
-                    }
+                    handleClassDecl(sub, currentParent)
                 }
-                container
             }
-            // B. Token-decorated type (data class or object)
-            decl != null && (decl.hasAnnotation<RedisOption.Token>() || decl.isDataObject()) -> {
-                val tokName = decl.getAnnotation<RedisOption.Token>()?.get("name") ?: decl.simpleName.asString()
+
+            decl.isEnum() -> {
+                decl.declarations.filterIsInstance<KSClassDeclaration>().filter {
+                    it.classKind == ClassKind.ENUM_ENTRY
+                }.forEach {
+                    currentParent.children += LibSpecNode.TokenNode(currentParent, it.tokenName())
+                }
+            }
+
+            decl.isDataObject() && !decl.hasAnnotation<RedisOption.Token>() -> {
+                val tokName = decl.simpleName.asString() // token case handled in #preserveToken
                 val tokNode = LibSpecNode.TokenNode(currentParent, tokName)
                 currentParent.children += tokNode
-                // Recurse into its constructor (for data classes)
-                decl.primaryConstructor?.parameters?.forEach { p ->
-                    tokNode.children += buildNode(p, tokNode)
-                }
-                tokNode
             }
-            // C. Data class or regular class without token
-            decl != null && decl.classKind == ClassKind.CLASS
-                && decl.qualifiedName?.asString()?.startsWith("kotlin") == false -> {
-                // Flatten its params as if direct children
-                val container = LibSpecNode.ContainerNode(currentParent, decl)
-                currentParent.children += container
-                decl.primaryConstructor?.parameters?.forEach { p ->
-                    container.children += buildNode(p, container)
-                }
-                container
+            // Plain class: descend into ctor params
+            decl.classKind == ClassKind.CLASS -> {
+                decl.primaryConstructor?.parameters?.forEach { handleValueParam(it, currentParent) }
             }
-            // D. Plain parameter
-            else -> currentParent
         }
     }
+
+    private fun KSAnnotated.preserveToken(givenNode: LibSpecNode): LibSpecNode =
+        getAnnotation<RedisOption.Token>()?.get("name")?.let { tokenName ->
+            val tokNode = LibSpecNode.TokenNode(parent = givenNode, name = tokenName)
+            givenNode.children += tokNode
+            tokNode
+        } ?: givenNode
 }
 

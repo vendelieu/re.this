@@ -6,7 +6,6 @@ import eu.vendeli.rethis.api.processor.type.SpecNode
 import eu.vendeli.rethis.api.processor.type.SpecNodeVisitor
 import eu.vendeli.rethis.api.processor.type.ValidationContext
 import eu.vendeli.rethis.api.processor.utils.getAnnotation
-import eu.vendeli.rethis.api.processor.utils.hasAnnotation
 import eu.vendeli.rethis.api.processor.utils.safeCast
 import eu.vendeli.rethis.api.spec.common.annotations.RedisOption
 

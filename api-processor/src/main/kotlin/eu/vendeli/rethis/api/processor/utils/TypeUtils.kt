@@ -1,11 +1,6 @@
 package eu.vendeli.rethis.api.processor.utils
 
-import com.google.devtools.ksp.symbol.ClassKind
-import com.google.devtools.ksp.symbol.KSAnnotated
-import com.google.devtools.ksp.symbol.KSClassDeclaration
-import com.google.devtools.ksp.symbol.KSDeclaration
-import com.google.devtools.ksp.symbol.KSValueParameter
-import com.google.devtools.ksp.symbol.Modifier
+import com.google.devtools.ksp.symbol.*
 import com.squareup.kotlinpoet.*
 import eu.vendeli.rethis.api.spec.common.annotations.RedisOption
 import eu.vendeli.rethis.api.spec.common.types.RespCode
@@ -30,10 +25,12 @@ internal val stdTypes = mapOf(
 
 internal fun KSClassDeclaration.tokenName() = getAnnotation<RedisOption.Token>()?.get("name") ?: simpleName.asString()
 
-internal fun KSAnnotated.finalName() = getAnnotation<RedisOption.Name>()?.get("name") ?: when(this) {
+internal fun KSAnnotated.effectiveName() = getAnnotation<RedisOption.Name>()?.get("name") ?: when (this) {
     is KSDeclaration -> simpleName.asString()
     is KSValueParameter -> name!!.asString()
     else -> toString()
 }
 
 internal fun KSClassDeclaration.isDataObject() = classKind == ClassKind.OBJECT && modifiers.contains(Modifier.DATA)
+internal fun KSClassDeclaration.isSealed() = classKind == ClassKind.CLASS && modifiers.contains(Modifier.SEALED)
+internal fun KSClassDeclaration.isEnum() = classKind == ClassKind.ENUM_CLASS

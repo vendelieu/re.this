@@ -10,6 +10,7 @@ import eu.vendeli.rethis.api.spec.common.annotations.RedisOptional
 
 internal object SimpleValidator : SpecNodeVisitor {
     override fun visitSimple(node: SpecNode.Simple, ctx: ValidationContext) {
+        ctx.markProcessed(node.specName)
         val param = ctx.findParam(node.specName) ?: return
         val pType = param.symbol.type.resolve()
         val contextualOptional = checkContextualOptionality(param)
@@ -28,7 +29,6 @@ internal object SimpleValidator : SpecNodeVisitor {
         val actual = pType.toClassName().simpleName.lowercase().libTypeNormalization()
         if (expected != actual)
             ctx.reportError("${node.specName}: expected type '$expected', found '$actual'")
-        ctx.markProcessed(node.specName)
     }
 
     private tailrec fun checkContextualOptionality(node: LibSpecNode?): Boolean = when {

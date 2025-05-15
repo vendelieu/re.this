@@ -1,8 +1,6 @@
 package eu.vendeli.rethis.api.processor.type
 
-import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSType
-import com.google.devtools.ksp.symbol.Modifier
 
 internal interface SpecNodeVisitor {
     fun visitSimple(node: SpecNode.Simple, ctx: ValidationContext)
@@ -26,9 +24,6 @@ internal interface SpecNodeVisitor {
         val q = declaration.qualifiedName?.asString() ?: return false
         return q.startsWith("kotlin.collections.") || q.endsWith(".Array")
     }
-
-    fun KSClassDeclaration.isSealed(): Boolean =
-        Modifier.SEALED in modifiers
 }
 
 
