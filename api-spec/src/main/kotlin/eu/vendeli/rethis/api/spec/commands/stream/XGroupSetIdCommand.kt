@@ -2,6 +2,7 @@ package eu.vendeli.rethis.api.spec.commands.stream
 
 import eu.vendeli.rethis.api.spec.common.annotations.RedisCommand
 import eu.vendeli.rethis.api.spec.common.annotations.RedisKey
+import eu.vendeli.rethis.api.spec.common.annotations.RedisOption
 import eu.vendeli.rethis.api.spec.common.annotations.RedisOptional
 import eu.vendeli.rethis.api.spec.common.request.XId
 import eu.vendeli.rethis.api.spec.common.types.CommandRequest
@@ -15,6 +16,6 @@ fun interface XGroupSetIdCommand : RedisCommandSpec<Boolean> {
         @RedisKey key: String,
         group: String,
         id: XId,
-        @RedisOptional entriesRead: Long?
+        @RedisOptional @RedisOption.Token("ENTRIESREAD") entriesread: Long?
     ): CommandRequest<String>
 }

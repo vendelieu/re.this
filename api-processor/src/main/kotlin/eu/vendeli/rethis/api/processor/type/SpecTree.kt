@@ -45,6 +45,7 @@ internal sealed class SpecNode(
         val specName: String,
         val isOptional: Boolean,
         val isMultiple: Boolean,
+        val token: String? = null,
         override val parentNode: SpecNode? = null,
     ) : SpecNode(specName, isOptional, isMultiple) {
         override fun accept(visitor: SpecNodeVisitor, ctx: ValidationContext) =

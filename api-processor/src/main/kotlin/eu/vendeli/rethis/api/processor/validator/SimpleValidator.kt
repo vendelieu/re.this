@@ -10,21 +10,25 @@ import eu.vendeli.rethis.api.spec.common.annotations.RedisOptional
 
 internal object SimpleValidator : SpecNodeVisitor {
     override fun visitSimple(node: SpecNode.Simple, ctx: ValidationContext) {
-        val param = ctx.findParam(node.name) ?: return
+        val param = ctx.findParam(node.specName) ?: return
         val pType = param.symbol.type.resolve()
         val contextualOptional = checkContextualOptionality(param)
 
         if (node.optional && !contextualOptional)
-            ctx.reportError("${node.name}: should be optional (marked with @RedisOptional and nullable or vararg)")
+            ctx.reportError("${node.specName}: should be optional (marked with @RedisOptional and nullable or vararg)")
 
         if (node.multiple && !param.symbol.isVararg && !pType.isCollection())
-            ctx.reportError("${node.name}: should be vararg or Collection")
+            ctx.reportError("${node.specName}: should be vararg or Collection")
+
+        if (node.token != null && !ctx.isTokenPresent(node.token)) {
+            ctx.reportError("Token ${node.token} is not present")
+        }
 
         val expected = node.type.specTypeNormalization()
         val actual = pType.toClassName().simpleName.lowercase().libTypeNormalization()
         if (expected != actual)
-            ctx.reportError("${node.name}: expected type '$expected', found '$actual'")
-        ctx.markProcessed(node.name)
+            ctx.reportError("${node.specName}: expected type '$expected', found '$actual'")
+        ctx.markProcessed(node.specName)
     }
 
     private tailrec fun checkContextualOptionality(node: LibSpecNode?): Boolean = when {

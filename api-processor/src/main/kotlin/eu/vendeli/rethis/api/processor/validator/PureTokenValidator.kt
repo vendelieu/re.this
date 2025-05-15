@@ -6,7 +6,7 @@ import eu.vendeli.rethis.api.processor.type.ValidationContext
 
 internal object PureTokenValidator : SpecNodeVisitor {
     override fun visitPureToken(node: SpecNode.PureToken, ctx: ValidationContext) {
-        if (ctx.isTokenPresent(node.token)) ctx.markProcessed(node.name)
+        if (ctx.isTokenPresent(node.token)) ctx.markProcessed(node.specName)
     }
 
     override fun visitSimple(node: SpecNode.Simple, ctx: ValidationContext) {}

@@ -13,20 +13,20 @@ import eu.vendeli.rethis.api.spec.common.annotations.RedisOption
 internal object BlockValidator : SpecNodeVisitor {
     @OptIn(KspExperimental::class)
     override fun visitBlock(node: SpecNode.Block, ctx: ValidationContext) {
-        val param = ctx.findParam(node.name)
-        ctx.markProcessed(node.name)
+        val param = ctx.findParam(node.specName)
+        ctx.markProcessed(node.specName)
         if (param == null) {
             node.children.forEach { it.accept(this, ctx) }
             return
         }
 
         val decl = param.symbol.type.resolve().declaration.safeCast<KSClassDeclaration>()
-            ?: return ctx.reportError("${node.name}: block not a class")
+            ?: return ctx.reportError("${node.specName}: block not a class")
 
         if (node.token != null) {
             if (!ctx.isTokenPresent(node.token)) ctx.reportError("Token ${node.token} is not present")
             val ann = decl.getAnnotation<RedisOption.Name>()?.get("name") ?: decl.simpleName.asString()
-            if (ann != node.token) ctx.reportError("${node.name}: @Name mismatch '${node.token}'")
+            if (ann != node.token) ctx.reportError("${node.specName}: @Name mismatch '${node.token}'")
         }
     }
 

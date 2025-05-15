@@ -10,13 +10,13 @@ import eu.vendeli.rethis.api.processor.utils.NameNormalizer
 
 internal object OneOfValidator : SpecNodeVisitor {
     override fun visitOneOf(node: SpecNode.OneOf, ctx: ValidationContext) {
-        ctx.markProcessed(node.name)
-        val param = ctx.findParam(node.name) ?: return
+        ctx.markProcessed(node.specName)
+        val param = ctx.findParam(node.specName) ?: return
         val allTokens = node.options.all { it is SpecNode.PureToken }
         if (allTokens) {
             PureTokenValidator.visitPureToken(
                 SpecNode.PureToken(
-                    node.name,
+                    node.specName,
                     (node.options.first() as SpecNode.PureToken).token,
                 ),
                 ctx,
@@ -30,7 +30,7 @@ internal object OneOfValidator : SpecNodeVisitor {
 
         val decl = param.symbol.type.resolve().declaration as? KSClassDeclaration
         if (decl == null || Modifier.SEALED !in decl.modifiers) {
-            ctx.reportError("${node.name}: should be sealed class")
+            ctx.reportError("${node.specName}: should be sealed class")
         } else {
             val expected = node.options.map {
                 NameNormalizer.normalizeClass((it as SpecNode.Simple).name)
@@ -39,10 +39,10 @@ internal object OneOfValidator : SpecNodeVisitor {
                 .filter { it.classKind == ClassKind.CLASS }
                 .map { it.simpleName.asString() }.toSet()
             (expected - actual).forEach {
-                ctx.reportError("${node.name}: missing subclass '$it'")
+                ctx.reportError("${node.specName}: missing subclass '$it'")
             }
             (actual - expected).forEach {
-                ctx.reportError("${node.name}: unexpected subclass '$it'")
+                ctx.reportError("${node.specName}: unexpected subclass '$it'")
             }
         }
     }

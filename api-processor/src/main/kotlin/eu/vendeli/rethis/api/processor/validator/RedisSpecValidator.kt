@@ -43,7 +43,7 @@ internal class RedisSpecValidator(
         val mainValidationReport = errors.entries.filter { it.value.isNotEmpty() }.joinToString("\n") { e ->
             "${e.key.qualifiedName?.asString()}\n${e.value.joinToString("\n") { "- $it" }}"
         }.takeIf { it.isNotBlank() }
-        val notProcessedParams = spec.arguments?.filterNot { it.name in processedParams } ?: emptyList()
+        val notProcessedParams = spec.arguments?.filterNot { it.specName in processedParams } ?: emptyList()
         val responseTypeValidationReport = validateResponseTypes(cmd.key, processedResponses).takeIf { it.isNotEmpty() }
 
         buildString {
@@ -63,7 +63,7 @@ internal class RedisSpecValidator(
             ) appendLine("------")
 
             if (notProcessedParams.isNotEmpty()) appendLine(
-                "- Still unprocessed parameters: [${notProcessedParams.joinToString { it.name }}]",
+                "- Still unprocessed parameters: [${notProcessedParams.joinToString { it.normalizedName }}]",
             )
             responseTypeValidationReport?.let { appendLine("- Response types validation issues:\n$it") }
         }.takeIf { !it.isBlank() }?.let { logger.error(it) }

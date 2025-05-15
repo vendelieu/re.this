@@ -8,32 +8,36 @@ internal class SpecTreeBuilder(private val raw: List<CommandArgument>) {
 
     private fun toNode(arg: CommandArgument, parentNode: SpecNode? = null): SpecNode = when (arg.type) {
         "oneof" -> SpecNode.OneOf(
-            arg.name,
+            arg.displayText ?: arg.name,
             arg.arguments.map { toNode(it, parentNode) },
             arg.optional,
             arg.multiple,
             arg.token,
-            parentNode
+            parentNode,
         )
+
         "block" -> SpecNode.Block(
-            arg.name,
+            arg.displayText ?: arg.name,
             arg.token,
             arg.arguments.map { toNode(it, parentNode) },
             arg.optional,
             arg.multiple,
-            parentNode
+            parentNode,
         )
+
         "pure-token" -> SpecNode.PureToken(
-            arg.name,
+            arg.displayText ?: arg.name,
             arg.token!!,
-            parentNode
+            parentNode,
         )
+
         else -> SpecNode.Simple(
             arg.type,
-            arg.name,
+            arg.displayText ?: arg.name,
             arg.optional,
             arg.multiple,
-            parentNode
+            arg.token,
+            parentNode,
         )
     }
 }
