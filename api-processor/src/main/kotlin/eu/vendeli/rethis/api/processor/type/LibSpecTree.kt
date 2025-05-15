@@ -30,24 +30,33 @@ sealed class LibSpecTree {
 }
 
 /**
- * Find a ParameterNode anywhere in the tree by its effective name.
+ * Starting from this node, recursively spit out the first ParameterNode
+ * whose `.name` equals the given name.
  */
-fun LibSpecTree.findParameterByName(name: String, root: LibSpecTree = this): LibSpecTree.ParameterNode? = when (root) {
-    is LibSpecTree.ParameterNode -> if (root.name == name) root else null
-    else -> root.children.asSequence()
-        .mapNotNull { findParameterByName(name, it) }
-        .firstOrNull()
+fun LibSpecTree.findParameterByName(name: String): LibSpecTree.ParameterNode? {
+    // 1) If I’m a ParameterNode and my name matches, return me
+    if (this is LibSpecTree.ParameterNode && this.name == name) return this
+
+    // 2) Otherwise, search each child in turn
+    for (child in this.children) {
+        val found = child.findParameterByName(name)
+        if (found != null) return found
+    }
+    return null
 }
 
 /**
- * Find a TokenNode anywhere in the tree by its token name.
+ * Same idea, but for TokenNode by its token literal.
  */
-fun LibSpecTree.findTokenByName(token: String, root: LibSpecTree = this): LibSpecTree.TokenNode? = when (root) {
-    is LibSpecTree.TokenNode -> if (root.name == token) root else null
-    else -> root.children.asSequence()
-        .mapNotNull { findTokenByName(token, it) }
-        .firstOrNull()
+fun LibSpecTree.findTokenByName(token: String): LibSpecTree.TokenNode? {
+    if (this is LibSpecTree.TokenNode && this.name == token) return this
+    for (child in this.children) {
+        val found = child.findTokenByName(token)
+        if (found != null) return found
+    }
+    return null
 }
+
 
 
 object SpecTreeBuilder {
@@ -67,12 +76,12 @@ object SpecTreeBuilder {
 
         // Wrap in TokenNode if annotated
         val currentParent = param.preserveToken(parent)
-        val node = LibSpecTree.ParameterNode(currentParent, name, param)
-        currentParent.children += node
+        val paramNode = LibSpecTree.ParameterNode(currentParent, name, param)
+        currentParent.children += paramNode
 
         // If the parameter type is a class, recurse
         // type may be array/collection, especially when it's varargs involved
-        handleParamWithArguments(param.type.resolve(), currentParent)
+        handleParamWithArguments(param.type.resolve(), paramNode)
     }
 
     private fun handleParamWithArguments(pType: KSType, parent: LibSpecTree) {
