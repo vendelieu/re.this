@@ -95,7 +95,7 @@ internal class RedisSpecValidator(
         validateKey(spec, encodeFun, errors)
         spec.second.arguments?.also {
             val tree = SpecTreeBuilder(it).build()
-            val ctx = ValidationContext(encodeFun, tree, fullSpec, errors, processedParams)
+            val ctx = ValidationContext(encodeFun, tree, fullSpec, errors, processedParams, spec.first)
             paramValidator.validateAll(ctx)
         }
         validateMeta(encodeFun, processedParams, errors)

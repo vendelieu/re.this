@@ -31,18 +31,15 @@ class RedisCommandProcessor(
 
     override fun process(resolver: Resolver): List<KSAnnotated> {
         val ret = mutableListOf<KSAnnotated>()
-        // todo check package for not marked with annotation
-
-        resolver.getSymbolsWithAnnotation(RedisCommand::class.qualifiedName!!)
-            .filterIsInstance<KSClassDeclaration>().groupBy {
-                it.getAnnotation<RedisCommand>()?.get("name")!!
-            }.entries.forEach {
-                validator.initProcessing(it)
-            }
-
-
         resolver.getSymbolsWithAnnotation(RedisCommand::class.qualifiedName!!)
             .filterIsInstance<KSClassDeclaration>()
+            .also {c ->
+                c.groupBy {
+                    it.getAnnotation<RedisCommand>()?.get("name")!!
+                }.entries.forEach {
+                    validator.initProcessing(it)
+                }
+            }
             .forEach { cmd ->
                 try {
 //                    processCommand(cmd)

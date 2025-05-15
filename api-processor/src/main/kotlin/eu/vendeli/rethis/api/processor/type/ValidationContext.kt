@@ -9,10 +9,11 @@ internal data class ValidationContext(
     val fullSpec: RedisCommandFullSpec,
     val errors: MutableList<String>,
     val processed: MutableList<String>,
+    val currentCmd: String,
 ) {
     val paramTree = SpecTreeBuilder.build(func)
 
-    fun findParam(name: String): LibSpecNode.ParameterNode? {
+    fun findParam(name: String): LibSpecTree.ParameterNode? {
         val normalizedName = NameNormalizer.normalizeParam(name)
         return paramTree.findParameterByName(normalizedName)
     }
