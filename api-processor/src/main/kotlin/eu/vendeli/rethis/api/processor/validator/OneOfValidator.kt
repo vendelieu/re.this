@@ -10,21 +10,17 @@ import eu.vendeli.rethis.api.processor.utils.NameNormalizer
 
 internal object OneOfValidator : SpecNodeVisitor {
     override fun visitOneOf(node: SpecNode.OneOf, ctx: ValidationContext) {
-        ctx.markProcessed(node.specName)
         val param = ctx.findParam(node.specName) ?: return
+        ctx.markProcessed(node.specName)
         val allTokens = node.options.all { it is SpecNode.PureToken }
 
         if (node.token != null && !ctx.isTokenPresent(node.token)) {
             ctx.reportError("Oneof token ${node.token} is not present")
         }
         if (allTokens) {
-            PureTokenValidator.visitPureToken(
-                SpecNode.PureToken(
-                    node.specName,
-                    (node.options.first() as SpecNode.PureToken).token,
-                ),
-                ctx,
-            )
+            node.options.forEach {
+                PureTokenValidator.visitPureToken(it as SpecNode.PureToken, ctx)
+            }
             return
         }
 

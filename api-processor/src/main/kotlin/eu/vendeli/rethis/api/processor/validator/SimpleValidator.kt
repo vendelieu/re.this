@@ -41,8 +41,8 @@ internal object SimpleValidator : SpecNodeVisitor {
     private tailrec fun checkContextualOptionality(node: LibSpecTree?): Boolean = when {
         node is LibSpecTree.ParameterNode && ( // if there's parameter in hierarchy
             ValidityCheck.OPTIONALITY in node.symbol.parseIgnore() || // or ignored check
-            node.symbol.hasAnnotation<RedisOptional>() && (node.symbol.isVararg || node.symbol.type.resolve().isMarkedNullable)
-            // or actually have optional marks
+                node.symbol.hasAnnotation<RedisOptional>() && // or actually have optional marks
+                (node.symbol.isVararg || node.symbol.type.resolve().isMarkedNullable)
             )
             -> true
 

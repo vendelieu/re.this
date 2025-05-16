@@ -2,6 +2,7 @@ package eu.vendeli.rethis.api.processor.utils
 
 import com.google.devtools.ksp.symbol.*
 import com.squareup.kotlinpoet.*
+import eu.vendeli.rethis.api.processor.type.CommandArgument
 import eu.vendeli.rethis.api.spec.common.annotations.RedisOption
 import eu.vendeli.rethis.api.spec.common.types.RespCode
 import kotlinx.datetime.Instant
@@ -34,3 +35,7 @@ internal fun KSAnnotated.effectiveName() = getAnnotation<RedisOption.Name>()?.ge
 internal fun KSClassDeclaration.isDataObject() = classKind == ClassKind.OBJECT && modifiers.contains(Modifier.DATA)
 internal fun KSClassDeclaration.isSealed() = classKind == ClassKind.CLASS && modifiers.contains(Modifier.SEALED)
 internal fun KSClassDeclaration.isEnum() = classKind == ClassKind.ENUM_CLASS
+
+internal fun List<CommandArgument>.flattenArguments(): List<CommandArgument> = flatMap { argument ->
+    listOf(argument) + argument.arguments.flattenArguments()
+}

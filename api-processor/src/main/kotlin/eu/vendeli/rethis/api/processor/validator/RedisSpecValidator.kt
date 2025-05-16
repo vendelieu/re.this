@@ -26,6 +26,7 @@ internal class RedisSpecValidator(
     private val paramValidator = SpecTreeValidator()
 
     fun initProcessing(cmd: Map.Entry<String, List<KSClassDeclaration>>) {
+        if (cmd.key.startsWith("SENTINEL")) return // skip check for sentinel commands since there's no spec for them
         val spec = fullSpec.commands[cmd.key]
         val processedParams = mutableListOf<String>()
         if (spec == null) {
@@ -43,7 +44,9 @@ internal class RedisSpecValidator(
         val mainValidationReport = errors.entries.filter { it.value.isNotEmpty() }.joinToString("\n") { e ->
             "${e.key.qualifiedName?.asString()}\n${e.value.joinToString("\n") { "- $it" }}"
         }.takeIf { it.isNotBlank() }
-        val notProcessedParams = spec.arguments?.filterNot { it.specName in processedParams } ?: emptyList()
+        val notProcessedParams = spec.arguments?.flattenArguments()?.filterNot {
+            it.specName in processedParams
+        } ?: emptyList()
         val responseTypeValidationReport = validateResponseTypes(cmd.key, processedResponses).takeIf { it.isNotEmpty() }
 
         buildString {
