@@ -1,11 +1,9 @@
 package eu.vendeli.rethis.api.processor.validator
 
-import com.google.devtools.ksp.symbol.ClassKind
-import com.google.devtools.ksp.symbol.KSClassDeclaration
-import com.google.devtools.ksp.symbol.KSValueParameter
-import eu.vendeli.rethis.api.processor.type.SpecNode
-import eu.vendeli.rethis.api.processor.type.SpecNodeVisitor
-import eu.vendeli.rethis.api.processor.type.ValidationContext
+import com.google.devtools.ksp.KspExperimental
+import com.google.devtools.ksp.getAnnotationsByType
+import eu.vendeli.rethis.api.processor.type.*
+import eu.vendeli.rethis.api.spec.common.annotations.RedisMeta
 
 internal class SpecTreeValidator(
     private val simpleVal: SimpleValidator = SimpleValidator,
@@ -18,10 +16,7 @@ internal class SpecTreeValidator(
         // 2. walk tree
         ctx.specTree.forEach { it.accept(asVisitor(), ctx) }
         // 3. order checks
-        validateParameterOrder(ctx)
-        ctx.func.parameters
-            .filter { it.isVararg }
-            .forEach { validateVarargOptionOrder(it, ctx) }
+        validateOrder(ctx)
     }
 
     private fun asVisitor(): SpecNodeVisitor = object : SpecNodeVisitor {
@@ -33,76 +28,69 @@ internal class SpecTreeValidator(
         override fun visitBlock(node: SpecNode.Block, ctx: ValidationContext) = blockVal.visitBlock(node, ctx)
     }
 
-    private fun validateParameterOrder(ctx: ValidationContext) {
-        // todo check correctness
-        val priorities = ctx.func.parameters.mapIndexedNotNull { idx, p ->
-            val name = p.name?.asString() ?: return@mapIndexedNotNull null
-            val explicit = p.annotations
-                .firstOrNull { it.shortName.asString() == "OrderPriority" }
-                ?.arguments?.firstOrNull { it.name?.asString() == "priority" }
-                ?.value as? Int
-            name to (explicit ?: idx)
-        }.toMap()
-        val names = ctx.func.parameters.mapNotNull { it.name?.asString() }
-        names.zipWithNext().forEach { (a, b) ->
-            val pa = priorities[a] ?: Int.MAX_VALUE
-            val pb = priorities[b] ?: Int.MAX_VALUE
-            if (pb < pa) ctx.errors += "Order mismatch: '$b'(=$pb) should come before '$a'(=$pa)'"
-        }
-    }
-
-    private fun validateVarargOptionOrder(
-        param: KSValueParameter,
-        ctx: ValidationContext,
-    ) {
-        val paramName = param.name?.asString() ?: return
-        // Resolve the vararg element type's declaration
-        val elementType = param.type.resolve()
+    /**
+     * Entry point: validates every argument‑list in the spec for the given command.
+     */
+    fun validateOrder(ctx: ValidationContext) {
+        // 1) Look up the spec’s top‑level arguments:
+        val topArgs = ctx.fullSpec.commands
+            .getValue(ctx.currentCmd)
             .arguments
-            .firstOrNull()
-            ?.type
-            ?.resolve()
-            ?.declaration as? KSClassDeclaration
             ?: return
 
-        // Gather all direct subclasses (sealed-class options)
-        val subclasses = elementType.declarations
-            .filterIsInstance<KSClassDeclaration>()
-            .filter { it.classKind == ClassKind.CLASS }
+        // 2) Kick off the recursive checker:
+        checkList(ctx, topArgs, path = listOf(ctx.currentCmd))
+    }
 
-        // Map each subclass to its priority: explicit @OrderPriority or fallback to declaration order
-        val priorities = subclasses.mapIndexed { idx, subDecl ->
-            val ann = subDecl.annotations
-                .firstOrNull { it.shortName.asString() == "OrderPriority" }
-            val explicit = ann
-                ?.arguments
-                ?.firstOrNull { it.name?.asString() == "priority" }
-                ?.value as? Int
-            explicit ?: (idx + 1)
+    /**
+     * Recursively checks that each sibling in `args` is ordered by priority.
+     *
+     * @param ctx   validation context (contains the Kotlin tree and error buffer)
+     * @param args  JSON‑derived arguments at this level
+     * @param path  breadcrumb path for error messages
+     */
+    @OptIn(KspExperimental::class)
+    private fun checkList(
+        ctx: ValidationContext,
+        args: List<CommandArgument>,
+        path: List<String>,
+    ) {
+        // Build a list of (displayPath, priority) for these siblings
+        val siblings = args.mapIndexed { idx, arg ->
+            // a) compute a human‑readable path
+            val display = (path + arg.specName).joinToString(" → ")
+            // b) find matching node in your Kotlin tree (either token or parameter)
+            val node = arg.token
+                ?.let { ctx.paramTree.findTokenByName(it) }
+                ?: ctx.findParam(arg.normalizedName)
+            // c) extract @OrderPriority if present
+            val kPrio = node?.symbol?.getAnnotationsByType(RedisMeta.OrderPriority::class)?.firstOrNull()?.priority
+            // d) fallback to spec index
+            val prio = kPrio ?: idx
+            display to prio
         }
 
-        // Check for duplicates
-        val duplicatePriorities = priorities
-            .groupBy { it }
-            .filter { it.value.size > 1 }
-            .keys
-        if (duplicatePriorities.isNotEmpty()) {
-            ctx.reportError(
-                "Vararg option '$paramName' has duplicate priorities: $duplicatePriorities",
-            )
+        // 1) Check sortedness
+        siblings.zipWithNext().forEach { (prev, next) ->
+            val (pName, pPrio) = prev
+            val (nName, nPrio) = next
+            if (nPrio < pPrio) {
+                ctx.reportError("Order mismatch: “$nName”(=$nPrio) should come after “$pName”(=$pPrio)")
+            }
         }
 
-        // Check for contiguous 1..N sequence
-        val maxPriority = priorities.maxOrNull() ?: 0
-        val expectedSet = (1..maxPriority).toSet()
-        val actualSet = priorities.toSet()
-        if (actualSet != expectedSet) {
-            ctx.reportError(
-                "Vararg option '$paramName' priorities are not contiguous: found $actualSet, expected $expectedSet",
-            )
+        // 2) Check contiguity: e.g. 0..N‑1
+        val prios = siblings.map { it.second }.toSet()
+        val expected = (0 until siblings.size).toSet()
+        if (prios != expected) {
+            ctx.reportError("Non‑contiguous priorities: found $prios, expected $expected")
         }
 
-        // Mark the vararg parameter processed
-        ctx.markProcessed(paramName)
+        // 3) Recurse into any nested sub‑arguments
+        args.forEach { arg ->
+            if (arg.arguments.isNotEmpty()) {
+                checkList(ctx, arg.arguments, path + arg.specName)
+            }
+        }
     }
 }

@@ -215,7 +215,7 @@ internal class RedisSpecValidator(
             }?.toSet() ?: emptySet()
 
         f.parameters.forEach { p ->
-            val extType = p.type.resolve().declaration.qualifiedName?.asString()!!
+            val extType = p.type.resolve().declaration.qualifiedName?.asString() ?: return@forEach
             if (extType !in stdTypes.values && extType !in extensions) {
                 errors += "Parameter '${p.name?.asString()}' has type '$extType' which is not in extensions"
             }

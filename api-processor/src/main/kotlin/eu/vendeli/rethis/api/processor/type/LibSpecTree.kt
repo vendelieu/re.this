@@ -7,24 +7,26 @@ import eu.vendeli.rethis.api.spec.common.annotations.RedisOption
 
 sealed class LibSpecTree {
     open val parent: LibSpecTree? = null
+    abstract val symbol: KSAnnotated
     open val children: MutableList<LibSpecTree> = mutableListOf()
 
     data class TokenNode(
         override val parent: LibSpecTree? = null,
         val name: String,
+        override val symbol: KSAnnotated,
         override val children: MutableList<LibSpecTree> = mutableListOf(),
     ) : LibSpecTree()
 
     data class ParameterNode(
         override val parent: LibSpecTree? = null,
         val name: String,
-        val symbol: KSValueParameter,
+        override val symbol: KSValueParameter,
         override val children: MutableList<LibSpecTree> = mutableListOf(),
     ) : LibSpecTree()
 
     data class ContainerNode(
         override val parent: LibSpecTree? = null,
-        val symbol: KSDeclaration,
+        override val symbol: KSDeclaration,
         override val children: MutableList<LibSpecTree> = mutableListOf(),
     ) : LibSpecTree()
 }
@@ -113,13 +115,13 @@ object SpecTreeBuilder {
                 decl.declarations.filterIsInstance<KSClassDeclaration>().filter {
                     it.classKind == ClassKind.ENUM_ENTRY
                 }.forEach {
-                    currentParent.children += LibSpecTree.TokenNode(currentParent, it.tokenName())
+                    currentParent.children += LibSpecTree.TokenNode(currentParent, it.tokenName(), decl)
                 }
             }
 
             decl.isDataObject() && !decl.hasAnnotation<RedisOption.Token>() -> {
                 val tokName = decl.simpleName.asString() // token case handled in #preserveToken
-                val tokNode = LibSpecTree.TokenNode(currentParent, tokName)
+                val tokNode = LibSpecTree.TokenNode(currentParent, tokName, decl)
                 currentParent.children += tokNode
             }
             // Plain class: descend into ctor params
@@ -133,7 +135,7 @@ object SpecTreeBuilder {
 
     private fun KSAnnotated.preserveToken(givenNode: LibSpecTree): LibSpecTree =
         getAnnotation<RedisOption.Token>()?.get("name")?.let { tokenName ->
-            val tokNode = LibSpecTree.TokenNode(parent = givenNode, name = tokenName)
+            val tokNode = LibSpecTree.TokenNode(parent = givenNode, name = tokenName, symbol = this)
             givenNode.children += tokNode
             tokNode
         } ?: givenNode

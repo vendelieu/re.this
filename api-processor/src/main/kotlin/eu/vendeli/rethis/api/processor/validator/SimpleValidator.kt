@@ -1,12 +1,14 @@
 package eu.vendeli.rethis.api.processor.validator
 
-import com.squareup.kotlinpoet.ksp.toClassName
+import com.squareup.kotlinpoet.ksp.toClassNameOrNull
 import eu.vendeli.rethis.api.processor.type.LibSpecTree
 import eu.vendeli.rethis.api.processor.type.SpecNode
 import eu.vendeli.rethis.api.processor.type.SpecNodeVisitor
 import eu.vendeli.rethis.api.processor.type.ValidationContext
 import eu.vendeli.rethis.api.processor.utils.hasAnnotation
+import eu.vendeli.rethis.api.processor.utils.parseIgnore
 import eu.vendeli.rethis.api.spec.common.annotations.RedisOptional
+import eu.vendeli.rethis.api.spec.common.types.ValidityCheck
 
 internal object SimpleValidator : SpecNodeVisitor {
     override fun visitSimple(node: SpecNode.Simple, ctx: ValidationContext) {
@@ -23,7 +25,7 @@ internal object SimpleValidator : SpecNodeVisitor {
         }
 
         val expected = node.type.specTypeNormalization()
-        val actual = pType.toClassName().simpleName.lowercase().libTypeNormalization()
+        val actual = pType.toClassNameOrNull()?.simpleName?.lowercase()?.libTypeNormalization()
         if (expected != actual) {
             ctx.reportError("${node.specName}: expected type '$expected', found '$actual'")
         }
@@ -37,8 +39,11 @@ internal object SimpleValidator : SpecNodeVisitor {
     }
 
     private tailrec fun checkContextualOptionality(node: LibSpecTree?): Boolean = when {
-        node is LibSpecTree.ParameterNode &&
+        node is LibSpecTree.ParameterNode && ( // if there's parameter in hierarchy
+            ValidityCheck.OPTIONALITY in node.symbol.parseIgnore() || // or ignored check
             node.symbol.hasAnnotation<RedisOptional>() && (node.symbol.isVararg || node.symbol.type.resolve().isMarkedNullable)
+            // or actually have optional marks
+            )
             -> true
 
         node == null -> false
