@@ -1,6 +1,7 @@
 package eu.vendeli.rethis.api.processor.type
 
 import com.google.devtools.ksp.symbol.KSType
+import eu.vendeli.rethis.api.processor.utils.NameNormalizer
 
 internal interface SpecNodeVisitor {
     fun visitSimple(node: SpecNode.Simple, ctx: ValidationContext)
@@ -33,6 +34,9 @@ internal sealed class SpecNode(
     val multiple: Boolean,
     open val parentNode: SpecNode? = null,
 ) {
+    abstract val token: String?
+    var processed: Boolean = false
+
     abstract fun accept(visitor: SpecNodeVisitor, ctx: ValidationContext)
 
     data class Simple(
@@ -40,18 +44,22 @@ internal sealed class SpecNode(
         val specName: String,
         val isOptional: Boolean,
         val isMultiple: Boolean,
-        val token: String? = null,
+        override val token: String? = null,
         override val parentNode: SpecNode? = null,
     ) : SpecNode(specName, isOptional, isMultiple) {
+        val normalizedName get() = NameNormalizer.normalizeParam(specName)
+
         override fun accept(visitor: SpecNodeVisitor, ctx: ValidationContext) =
             visitor.visitSimple(this, ctx)
     }
 
     data class PureToken(
         val specName: String,
-        val token: String,
+        override val token: String,
         override val parentNode: SpecNode? = null,
     ) : SpecNode(specName, optional = false, multiple = false) {
+        val normalizedName get() = NameNormalizer.normalizeParam(specName)
+
         override fun accept(visitor: SpecNodeVisitor, ctx: ValidationContext) =
             visitor.visitPureToken(this, ctx)
     }
@@ -61,21 +69,25 @@ internal sealed class SpecNode(
         val options: List<SpecNode>,
         val isOptional: Boolean,
         val isMultiple: Boolean,
-        val token: String? = null,
+        override val token: String? = null,
         override val parentNode: SpecNode? = null,
     ) : SpecNode(specName, isOptional, isMultiple) {
+        val normalizedName get() = NameNormalizer.normalizeParam(specName)
+
         override fun accept(visitor: SpecNodeVisitor, ctx: ValidationContext) =
             visitor.visitOneOf(this, ctx)
     }
 
     data class Block(
         val specName: String,
-        val token: String?,
+        override val token: String?,
         val children: List<SpecNode>,
         val isOptional: Boolean,
         val isMultiple: Boolean,
         override val parentNode: SpecNode? = null,
     ) : SpecNode(specName, isOptional, isMultiple) {
+        val normalizedName get() = NameNormalizer.normalizeParam(specName)
+
         override fun accept(visitor: SpecNodeVisitor, ctx: ValidationContext) =
             visitor.visitBlock(this, ctx)
     }

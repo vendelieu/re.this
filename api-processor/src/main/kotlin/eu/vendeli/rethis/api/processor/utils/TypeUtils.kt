@@ -24,7 +24,7 @@ internal val stdTypes = mapOf(
     Instant::class.asClassName() to "kotlinx.datetime.Instant",
 )
 
-internal fun KSClassDeclaration.tokenName() = getAnnotation<RedisOption.Token>()?.get("name") ?: simpleName.asString()
+internal fun KSClassDeclaration.tokenName() = getAnnotation<RedisOption.Token>()?.get("name") ?: effectiveName()
 
 internal fun KSAnnotated.effectiveName() = getAnnotation<RedisOption.Name>()?.get("name") ?: when (this) {
     is KSDeclaration -> simpleName.asString()

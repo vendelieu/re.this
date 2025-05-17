@@ -8,7 +8,6 @@ internal data class ValidationContext(
     val specTree: List<SpecNode>,
     val fullSpec: RedisCommandFullSpec,
     val errors: MutableList<String>,
-    val processed: MutableList<String>,
     val currentCmd: String,
 ) {
     val paramTree = SpecTreeBuilder.build(func)
@@ -21,7 +20,6 @@ internal data class ValidationContext(
     fun isTokenPresent(name: String): Boolean = paramTree.findTokenByName(name) != null
 
     fun markProcessed(name: String) {
-        processed += name
     }
 
     fun reportError(msg: String) {

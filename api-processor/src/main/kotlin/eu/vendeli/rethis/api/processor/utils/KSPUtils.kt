@@ -39,4 +39,4 @@ internal fun FileSpec.Builder.typeWrite(param: KSValueParameter, value: String) 
 internal fun KSType.toKSPName() = if (arguments.isEmpty()) toClassName() else toTypeName()
 
 @Suppress("UNCHECKED_CAST", "NOTHING_TO_INLINE")
-internal inline fun <R> Any?.safeCast(): R? = this as? R
+internal inline fun <reified R> Any?.safeCast(): R? = this as? R

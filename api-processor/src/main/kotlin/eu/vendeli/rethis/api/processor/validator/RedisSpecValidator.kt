@@ -23,12 +23,11 @@ internal class RedisSpecValidator(
     private val logger: KSPLogger,
     private val fullSpec: RedisCommandFullSpec,
 ) {
-    private val paramValidator = SpecTreeValidator()
+    private val paramValidator = SpecTreeValidator
 
     fun initProcessing(cmd: Map.Entry<String, List<KSClassDeclaration>>) {
         if (cmd.key.startsWith("SENTINEL")) return // skip check for sentinel commands since there's no spec for them
         val spec = fullSpec.commands[cmd.key]
-        val processedParams = mutableListOf<String>()
         if (spec == null) {
             logger.error("No spec found for command `${cmd.key}`")
             return
@@ -38,20 +37,17 @@ internal class RedisSpecValidator(
 
         cmd.value.forEach {
             val cmdErrorContainer = errors.getOrPut(it) { mutableListOf() }
-            processCommand(cmd.key to spec, it, cmdErrorContainer, processedParams, processedResponses)
+            processCommand(cmd.key to spec, it, cmdErrorContainer, processedResponses)
         }
 
         val mainValidationReport = errors.entries.filter { it.value.isNotEmpty() }.joinToString("\n") { e ->
             "${e.key.qualifiedName?.asString()}\n${e.value.joinToString("\n") { "- $it" }}"
         }.takeIf { it.isNotBlank() }
-        val notProcessedParams = spec.arguments?.flattenArguments()?.filterNot {
-            it.specName in processedParams
-        } ?: emptyList()
         val responseTypeValidationReport = validateResponseTypes(cmd.key, processedResponses).takeIf { it.isNotEmpty() }
 
         buildString {
             if (
-                mainValidationReport != null || notProcessedParams.isNotEmpty() || responseTypeValidationReport != null
+                mainValidationReport != null || responseTypeValidationReport != null
             ) {
                 append(cmd.key)
                 if (mainValidationReport == null) cmd.value.singleOrNull()?.also {
@@ -62,12 +58,9 @@ internal class RedisSpecValidator(
 
             mainValidationReport?.also(::appendLine)
             if (
-                mainValidationReport != null && (notProcessedParams.isNotEmpty() || responseTypeValidationReport != null)
+                mainValidationReport != null && responseTypeValidationReport != null
             ) appendLine("------")
 
-            if (notProcessedParams.isNotEmpty()) appendLine(
-                "- Still unprocessed parameters: [${notProcessedParams.joinToString { it.normalizedName }}]",
-            )
             responseTypeValidationReport?.let { appendLine("- Response types validation issues:\n$it") }
         }.takeIf { !it.isBlank() }?.let { logger.error(it) }
     }
@@ -76,7 +69,6 @@ internal class RedisSpecValidator(
         spec: Pair<String, RedisCommandApiSpec>,
         c: KSClassDeclaration,
         errors: MutableList<String>,
-        processedParams: MutableList<String>,
         processedResponses: MutableSet<RespCode>,
     ) {
         val encodeFun = c.declarations.filterIsInstance<KSFunctionDeclaration>().firstOrNull {
@@ -96,12 +88,15 @@ internal class RedisSpecValidator(
         validateBlockingStatus(annotation, spec.second, errors)
 
         validateKey(spec, encodeFun, errors)
-        spec.second.arguments?.also {
-            val tree = SpecTreeBuilder(it).build()
-            val ctx = ValidationContext(encodeFun, tree, fullSpec, errors, processedParams, spec.first)
-            paramValidator.validateAll(ctx)
+
+        spec.second.arguments?.also { args ->
+            val tree = SpecTreeBuilder(args).build()
+            val ctx = ValidationContext(encodeFun, tree, fullSpec, errors, spec.first)
+            validateMeta(encodeFun, ctx, errors)
+
+            tree.forEach { it.accept(SpecTreeValidator, ctx) }
+            SpecTreeValidator.finalizeValidation(ctx)
         }
-        validateMeta(encodeFun, processedParams, errors)
     }
 
     private fun validateKey(
@@ -298,11 +293,12 @@ internal class RedisSpecValidator(
 
     private fun validateMeta(
         f: KSFunctionDeclaration,
-        processedParams: MutableList<String>,
+        ctx: ValidationContext,
         errors: MutableList<String>,
     ) {
-        f.parameters.forEach { p ->
-            p.getAnnotation<RedisMeta.WithSizeParam>()?.get("name")?.let { processedParams.add(it) }
+        f.parameters.filter { it.hasAnnotation<RedisMeta.WithSizeParam>() }.forEach { p ->
+            val name = p.getAnnotation<RedisMeta.WithSizeParam>()?.get("name")
+            ctx.specTree.find { it.name == name }?.processed = true
         }
     }
 }

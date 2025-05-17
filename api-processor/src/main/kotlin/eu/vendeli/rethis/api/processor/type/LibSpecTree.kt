@@ -9,6 +9,7 @@ sealed class LibSpecTree {
     open val parent: LibSpecTree? = null
     abstract val symbol: KSAnnotated
     open val children: MutableList<LibSpecTree> = mutableListOf()
+    var validated: Boolean = false
 
     data class TokenNode(
         override val parent: LibSpecTree? = null,
@@ -37,7 +38,7 @@ sealed class LibSpecTree {
  */
 fun LibSpecTree.findParameterByName(name: String): LibSpecTree.ParameterNode? {
     // 1) If I’m a ParameterNode and my name matches, return me
-    if (this is LibSpecTree.ParameterNode && this.name == name) return this
+    if (this is LibSpecTree.ParameterNode && this.name == name && !validated) return this
 
     // 2) Otherwise, search each child in turn
     for (child in this.children) {
