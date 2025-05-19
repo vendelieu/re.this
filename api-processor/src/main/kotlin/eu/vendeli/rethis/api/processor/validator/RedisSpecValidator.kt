@@ -12,6 +12,7 @@ import com.squareup.kotlinpoet.ksp.toClassName
 import com.squareup.kotlinpoet.ksp.toTypeName
 import eu.vendeli.rethis.api.processor.type.RedisCommandApiSpec
 import eu.vendeli.rethis.api.processor.type.RedisCommandFullSpec
+import eu.vendeli.rethis.api.processor.type.SpecTreeBuilder
 import eu.vendeli.rethis.api.processor.type.ValidationContext
 import eu.vendeli.rethis.api.processor.utils.*
 import eu.vendeli.rethis.api.spec.common.annotations.RedisCommand
@@ -23,8 +24,6 @@ internal class RedisSpecValidator(
     private val logger: KSPLogger,
     private val fullSpec: RedisCommandFullSpec,
 ) {
-    private val paramValidator = SpecTreeValidator
-
     fun initProcessing(cmd: Map.Entry<String, List<KSClassDeclaration>>) {
         if (cmd.key.startsWith("SENTINEL")) return // skip check for sentinel commands since there's no spec for them
         val spec = fullSpec.commands[cmd.key]

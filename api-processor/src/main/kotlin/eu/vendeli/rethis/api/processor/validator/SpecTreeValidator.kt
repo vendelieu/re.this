@@ -1,7 +1,6 @@
 package eu.vendeli.rethis.api.processor.validator
 
 import com.google.devtools.ksp.KspExperimental
-import com.google.devtools.ksp.getAnnotationsByType
 import com.google.devtools.ksp.symbol.ClassKind
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.Modifier
@@ -17,6 +16,7 @@ internal object SpecTreeValidator : SpecNodeVisitor {
     @OptIn(KspExperimental::class)
     override fun visitSimple(node: SpecNode.Simple, ctx: ValidationContext) {
         if (node.processed) return
+        val initErrorsSize = ctx.errors.size
         // Custom‑codec bypass
         if (ctx.paramTree.findParameterByName(node.normalizedName)?.symbol
                 ?.hasAnnotation<RedisMeta.CustomCodec>() == true
@@ -61,6 +61,7 @@ internal object SpecTreeValidator : SpecNodeVisitor {
         if (node.multiple && !kNode.symbol.isVararg && !t.isCollection()) {
             ctx.reportError("'${node.normalizedName}' must be repeatable")
         }
+        if (ctx.errors.size == initErrorsSize) kNode.validated = true
     }
 
     private tailrec fun checkContextualOptionality(node: LibSpecTree?): Boolean = when {
@@ -76,12 +77,15 @@ internal object SpecTreeValidator : SpecNodeVisitor {
     }
 
     override fun visitPureToken(node: PureToken, ctx: ValidationContext) {
+        val initErrorsSize = ctx.errors.size
         val tok = ctx.paramTree.findTokenByName(node.token)
             ?: return ctx.reportError("Missing pure‑token '${node.token}'")
+        if (ctx.errors.size == initErrorsSize) tok.validated = true
         node.processed = true
     }
 
     override fun visitOneOf(node: SpecNode.OneOf, ctx: ValidationContext) {
+        val initErrorsSize = ctx.errors.size
         val kNode = ctx.paramTree.findParameterByName(node.normalizedName)
             ?: return ctx.reportError("Missing oneof parameter '${node.normalizedName}'")
         node.processed = true
@@ -107,8 +111,8 @@ internal object SpecTreeValidator : SpecNodeVisitor {
                 .toSet()
         }
 
-        val expect = node.options
-            .map { it.token ?: it.name }
+        val expect = node.children
+            .map { it.token ?: it.normalizedName }
             .toSet()
         (expect - actual).forEach {
             ctx.reportError("Missing sub-entity '$it' in oneOf '${decl.simpleName.asString()}'")
@@ -117,12 +121,16 @@ internal object SpecTreeValidator : SpecNodeVisitor {
             ctx.reportError("Unexpected sub-entity '$it' in oneOf '${decl.simpleName.asString()}'")
         }
 
-        node.options.forEach { if (!it.processed) it.accept(this, ctx) }
+        if (ctx.errors.size == initErrorsSize) kNode.validated = true
+        node.children.forEach { if (!it.processed) it.accept(this, ctx) }
     }
 
     override fun visitBlock(node: SpecNode.Block, ctx: ValidationContext) {
-        val kNode = ctx.paramTree.findParameterByName(node.normalizedName)
-            ?: return ctx.reportError("Missing block parameter '${node.normalizedName}'")
+        val kNode = node.token?.let {
+            ctx.paramTree.findTokenByName(it)
+        } ?: ctx.paramTree.findParameterByName(node.normalizedName)
+        ?: return ctx.reportError("Missing block parameter '${node.normalizedName}'")
+        val initErrorsSize = ctx.errors.size
         node.processed = true
 
         node.token?.let {
@@ -131,66 +139,17 @@ internal object SpecTreeValidator : SpecNodeVisitor {
             }
         }
 
+        if (ctx.errors.size == initErrorsSize) kNode.validated = true
         node.children.forEach { if (!it.processed) it.accept(this, ctx) }
     }
 
-    // 2) Order validation
-    fun validateOrder(ctx: ValidationContext) {
-        val top = ctx.fullSpec.commands[ctx.currentCmd]?.arguments ?: return
-        recurseOrder(top, ctx, path = listOf(ctx.currentCmd))
-    }
-
-    @OptIn(KspExperimental::class)
-    private fun recurseOrder(
-        args: List<CommandArgument>,
-        ctx: ValidationContext,
-        path: List<String>,
-    ) {
-        // require explicit @OrderPriority
-        val siblings = args.mapIndexed { idx, arg ->
-            val display = (path + arg.specName).joinToString(" → ")
-            val kNode = arg.token
-                ?.let { ctx.paramTree.findTokenByName(it) }
-                ?: ctx.paramTree.findParameterByName(arg.normalizedName)
-
-            val prio = kNode?.symbol
-                ?.getAnnotationsByType(RedisMeta.OrderPriority::class)
-                ?.firstOrNull()?.priority
-
-            display to (prio ?: Int.MIN_VALUE)
-        }
-        if (siblings.any { it.second == Int.MIN_VALUE }) return
-
-        // strictly increasing
-        siblings.zipWithNext().forEach { (l, r) ->
-            if (r.second <= l.second) {
-                ctx.reportError(
-                    "Order violation: '${r.first}'(=${r.second}) must come after '${l.first}'(=${l.second})",
-                )
-            }
-        }
-
-        // contiguous
-        val prios = siblings.map { it.second }.toSet()
-        val minP = prios.minOrNull()!!
-        val maxP = prios.maxOrNull()!!
-        if (prios != (minP..maxP).toSet()) {
-            ctx.reportError(
-                "Non‑contiguous @OrderPriority at '${path.joinToString(" → ")}': $prios vs ${minP..maxP}",
-            )
-        }
-
-        // recurse
-        args.forEach {
-            if (it.arguments.isNotEmpty()) {
-                recurseOrder(it.arguments, ctx, path + it.specName)
-            }
-        }
+    fun collectOrders(specTree: List<SpecNode>): List<Pair<String, Float>> = specTree.flatMap { node ->
+        listOf((node.token ?: node.normalizedName) to node.order) + collectOrders(node.children)
     }
 
     fun finalizeValidation(ctx: ValidationContext) {
-        validateOrder(ctx)
-        ctx.specTree.filter { !it.processed }
-            .forEach { ctx.reportError("Not processed spec entry: '${it.name}'") }
+        ctx.specTree.filter { !it.processed }.forEach {
+            ctx.reportError("Not processed spec entry: '${it.name}'")
+        }
     }
 }

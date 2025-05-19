@@ -61,8 +61,7 @@ fun LibSpecTree.findTokenByName(token: String): LibSpecTree.TokenNode? {
 }
 
 
-
-object SpecTreeBuilder {
+object LibSpecTreeBuilder {
     fun build(function: KSFunctionDeclaration): LibSpecTree.ContainerNode {
         val root = LibSpecTree.ContainerNode(parent = null, symbol = function)
         function.parameters.forEach { handleValueParam(it, root) }
@@ -77,53 +76,63 @@ object SpecTreeBuilder {
         // Determine name override or default
         val name = param.effectiveName()
 
-        // Wrap in TokenNode if annotated
+        // Preserve any @RedisOption.Token on the parameter itself
         val currentParent = param.preserveToken(parent)
+
+        // Create the ParameterNode with proper order
         val paramNode = LibSpecTree.ParameterNode(currentParent, name, param)
         currentParent.children += paramNode
 
-        // If the parameter type is a class, recurse
-        // type may be array/collection, especially when it's varargs involved
+        // Recurse into its nested type (for sealed enums, data objects, etc.)
         handleParamWithArguments(param.type.resolve(), paramNode)
     }
 
-    private fun handleParamWithArguments(pType: KSType, parent: LibSpecTree) {
-        pType.arguments.forEach {  // handle more nested types
-            handleParamWithArguments(it.type?.resolve() ?: return@forEach, parent)
-        }
-        val declaration = pType.declaration.safeCast<KSClassDeclaration>() ?: return
-        if (declaration.qualifiedName?.getQualifier()?.startsWith("kotlin") == false) {
-            handleClassDecl(declaration, parent)
-        }
-    }
-
-    // 2. Handle a class declaration (sealed, token, or plain)
-    private fun handleClassDecl(
-        decl: KSClassDeclaration,
+    private fun handleParamWithArguments(
+        pType: KSType,
         parent: LibSpecTree,
     ) {
+        // 1) Recurse into generic arguments first
+        pType.arguments.forEach { arg ->
+            arg.type?.resolve()?.let {
+                handleParamWithArguments(it, parent)
+            }
+        }
+
+        // 2) If the type is a KSClassDeclaration, handle special cases
+        val decl = pType.declaration.safeCast<KSClassDeclaration>() ?: return
+        // Skip Kotlin stdlib types
+        if (decl.qualifiedName?.getQualifier()?.startsWith("kotlin") == true) return
+
+        // Preserve any token annotation on the type
         val currentParent = decl.preserveToken(parent)
 
         when {
-            // Sealed container: iterate subclasses
-            decl.isSealed() -> {
-                decl.getSealedSubclasses().forEach { sub ->
-                    handleClassDecl(sub, currentParent)
-                }
+            // Sealed class: each subclass becomes its own TokenNode
+            decl.isSealed() -> decl.getSealedSubclasses().forEach { sub ->
+                currentParent.children += LibSpecTree.TokenNode(
+                    parent = currentParent,
+                    name = sub.tokenName(),
+                    symbol = sub,
+                )
             }
-
-            decl.isEnum() -> {
-                decl.declarations.filterIsInstance<KSClassDeclaration>().filter {
-                    it.classKind == ClassKind.ENUM_ENTRY
-                }.forEach {
-                    currentParent.children += LibSpecTree.TokenNode(currentParent, it.tokenName(), decl)
+            // Enum: each enum entry becomes a TokenNode
+            decl.isEnum() -> decl.declarations
+                .filterIsInstance<KSClassDeclaration>()
+                .filter { it.classKind == ClassKind.ENUM_ENTRY }
+                .forEach { entry ->
+                    currentParent.children += LibSpecTree.TokenNode(
+                        parent = currentParent,
+                        name = entry.tokenName(),
+                        symbol = entry,
+                    )
                 }
-            }
-
+            // Data object without explicit token
             decl.isDataObject() && !decl.hasAnnotation<RedisOption.Token>() -> {
-                val tokName = decl.simpleName.asString() // token case handled in #preserveToken
-                val tokNode = LibSpecTree.TokenNode(currentParent, tokName, decl)
-                currentParent.children += tokNode
+                currentParent.children += LibSpecTree.TokenNode(
+                    parent = currentParent,
+                    name = decl.effectiveName(),
+                    symbol = decl,
+                )
             }
             // Plain class: descend into ctor params
             decl.classKind == ClassKind.CLASS -> {
@@ -134,11 +143,16 @@ object SpecTreeBuilder {
         }
     }
 
-    private fun KSAnnotated.preserveToken(givenNode: LibSpecTree): LibSpecTree =
-        getAnnotation<RedisOption.Token>()?.get("name")?.let { tokenName ->
-            val tokNode = LibSpecTree.TokenNode(parent = givenNode, name = tokenName, symbol = this)
-            givenNode.children += tokNode
-            tokNode
-        } ?: givenNode
+    // Lift any @RedisOption.Token into its own child TokenNode
+    private fun KSAnnotated.preserveToken(
+        givenNode: LibSpecTree,
+    ): LibSpecTree = getAnnotation<RedisOption.Token>()?.get("name")?.let { tok ->
+        val tokNode = LibSpecTree.TokenNode(
+            parent = givenNode,
+            name = tok,
+            symbol = this,
+        )
+        givenNode.children += tokNode
+        tokNode
+    } ?: givenNode
 }
-
