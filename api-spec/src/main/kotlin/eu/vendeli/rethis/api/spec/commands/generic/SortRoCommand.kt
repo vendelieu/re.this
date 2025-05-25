@@ -14,5 +14,5 @@ fun interface SortRoCommand : RedisCommandSpec<List<String>> {
     suspend fun encode(
         @RedisKey key: String,
         @RedisOptional vararg option: SortRoOption
-    ): CommandRequest<String>
+    ): CommandRequest<List<String>>
 }

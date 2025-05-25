@@ -9,5 +9,5 @@ import eu.vendeli.rethis.api.spec.common.types.RespCode
 
 @RedisCommand("WATCH", RedisOperation.WRITE, [RespCode.SIMPLE_STRING])
 fun interface WatchCommand : RedisCommandSpec<Boolean> {
-    suspend fun encode(@RedisKey vararg key: String): CommandRequest<String>
+    suspend fun encode(@RedisKey vararg key: String): CommandRequest<List<String>>
 }

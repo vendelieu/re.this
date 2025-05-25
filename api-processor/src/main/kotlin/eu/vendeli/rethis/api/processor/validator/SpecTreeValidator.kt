@@ -6,6 +6,7 @@ import com.google.devtools.ksp.symbol.Modifier
 import eu.vendeli.rethis.api.processor.type.*
 import eu.vendeli.rethis.api.processor.type.SpecNode.PureToken
 import eu.vendeli.rethis.api.processor.utils.*
+import eu.vendeli.rethis.api.spec.common.annotations.RedisKey
 import eu.vendeli.rethis.api.spec.common.annotations.RedisOptional
 import eu.vendeli.rethis.api.spec.common.types.ValidityCheck
 
@@ -23,16 +24,16 @@ internal object SpecTreeValidator : SpecNodeVisitor {
         }
         // Token presence
         node.token?.let {
-            if (ctx.paramTree.findTokenByName(it) == null) {
+            if (param != null && ctx.paramTree.findTokenByName(it) == null) {
                 ctx.reportError("Token '$it' not found for '${node.normalizedName}'")
             }
         }
 
         if (param == null) return
+        val ignores = param.symbol.parseIgnore()
 
         // Type check
         val expectedK = node.type.lowercase().specTypeNormalization()
-        val shouldIgnore = param.symbol.parseIgnore().contains(ValidityCheck.TYPE)
         val actualK = param.symbol.type
             .resolve().let {
                 if (it.isCollection()) it.arguments.first().type?.resolve()
@@ -41,7 +42,7 @@ internal object SpecTreeValidator : SpecNodeVisitor {
             ?.declaration
             ?.simpleName
             ?.asString()?.lowercase()?.libTypeNormalization()
-        if (!shouldIgnore && !actualK.equals(expectedK, true)) {
+        if (!ignores.contains(ValidityCheck.TYPE) && !actualK.equals(expectedK, true)) {
             ctx.reportError(
                 "Type mismatch for '${node.normalizedName}': expected $expectedK, got $actualK",
             )
@@ -51,13 +52,18 @@ internal object SpecTreeValidator : SpecNodeVisitor {
         val t = param.symbol.type.resolve()
         val contextualOptional = checkContextualOptionality(param)
 
-        if (node.optional && !contextualOptional) {
+        if (!ignores.contains(ValidityCheck.OPTIONALITY) && node.optional && !contextualOptional) {
             ctx.reportError("'${node.normalizedName}' must be optional")
         }
 
         // Multiple
-        if (node.multiple && !param.symbol.isVararg && !t.isCollection()) {
-            ctx.reportError("'${node.normalizedName}' must be repeatable")
+        if (!ignores.contains(ValidityCheck.REPEATABILITY) && node.multiple && !param.symbol.isVararg && !t.isCollection()) {
+            ctx.reportError("'${node.normalizedName}' must be repeatable\n${param.symbol.parent?.parent}")
+        }
+
+        // Key
+        if (node.idx != null && !param.symbol.hasAnnotation<RedisKey>()) {
+            ctx.reportError("Parameter `${node.normalizedName}` is not annotated with @RedisKey")
         }
 
         node.processed = true
@@ -79,7 +85,10 @@ internal object SpecTreeValidator : SpecNodeVisitor {
         if (ctx.paramTree.findTokenByName(node.token) != null) {
             node.processed = true
         } else {
-            ctx.reportError("Token '${node.token}' not found")
+            ctx.logger.warn(
+                "Token '${node.token}' not found for `${ctx.currentCmd}` " +
+                    "in ${ctx.func.parent?.safeCast<KSClassDeclaration>()?.qualifiedName?.asString()}",
+            )
         }
     }
 
@@ -124,7 +133,7 @@ internal object SpecTreeValidator : SpecNodeVisitor {
             ctx.reportError("'${node.normalizedName}' must be repeatable")
         }
         if (node.optional && !checkContextualOptionality(param)) {
-            ctx.reportError("'${node.normalizedName}' must be optional")
+            ctx.reportError("Block '${node.normalizedName}' must be optional")
         }
     }
 }

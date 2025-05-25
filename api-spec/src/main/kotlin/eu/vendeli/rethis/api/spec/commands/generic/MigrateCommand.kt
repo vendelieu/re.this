@@ -24,5 +24,5 @@ fun interface MigrateCommand : RedisCommandSpec<String> {
         destinationDb: Long,
         timeout: Duration,
         @RedisOptional vararg option: MigrateOption,
-    ): CommandRequest<String>
+    ): CommandRequest<List<String>>
 }

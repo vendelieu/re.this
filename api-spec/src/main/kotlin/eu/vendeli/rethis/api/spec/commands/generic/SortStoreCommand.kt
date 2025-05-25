@@ -2,12 +2,10 @@ package eu.vendeli.rethis.api.spec.commands.generic
 
 import eu.vendeli.rethis.api.spec.common.annotations.RedisCommand
 import eu.vendeli.rethis.api.spec.common.annotations.RedisKey
+import eu.vendeli.rethis.api.spec.common.annotations.RedisMeta
 import eu.vendeli.rethis.api.spec.common.annotations.RedisOptional
 import eu.vendeli.rethis.api.spec.common.request.SortOption
-import eu.vendeli.rethis.api.spec.common.types.CommandRequest
-import eu.vendeli.rethis.api.spec.common.types.RedisCommandSpec
-import eu.vendeli.rethis.api.spec.common.types.RedisOperation
-import eu.vendeli.rethis.api.spec.common.types.RespCode
+import eu.vendeli.rethis.api.spec.common.types.*
 
 @RedisCommand(
     "SORT",
@@ -18,7 +16,7 @@ import eu.vendeli.rethis.api.spec.common.types.RespCode
 fun interface SortStoreCommand : RedisCommandSpec<Long> {
     suspend fun encode(
         @RedisKey key: String,
-        store: SortOption.Store,
+        @RedisMeta.IgnoreCheck([ValidityCheck.OPTIONALITY]) store: SortOption.Store,
         @RedisOptional vararg option: SortOption,
     ): CommandRequest<List<String>>
 }

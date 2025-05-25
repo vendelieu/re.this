@@ -14,7 +14,6 @@ import com.squareup.kotlinpoet.ksp.toTypeName
 import eu.vendeli.rethis.api.processor.type.*
 import eu.vendeli.rethis.api.processor.utils.*
 import eu.vendeli.rethis.api.spec.common.annotations.RedisCommand
-import eu.vendeli.rethis.api.spec.common.annotations.RedisKey
 import eu.vendeli.rethis.api.spec.common.annotations.RedisMeta
 import eu.vendeli.rethis.api.spec.common.types.RespCode
 import eu.vendeli.rethis.api.spec.common.types.ValidityCheck
@@ -44,7 +43,7 @@ internal class RedisSpecValidator(
             processedEntries += processCommand(cmd.key to spec, it, cmdErrorContainer, processedResponses)
         }
 
-        val notProcessedElements = fullSpec.commands[cmd.key]?.collectAllArguments()?.map { it.specName }?.filter {
+        val notProcessedElements = fullSpec.commands[cmd.key]?.collectAllArguments()?.map { it.name }?.filter {
             it !in processedEntries
         }
 
@@ -103,7 +102,7 @@ internal class RedisSpecValidator(
         validateKey(spec, encodeFun, errors)
 
         val tree = SpecTreeBuilder(spec.second.arguments ?: emptyList()).build()
-        val ctx = ValidationContext(encodeFun, tree, fullSpec, errors, spec.first)
+        val ctx = ValidationContext(encodeFun, tree, fullSpec, errors, spec.first, logger)
 
         validateMeta(encodeFun, ctx, errors)
 
@@ -128,7 +127,7 @@ internal class RedisSpecValidator(
             errors += "No return type found for encode function"
         } else {
             val isKeyTypeNameList = commandRequestType.starProjection().toTypeName() == LIST.parameterizedBy(STAR)
-            if (keys.size > 1 && !isKeyTypeNameList) {
+            if ((keys.size > 1 || keys.any { it.multiple }) && !isKeyTypeNameList) {
                 errors += "Multiple keys but command request type is not List<*>"
             }
 
@@ -142,23 +141,6 @@ internal class RedisSpecValidator(
 
             if (desiredKeyType != actualKeyType) {
                 errors += "Key type mismatch: desired `$desiredKeyType` but actual `$actualKeyType`"
-            }
-        }
-
-
-        keys.forEach { k ->
-            val keyParam = f.parameters.find { it.name?.asString() == k.name }
-            if (keyParam == null) {
-                errors += "Not found key-parameter `${k.name}`"
-                return@forEach
-            }
-
-            if (!keyParam.hasAnnotation<RedisKey>()) {
-                errors += "Parameter `${keyParam.name?.asString()}` is not annotated with @RedisKey"
-            }
-
-            if ((keyParam.isVararg || keyParam.type.resolve().isCollection()) && !k.multiple) {
-                errors += "Parameter `${keyParam.name?.asString()}` is vararg/list but spec.multiple=false"
             }
         }
     }

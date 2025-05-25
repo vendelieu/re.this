@@ -12,5 +12,5 @@ import eu.vendeli.rethis.api.spec.common.types.RespCode
 fun interface MSetNxCommand : RedisCommandSpec<Boolean> {
     suspend fun encode(
         @RedisKey vararg data: KeyValue,
-    ): CommandRequest<String>
+    ): CommandRequest<List<String>>
 }

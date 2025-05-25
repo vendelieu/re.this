@@ -11,5 +11,5 @@ import eu.vendeli.rethis.api.spec.common.types.RespCode
 fun interface MGetCommand : RedisCommandSpec<List<String?>> {
     suspend fun encode(
         @RedisKey vararg key: String,
-    ): CommandRequest<String>
+    ): CommandRequest<List<String>>
 }

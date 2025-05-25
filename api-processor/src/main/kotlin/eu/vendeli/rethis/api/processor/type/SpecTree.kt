@@ -50,6 +50,7 @@ internal sealed class SpecNode {
         override val token: String? = null,
         override val parentNode: SpecNode? = null,
         override val order: Float,
+        val idx: Int? = null,
     ) : SpecNode() {
         override fun accept(visitor: SpecNodeVisitor, ctx: ValidationContext) =
             visitor.visitSimple(this, ctx)
@@ -111,7 +112,7 @@ internal class SpecTreeBuilder(private val raw: List<CommandArgument>) {
     private fun toNode(arg: CommandArgument, order: Float, parent: SpecNode? = null): SpecNode =
         when (arg.type) {
             "oneof" -> SpecNode.OneOf(
-                name = arg.specName,
+                name = arg.name,
                 optional = arg.optional,
                 multiple = arg.multiple,
                 token = arg.token,
@@ -121,7 +122,7 @@ internal class SpecTreeBuilder(private val raw: List<CommandArgument>) {
             )
 
             "block" -> SpecNode.Block(
-                name = arg.specName,
+                name = arg.name,
                 token = arg.token,
                 optional = arg.optional,
                 multiple = arg.multiple,
@@ -131,7 +132,7 @@ internal class SpecTreeBuilder(private val raw: List<CommandArgument>) {
             )
 
             "pure-token" -> SpecNode.PureToken(
-                name = arg.specName,
+                name = arg.name,
                 token = arg.token!!,
                 parentNode = parent,
                 order = order,
@@ -139,12 +140,13 @@ internal class SpecTreeBuilder(private val raw: List<CommandArgument>) {
 
             else -> SpecNode.Simple(
                 type = arg.type,
-                name = arg.specName,
+                name = arg.name,
                 optional = arg.optional,
                 multiple = arg.multiple,
                 token = arg.token,
                 parentNode = parent,
                 order = order,
+                idx = arg.keySpecIndex
             )
         }
 

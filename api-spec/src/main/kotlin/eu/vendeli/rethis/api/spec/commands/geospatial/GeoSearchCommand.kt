@@ -27,8 +27,8 @@ fun interface GeoSearchCommand : RedisCommandSpec<List<GeoSearchResult>> {
         @RedisOptional @RedisOption.Token("WITHCOORD") withCoord: Boolean?,
         @RedisOptional @RedisOption.Token("WITHDIST") withDist: Boolean?,
         @RedisOptional @RedisOption.Token("WITHHASH") withHash: Boolean?,
-        @RedisOptional count: Long?,
-        @RedisOptional any: Boolean?,
+        @RedisOptional @RedisOption.Token("COUNT") count: Long?,
+        @RedisOptional @RedisOption.Token("ANY") any: Boolean?,
         @RedisOptional order: GeoSort?,
     ): CommandRequest<String>
 }

@@ -19,7 +19,7 @@ sealed class MigrateOption {
 
     @RedisOption.Token("AUTH")
     class Auth(
-        val password: String,
+        val auth: String,
     ) : Authorization()
 
     @RedisOption.Token("AUTH2")
@@ -30,6 +30,6 @@ sealed class MigrateOption {
 
     @RedisOption.Token("KEYS")
     class Keys(
-        @RedisKey vararg val key: String,
+        @RedisKey vararg val keys: String,
     ) : MigrateOption()
 }

@@ -1,6 +1,8 @@
 package eu.vendeli.rethis.api.spec.common.request.string
 
+import eu.vendeli.rethis.api.spec.common.annotations.RedisKey
+
 class KeyValue(
-    val key: String,
+    @RedisKey val key: String,
     val value: String
 )
