@@ -14,6 +14,6 @@ fun interface PExpireCommand : RedisCommandSpec<Boolean> {
     suspend fun encode(
         @RedisKey key: String,
         milliseconds: Long,
-        @RedisOptional option: UpdateStrategyOption?
+        @RedisOptional condition: UpdateStrategyOption?
     ): CommandRequest<String>
 }

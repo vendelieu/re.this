@@ -2,8 +2,10 @@ package eu.vendeli.rethis.api.spec.commands.stream
 
 import eu.vendeli.rethis.api.spec.common.annotations.RedisCommand
 import eu.vendeli.rethis.api.spec.common.annotations.RedisKey
+import eu.vendeli.rethis.api.spec.common.annotations.RedisOption
 import eu.vendeli.rethis.api.spec.common.annotations.RedisOptional
 import eu.vendeli.rethis.api.spec.common.request.XAddOption
+import eu.vendeli.rethis.api.spec.common.request.common.FieldValue
 import eu.vendeli.rethis.api.spec.common.types.CommandRequest
 import eu.vendeli.rethis.api.spec.common.types.RedisCommandSpec
 import eu.vendeli.rethis.api.spec.common.types.RedisOperation
@@ -13,14 +15,14 @@ import eu.vendeli.rethis.api.spec.common.types.RespCode
     "XADD",
     RedisOperation.WRITE,
     [RespCode.BULK, RespCode.NULL],
-    extensions = [XAddOption.NOMKSTREAM::class, XAddOption.Trim::class, XAddOption.Identifier::class],
+    extensions = [XAddOption.Trim::class, XAddOption.Identifier::class, FieldValue::class],
 )
 fun interface XAddCommand : RedisCommandSpec<String> {
     suspend fun encode(
         @RedisKey key: String,
-        @RedisOptional nomkstream: Boolean?,
+        @RedisOptional @RedisOption.Token("NOMKSTREAM") nomkstream: Boolean?,
         @RedisOptional trim: XAddOption.Trim?,
-        id: XAddOption.Identifier,
-        vararg entry: Pair<String, String>,
+        idSelector: XAddOption.Identifier,
+        vararg entry: FieldValue,
     ): CommandRequest<String>
 }

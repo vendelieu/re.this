@@ -9,5 +9,5 @@ import eu.vendeli.rethis.api.spec.common.types.RespCode
 
 @RedisCommand("JSON.MSET", RedisOperation.WRITE, [RespCode.SIMPLE_STRING], extensions = [JsonEntry::class])
 fun interface JsonMSetCommand : RedisCommandSpec<Boolean> {
-    suspend fun encode(vararg entry: JsonEntry): CommandRequest<Nothing>
+    suspend fun encode(vararg triplet: JsonEntry): CommandRequest<Nothing>
 }

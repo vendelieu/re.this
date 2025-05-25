@@ -15,9 +15,9 @@ import eu.vendeli.rethis.api.spec.common.types.RespCode
 fun interface XTrimCommand : RedisCommandSpec<Long> {
     suspend fun encode(
         @RedisKey key: String,
-        threshold: Long,
-        trimmingStrategy: TrimmingStrategy,
-        @RedisOptional exactement: Exactement?,
+        threshold: String,
+        strategy: TrimmingStrategy,
+        @RedisOptional operator: Exactement?,
         @RedisOptional trim: XOption.Limit?
     ): CommandRequest<String>
 }

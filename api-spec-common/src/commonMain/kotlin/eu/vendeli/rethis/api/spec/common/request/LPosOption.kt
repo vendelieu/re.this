@@ -14,11 +14,11 @@ sealed class LPosOption {
 
     @RedisOption.Token("MAXLEN")
     class MaxLen(
-        val maxLen: Long,
+        val len: Long,
     ) : CommonOption()
 
     @RedisOption.Token("COUNT")
     class Count(
-        val count: Long,
+        val numMatches: Long,
     ) : LPosOption()
 }

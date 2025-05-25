@@ -9,29 +9,29 @@ sealed class GeoSearchOption
 @RedisOptionContainer
 sealed class CenterPoint : GeoSearchOption()
 
-@RedisOption
-class FROMMEMBER(
+@RedisOption.Token("FROMMEMBER")
+class FromMember(
     val member: String,
 ) : CenterPoint()
 
-@RedisOption
-class FROMLONLAT(
-    longitude: Double,
-    latitude: Double,
+@RedisOption.Token("FROMLONLAT")
+class FromLongitudeLatitude(
+    val longitude: Double,
+    val latitude: Double,
 ) : CenterPoint()
 
 @RedisOptionContainer
 sealed class Shape : GeoSearchOption()
 
-@RedisOption
-class BYRADIUS(
-    radius: Double,
-    unit: GeoUnit,
+@RedisOption.Token("BYRADIUS")
+class ByRadius(
+    val radius: Double,
+    val unit: GeoUnit,
 ) : Shape()
 
-@RedisOption
-class BYBOX(
-    width: Double,
-    height: Double,
-    unit: GeoUnit,
+@RedisOption.Token("BYBOX")
+class ByBox(
+    val width: Double,
+    val height: Double,
+    val unit: GeoUnit,
 ) : Shape()

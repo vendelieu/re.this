@@ -1,8 +1,11 @@
 package eu.vendeli.rethis.api.spec.commands.stream
 
 import eu.vendeli.rethis.api.spec.common.annotations.RedisCommand
+import eu.vendeli.rethis.api.spec.common.annotations.RedisKey
+import eu.vendeli.rethis.api.spec.common.annotations.RedisOption
 import eu.vendeli.rethis.api.spec.common.annotations.RedisOptional
-import eu.vendeli.rethis.api.spec.common.request.XOption
+import eu.vendeli.rethis.api.spec.common.request.stream.XReadGroupKeyIds
+import eu.vendeli.rethis.api.spec.common.request.stream.XReadGroupOption
 import eu.vendeli.rethis.api.spec.common.types.*
 
 @RedisCommand(
@@ -10,16 +13,13 @@ import eu.vendeli.rethis.api.spec.common.types.*
     RedisOperation.READ,
     [RespCode.ARRAY, RespCode.MAP, RespCode.NULL],
     isBlocking = true,
-    extensions = [XOption.Limit::class],
+    extensions = [XReadGroupKeyIds::class, XReadGroupOption::class]
 )
 fun interface XReadGroupCommand : RedisCommandSpec<Map<String, RType?>> {
     suspend fun encode(
-        group: String,
+        @RedisOption.Token("GROUP") group: String,
         consumer: String,
-//        @RedisKey keys: List<String>,
-//        ids: List<String>,
-        @RedisOptional count: XOption.Limit?,
-        @RedisOptional milliseconds: Long?,
-        @RedisOptional noack: Boolean?,
+        keyIds: XReadGroupKeyIds,
+        @RedisOptional vararg option: XReadGroupOption,
     ): CommandRequest<List<String>>
 }

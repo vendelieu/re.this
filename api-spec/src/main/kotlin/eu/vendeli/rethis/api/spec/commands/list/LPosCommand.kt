@@ -2,6 +2,7 @@ package eu.vendeli.rethis.api.spec.commands.list
 
 import eu.vendeli.rethis.api.spec.common.annotations.RedisCommand
 import eu.vendeli.rethis.api.spec.common.annotations.RedisKey
+import eu.vendeli.rethis.api.spec.common.annotations.RedisOptional
 import eu.vendeli.rethis.api.spec.common.request.LPosOption
 import eu.vendeli.rethis.api.spec.common.types.CommandRequest
 import eu.vendeli.rethis.api.spec.common.types.RedisCommandSpec
@@ -13,6 +14,6 @@ fun interface LPosCommand : RedisCommandSpec<Long> {
     suspend fun encode(
         @RedisKey key: String,
         element: String,
-        vararg option: LPosOption.CommonOption
+        @RedisOptional vararg option: LPosOption.CommonOption
     ): CommandRequest<String>
 }

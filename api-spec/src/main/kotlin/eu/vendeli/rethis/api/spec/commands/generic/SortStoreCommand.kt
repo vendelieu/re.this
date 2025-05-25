@@ -9,11 +9,16 @@ import eu.vendeli.rethis.api.spec.common.types.RedisCommandSpec
 import eu.vendeli.rethis.api.spec.common.types.RedisOperation
 import eu.vendeli.rethis.api.spec.common.types.RespCode
 
-@RedisCommand("SORT", RedisOperation.WRITE, [RespCode.INTEGER], extensions = [SortOption.STORE::class])
+@RedisCommand(
+    "SORT",
+    RedisOperation.WRITE,
+    [RespCode.INTEGER],
+    extensions = [SortOption.Store::class, SortOption::class],
+)
 fun interface SortStoreCommand : RedisCommandSpec<Long> {
     suspend fun encode(
         @RedisKey key: String,
-        store: SortOption.STORE,
-        @RedisOptional vararg option: SortOption
-    ): CommandRequest<String>
+        store: SortOption.Store,
+        @RedisOptional vararg option: SortOption,
+    ): CommandRequest<List<String>>
 }

@@ -2,6 +2,7 @@ package eu.vendeli.rethis.api.spec.commands.stream
 
 import eu.vendeli.rethis.api.spec.common.annotations.RedisCommand
 import eu.vendeli.rethis.api.spec.common.annotations.RedisKey
+import eu.vendeli.rethis.api.spec.common.annotations.RedisOption
 import eu.vendeli.rethis.api.spec.common.annotations.RedisOptional
 import eu.vendeli.rethis.api.spec.common.types.*
 
@@ -13,7 +14,7 @@ fun interface XAutoClaimCommand : RedisCommandSpec<List<RType>> {
         consumer: String,
         minIdleTime: String,
         start: String,
-        @RedisOptional count: Long?,
-        @RedisOptional justid: Boolean?
+        @RedisOptional @RedisOption.Token("COUNT") count: Long?,
+        @RedisOptional @RedisOption.Token("JUSTID") justid: Boolean?
     ): CommandRequest<String>
 }

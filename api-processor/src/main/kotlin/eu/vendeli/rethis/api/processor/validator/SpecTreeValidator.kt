@@ -1,13 +1,11 @@
 package eu.vendeli.rethis.api.processor.validator
 
 import com.google.devtools.ksp.KspExperimental
-import com.google.devtools.ksp.symbol.ClassKind
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.Modifier
 import eu.vendeli.rethis.api.processor.type.*
 import eu.vendeli.rethis.api.processor.type.SpecNode.PureToken
 import eu.vendeli.rethis.api.processor.utils.*
-import eu.vendeli.rethis.api.spec.common.annotations.RedisMeta
 import eu.vendeli.rethis.api.spec.common.annotations.RedisOptional
 import eu.vendeli.rethis.api.spec.common.types.ValidityCheck
 
@@ -16,19 +14,13 @@ internal object SpecTreeValidator : SpecNodeVisitor {
     @OptIn(KspExperimental::class)
     override fun visitSimple(node: SpecNode.Simple, ctx: ValidationContext) {
         if (node.processed) return
-        val initErrorsSize = ctx.errors.size
         // Custom‑codec bypass
-        if (ctx.paramTree.findParameterByName(node.normalizedName)?.symbol
-                ?.hasAnnotation<RedisMeta.CustomCodec>() == true
-        ) {
+        val param = ctx.paramTree.findParameterByName(node.normalizedName)
+
+        if (param?.symbol?.isCustomEncoder() == true) {
             node.processed = true
             return
         }
-
-        val kNode = ctx.paramTree.findParameterByName(node.normalizedName)
-            ?: return ctx.reportError("Missing lib parameter for spec '${node.normalizedName}'")
-        node.processed = true
-
         // Token presence
         node.token?.let {
             if (ctx.paramTree.findTokenByName(it) == null) {
@@ -36,32 +28,39 @@ internal object SpecTreeValidator : SpecNodeVisitor {
             }
         }
 
+        if (param == null) return
+
         // Type check
         val expectedK = node.type.lowercase().specTypeNormalization()
-        val actualK = kNode.symbol.type
-            .resolve()
-            .declaration
-            .simpleName
-            .asString().lowercase().libTypeNormalization()
-        if (!actualK.equals(expectedK, true)) {
+        val shouldIgnore = param.symbol.parseIgnore().contains(ValidityCheck.TYPE)
+        val actualK = param.symbol.type
+            .resolve().let {
+                if (it.isCollection()) it.arguments.first().type?.resolve()
+                else it
+            }
+            ?.declaration
+            ?.simpleName
+            ?.asString()?.lowercase()?.libTypeNormalization()
+        if (!shouldIgnore && !actualK.equals(expectedK, true)) {
             ctx.reportError(
                 "Type mismatch for '${node.normalizedName}': expected $expectedK, got $actualK",
             )
         }
 
         // Optionality
-        val t = kNode.symbol.type.resolve()
-        val contextualOptional = checkContextualOptionality(kNode)
+        val t = param.symbol.type.resolve()
+        val contextualOptional = checkContextualOptionality(param)
 
         if (node.optional && !contextualOptional) {
             ctx.reportError("'${node.normalizedName}' must be optional")
         }
 
         // Multiple
-        if (node.multiple && !kNode.symbol.isVararg && !t.isCollection()) {
+        if (node.multiple && !param.symbol.isVararg && !t.isCollection()) {
             ctx.reportError("'${node.normalizedName}' must be repeatable")
         }
-        if (ctx.errors.size == initErrorsSize) kNode.validated = true
+
+        node.processed = true
     }
 
     private tailrec fun checkContextualOptionality(node: LibSpecTree?): Boolean = when {
@@ -77,79 +76,55 @@ internal object SpecTreeValidator : SpecNodeVisitor {
     }
 
     override fun visitPureToken(node: PureToken, ctx: ValidationContext) {
-        val initErrorsSize = ctx.errors.size
-        val tok = ctx.paramTree.findTokenByName(node.token)
-            ?: return ctx.reportError("Missing pure‑token '${node.token}'")
-        if (ctx.errors.size == initErrorsSize) tok.validated = true
-        node.processed = true
+        if (ctx.paramTree.findTokenByName(node.token) != null) {
+            node.processed = true
+        } else {
+            ctx.reportError("Token '${node.token}' not found")
+        }
     }
 
-    override fun visitOneOf(node: SpecNode.OneOf, ctx: ValidationContext) {
-        val initErrorsSize = ctx.errors.size
-        val kNode = ctx.paramTree.findParameterByName(node.normalizedName)
-            ?: return ctx.reportError("Missing oneof parameter '${node.normalizedName}'")
-        node.processed = true
+    override fun visitOneOf(
+        node: SpecNode.OneOf,
+        ctx: ValidationContext,
+    ) {
+        node.children.forEach { if (!it.processed) it.accept(SpecTreeValidator, ctx) }
+        node.token?.let {
+            if (ctx.paramTree.findTokenByName(it) == null) {
+                ctx.reportError("OneOf token '$it' not found")
+            } else {
+                node.processed = true
+            }
+        }
 
+        if (node.children.all { it.processed }) {
+            node.processed = true
+        }
+
+        val param = ctx.paramTree.findParameterByName(node.normalizedName) ?: return
         // Must be sealed
-        val decl = kNode.symbol.type.resolve().declaration.safeCast<KSClassDeclaration>()
-            ?: return ctx.reportError("'${node.normalizedName}' must be sealed")
+        val decl = param.symbol.type.resolve().declaration.safeCast<KSClassDeclaration>()
+            ?: return ctx.reportError("'${node.normalizedName}' must be a sealed/enum class!")
         if (!decl.modifiers.contains(Modifier.SEALED) && !decl.isEnum()) {
-            ctx.reportError("'${node.normalizedName}' must be a sealed class")
+            ctx.reportError("'${node.normalizedName}' must be a sealed/enum class")
         }
-
-        val isEnum = decl.isEnum()
-        // 1:1 subclass match
-        val actual = if (isEnum) {
-            decl.declarations.filterIsInstance<KSClassDeclaration>().filter {
-                it.classKind == ClassKind.ENUM_ENTRY
-            }.map {
-                it.effectiveName()
-            }.toSet()
-        } else {
-            decl.getSealedSubclasses()
-                .map { it.effectiveName() }
-                .toSet()
-        }
-
-        val expect = node.children
-            .map { it.token ?: it.normalizedName }
-            .toSet()
-        (expect - actual).forEach {
-            ctx.reportError("Missing sub-entity '$it' in oneOf '${decl.simpleName.asString()}'")
-        }
-        (actual - expect).forEach {
-            ctx.reportError("Unexpected sub-entity '$it' in oneOf '${decl.simpleName.asString()}'")
-        }
-
-        if (ctx.errors.size == initErrorsSize) kNode.validated = true
-        node.children.forEach { if (!it.processed) it.accept(this, ctx) }
+        node.processed = true
     }
 
     override fun visitBlock(node: SpecNode.Block, ctx: ValidationContext) {
-        val kNode = node.token?.let {
-            ctx.paramTree.findTokenByName(it)
-        } ?: ctx.paramTree.findParameterByName(node.normalizedName)
-        ?: return ctx.reportError("Missing block parameter '${node.normalizedName}'")
-        val initErrorsSize = ctx.errors.size
-        node.processed = true
-
+        node.children.forEach { if (!it.processed) it.accept(SpecTreeValidator, ctx) }
         node.token?.let {
             if (ctx.paramTree.findTokenByName(it) == null) {
                 ctx.reportError("Block token '$it' not found")
             }
         }
+        node.processed = true
 
-        if (ctx.errors.size == initErrorsSize) kNode.validated = true
-        node.children.forEach { if (!it.processed) it.accept(this, ctx) }
-    }
-
-    fun collectOrders(specTree: List<SpecNode>): List<Pair<String, Float>> = specTree.flatMap { node ->
-        listOf((node.token ?: node.normalizedName) to node.order) + collectOrders(node.children)
-    }
-
-    fun finalizeValidation(ctx: ValidationContext) {
-        ctx.specTree.filter { !it.processed }.forEach {
-            ctx.reportError("Not processed spec entry: '${it.name}'")
+        val param = ctx.paramTree.findParameterByName(node.normalizedName) ?: return
+        if (node.multiple && !param.symbol.isVararg) {
+            ctx.reportError("'${node.normalizedName}' must be repeatable")
+        }
+        if (node.optional && !checkContextualOptionality(param)) {
+            ctx.reportError("'${node.normalizedName}' must be optional")
         }
     }
 }

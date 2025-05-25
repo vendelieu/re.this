@@ -6,13 +6,10 @@ import eu.vendeli.rethis.api.spec.common.annotations.RedisOptionContainer
 @RedisOptionContainer
 sealed class XAddOption {
     @RedisOption
-    data object NOMKSTREAM : XAddOption()
-
-    @RedisOption
     class Trim(
         val strategy: TrimmingStrategy,
-        val exactement: Exactement? = null,
-        val threshold: Long,
+        val operator: Exactement? = null,
+        val threshold: String,
         val limit: XOption.Limit? = null,
     ) : XAddOption()
 

@@ -14,6 +14,6 @@ fun interface ExpireCommand : RedisCommandSpec<Boolean> {
     suspend fun encode(
         @RedisKey key: String,
         seconds: Long,
-        @RedisOptional option: UpdateStrategyOption?
+        @RedisOptional condition: UpdateStrategyOption?
     ): CommandRequest<String>
 }

@@ -22,13 +22,13 @@ import eu.vendeli.rethis.api.spec.common.types.RespCode
 fun interface GeoSearchCommand : RedisCommandSpec<List<GeoSearchResult>> {
     suspend fun encode(
         @RedisKey key: String,
-        center: CenterPoint,
-        shape: Shape,
+        from: CenterPoint,
+        by: Shape,
         @RedisOptional @RedisOption.Token("WITHCOORD") withCoord: Boolean?,
         @RedisOptional @RedisOption.Token("WITHDIST") withDist: Boolean?,
         @RedisOptional @RedisOption.Token("WITHHASH") withHash: Boolean?,
         @RedisOptional count: Long?,
         @RedisOptional any: Boolean?,
-        @RedisOptional sort: GeoSort?,
+        @RedisOptional order: GeoSort?,
     ): CommandRequest<String>
 }

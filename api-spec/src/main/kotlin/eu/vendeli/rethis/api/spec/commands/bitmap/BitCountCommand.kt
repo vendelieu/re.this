@@ -20,6 +20,6 @@ fun interface BitCountCommand : RedisCommandSpec<Long> {
     suspend fun encode(
         @RedisKey key: String,
         @RedisOptional range: Range?,
-        @RedisOptional mode: BitmapDataType?,
+        @RedisOptional unit: BitmapDataType?,
     ): CommandRequest<String>
 }

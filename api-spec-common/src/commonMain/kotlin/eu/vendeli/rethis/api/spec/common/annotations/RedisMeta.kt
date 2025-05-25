@@ -18,7 +18,7 @@ annotation class RedisMeta {
     @Retention(AnnotationRetention.SOURCE)
     annotation class WithSizeParam(val name: String)
 
-    @Target(AnnotationTarget.VALUE_PARAMETER)
+    @Target(AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.CLASS)
     @Retention(AnnotationRetention.SOURCE)
     annotation class IgnoreCheck(val check: Array<ValidityCheck>)
 }

@@ -7,7 +7,7 @@ import eu.vendeli.rethis.api.spec.common.types.RedisCommandSpec
 import eu.vendeli.rethis.api.spec.common.types.RedisOperation
 import eu.vendeli.rethis.api.spec.common.types.RespCode
 
-@RedisCommand("ZSCORE", RedisOperation.READ, [RespCode.BULK, RespCode.NULL])
+@RedisCommand("ZSCORE", RedisOperation.READ, [RespCode.BULK, RespCode.DOUBLE, RespCode.NULL])
 fun interface ZScoreCommand : RedisCommandSpec<Double> {
     suspend fun encode(
         @RedisKey key: String,

@@ -15,3 +15,15 @@ internal data class RedisCommandApiSpec(
     val complexity: String? = null,
     val arity: Int? = null,
 )
+
+internal fun RedisCommandApiSpec.collectAllArguments(): List<CommandArgument> = arguments?.flatMap {
+    sequence {
+        var stack = listOf(it)
+        while (stack.isNotEmpty()) {
+            val current = stack.first()
+            stack = stack.drop(1)
+            yield(current)
+            stack = current.arguments + stack
+        }
+    }.toList()
+} ?: emptyList()

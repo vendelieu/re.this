@@ -1,12 +1,17 @@
 package eu.vendeli.rethis.api.spec.commands.scripting
 
 import eu.vendeli.rethis.api.spec.common.annotations.RedisCommand
+import eu.vendeli.rethis.api.spec.common.annotations.RedisOption
+import eu.vendeli.rethis.api.spec.common.annotations.RedisOptional
 import eu.vendeli.rethis.api.spec.common.types.CommandRequest
 import eu.vendeli.rethis.api.spec.common.types.RedisCommandSpec
 import eu.vendeli.rethis.api.spec.common.types.RedisOperation
 import eu.vendeli.rethis.api.spec.common.types.RespCode
 
-@RedisCommand("FUNCTION LOAD", RedisOperation.WRITE, [RespCode.SIMPLE_STRING])
+@RedisCommand("FUNCTION LOAD", RedisOperation.WRITE, [RespCode.BULK])
 fun interface FunctionLoadCommand : RedisCommandSpec<String> {
-    suspend fun encode(script: String): CommandRequest<Nothing>
+    suspend fun encode(
+        functionCode: String,
+        @RedisOptional @RedisOption.Token("REPLACE") replace: Boolean?,
+    ): CommandRequest<Nothing>
 }

@@ -7,7 +7,7 @@ import eu.vendeli.rethis.api.spec.common.types.RedisCommandSpec
 import eu.vendeli.rethis.api.spec.common.types.RedisOperation
 import eu.vendeli.rethis.api.spec.common.types.RespCode
 
-@RedisCommand("ZINCRBY", RedisOperation.WRITE, [RespCode.BULK])
+@RedisCommand("ZINCRBY", RedisOperation.WRITE, [RespCode.BULK, RespCode.DOUBLE])
 fun interface ZIncrByCommand : RedisCommandSpec<Double> {
     suspend fun encode(
         @RedisKey key: String,

@@ -92,44 +92,59 @@ internal sealed class SpecNode {
     }
 }
 
+internal fun SpecNode.collectAllChildren(): List<SpecNode> {
+    val allChildren = mutableListOf<SpecNode>()
+    fun traverse(node: SpecNode) {
+        node.children.forEach { child ->
+            allChildren.add(child)
+            traverse(child)
+        }
+    }
+    traverse(this)
+    return allChildren
+}
+
 internal class SpecTreeBuilder(private val raw: List<CommandArgument>) {
     fun build(): List<SpecNode> =
         raw.mapIndexed { idx, arg -> toNode(arg, idx.toFloat()) }
 
     private fun toNode(arg: CommandArgument, order: Float, parent: SpecNode? = null): SpecNode =
         when (arg.type) {
-            "oneof"  -> SpecNode.OneOf(
-                name       = arg.displayText ?: arg.name,
-                optional   = arg.optional,
-                multiple   = arg.multiple,
-                token      = arg.token,
+            "oneof" -> SpecNode.OneOf(
+                name = arg.specName,
+                optional = arg.optional,
+                multiple = arg.multiple,
+                token = arg.token,
                 parentNode = parent,
-                order      = order,
-                children   = arg.arguments.mapIndexed { i, c -> toNode(c, order.toSubOrder(i), parent) },
+                order = order,
+                children = arg.arguments.mapIndexed { i, c -> toNode(c, order.toSubOrder(i), parent) },
             )
-            "block"  -> SpecNode.Block(
-                name       = arg.displayText ?: arg.name,
-                token      = arg.token,
-                optional   = arg.optional,
-                multiple   = arg.multiple,
+
+            "block" -> SpecNode.Block(
+                name = arg.specName,
+                token = arg.token,
+                optional = arg.optional,
+                multiple = arg.multiple,
                 parentNode = parent,
-                order      = order,
-                children   = arg.arguments.mapIndexed { i, c -> toNode(c, order.toSubOrder(i), parent) },
+                order = order,
+                children = arg.arguments.mapIndexed { i, c -> toNode(c, order.toSubOrder(i), parent) },
             )
+
             "pure-token" -> SpecNode.PureToken(
-                name       = arg.displayText ?: arg.name,
-                token      = arg.token!!,
+                name = arg.specName,
+                token = arg.token!!,
                 parentNode = parent,
-                order      = order
+                order = order,
             )
-            else     -> SpecNode.Simple(
-                type       = arg.type,
-                name       = arg.displayText ?: arg.name,
-                optional   = arg.optional,
-                multiple   = arg.multiple,
-                token      = arg.token,
+
+            else -> SpecNode.Simple(
+                type = arg.type,
+                name = arg.specName,
+                optional = arg.optional,
+                multiple = arg.multiple,
+                token = arg.token,
                 parentNode = parent,
-                order      = order
+                order = order,
             )
         }
 

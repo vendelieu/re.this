@@ -3,6 +3,7 @@ package eu.vendeli.rethis.api.spec.commands.sortedset
 import eu.vendeli.rethis.api.spec.common.annotations.RedisCommand
 import eu.vendeli.rethis.api.spec.common.annotations.RedisKey
 import eu.vendeli.rethis.api.spec.common.annotations.RedisMeta
+import eu.vendeli.rethis.api.spec.common.annotations.RedisOption
 import eu.vendeli.rethis.api.spec.common.annotations.RedisOptional
 import eu.vendeli.rethis.api.spec.common.request.ZPopCommonOption
 import eu.vendeli.rethis.api.spec.common.response.MPopResult
@@ -16,6 +17,6 @@ fun interface ZMPopCommand : RedisCommandSpec<List<MPopResult>> {
     suspend fun encode(
         modifier: ZPopCommonOption,
         @RedisKey @RedisMeta.WithSizeParam("numkeys") vararg key: String,
-        @RedisOptional count: Long?,
+        @RedisOptional @RedisOption.Token("COUNT") count: Long?,
     ): CommandRequest<List<String>>
 }

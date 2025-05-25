@@ -15,6 +15,6 @@ fun interface JsonSetCommand : RedisCommandSpec<String> {
         @RedisKey key: String,
         value: String,
         @RedisOptional path: String?,
-        @RedisOptional upsertMode: UpsertMode?
+        @RedisOptional condition: UpsertMode?
     ): CommandRequest<String>
 }

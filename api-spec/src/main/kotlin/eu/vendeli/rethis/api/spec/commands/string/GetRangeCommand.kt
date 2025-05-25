@@ -7,11 +7,11 @@ import eu.vendeli.rethis.api.spec.common.types.RedisCommandSpec
 import eu.vendeli.rethis.api.spec.common.types.RedisOperation
 import eu.vendeli.rethis.api.spec.common.types.RespCode
 
-@RedisCommand("GETRANGE", RedisOperation.READ, [RespCode.SIMPLE_STRING])
+@RedisCommand("GETRANGE", RedisOperation.READ, [RespCode.BULK])
 fun interface GetRangeCommand : RedisCommandSpec<String> {
     suspend fun encode(
         @RedisKey key: String,
-        from: Long,
-        to: Long
+        start: Long,
+        end: Long
     ): CommandRequest<String>
 }

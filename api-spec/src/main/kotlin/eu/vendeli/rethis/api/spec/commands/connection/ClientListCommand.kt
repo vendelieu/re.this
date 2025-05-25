@@ -12,7 +12,7 @@ import eu.vendeli.rethis.api.spec.common.types.RespCode
 @RedisCommand("CLIENT LIST", RedisOperation.READ, [RespCode.BULK], extensions = [ClientType::class])
 fun interface ClientListCommand : RedisCommandSpec<String> {
     suspend fun encode(
-        @RedisOptional type: ClientType?,
+        @RedisOptional clientType: ClientType?,
         @RedisOptional @RedisOption.Token("ID") vararg clientId: Long,
     ): CommandRequest<Nothing>
 }

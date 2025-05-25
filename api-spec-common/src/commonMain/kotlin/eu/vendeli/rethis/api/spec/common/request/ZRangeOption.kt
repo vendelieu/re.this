@@ -3,6 +3,7 @@ package eu.vendeli.rethis.api.spec.common.request
 import eu.vendeli.rethis.api.spec.common.annotations.RedisOption
 import eu.vendeli.rethis.api.spec.common.annotations.RedisOptionContainer
 
+@RedisOptionContainer
 sealed class ZRangeOption {
     @RedisOptionContainer
     sealed class Type : ZRangeOption()
@@ -13,8 +14,8 @@ sealed class ZRangeOption {
     @RedisOption
     data object BYLEX : Type()
 
-    @RedisOption
-    class LIMIT(
+    @RedisOption.Token("LIMIT")
+    class Limit(
         val offset: Long,
         val count: Long,
     ) : ZRangeOption()

@@ -7,7 +7,7 @@ import eu.vendeli.rethis.api.spec.common.types.RedisCommandSpec
 import eu.vendeli.rethis.api.spec.common.types.RedisOperation
 import eu.vendeli.rethis.api.spec.common.types.RespCode
 
-@RedisCommand("GETDEL", RedisOperation.READ, [RespCode.SIMPLE_STRING, RespCode.NULL])
+@RedisCommand("GETDEL", RedisOperation.READ, [RespCode.BULK, RespCode.NULL])
 fun interface GetDelCommand : RedisCommandSpec<String> {
     suspend fun encode(
         @RedisKey key: String

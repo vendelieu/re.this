@@ -9,7 +9,7 @@ import eu.vendeli.rethis.api.spec.common.types.*
 fun interface JsonArrPopCommand : RedisCommandSpec<RType> {
     suspend fun encode(
         @RedisKey key: String,
-        path: String,
+        @RedisOptional path: String?,
         @RedisOptional index: Long?
     ): CommandRequest<String>
 }

@@ -12,16 +12,21 @@ import eu.vendeli.rethis.api.spec.common.types.RedisCommandSpec
 import eu.vendeli.rethis.api.spec.common.types.RedisOperation
 import eu.vendeli.rethis.api.spec.common.types.RespCode
 
-@RedisCommand("GEOSEARCHSTORE", RedisOperation.WRITE, [RespCode.INTEGER], extensions = [CenterPoint::class, Shape::class, GeoSort::class])
+@RedisCommand(
+    "GEOSEARCHSTORE",
+    RedisOperation.WRITE,
+    [RespCode.INTEGER],
+    extensions = [CenterPoint::class, Shape::class, GeoSort::class],
+)
 fun interface GeoSearchStoreCommand : RedisCommandSpec<Long> {
     suspend fun encode(
         @RedisKey destination: String,
         @RedisKey source: String,
-        center: CenterPoint,
-        shape: Shape,
-        @RedisOptional sort: GeoSort?,
-        @RedisOptional count: Long?,
-        @RedisOptional any: Boolean?,
-        @RedisOptional @RedisOption.Token("STOREDIST") storedist: Boolean?
+        from: CenterPoint,
+        by: Shape,
+        @RedisOptional order: GeoSort?,
+        @RedisOptional @RedisOption.Token("COUNT") count: Long?,
+        @RedisOptional @RedisOption.Token("ANY") any: Boolean?,
+        @RedisOptional @RedisOption.Token("STOREDIST") storedist: Boolean?,
     ): CommandRequest<List<String>>
 }

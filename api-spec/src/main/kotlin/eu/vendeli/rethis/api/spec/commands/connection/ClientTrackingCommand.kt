@@ -17,7 +17,7 @@ import eu.vendeli.rethis.api.spec.common.types.RespCode
 )
 fun interface ClientTrackingCommand : RedisCommandSpec<Boolean> {
     suspend fun encode(
-        mode: ClientStandby,
+        status: ClientStandby,
         @RedisOptional vararg options: ClientTrackingMode,
     ): CommandRequest<Nothing>
 }

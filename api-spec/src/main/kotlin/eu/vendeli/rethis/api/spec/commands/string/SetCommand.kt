@@ -11,7 +11,7 @@ import eu.vendeli.rethis.api.spec.common.types.RespCode
 @RedisCommand(
     "SET",
     RedisOperation.WRITE,
-    [RespCode.SIMPLE_STRING, RespCode.NULL],
+    [RespCode.BULK, RespCode.SIMPLE_STRING, RespCode.NULL],
     extensions = [SetOption::class],
 )
 fun interface SetCommand : RedisCommandSpec<String> {

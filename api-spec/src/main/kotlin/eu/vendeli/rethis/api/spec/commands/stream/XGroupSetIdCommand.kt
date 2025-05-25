@@ -15,7 +15,7 @@ fun interface XGroupSetIdCommand : RedisCommandSpec<Boolean> {
     suspend fun encode(
         @RedisKey key: String,
         group: String,
-        id: XId,
-        @RedisOptional @RedisOption.Token("ENTRIESREAD") entriesread: Long?
+        idSelector: XId,
+        @RedisOptional @RedisOption.Token("ENTRIESREAD") entriesRead: Long?
     ): CommandRequest<String>
 }

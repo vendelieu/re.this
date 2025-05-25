@@ -1,5 +1,7 @@
 package eu.vendeli.rethis.api.processor.type
 
+import com.google.devtools.ksp.KspExperimental
+import com.google.devtools.ksp.getAnnotationsByType
 import com.google.devtools.ksp.getConstructors
 import com.google.devtools.ksp.symbol.*
 import eu.vendeli.rethis.api.processor.utils.*
@@ -84,24 +86,24 @@ object LibSpecTreeBuilder {
         currentParent.children += paramNode
 
         // Recurse into its nested type (for sealed enums, data objects, etc.)
-        handleParamWithArguments(param.type.resolve(), paramNode)
+        handleDeclaration(param.type.resolve(), paramNode)
     }
 
-    private fun handleParamWithArguments(
+    private fun handleDeclaration(
         pType: KSType,
         parent: LibSpecTree,
     ) {
         // 1) Recurse into generic arguments first
         pType.arguments.forEach { arg ->
             arg.type?.resolve()?.let {
-                handleParamWithArguments(it, parent)
+                handleDeclaration(it, parent)
             }
         }
 
         // 2) If the type is a KSClassDeclaration, handle special cases
         val decl = pType.declaration.safeCast<KSClassDeclaration>() ?: return
         // Skip Kotlin stdlib types
-        if (decl.qualifiedName?.getQualifier()?.startsWith("kotlin") == true) return
+        if (decl.isStdType()) return
 
         // Preserve any token annotation on the type
         val currentParent = decl.preserveToken(parent)
@@ -109,11 +111,7 @@ object LibSpecTreeBuilder {
         when {
             // Sealed class: each subclass becomes its own TokenNode
             decl.isSealed() -> decl.getSealedSubclasses().forEach { sub ->
-                currentParent.children += LibSpecTree.TokenNode(
-                    parent = currentParent,
-                    name = sub.tokenName(),
-                    symbol = sub,
-                )
+                handleDeclaration(sub.asStarProjectedType(), currentParent)
             }
             // Enum: each enum entry becomes a TokenNode
             decl.isEnum() -> decl.declarations
@@ -135,24 +133,24 @@ object LibSpecTreeBuilder {
                 )
             }
             // Plain class: descend into ctor params
-            decl.classKind == ClassKind.CLASS -> {
-                decl.getConstructors().flatMap { it.parameters }.forEach {
-                    handleValueParam(it, currentParent)
-                }
+            decl.classKind == ClassKind.CLASS -> decl.getConstructors().flatMap {
+                it.parameters
+            }.forEach {
+                handleValueParam(it, currentParent)
             }
         }
     }
 
-    // Lift any @RedisOption.Token into its own child TokenNode
+    @OptIn(KspExperimental::class)
     private fun KSAnnotated.preserveToken(
         givenNode: LibSpecTree,
-    ): LibSpecTree = getAnnotation<RedisOption.Token>()?.get("name")?.let { tok ->
+    ): LibSpecTree = getAnnotationsByType(RedisOption.Token::class).map {
         val tokNode = LibSpecTree.TokenNode(
             parent = givenNode,
-            name = tok,
+            name = it.name,
             symbol = this,
         )
         givenNode.children += tokNode
         tokNode
-    } ?: givenNode
+    }.lastOrNull() ?: givenNode
 }

@@ -1,5 +1,6 @@
 package eu.vendeli.rethis.api.spec.common.request
 
+import eu.vendeli.rethis.api.spec.common.annotations.RedisKey
 import eu.vendeli.rethis.api.spec.common.annotations.RedisOption
 import eu.vendeli.rethis.api.spec.common.annotations.RedisOptionContainer
 
@@ -17,18 +18,18 @@ sealed class MigrateOption {
     sealed class Authorization : MigrateOption()
 
     @RedisOption.Token("AUTH")
-    class AUTH(
-        password: String,
+    class Auth(
+        val password: String,
     ) : Authorization()
 
-    @RedisOption.Token("AUTH")
-    class AUTH2(
-        username: String,
-        password: String,
+    @RedisOption.Token("AUTH2")
+    class Auth2(
+        val username: String,
+        val password: String,
     ) : Authorization()
 
     @RedisOption.Token("KEYS")
-    class KEYS(
-        vararg key: String,
+    class Keys(
+        @RedisKey vararg val key: String,
     ) : MigrateOption()
 }

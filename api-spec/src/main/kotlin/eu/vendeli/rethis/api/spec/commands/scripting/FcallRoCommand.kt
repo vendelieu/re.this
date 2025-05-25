@@ -13,6 +13,7 @@ import eu.vendeli.rethis.api.spec.common.types.RedisOperation
 fun interface FcallRoCommand : RedisCommandSpec<RType> {
     suspend fun encode(
         function: String,
-        @RedisKey @RedisOptional @RedisMeta.WithSizeParam("numkeys") vararg key: String
+        @RedisKey @RedisOptional @RedisMeta.WithSizeParam("numkeys") vararg key: String,
+        @RedisOptional arg: List<String>
     ): CommandRequest<List<String>>
 }

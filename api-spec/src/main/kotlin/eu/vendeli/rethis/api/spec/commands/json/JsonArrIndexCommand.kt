@@ -2,6 +2,7 @@ package eu.vendeli.rethis.api.spec.commands.json
 
 import eu.vendeli.rethis.api.spec.common.annotations.RedisCommand
 import eu.vendeli.rethis.api.spec.common.annotations.RedisKey
+import eu.vendeli.rethis.api.spec.common.annotations.RedisOptional
 import eu.vendeli.rethis.api.spec.common.types.CommandRequest
 import eu.vendeli.rethis.api.spec.common.types.RedisCommandSpec
 import eu.vendeli.rethis.api.spec.common.types.RedisOperation
@@ -12,6 +13,8 @@ fun interface JsonArrIndexCommand : RedisCommandSpec<Long> {
     suspend fun encode(
         @RedisKey key: String,
         path: String,
-        value: String
+        value: String,
+        @RedisOptional start: Long?,
+        @RedisOptional stop: Long?
     ): CommandRequest<String>
 }

@@ -7,7 +7,7 @@ import eu.vendeli.rethis.api.spec.common.types.RedisCommandSpec
 import eu.vendeli.rethis.api.spec.common.types.RedisOperation
 import eu.vendeli.rethis.api.spec.common.types.RespCode
 
-@RedisCommand("INCRBYFLOAT", RedisOperation.WRITE, [RespCode.DOUBLE])
+@RedisCommand("INCRBYFLOAT", RedisOperation.WRITE, [RespCode.BULK])
 fun interface IncrByFloatCommand : RedisCommandSpec<Double> {
     suspend fun encode(
         @RedisKey key: String,

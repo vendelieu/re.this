@@ -6,10 +6,11 @@ import eu.vendeli.rethis.api.spec.common.annotations.RedisMeta
 import eu.vendeli.rethis.api.spec.common.annotations.RedisOptional
 import eu.vendeli.rethis.api.spec.common.types.*
 
-@RedisCommand("FCALL", RedisOperation.WRITE, [RespCode.ARRAY])
+@RedisCommand("FCALL", RedisOperation.WRITE, [])
 fun interface FcallCommand : RedisCommandSpec<RType> {
     suspend fun encode(
-        name: String,
+        function: String,
         @RedisKey @RedisOptional @RedisMeta.WithSizeParam("numkeys") vararg key: String,
+        @RedisOptional arg: List<String>
     ): CommandRequest<List<String>>
 }

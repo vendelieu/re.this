@@ -5,7 +5,7 @@ import eu.vendeli.rethis.api.spec.common.annotations.RedisOptionContainer
 
 @RedisOptionContainer
 sealed class CopyOption {
-    @RedisOption
+    @RedisOption.Token("DB")
     class DB(
         val destinationDb: Long,
     ) : CopyOption()

@@ -22,6 +22,6 @@ fun interface HExpireCommand : RedisCommandSpec<List<Long>> {
         @RedisKey key: String,
         seconds: Duration,
         @RedisMeta.WithSizeParam("numfields") vararg field: String,
-        @RedisOptional updateType: UpdateStrategyOption?,
+        @RedisOptional condition: UpdateStrategyOption?,
     ): CommandRequest<String>
 }

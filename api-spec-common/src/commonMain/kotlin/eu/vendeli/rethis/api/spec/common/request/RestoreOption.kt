@@ -10,13 +10,13 @@ sealed class RestoreOption {
     @RedisOption
     data object ABSTTL : RestoreOption()
 
-    @RedisOption
-    class IDLETIME(
+    @RedisOption.Token("IDLETIME")
+    class IdleTime(
         val seconds: Duration,
     ) : RestoreOption()
 
-    @RedisOption
-    class FREQ(
+    @RedisOption.Token("FREQ")
+    class Frequency(
         val frequency: Long,
     ) : RestoreOption()
 }

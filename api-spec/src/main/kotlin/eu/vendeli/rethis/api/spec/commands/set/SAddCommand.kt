@@ -11,6 +11,6 @@ import eu.vendeli.rethis.api.spec.common.types.RespCode
 fun interface SAddCommand : RedisCommandSpec<Long> {
     suspend fun encode(
         @RedisKey key: String,
-        vararg members: String,
+        vararg member: String,
     ): CommandRequest<List<String>>
 }

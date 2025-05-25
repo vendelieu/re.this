@@ -3,6 +3,7 @@ package eu.vendeli.rethis.api.spec.commands.list
 import eu.vendeli.rethis.api.spec.common.annotations.RedisCommand
 import eu.vendeli.rethis.api.spec.common.annotations.RedisKey
 import eu.vendeli.rethis.api.spec.common.annotations.RedisMeta
+import eu.vendeli.rethis.api.spec.common.annotations.RedisOption
 import eu.vendeli.rethis.api.spec.common.annotations.RedisOptional
 import eu.vendeli.rethis.api.spec.common.response.MPopResult
 import eu.vendeli.rethis.api.spec.common.response.MoveDirection
@@ -22,7 +23,7 @@ fun interface BlmPopCommand : RedisCommandSpec<List<MPopResult>> {
     suspend fun encode(
         timeout: Double,
         @RedisKey @RedisMeta.WithSizeParam("numkeys") vararg key: String,
-        direction: MoveDirection,
-        @RedisOptional count: Long?,
+        where: MoveDirection,
+        @RedisOptional @RedisOption.Token("COUNT") count: Long?,
     ): CommandRequest<List<String>>
 }

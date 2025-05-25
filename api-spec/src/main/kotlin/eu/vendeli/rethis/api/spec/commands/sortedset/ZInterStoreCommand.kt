@@ -1,9 +1,6 @@
 package eu.vendeli.rethis.api.spec.commands.sortedset
 
-import eu.vendeli.rethis.api.spec.common.annotations.RedisCommand
-import eu.vendeli.rethis.api.spec.common.annotations.RedisKey
-import eu.vendeli.rethis.api.spec.common.annotations.RedisMeta
-import eu.vendeli.rethis.api.spec.common.annotations.RedisOptional
+import eu.vendeli.rethis.api.spec.common.annotations.*
 import eu.vendeli.rethis.api.spec.common.request.ZAggregate
 import eu.vendeli.rethis.api.spec.common.types.CommandRequest
 import eu.vendeli.rethis.api.spec.common.types.RedisCommandSpec
@@ -15,7 +12,7 @@ fun interface ZInterStoreCommand : RedisCommandSpec<Long> {
     suspend fun encode(
         @RedisKey destination: String,
         @RedisKey @RedisMeta.WithSizeParam("numkeys") vararg key: String,
-//        @RedisOptional weight: List<Long>?,
-        @RedisOptional aggregate: ZAggregate? // todo move to option last two p
+        @RedisOptional @RedisOption.Token("WEIGHTS") weight: List<Long>,
+        @RedisOptional aggregate: ZAggregate?,
     ): CommandRequest<List<String>>
 }

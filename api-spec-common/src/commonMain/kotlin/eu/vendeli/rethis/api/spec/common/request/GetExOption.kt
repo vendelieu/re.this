@@ -1,27 +1,30 @@
 package eu.vendeli.rethis.api.spec.common.request
 
 import eu.vendeli.rethis.api.spec.common.annotations.RedisOption
+import eu.vendeli.rethis.api.spec.common.annotations.RedisOptionContainer
+import kotlinx.datetime.Instant
 import kotlin.time.Duration
 
+@RedisOptionContainer
 sealed class GetExOption {
     @RedisOption.Token("EX")
-    class EX(
-        seconds: Duration,
+    class Ex(
+        val seconds: Duration,
     ) : GetExOption()
 
     @RedisOption.Token("PX")
-    class PX(
-        milliseconds: Duration,
+    class Px(
+        val milliseconds: Duration,
     ) : GetExOption()
 
     @RedisOption.Token("EXAT")
-    class EXAT(
-        seconds: Duration,
+    class ExAt(
+        val unixTimeSeconds: Instant,
     ) : GetExOption()
 
     @RedisOption.Token("PXAT")
-    class PXAT(
-        milliseconds: Duration,
+    class PxAt(
+        val unixTimeMilliseconds: Instant,
     ) : GetExOption()
 
     @RedisOption.Token("PERSIST")

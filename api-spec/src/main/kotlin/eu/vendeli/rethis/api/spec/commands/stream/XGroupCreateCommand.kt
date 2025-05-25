@@ -15,7 +15,7 @@ fun interface XGroupCreateCommand : RedisCommandSpec<Boolean> {
     suspend fun encode(
         @RedisKey key: String,
         group: String,
-        id: XId,
+        idSelector: XId,
         @RedisOptional @RedisOption.Token("MKSTREAM") mkstream: Boolean?,
         @RedisOptional @RedisOption.Token("ENTRIESREAD") entriesRead: Long?
     ): CommandRequest<String>

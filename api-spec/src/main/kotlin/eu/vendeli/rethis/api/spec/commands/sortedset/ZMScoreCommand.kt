@@ -7,10 +7,10 @@ import eu.vendeli.rethis.api.spec.common.types.RedisCommandSpec
 import eu.vendeli.rethis.api.spec.common.types.RedisOperation
 import eu.vendeli.rethis.api.spec.common.types.RespCode
 
-@RedisCommand("ZMSCORE", RedisOperation.READ, [RespCode.ARRAY])
+@RedisCommand("ZMSCORE", RedisOperation.READ, [RespCode.ARRAY, RespCode.NULL])
 fun interface ZMScoreCommand : RedisCommandSpec<List<Double?>> {
     suspend fun encode(
         @RedisKey key: String,
-        vararg members: String
+        vararg member: String
     ): CommandRequest<String>
 }

@@ -1,5 +1,6 @@
 package eu.vendeli.rethis.api.processor.validator
 
+import com.google.devtools.ksp.KspExperimental
 import com.google.devtools.ksp.processing.KSPLogger
 import com.google.devtools.ksp.symbol.KSAnnotation
 import com.google.devtools.ksp.symbol.KSClassDeclaration
@@ -10,22 +11,24 @@ import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import com.squareup.kotlinpoet.STAR
 import com.squareup.kotlinpoet.ksp.toClassName
 import com.squareup.kotlinpoet.ksp.toTypeName
-import eu.vendeli.rethis.api.processor.type.RedisCommandApiSpec
-import eu.vendeli.rethis.api.processor.type.RedisCommandFullSpec
-import eu.vendeli.rethis.api.processor.type.SpecTreeBuilder
-import eu.vendeli.rethis.api.processor.type.ValidationContext
+import eu.vendeli.rethis.api.processor.type.*
 import eu.vendeli.rethis.api.processor.utils.*
 import eu.vendeli.rethis.api.spec.common.annotations.RedisCommand
 import eu.vendeli.rethis.api.spec.common.annotations.RedisKey
 import eu.vendeli.rethis.api.spec.common.annotations.RedisMeta
 import eu.vendeli.rethis.api.spec.common.types.RespCode
+import eu.vendeli.rethis.api.spec.common.types.ValidityCheck
 
 internal class RedisSpecValidator(
     private val logger: KSPLogger,
     private val fullSpec: RedisCommandFullSpec,
 ) {
+    @OptIn(KspExperimental::class)
     fun initProcessing(cmd: Map.Entry<String, List<KSClassDeclaration>>) {
         if (cmd.key.startsWith("SENTINEL")) return // skip check for sentinel commands since there's no spec for them
+
+        if (cmd.value.all { it.isCustomEncoder() }) return
+
         val spec = fullSpec.commands[cmd.key]
         if (spec == null) {
             logger.error("No spec found for command `${cmd.key}`")
@@ -33,20 +36,30 @@ internal class RedisSpecValidator(
         }
         val errors = mutableMapOf<KSClassDeclaration, MutableList<String>>()
         val processedResponses = mutableSetOf<RespCode>()
+        val processedEntries = mutableSetOf<String>()
 
         cmd.value.forEach {
+            if (it.isCustomEncoder()) return@forEach
             val cmdErrorContainer = errors.getOrPut(it) { mutableListOf() }
-            processCommand(cmd.key to spec, it, cmdErrorContainer, processedResponses)
+            processedEntries += processCommand(cmd.key to spec, it, cmdErrorContainer, processedResponses)
+        }
+
+        val notProcessedElements = fullSpec.commands[cmd.key]?.collectAllArguments()?.map { it.specName }?.filter {
+            it !in processedEntries
         }
 
         val mainValidationReport = errors.entries.filter { it.value.isNotEmpty() }.joinToString("\n") { e ->
             "${e.key.qualifiedName?.asString()}\n${e.value.joinToString("\n") { "- $it" }}"
         }.takeIf { it.isNotBlank() }
-        val responseTypeValidationReport = validateResponseTypes(cmd.key, processedResponses).takeIf { it.isNotEmpty() }
+        val isResponseValidationIgnore = cmd.value.all { it.parseIgnore().contains(ValidityCheck.RESPONSE) }
+        val responseTypeValidationReport = if (!isResponseValidationIgnore) validateResponseTypes(
+            cmd.key,
+            processedResponses,
+        ).takeIf { it.isNotEmpty() } else null
 
         buildString {
             if (
-                mainValidationReport != null || responseTypeValidationReport != null
+                mainValidationReport != null || responseTypeValidationReport != null || !notProcessedElements.isNullOrEmpty()
             ) {
                 append(cmd.key)
                 if (mainValidationReport == null) cmd.value.singleOrNull()?.also {
@@ -60,7 +73,8 @@ internal class RedisSpecValidator(
                 mainValidationReport != null && responseTypeValidationReport != null
             ) appendLine("------")
 
-            responseTypeValidationReport?.let { appendLine("- Response types validation issues:\n$it") }
+            responseTypeValidationReport?.also { appendLine("- Response types validation issues:\n$it") }
+            notProcessedElements?.takeIf { it.isNotEmpty() }?.also { appendLine("- Not processed entries: $it") }
         }.takeIf { !it.isBlank() }?.let { logger.error(it) }
     }
 
@@ -69,13 +83,13 @@ internal class RedisSpecValidator(
         c: KSClassDeclaration,
         errors: MutableList<String>,
         processedResponses: MutableSet<RespCode>,
-    ) {
+    ): Set<String> {
         val encodeFun = c.declarations.filterIsInstance<KSFunctionDeclaration>().firstOrNull {
             it.simpleName.asString() == "encode"
         }
         if (encodeFun == null) {
             errors += "No encode function found for ${c.qualifiedName}"
-            return
+            return emptySet()
         }
         val annotation = c.annotations.first { it.shortName.asString() == RedisCommand::class.simpleName }
 //        validateOperation(spec, annotation, errors) // TODO turn on again
@@ -88,14 +102,16 @@ internal class RedisSpecValidator(
 
         validateKey(spec, encodeFun, errors)
 
-        spec.second.arguments?.also { args ->
-            val tree = SpecTreeBuilder(args).build()
-            val ctx = ValidationContext(encodeFun, tree, fullSpec, errors, spec.first)
-            validateMeta(encodeFun, ctx, errors)
+        val tree = SpecTreeBuilder(spec.second.arguments ?: emptyList()).build()
+        val ctx = ValidationContext(encodeFun, tree, fullSpec, errors, spec.first)
 
-            tree.forEach { it.accept(SpecTreeValidator, ctx) }
-            SpecTreeValidator.finalizeValidation(ctx)
-        }
+        validateMeta(encodeFun, ctx, errors)
+
+        tree.forEach { it.accept(SpecTreeValidator, ctx) }
+
+        return ctx.specTree.flatMap {
+            listOf(it) + it.collectAllChildren()
+        }.filter { it.processed }.map { it.name }.toSet()
     }
 
     private fun validateKey(
@@ -212,8 +228,11 @@ internal class RedisSpecValidator(
             }?.toSet() ?: emptySet()
 
         f.parameters.forEach { p ->
-            val extType = p.type.resolve().declaration.qualifiedName?.asString() ?: return@forEach
-            if (extType !in stdTypes.values && extType !in extensions) {
+            val extType = p.type.resolve().let {
+                if (it.isCollection()) it.arguments.first().type!!.resolve()
+                else it
+            }
+            if (!extType.declaration.isStdType() && extType.declaration.qualifiedName?.asString() !in extensions) {
                 errors += "Parameter '${p.name?.asString()}' has type '$extType' which is not in extensions"
             }
         }

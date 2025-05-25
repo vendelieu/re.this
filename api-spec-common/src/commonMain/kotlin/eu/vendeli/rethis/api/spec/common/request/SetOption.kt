@@ -10,23 +10,23 @@ sealed class SetOption
 @RedisOptionContainer
 sealed class SetExpire : SetOption() {
     @RedisOption.Token("EX")
-    class EX(
-        seconds: Duration,
+    class Ex(
+        val seconds: Duration,
     ) : SetExpire()
 
     @RedisOption.Token("PX")
-    class PX(
-        milliseconds: Duration,
+    class Px(
+        val milliseconds: Duration,
     ) : SetExpire()
 
     @RedisOption.Token("EXAT")
-    class EXAT(
-        instant: Instant,
+    class ExAt(
+        val unixTimeSeconds: Instant,
     ) : SetExpire()
 
     @RedisOption.Token("PXAT")
-    class PXAT(
-        instant: Instant,
+    class PxAt(
+        val unixTimeMilliseconds: Instant,
     ) : SetExpire()
 
     @RedisOption

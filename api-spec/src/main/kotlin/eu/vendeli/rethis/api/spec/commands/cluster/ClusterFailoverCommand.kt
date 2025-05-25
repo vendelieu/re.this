@@ -10,5 +10,5 @@ import eu.vendeli.rethis.api.spec.common.types.RespCode
 
 @RedisCommand("CLUSTER FAILOVER", RedisOperation.WRITE, [RespCode.SIMPLE_STRING], extensions = [ClusterFailoverOption::class])
 fun interface ClusterFailoverCommand : RedisCommandSpec<Boolean> {
-    suspend fun encode(@RedisOptional option: ClusterFailoverOption?): CommandRequest<Nothing>
+    suspend fun encode(@RedisOptional options: ClusterFailoverOption?): CommandRequest<Nothing>
 }

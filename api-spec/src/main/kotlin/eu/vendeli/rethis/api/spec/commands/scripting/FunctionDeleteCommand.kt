@@ -8,5 +8,5 @@ import eu.vendeli.rethis.api.spec.common.types.RespCode
 
 @RedisCommand("FUNCTION DELETE", RedisOperation.WRITE, [RespCode.SIMPLE_STRING])
 fun interface FunctionDeleteCommand : RedisCommandSpec<Boolean> {
-    suspend fun encode(name: String): CommandRequest<Nothing>
+    suspend fun encode(libraryName: String): CommandRequest<Nothing>
 }

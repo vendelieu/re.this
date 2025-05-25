@@ -1,23 +1,24 @@
 package eu.vendeli.rethis.api.spec.common.request
 
+import eu.vendeli.rethis.api.spec.common.annotations.RedisKey
 import eu.vendeli.rethis.api.spec.common.annotations.RedisOption
 import eu.vendeli.rethis.api.spec.common.annotations.RedisOptionContainer
 
 sealed class SortOption {
-    @RedisOption
-    class BY(
+    @RedisOption.Token("BY")
+    class By(
         val pattern: String,
     ) : SortOption()
 
-    @RedisOption
-    class LIMIT(
+    @RedisOption.Token("LIMIT")
+    class Limit(
         val offset: Long,
         val count: Long,
     ) : SortOption()
 
-    @RedisOption
-    class GET(
-        val pattern: String,
+    @RedisOption.Token("GET")
+    class Get(
+        vararg val pattern: String,
     ) : SortOption()
 
     @RedisOptionContainer
@@ -32,8 +33,8 @@ sealed class SortOption {
     @RedisOption
     data object ALPHA : SortOption()
 
-    @RedisOption
-    class STORE(
-        val destination: String,
+    @RedisOption.Token("STORE")
+    class Store(
+        @RedisKey val destination: String,
     ) : SortOption()
 }
