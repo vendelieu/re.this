@@ -1,12 +1,10 @@
 package eu.vendeli.rethis.api.processor.utils
 
 import com.google.devtools.ksp.symbol.*
-import com.squareup.kotlinpoet.*
+import com.squareup.kotlinpoet.ClassName
 import eu.vendeli.rethis.api.processor.type.CommandArgument
 import eu.vendeli.rethis.api.spec.common.annotations.RedisOption
 import eu.vendeli.rethis.api.spec.common.types.RespCode
-import kotlinx.datetime.Instant
-import kotlin.time.Duration
 
 internal val charsetClassName = ClassName("io.ktor.utils.io.charsets", "Charset")
 
@@ -15,14 +13,19 @@ internal val decodersMap: Map<RespCode, Pair<String?, String>> = mapOf(
     RespCode.NULL to (null to "null"),
 )
 
-internal val stdTypes = mapOf(
-    STRING to "kotlin.String",
-    LONG to "kotlin.Long",
-    DOUBLE to "kotlin.Double",
-    BOOLEAN to "kotlin.Boolean",
-    Duration::class.asClassName() to "kotlin.time.Duration",
-    Instant::class.asClassName() to "kotlinx.datetime.Instant",
-)
+internal fun String.specTypeNormalization() = when (this) {
+    "key" -> "string"
+    "integer" -> "long"
+    "int" -> "long"
+    "pattern" -> "string"
+    "unix-time" -> "instant"
+    else -> this
+}
+
+internal fun String.libTypeNormalization() = when (this) {
+    "duration" -> "long"
+    else -> this
+}
 
 internal fun KSClassDeclaration.tokenName() = getAnnotation<RedisOption.Token>()?.get("name") ?: effectiveName()
 
@@ -30,6 +33,12 @@ internal fun KSAnnotated.effectiveName() = getAnnotation<RedisOption.Name>()?.ge
     is KSDeclaration -> simpleName.asString()
     is KSValueParameter -> name!!.asString()
     else -> toString()
+}
+
+private val collectionTypes = setOf("kotlin.collections.List", "kotlin.collections.Set", "kotlin.Array")
+internal fun KSType.isCollection(): Boolean {
+    val typeName = declaration.qualifiedName?.asString() ?: return false
+    return typeName in collectionTypes
 }
 
 internal fun KSClassDeclaration.isDataObject() = classKind == ClassKind.OBJECT && modifiers.contains(Modifier.DATA)

@@ -14,7 +14,7 @@ import eu.vendeli.rethis.api.spec.common.types.RespCode
 
 @RedisCommand(
     "BZMPOP",
-    RedisOperation.READ,
+    RedisOperation.WRITE,
     [RespCode.ARRAY, RespCode.NULL],
     isBlocking = true,
     extensions = [ZPopCommonOption::class],

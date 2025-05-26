@@ -10,7 +10,7 @@ import eu.vendeli.rethis.api.spec.common.types.*
 
 @RedisCommand(
     "XREADGROUP",
-    RedisOperation.READ,
+    RedisOperation.WRITE,
     [RespCode.ARRAY, RespCode.MAP, RespCode.NULL],
     isBlocking = true,
     extensions = [XReadGroupKeyIds::class, XReadGroupOption::class]

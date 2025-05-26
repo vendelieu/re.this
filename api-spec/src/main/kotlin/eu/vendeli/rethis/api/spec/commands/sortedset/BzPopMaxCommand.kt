@@ -8,7 +8,7 @@ import eu.vendeli.rethis.api.spec.common.types.RedisCommandSpec
 import eu.vendeli.rethis.api.spec.common.types.RedisOperation
 import eu.vendeli.rethis.api.spec.common.types.RespCode
 
-@RedisCommand("BZPOPMAX", RedisOperation.READ, [RespCode.ARRAY, RespCode.NULL], isBlocking = true)
+@RedisCommand("BZPOPMAX", RedisOperation.WRITE, [RespCode.ARRAY, RespCode.NULL], isBlocking = true)
 fun interface BzPopMaxCommand : RedisCommandSpec<ZPopResult> {
     suspend fun encode(
         timeout: Double,

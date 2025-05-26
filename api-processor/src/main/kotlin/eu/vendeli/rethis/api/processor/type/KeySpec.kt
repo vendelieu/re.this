@@ -1,13 +1,14 @@
 package eu.vendeli.rethis.api.processor.type
 
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
 internal data class KeySpec(
-    val begin_search: BeginSearch? = null,
-    val find_keys: FindKeys? = null,
-    val RW: Boolean? = null,
-    val RO: Boolean? = null,
+    @SerialName("begin_search") val beginSearch: BeginSearch? = null,
+    @SerialName("find_keys") val findKeys: FindKeys? = null,
+    @SerialName("RW") val rW: Boolean? = null,
+    @SerialName("RO") val rO: Boolean? = null,
     val insert: Boolean? = null,
     val access: Boolean? = null,
     val delete: Boolean? = null
@@ -32,7 +33,7 @@ internal data class FindKeys(
 
 @Serializable
 internal data class FindKeysSpec(
-    val lastkey: Int? = null,
-    val keystep: Int? = null,
+    @SerialName("lastkey") val lastKey: Int? = null,
+    @SerialName("keystep") val keyStep: Int? = null,
     val limit: Int? = null
 )

@@ -2,7 +2,6 @@ package eu.vendeli.rethis.api.processor.validator
 
 import com.google.devtools.ksp.KspExperimental
 import com.google.devtools.ksp.processing.KSPLogger
-import com.google.devtools.ksp.symbol.KSAnnotation
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSFunctionDeclaration
 import com.google.devtools.ksp.symbol.KSType
@@ -11,12 +10,12 @@ import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import com.squareup.kotlinpoet.STAR
 import com.squareup.kotlinpoet.ksp.toClassName
 import com.squareup.kotlinpoet.ksp.toTypeName
-import eu.vendeli.rethis.api.processor.type.*
+import eu.vendeli.rethis.api.processor.type.RedisCommandFullSpec
+import eu.vendeli.rethis.api.processor.type.ValidationContext
+import eu.vendeli.rethis.api.processor.type.collectAllChildren
 import eu.vendeli.rethis.api.processor.utils.*
-import eu.vendeli.rethis.api.spec.common.annotations.RedisCommand
 import eu.vendeli.rethis.api.spec.common.annotations.RedisMeta
 import eu.vendeli.rethis.api.spec.common.types.RespCode
-import eu.vendeli.rethis.api.spec.common.types.ValidityCheck
 
 internal class RedisSpecValidator(
     private val logger: KSPLogger,
@@ -40,45 +39,15 @@ internal class RedisSpecValidator(
         cmd.value.forEach {
             if (it.isCustomEncoder()) return@forEach
             val cmdErrorContainer = errors.getOrPut(it) { mutableListOf() }
-            processedEntries += processCommand(cmd.key to spec, it, cmdErrorContainer, processedResponses)
+            processedEntries += processCommand(cmd.key, it, cmdErrorContainer, processedResponses)
         }
+        val responseValidationResult = validateResponseTypes(cmd.key, processedResponses)
 
-        val notProcessedElements = fullSpec.commands[cmd.key]?.collectAllArguments()?.map { it.name }?.filter {
-            it !in processedEntries
-        }
-
-        val mainValidationReport = errors.entries.filter { it.value.isNotEmpty() }.joinToString("\n") { e ->
-            "${e.key.qualifiedName?.asString()}\n${e.value.joinToString("\n") { "- $it" }}"
-        }.takeIf { it.isNotBlank() }
-        val isResponseValidationIgnore = cmd.value.all { it.parseIgnore().contains(ValidityCheck.RESPONSE) }
-        val responseTypeValidationReport = if (!isResponseValidationIgnore) validateResponseTypes(
-            cmd.key,
-            processedResponses,
-        ).takeIf { it.isNotEmpty() } else null
-
-        buildString {
-            if (
-                mainValidationReport != null || responseTypeValidationReport != null || !notProcessedElements.isNullOrEmpty()
-            ) {
-                append(cmd.key)
-                if (mainValidationReport == null) cmd.value.singleOrNull()?.also {
-                    append(" - ${it.qualifiedName?.asString()}")
-                }
-                append("\n")
-            }
-
-            mainValidationReport?.also(::appendLine)
-            if (
-                mainValidationReport != null && responseTypeValidationReport != null
-            ) appendLine("------")
-
-            responseTypeValidationReport?.also { appendLine("- Response types validation issues:\n$it") }
-            notProcessedElements?.takeIf { it.isNotEmpty() }?.also { appendLine("- Not processed entries: $it") }
-        }.takeIf { !it.isBlank() }?.let { logger.error(it) }
+        logger.report(cmd, spec, errors, processedEntries, responseValidationResult)
     }
 
     private fun processCommand(
-        spec: Pair<String, RedisCommandApiSpec>,
+        command: String,
         c: KSClassDeclaration,
         errors: MutableList<String>,
         processedResponses: MutableSet<RespCode>,
@@ -90,215 +59,126 @@ internal class RedisSpecValidator(
             errors += "No encode function found for ${c.qualifiedName}"
             return emptySet()
         }
-        val annotation = c.annotations.first { it.shortName.asString() == RedisCommand::class.simpleName }
-//        validateOperation(spec, annotation, errors) // TODO turn on again
+        val ctx = ValidationContext(encodeFun, fullSpec, errors, command, logger)
 
-        val declaredRTypes = annotation.arguments.parseResponseTypes()
-        processedResponses.addAll(declaredRTypes.orEmpty())
+        validateOperation(ctx)
 
-        validateExtensions(annotation, encodeFun, errors)
-        validateBlockingStatus(annotation, spec.second, errors)
+        val declaredRTypes = ctx.annotation.arguments.parseResponseTypes()
+        processedResponses += declaredRTypes.orEmpty()
 
-        validateKey(spec, encodeFun, errors)
+        validateExtensions(ctx)
+        validateBlockingStatus(ctx)
 
-        val tree = SpecTreeBuilder(spec.second.arguments ?: emptyList()).build()
-        val ctx = ValidationContext(encodeFun, tree, fullSpec, errors, spec.first, logger)
+        validateKey(ctx)
+        validateMeta(ctx)
 
-        validateMeta(encodeFun, ctx, errors)
-
-        tree.forEach { it.accept(SpecTreeValidator, ctx) }
+        ctx.specTree.forEach { it.accept(SpecTreeValidator, ctx) }
 
         return ctx.specTree.flatMap {
             listOf(it) + it.collectAllChildren()
         }.filter { it.processed }.map { it.name }.toSet()
     }
 
-    private fun validateKey(
-        spec: Pair<String, RedisCommandApiSpec>,
-        f: KSFunctionDeclaration,
-        errors: MutableList<String>,
-    ) {
-        val keys = spec.second.arguments?.filter { it.keySpecIndex != null && it.type == "key" } ?: emptyList()
+    private fun validateKey(ctx: ValidationContext) = with(ctx) {
+        val keys = curSpec.arguments?.filter { it.keySpecIndex != null && it.type == "key" }.orEmpty()
         if (keys.isEmpty()) return
 
         // validate CommandRequest key
-        val commandRequestType = f.returnType?.resolve()?.arguments?.firstOrNull()?.type?.resolve()
+        val commandRequestType = func.returnType?.resolve()?.arguments?.firstOrNull()?.type?.resolve()
         if (commandRequestType == null) {
-            errors += "No return type found for encode function"
-        } else {
-            val isKeyTypeNameList = commandRequestType.starProjection().toTypeName() == LIST.parameterizedBy(STAR)
-            if ((keys.size > 1 || keys.any { it.multiple }) && !isKeyTypeNameList) {
-                errors += "Multiple keys but command request type is not List<*>"
-            }
+            reportError("No return type found for encode function")
+            return@with
+        }
 
-            val desiredKeyType = keys.distinctBy {
-                it.type
-            }.takeIf { it.size == 1 }?.first()?.type?.specTypeNormalization() ?: "string"
-            val actualKeyType = commandRequestType.let {
-                if (isKeyTypeNameList) it.arguments.first().type?.resolve()?.toClassName()?.simpleName
-                else it.toClassName().simpleName
-            }?.lowercase()
+        val isKeyTypeNameList = commandRequestType.starProjection().toTypeName() == LIST.parameterizedBy(STAR)
+        if ((keys.size > 1 || keys.any { it.multiple }) && !isKeyTypeNameList) {
+            reportError("Multiple keys but command request type is not List<*>")
+        }
 
-            if (desiredKeyType != actualKeyType) {
-                errors += "Key type mismatch: desired `$desiredKeyType` but actual `$actualKeyType`"
-            }
+        val desiredKeyType = keys.distinctBy {
+            it.type
+        }.takeIf { it.size == 1 }?.first()?.type?.specTypeNormalization() ?: "string"
+        val actualKeyType = commandRequestType.let {
+            if (isKeyTypeNameList) it.arguments.first().type?.resolve()?.toClassName()?.simpleName
+            else it.toClassName().simpleName
+        }?.lowercase()
+
+        if (desiredKeyType != actualKeyType) {
+            reportError("Key type mismatch: desired `$desiredKeyType` but actual `$actualKeyType`")
         }
     }
 
-
-    private val collectionTypes = setOf("kotlin.collections.List", "kotlin.collections.Set", "kotlin.Array")
-    private fun KSType.isCollection(): Boolean {
-        val typeName = declaration.qualifiedName?.asString() ?: return false
-        return typeName in collectionTypes
-    }
-
-    private fun String.specTypeNormalization() = when (this) {
-        "key" -> "string"
-        "integer" -> "long"
-        "int" -> "long"
-        "pattern" -> "string"
-        "unix-time" -> "instant"
-        else -> this
-    }
-
-    private fun String.libTypeNormalization() = when (this) {
-        "duration" -> "long"
-        else -> this
-    }
-
-
-    private fun inferOperation(flags: List<String>): String =
-        if (flags.any { it.equals("readonly", true) } || flags.none {
-                it.equals("write", true) || it.equals(
-                    "admin",
-                    true,
-                )
-            })
-            "READ"
-        else
-            "WRITE"
-
-    private fun validateOperation(
-        spec: Pair<String, RedisCommandApiSpec>,
-        a: KSAnnotation,
-        errors: MutableList<String>,
-    ) {
-        if (spec.first.startsWith("JSON.")) return // JSON commands have no properties to check
-        val declaredOp = a.arguments
+    private fun validateOperation(ctx: ValidationContext): Unit = with(ctx) {
+        if (currentCmd.startsWith("JSON.")) return // JSON commands have no properties to check
+        val declaredOp = annotation.arguments
             .firstOrNull { it.name?.asString() == "operation" }
             ?.value.inferEnumValue()
 
-        if (spec.second.commandFlags == null) {
-            if (declaredOp != "READ") errors += "Operation mismatch: declared '$declaredOp' but should be READ (spec flags are empty)"
-            return
-        }
-        val expectedOp = inferOperation(spec.second.commandFlags!!)
-        if (declaredOp != expectedOp) {
-            errors += "Operation mismatch: declared '$declaredOp' but spec flags imply '$expectedOp'"
+        curSpec.tryInferOperation()?.takeIf { declaredOp != it }?.also { expectedOp ->
+            reportError("Operation mismatch: declared '$declaredOp' but spec flags imply '$expectedOp'")
         }
     }
 
 
-    private fun validateExtensions(
-        a: KSAnnotation,
-        f: KSFunctionDeclaration,
-        errors: MutableList<String>,
-    ) {
-        val extensions = a.arguments.first { it.name?.asString() == "extensions" }
+    private fun validateExtensions(ctx: ValidationContext) = with(ctx) {
+        val extensions = annotation.arguments.first { it.name?.asString() == "extensions" }
             .value?.safeCast<List<KSType>>()?.mapNotNull {
                 it.declaration.qualifiedName?.asString()
             }?.toSet() ?: emptySet()
 
-        f.parameters.forEach { p ->
+        func.parameters.forEach { p ->
             val extType = p.type.resolve().let {
                 if (it.isCollection()) it.arguments.first().type!!.resolve()
                 else it
             }
             if (!extType.declaration.isStdType() && extType.declaration.qualifiedName?.asString() !in extensions) {
-                errors += "Parameter '${p.name?.asString()}' has type '$extType' which is not in extensions"
+                reportError("Parameter '${p.name?.asString()}' has type '$extType' which is not in extensions")
             }
         }
 
         extensions.forEach { ext ->
-            val isPresent = f.parameters.any { it.type.resolve().declaration.qualifiedName?.asString() == ext }
+            val isPresent = func.parameters.any { it.type.resolve().declaration.qualifiedName?.asString() == ext }
             if (!isPresent) {
-                errors += "Redundant extension '$ext' that is not present in parameters"
+                reportError("Redundant extension '$ext' that is not present in parameters")
             }
         }
     }
 
-    private fun String.inferResponseType(): RespCode? = when {
-        checkMatch("simple string reply") -> RespCode.SIMPLE_STRING
-        checkMatch("integer reply") -> RespCode.INTEGER
-        checkMatch("boolean reply") -> RespCode.BOOLEAN
-        checkMatch("double reply") -> RespCode.DOUBLE
-        checkMatch("verbatim string reply") -> RespCode.VERBATIM_STRING
-        checkMatch("big number reply") -> RespCode.BIG_NUMBER
-        checkMatch("bulk string reply") -> RespCode.BULK
-        checkMatch("simple error reply") -> RespCode.SIMPLE_ERROR
+    private fun validateBlockingStatus(ctx: ValidationContext) = with(ctx) {
+        val blockingStatus = annotation.arguments.first { it.name?.asString() == "isBlocking" }
+            .value?.safeCast<Boolean>() ?: false
+        val expectedBlockingStatus = curSpec.commandFlags?.find { it.equals("blocking", true) } != null
 
-        contains("array reply", true) -> RespCode.ARRAY
-        contains("set reply", true) -> RespCode.SET
-        contains("map reply", true) -> RespCode.MAP
-        contains("null reply", true) || contains("nil reply", true) -> RespCode.NULL
-        else -> null
+        if (blockingStatus != expectedBlockingStatus) {
+            reportError(
+                "Blocking status mismatch: declared '$blockingStatus' but spec flags imply '$expectedBlockingStatus'",
+            )
+        }
+    }
+
+    private fun validateMeta(
+        ctx: ValidationContext,
+    ) = with(ctx) {
+        func.parameters.filter { it.hasAnnotation<RedisMeta.WithSizeParam>() }.forEach { p ->
+            val name = p.getAnnotation<RedisMeta.WithSizeParam>()?.get("name")
+            specTree.find { it.name == name }?.processed = true
+        }
     }
 
     private fun validateResponseTypes(
         cmd: String,
         processedResponses: MutableSet<RespCode>,
-    ): StringBuilder {
-        val responseValidationReport = StringBuilder()
+    ): Pair<Set<RespCode>, Set<RespCode>> {
+        // skip json commands response validation since spec is incomplete
+        if (cmd.startsWith("JSON.")) return emptySet<RespCode>() to emptySet()
+
         val expectedR2TypesDescr = fullSpec.resp2Responses[cmd]
         val expectedR3TypesDescr = fullSpec.resp3Responses[cmd]
-
-        if (cmd.startsWith("JSON.")) return responseValidationReport
-        // skip json commands response validation since spec is incomplete
-
-//        if (expectedR2TypesDescr == null && expectedR3TypesDescr == null) {
-//            errors += "No responseTypes found in spec"
-//            return
-//        } todo check response type invalid specs
 
         val expectedR2Types = expectedR2TypesDescr?.mapNotNull { it.inferResponseType() }
         val expectedR3Types = expectedR3TypesDescr?.mapNotNull { it.inferResponseType() }
         val expectedSummaryTypes = listOfNotNull(expectedR2Types, expectedR3Types).flatten().toSet()
 
-        // todo get array<?> from spec
-
-        processedResponses.minus(expectedSummaryTypes).takeIf { it.isNotEmpty() }?.let {
-            responseValidationReport.appendLine("   - Have redundant response types: ${it.joinToString(", ")}")
-        }
-
-        expectedSummaryTypes.minus(processedResponses).takeIf { it.isNotEmpty() }?.let {
-            responseValidationReport.appendLine("   - Absent response types: ${it.joinToString(", ")}")
-        }
-
-        return responseValidationReport
-    }
-
-    private fun validateBlockingStatus(
-        a: KSAnnotation,
-        spec: RedisCommandApiSpec,
-        errors: MutableList<String>,
-    ) {
-        val blockingStatus = a.arguments.first { it.name?.asString() == "isBlocking" }
-            .value?.safeCast<Boolean>() ?: false
-        val expectedBlockingStatus = spec.commandFlags?.find { it.equals("blocking", true) } != null
-
-        if (blockingStatus != expectedBlockingStatus) {
-            errors += "Blocking status mismatch: declared '$blockingStatus' but spec flags imply '$expectedBlockingStatus'"
-        }
-    }
-
-    private fun validateMeta(
-        f: KSFunctionDeclaration,
-        ctx: ValidationContext,
-        errors: MutableList<String>,
-    ) {
-        f.parameters.filter { it.hasAnnotation<RedisMeta.WithSizeParam>() }.forEach { p ->
-            val name = p.getAnnotation<RedisMeta.WithSizeParam>()?.get("name")
-            ctx.specTree.find { it.name == name }?.processed = true
-        }
+        return processedResponses.minus(expectedSummaryTypes) to expectedSummaryTypes.minus(processedResponses)
     }
 }

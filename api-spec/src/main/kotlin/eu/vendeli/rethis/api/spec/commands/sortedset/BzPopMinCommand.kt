@@ -10,7 +10,7 @@ import eu.vendeli.rethis.api.spec.common.types.RespCode
 
 @RedisCommand(
     "BZPOPMIN",
-    RedisOperation.READ,
+    RedisOperation.WRITE,
     [RespCode.ARRAY, RespCode.NULL],
     isBlocking = true,
 )

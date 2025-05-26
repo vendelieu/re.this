@@ -7,7 +7,7 @@ import eu.vendeli.rethis.api.spec.common.types.RedisCommandSpec
 import eu.vendeli.rethis.api.spec.common.types.RedisOperation
 import eu.vendeli.rethis.api.spec.common.types.RespCode
 
-@RedisCommand("TOUCH", RedisOperation.WRITE, [RespCode.INTEGER])
+@RedisCommand("TOUCH", RedisOperation.READ, [RespCode.INTEGER])
 fun interface TouchCommand : RedisCommandSpec<Long> {
     suspend fun encode(@RedisKey vararg key: String): CommandRequest<List<String>>
 }

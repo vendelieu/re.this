@@ -1,6 +1,5 @@
 package eu.vendeli.rethis.api.processor.type
 
-import eu.vendeli.rethis.api.processor.utils.NameNormalizer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -14,7 +13,4 @@ internal data class CommandArgument(
     val token: String? = null,
     @SerialName("key_spec_index") val keySpecIndex: Int? = null,
     val arguments: List<CommandArgument> = emptyList(),
-) {
-    val specName get() = displayText ?: name
-    val normalizedName get() = NameNormalizer.normalizeParam(specName)
-}
+)

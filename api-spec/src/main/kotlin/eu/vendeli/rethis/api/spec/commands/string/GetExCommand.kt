@@ -11,7 +11,7 @@ import eu.vendeli.rethis.api.spec.common.types.RespCode
 
 @RedisCommand(
     "GETEX", 
-    RedisOperation.READ,
+    RedisOperation.WRITE,
     [RespCode.BULK, RespCode.NULL],
     extensions = [GetExOption::class]
 )

@@ -11,7 +11,7 @@ import eu.vendeli.rethis.api.spec.common.types.RespCode
 
 @RedisCommand(
     "BLMOVE",
-    RedisOperation.READ,
+    RedisOperation.WRITE,
     [RespCode.BULK, RespCode.NULL],
     isBlocking = true,
     extensions = [MoveDirection::class],

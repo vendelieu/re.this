@@ -1,5 +1,6 @@
 package eu.vendeli.rethis.api.processor.type
 
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -8,7 +9,7 @@ internal data class ArgumentSpec(
     val type: String,
     val optional: Boolean = false,
     val multiple: Boolean = false,
-    val multiple_token: Boolean? = null,
+    @SerialName("multiple_token") val multipleToken: Boolean? = null,
     val token: String? = null,
     val arguments: List<ArgumentSpec> = emptyList()
 )
