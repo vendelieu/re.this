@@ -4,8 +4,8 @@ import eu.vendeli.rethis.api.spec.common.annotations.RedisCommand
 import eu.vendeli.rethis.api.spec.common.annotations.RedisKey
 import eu.vendeli.rethis.api.spec.common.annotations.RedisOption
 import eu.vendeli.rethis.api.spec.common.annotations.RedisOptional
-import eu.vendeli.rethis.api.spec.common.request.LcsMode
-import eu.vendeli.rethis.api.spec.common.request.MinMatchLen
+import eu.vendeli.rethis.api.spec.common.request.string.LcsMode
+import eu.vendeli.rethis.api.spec.common.request.string.MinMatchLen
 import eu.vendeli.rethis.api.spec.common.response.LcsResult
 import eu.vendeli.rethis.api.spec.common.types.CommandRequest
 import eu.vendeli.rethis.api.spec.common.types.RedisCommandSpec

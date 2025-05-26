@@ -25,7 +25,7 @@ internal class RedisSpecValidator(
     fun initProcessing(cmd: Map.Entry<String, List<KSClassDeclaration>>) {
         if (cmd.key.startsWith("SENTINEL")) return // skip check for sentinel commands since there's no spec for them
 
-        if (cmd.value.all { it.isCustomEncoder() }) return
+        if (cmd.value.all { it.hasCustomEncoder() }) return
 
         val spec = fullSpec.commands[cmd.key]
         if (spec == null) {
@@ -37,9 +37,9 @@ internal class RedisSpecValidator(
         val processedEntries = mutableSetOf<String>()
 
         cmd.value.forEach {
-            if (it.isCustomEncoder()) return@forEach
+            if (it.hasCustomEncoder()) return@forEach
             val cmdErrorContainer = errors.getOrPut(it) { mutableListOf() }
-            processedEntries += processCommand(cmd.key, it, cmdErrorContainer, processedResponses)
+            processedEntries += processCommand(cmd.key, it, cmdErrorContainer, processedResponses, cmd.value.size > 1)
         }
         val responseValidationResult = validateResponseTypes(cmd.key, processedResponses)
 
@@ -51,6 +51,7 @@ internal class RedisSpecValidator(
         c: KSClassDeclaration,
         errors: MutableList<String>,
         processedResponses: MutableSet<RespCode>,
+        isMultiSpec: Boolean,
     ): Set<String> {
         val encodeFun = c.declarations.filterIsInstance<KSFunctionDeclaration>().firstOrNull {
             it.simpleName.asString() == "encode"
@@ -59,7 +60,7 @@ internal class RedisSpecValidator(
             errors += "No encode function found for ${c.qualifiedName}"
             return emptySet()
         }
-        val ctx = ValidationContext(encodeFun, fullSpec, errors, command, logger)
+        val ctx = ValidationContext(command, encodeFun, fullSpec, errors, logger, isMultiSpec)
 
         validateOperation(ctx)
 

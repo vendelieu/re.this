@@ -4,7 +4,7 @@ import eu.vendeli.rethis.api.spec.common.annotations.RedisCommand
 import eu.vendeli.rethis.api.spec.common.annotations.RedisKey
 import eu.vendeli.rethis.api.spec.common.annotations.RedisOption
 import eu.vendeli.rethis.api.spec.common.annotations.RedisOptional
-import eu.vendeli.rethis.api.spec.common.request.XClaimOption
+import eu.vendeli.rethis.api.spec.common.request.stream.XClaimOption
 import eu.vendeli.rethis.api.spec.common.types.*
 
 @RedisCommand(

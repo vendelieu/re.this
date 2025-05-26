@@ -1,7 +1,7 @@
 package eu.vendeli.rethis.api.spec.commands.sortedset
 
 import eu.vendeli.rethis.api.spec.common.annotations.*
-import eu.vendeli.rethis.api.spec.common.request.ZAggregate
+import eu.vendeli.rethis.api.spec.common.request.sortedset.ZAggregate
 import eu.vendeli.rethis.api.spec.common.types.CommandRequest
 import eu.vendeli.rethis.api.spec.common.types.RedisCommandSpec
 import eu.vendeli.rethis.api.spec.common.types.RedisOperation

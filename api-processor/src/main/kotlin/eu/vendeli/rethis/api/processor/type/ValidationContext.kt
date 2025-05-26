@@ -7,11 +7,12 @@ import eu.vendeli.rethis.api.processor.utils.safeCast
 import eu.vendeli.rethis.api.spec.common.annotations.RedisCommand
 
 internal data class ValidationContext(
+    val currentCmd: String,
     val func: KSFunctionDeclaration,
     val fullSpec: RedisCommandFullSpec,
     private val errors: MutableList<String>,
-    val currentCmd: String,
     val logger: KSPLogger,
+    val isMultiSpec: Boolean,
 ) {
     val curSpec = fullSpec.commands[currentCmd]!!
     val annotation = func.parent?.safeCast<KSAnnotated>()!!.annotations.first {

@@ -45,7 +45,7 @@ internal fun FileSpec.Builder.typeWrite(
     "buffer.$extName($value, charset)"
 }
 
-internal fun KSAnnotated.isCustomEncoder(): Boolean {
+internal fun KSAnnotated.hasCustomEncoder(): Boolean {
     val customDecoder = getAnnotation<RedisMeta.CustomCodec>()?.get("encoder")
     return customDecoder != null && customDecoder != Unit::class.simpleName
 }

@@ -18,7 +18,7 @@ internal object SpecTreeValidator : SpecNodeVisitor {
         // Custom‑codec bypass
         val param = ctx.paramTree.findParameterByName(node.normalizedName)
 
-        if (param?.symbol?.isCustomEncoder() == true) {
+        if (param?.symbol?.hasCustomEncoder() == true) {
             node.processed = true
             return
         }
@@ -84,12 +84,9 @@ internal object SpecTreeValidator : SpecNodeVisitor {
     override fun visitPureToken(node: PureToken, ctx: ValidationContext) {
         if (ctx.paramTree.findTokenByName(node.token) != null) {
             node.processed = true
-        } else {
-            ctx.logger.warn(
-                "Token '${node.token}' not found for `${ctx.currentCmd}` " +
-                    "in ${ctx.func.parent?.safeCast<KSClassDeclaration>()?.qualifiedName?.asString()}",
-            )
-        }
+        } else if (!ctx.isMultiSpec) ctx.reportError(
+            "Token '${node.token}' not found",
+        )
     }
 
     override fun visitOneOf(

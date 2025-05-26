@@ -1,5 +1,6 @@
 package eu.vendeli.rethis.api.spec.common.types
 
+import eu.vendeli.rethis.api.spec.common.utils.CRC16
 import io.ktor.util.reflect.*
 import io.ktor.utils.io.core.*
 import kotlinx.io.Buffer

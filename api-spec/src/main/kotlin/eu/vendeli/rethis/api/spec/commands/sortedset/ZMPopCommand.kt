@@ -5,7 +5,7 @@ import eu.vendeli.rethis.api.spec.common.annotations.RedisKey
 import eu.vendeli.rethis.api.spec.common.annotations.RedisMeta
 import eu.vendeli.rethis.api.spec.common.annotations.RedisOption
 import eu.vendeli.rethis.api.spec.common.annotations.RedisOptional
-import eu.vendeli.rethis.api.spec.common.request.ZPopCommonOption
+import eu.vendeli.rethis.api.spec.common.request.sortedset.ZPopCommonOption
 import eu.vendeli.rethis.api.spec.common.response.MPopResult
 import eu.vendeli.rethis.api.spec.common.types.CommandRequest
 import eu.vendeli.rethis.api.spec.common.types.RedisCommandSpec

@@ -3,7 +3,7 @@ package eu.vendeli.rethis.api.spec.commands.generic
 import eu.vendeli.rethis.api.spec.common.annotations.RedisCommand
 import eu.vendeli.rethis.api.spec.common.annotations.RedisMeta
 import eu.vendeli.rethis.api.spec.common.annotations.RedisOptional
-import eu.vendeli.rethis.api.spec.common.request.ScanOption
+import eu.vendeli.rethis.api.spec.common.request.generic.ScanOption
 import eu.vendeli.rethis.api.spec.common.response.ScanResult
 import eu.vendeli.rethis.api.spec.common.types.*
 

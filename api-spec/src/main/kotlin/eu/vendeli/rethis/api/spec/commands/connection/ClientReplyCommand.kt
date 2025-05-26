@@ -1,7 +1,7 @@
 package eu.vendeli.rethis.api.spec.commands.connection
 
 import eu.vendeli.rethis.api.spec.common.annotations.RedisCommand
-import eu.vendeli.rethis.api.spec.common.request.ClientReplyMode
+import eu.vendeli.rethis.api.spec.common.request.connection.ClientReplyMode
 import eu.vendeli.rethis.api.spec.common.types.CommandRequest
 import eu.vendeli.rethis.api.spec.common.types.RedisCommandSpec
 import eu.vendeli.rethis.api.spec.common.types.RedisOperation
