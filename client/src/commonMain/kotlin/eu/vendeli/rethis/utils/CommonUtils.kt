@@ -101,5 +101,4 @@ internal suspend inline fun ReThis.registerSubscription(
     subscriptions.jobs[target] = handlerJob
 }
 
-@Suppress("NOTHING_TO_INLINE")
 private inline infix fun String?.isEqualTo(other: String) = this != null && compareTo(other.lowercase()) == 0

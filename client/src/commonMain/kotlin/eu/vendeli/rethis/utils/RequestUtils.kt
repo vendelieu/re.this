@@ -29,7 +29,6 @@ fun <T, R : Argument> MutableList<R>.writeArgument(value: T): MutableList<R> {
     return this
 }
 
-@Suppress("NOTHING_TO_INLINE")
 inline fun <T, R : Argument> MutableList<R>.writeArgument(value: List<T>): MutableList<R> {
     if (isEmpty()) return this
 
@@ -38,7 +37,6 @@ inline fun <T, R : Argument> MutableList<R>.writeArgument(value: List<T>): Mutab
 }
 
 @JvmName("writeArgArray")
-@Suppress("NOTHING_TO_INLINE")
 inline fun <T, R : Argument> MutableList<R>.writeArgument(vararg value: T): MutableList<R> {
     if (isEmpty()) return this
 
@@ -46,7 +44,6 @@ inline fun <T, R : Argument> MutableList<R>.writeArgument(vararg value: T): Muta
     return this
 }
 
-@Suppress("NOTHING_TO_INLINE")
 inline fun <T, R : Argument> MutableList<R>.writeArgument(value: Array<T>): MutableList<R> {
     if (isEmpty()) return this
 
@@ -54,12 +51,10 @@ inline fun <T, R : Argument> MutableList<R>.writeArgument(value: Array<T>): Muta
     return this
 }
 
-@Suppress("NOTHING_TO_INLINE")
 internal inline fun Buffer.writeValues(value: List<Argument>, charset: Charset) = apply {
     writeRedisValue(value, charset)
 }
 
-@Suppress("NOTHING_TO_INLINE")
 internal inline fun bufferValues(value: List<Argument>, charset: Charset) = Buffer().writeValues(value, charset)
 
 internal fun Sink.writeRedisValue(

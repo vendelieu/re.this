@@ -18,7 +18,6 @@ import io.ktor.util.logging.*
 
 fun RType.isOk() = unwrap<String>() == "OK"
 
-@Suppress("NOTHING_TO_INLINE")
 inline fun RType.handleEx(): RType =
     if (this is RType.Error) throw exception else this
 

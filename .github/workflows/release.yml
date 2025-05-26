@@ -11,12 +11,9 @@ on:
 jobs:
   release:
     name: Release
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
     outputs:
       version: ${{ steps.vars.outputs.version }}
-    strategy:
-      matrix:
-        os: [ ubuntu-latest, windows-latest, macOS-latest ]
     steps:
       - uses: actions/checkout@v4
 
@@ -56,7 +53,6 @@ jobs:
         run: ./gradlew publishAllPublicationsToMavenCentralRepository --no-parallel
 
       - name: Publish meta
-        if: ${{ matrix.os == 'ubuntu-latest' }}
         env:
           release: true
           meta_only: true

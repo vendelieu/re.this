@@ -20,7 +20,6 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.io.decodeFromSource
 import kotlinx.serialization.serializer
 
-@Suppress("NOTHING_TO_INLINE")
 @OptIn(ExperimentalSerializationApi::class)
 private inline fun Source.decode(
     typeInfo: TypeInfo,

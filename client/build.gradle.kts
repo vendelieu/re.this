@@ -44,9 +44,7 @@ configureKotlin {
     }
 }
 
-tasks {
-    withType<Test> { useJUnitPlatform() }
-}
+tasks.withType<Test> { useJUnitPlatform() }
 
 @OptIn(ExperimentalBCVApi::class)
 apiValidation.klib.enabled = true

@@ -34,7 +34,6 @@ data class CommandRequest<K>(
         return this
     }
 
-    @Suppress("NOTHING_TO_INLINE")
     private inline fun K.isCollection() = this is List<*> || this is Array<*>
     private fun K.haveAsList() = when (this) {
         is Array<*> -> toList()

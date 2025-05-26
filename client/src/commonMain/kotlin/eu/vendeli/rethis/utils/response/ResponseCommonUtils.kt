@@ -23,7 +23,6 @@ internal suspend fun ByteReadChannel.parseResponse(): ArrayDeque<ResponseToken> 
     return response
 }
 
-@Suppress("NOTHING_TO_INLINE")
 internal inline fun ArrayDeque<ResponseToken>.validatedResponseType(): Code {
     val typeToken = removeFirst()
     if (typeToken !is Code) throw ResponseParsingException(
@@ -33,7 +32,6 @@ internal inline fun ArrayDeque<ResponseToken>.validatedResponseType(): Code {
 }
 
 @Throws(ResponseParsingException::class)
-@Suppress("NOTHING_TO_INLINE")
 internal inline fun ArrayDeque<ResponseToken>.validatedSimpleResponse(codeToken: Code): Source {
     if (!codeToken.code.isSimple) throw ResponseParsingException(
         message = "Wrong response type, expected simple type, given ${codeToken.code}\nResponse: $this",

@@ -50,7 +50,7 @@ internal fun KSAnnotated.hasCustomEncoder(): Boolean {
     return customDecoder != null && customDecoder != Unit::class.simpleName
 }
 
-@Suppress("UNCHECKED_CAST", "NOTHING_TO_INLINE")
+@Suppress("UNCHECKED_CAST")
 internal inline fun <reified R> Any?.safeCast(): R? = this as? R
 
 internal fun KSPLogger.report(

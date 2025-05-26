@@ -63,7 +63,6 @@ class ReThisMap(
 @Suppress("FunctionName")
 fun ReThis.Hash(key: String) = ReThisMap(this, key)
 
-@Suppress("NOTHING_TO_INLINE")
 private inline fun Pair<String, String>.toMapEntry(
     client: ReThis,
     bucket: String,
@@ -74,7 +73,6 @@ private inline fun Pair<String, String>.toMapEntry(
     override fun setValue(newValue: String): String = updateValue(client, bucket, key to newValue).let { newValue }
 }
 
-@Suppress("NOTHING_TO_INLINE")
 private inline fun updateValue(client: ReThis, bucket: String, pair: Pair<String, String>) = coRunBlocking {
     client.hMSet(bucket, pair)
 }

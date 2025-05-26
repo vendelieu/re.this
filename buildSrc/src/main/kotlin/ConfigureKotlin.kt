@@ -1,11 +1,9 @@
 import org.gradle.api.Project
-import org.gradle.kotlin.dsl.assign
 import org.gradle.kotlin.dsl.configure
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
-
 
 fun Project.configureKotlin(block: KotlinMultiplatformExtension.() -> Unit) {
     plugins.apply("kotlin-multiplatform")
@@ -13,7 +11,12 @@ fun Project.configureKotlin(block: KotlinMultiplatformExtension.() -> Unit) {
     configure<KotlinMultiplatformExtension> {
         @OptIn(ExperimentalKotlinGradlePluginApi::class)
         compilerOptions {
-            freeCompilerArgs = listOf("-opt-in=eu.vendeli.rethis.annotations.ReThisInternal")
+            extraWarnings.set(true)
+            freeCompilerArgs.addAll(
+                "-Xsuppress-warning=CAN_BE_VAL",
+                "-Xsuppress-warning=NOTHING_TO_INLINE",
+                "-opt-in=eu.vendeli.rethis.annotations.ReThisInternal",
+            )
         }
 
         val jvmTargetVer = 17
@@ -21,8 +24,8 @@ fun Project.configureKotlin(block: KotlinMultiplatformExtension.() -> Unit) {
             compilations.all {
                 compileTaskProvider.configure {
                     compilerOptions {
-                        jvmTarget = JvmTarget.fromTarget("$jvmTargetVer")
-                        freeCompilerArgs = listOf(
+                        jvmTarget.set(JvmTarget.fromTarget("$jvmTargetVer"))
+                        freeCompilerArgs.addAll(
                             "-Xjsr305=strict",
                             "-opt-in=eu.vendeli.rethis.annotations.ReThisInternal",
                         )
@@ -66,10 +69,6 @@ fun Project.configureKotlin(block: KotlinMultiplatformExtension.() -> Unit) {
         androidNativeArm32()
         androidNativeArm64()
 
-        targets.configureEach { disableCompilationsIfNeeded() }
-
         block()
     }
-
-    disablePublicationTasksIfNeeded()
 }
