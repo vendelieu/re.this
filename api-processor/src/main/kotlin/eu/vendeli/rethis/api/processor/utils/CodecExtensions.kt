@@ -9,7 +9,6 @@ import eu.vendeli.rethis.api.spec.common.annotations.RedisOptional
 import eu.vendeli.rethis.api.spec.common.types.CommandRequest
 import eu.vendeli.rethis.api.spec.common.types.RedisOperation
 import eu.vendeli.rethis.api.spec.common.types.RespCode
-import io.ktor.utils.io.*
 import kotlinx.io.Buffer
 
 internal fun TypeSpec.Builder.addEncodeFunction(
@@ -47,12 +46,14 @@ internal fun TypeSpec.Builder.addDecodeFunction(
     type: TypeName,
 ): TypeSpec.Builder {
     val isReturnBool = type.copy(true) == BOOLEAN.copy(true)
+    val isNullableResponse = RespCode.NULL in respCode
+
     addFunction(
         FunSpec.builder("decode")
             .addModifiers(KModifier.SUSPEND)
-            .addParameter("input", ByteReadChannel::class)
+            .addParameter("input", Buffer::class)
             .addParameter("charset", charsetClassName)
-            .returns(type.copy(true))
+            .returns(type.copy(isNullableResponse))
             .addCode(
                 CodeBlock.builder().apply {
                     addStatement("val code = RespCode.fromCode(input.readByte())")
@@ -119,10 +120,10 @@ private fun FileSpec.Builder.buildEncoderCode(
         if (isThereOptionals) {
             addStatement("var size = $stablePartsSize")
             addStatement(optionalsSize.toString())
-            addStatement("buffer.writeString(\"\$size\")\n")
+            addStatement("buffer.writeString(\"\$size\")")
         }
 
-        addStatement("COMMAND_HEADER.copyTo(buffer)")
+        addStatement("COMMAND_HEADER.copyTo(buffer)\n")
     }
 
     parameters.forEach { param ->

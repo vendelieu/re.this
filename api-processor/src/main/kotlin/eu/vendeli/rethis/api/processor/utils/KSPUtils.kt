@@ -38,11 +38,29 @@ internal fun KSDeclaration.isStdType() = qualifiedName?.getQualifier()?.startsWi
 
 internal fun FileSpec.Builder.typeWrite(
     param: KSValueParameter, value: String,
-) = param.type.resolve().toClassName().simpleName.toPascalCase().let {
-    val extName = "write${it}Arg"
-    addImport("eu.vendeli.rethis.utils", extName)
+): String = param.type.resolve().let {
+    val name = it.toClassName().simpleName.toPascalCase()
+    val extName = "write${name}Arg"
 
-    "buffer.$extName($value, charset)"
+    when {
+        it.declaration.isStdType() -> {
+            addImport("eu.vendeli.rethis.utils", extName)
+
+            "buffer.$extName($value, charset)"
+        }
+
+        it.declaration.isEnum() -> {
+            "buffer.writeStringArg($value.name, charset)"
+        }
+
+        it.declaration.isDataObject() -> {
+            "buffer.writeStringArg($value.toString(), charset)"
+        }
+
+        else -> {
+            "buffer.$extName($value, charset)"
+        }
+    }
 }
 
 internal fun KSAnnotated.hasCustomEncoder(): Boolean {

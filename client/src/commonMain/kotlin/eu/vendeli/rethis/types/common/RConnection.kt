@@ -6,6 +6,7 @@ import io.ktor.network.sockets.*
 import io.ktor.utils.io.*
 import io.ktor.utils.io.charsets.*
 import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.io.Buffer
 import kotlinx.io.InternalIoApi
 
@@ -30,6 +31,20 @@ internal data class RConnection(
         }
 
         return this
+    }
+
+    @OptIn(InternalAPI::class, InternalIoApi::class)
+    suspend fun doRequest(payload: Buffer): Buffer = state.withLock {
+        output.runCatching {
+            writeBuffer.transferFrom(payload)
+            flush()
+        }.onFailure {
+            if (input.availableForRead > 0) input.readBuffer.buffer.clear()
+            if (output.availableForWrite > 0) output.writeBuffer.buffer.clear()
+            throw it
+        }
+        input.awaitContent()
+        Buffer().apply { transferFrom(input.readBuffer) }
     }
 
     suspend inline fun sendRequest(payload: List<Argument>, charset: Charset): RConnection =

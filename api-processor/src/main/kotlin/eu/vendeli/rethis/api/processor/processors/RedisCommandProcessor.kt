@@ -42,7 +42,8 @@ class RedisCommandProcessor(
             }
             .forEach { cmd ->
                 try {
-//                    processCommand(cmd)
+                    processCommand(cmd)
+                    return emptyList()
                 } catch (e: Exception) {
                     logger.error("Error processing ${cmd.qualifiedName}: ${e.message}")
                     ret.add(cmd)
@@ -128,7 +129,7 @@ class RedisCommandProcessor(
             .indent(" ".repeat(4))
 
         commandFileSpec.addCommandFunctions(
-            coderName, commandName, specSigArguments, type, cmdPackagePart,
+            coderName, commandName, specSigArguments, type, cmdPackagePart, responseTypes
         )
 
         codecFileSpec.build().runCatching { writeTo(File(clientDir)) }

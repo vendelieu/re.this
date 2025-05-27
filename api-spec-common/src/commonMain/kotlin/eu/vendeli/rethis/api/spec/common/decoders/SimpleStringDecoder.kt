@@ -1,12 +1,10 @@
 package eu.vendeli.rethis.api.spec.common.decoders
 
 import eu.vendeli.rethis.api.spec.common.types.RespCode
-import io.ktor.utils.io.*
-import io.ktor.utils.io.charsets.Charset
+import io.ktor.utils.io.charsets.*
+import io.ktor.utils.io.core.*
+import kotlinx.io.Buffer
 
 object SimpleStringDecoder : ResponseDecoder<String>(RespCode.SIMPLE_STRING) {
-    override suspend fun decode(input: ByteReadChannel, charset: Charset): String {
-        input.readRemaining()
-        return TODO("Not yet implemented")
-    }
+    override suspend fun decode(input: Buffer, charset: Charset): String = input.readText(charset)
 }

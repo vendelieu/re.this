@@ -2,6 +2,7 @@ package eu.vendeli.rethis.api.processor.utils
 
 import com.squareup.kotlinpoet.*
 import eu.vendeli.rethis.ReThis
+import eu.vendeli.rethis.api.spec.common.types.RespCode
 
 fun FileSpec.Builder.addCommandFunctions(
     codecName: String,
@@ -9,7 +10,9 @@ fun FileSpec.Builder.addCommandFunctions(
     parameters: Map<String, Pair<TypeName, List<KModifier>>>,
     type: TypeName,
     cmdPackagePart: String,
+    responseTypes: List<RespCode>,
 ) {
+    val isNullable = RespCode.NULL in responseTypes
     addImport("eu.vendeli.rethis.codecs.$cmdPackagePart", codecName)
     addImport("eu.vendeli.rethis.core", "use")
     addFunction(
@@ -20,13 +23,13 @@ fun FileSpec.Builder.addCommandFunctions(
                     addParameter(it.key, it.value.first, it.value.second)
                 }
             }
-            .returns(type.copy(true))
+            .returns(type.copy(isNullable))
             .addCode(
                 CodeBlock.builder().apply {
                     addStatement("val request = $codecName.encode(cfg.charset, ${parameters.keys.joinToString()})")
                     addStatement(
-                        "return connectionPool.use {\n\tit.sendRequest(request.buffer)\n\t" +
-                            "$codecName.decode(it.input, cfg.charset)\n}"
+                        "return connectionPool.use {\n\t" +
+                            "$codecName.decode(it.doRequest(request.buffer), cfg.charset)\n}"
                     )
                 }.build(),
             )
