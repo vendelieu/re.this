@@ -39,7 +39,7 @@ configureKotlin {
             }
             implementation("commons-io:commons-io:2.19.0")
             implementation("org.apache.commons:commons-compress:1.27.1")
-            implementation("com.fasterxml.woodstox:woodstox-core:7.1.0")
+            implementation("com.fasterxml.woodstox:woodstox-core:7.1.1")
         }
     }
 }
