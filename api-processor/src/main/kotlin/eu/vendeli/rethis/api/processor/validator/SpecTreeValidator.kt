@@ -3,8 +3,8 @@ package eu.vendeli.rethis.api.processor.validator
 import com.google.devtools.ksp.KspExperimental
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.Modifier
-import eu.vendeli.rethis.api.processor.type.*
-import eu.vendeli.rethis.api.processor.type.SpecNode.PureToken
+import eu.vendeli.rethis.api.processor.types.*
+import eu.vendeli.rethis.api.processor.types.SpecNode.PureToken
 import eu.vendeli.rethis.api.processor.utils.*
 import eu.vendeli.rethis.api.spec.common.annotations.RedisKey
 import eu.vendeli.rethis.api.spec.common.annotations.RedisOptional
@@ -74,8 +74,7 @@ internal object SpecTreeValidator : SpecNodeVisitor {
             ValidityCheck.OPTIONALITY in node.symbol.parseIgnore() || // or ignored check
                 node.symbol.hasAnnotation<RedisOptional>() && // or actually have optional marks
                 (node.symbol.isVararg || node.symbol.type.resolve().let { it.isCollection() || it.isMarkedNullable })
-            )
-            -> true
+            ) -> true
 
         node == null -> false
         else -> checkContextualOptionality(node.parent)

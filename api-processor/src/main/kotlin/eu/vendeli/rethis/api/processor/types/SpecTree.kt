@@ -1,4 +1,4 @@
-package eu.vendeli.rethis.api.processor.type
+package eu.vendeli.rethis.api.processor.types
 
 import eu.vendeli.rethis.api.processor.utils.normalizeParam
 

@@ -1,4 +1,4 @@
-package eu.vendeli.rethis.api.processor.type
+package eu.vendeli.rethis.api.processor.types
 
 import com.google.devtools.ksp.KspExperimental
 import com.google.devtools.ksp.getAnnotationsByType
@@ -136,6 +136,7 @@ object LibSpecTreeBuilder {
             decl.classKind == ClassKind.CLASS -> decl.getConstructors().flatMap {
                 it.parameters
             }.forEach {
+                if (!it.isVal) println("Parameter `${it.name?.asString()}` in `${it.parent?.parent}` should be val")
                 handleValueParam(it, currentParent)
             }
         }

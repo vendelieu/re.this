@@ -10,9 +10,9 @@ import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import com.squareup.kotlinpoet.STAR
 import com.squareup.kotlinpoet.ksp.toClassName
 import com.squareup.kotlinpoet.ksp.toTypeName
-import eu.vendeli.rethis.api.processor.type.RedisCommandFullSpec
-import eu.vendeli.rethis.api.processor.type.ValidationContext
-import eu.vendeli.rethis.api.processor.type.collectAllChildren
+import eu.vendeli.rethis.api.processor.types.RedisCommandFullSpec
+import eu.vendeli.rethis.api.processor.types.ValidationContext
+import eu.vendeli.rethis.api.processor.types.collectAllChildren
 import eu.vendeli.rethis.api.processor.utils.*
 import eu.vendeli.rethis.api.spec.common.annotations.RedisMeta
 import eu.vendeli.rethis.api.spec.common.types.RespCode

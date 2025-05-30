@@ -4,11 +4,8 @@ import com.google.devtools.ksp.processing.KSPLogger
 import com.google.devtools.ksp.symbol.KSAnnotated
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSDeclaration
-import com.google.devtools.ksp.symbol.KSValueParameter
-import com.squareup.kotlinpoet.FileSpec
-import com.squareup.kotlinpoet.ksp.toClassName
-import eu.vendeli.rethis.api.processor.type.RedisCommandApiSpec
-import eu.vendeli.rethis.api.processor.type.collectAllArguments
+import eu.vendeli.rethis.api.processor.types.RedisCommandApiSpec
+import eu.vendeli.rethis.api.processor.types.collectAllArguments
 import eu.vendeli.rethis.api.spec.common.annotations.RedisMeta
 import eu.vendeli.rethis.api.spec.common.types.RespCode
 import eu.vendeli.rethis.api.spec.common.types.ValidityCheck
@@ -35,33 +32,6 @@ internal inline fun String?.ifNullOrEmpty(defaultValue: () -> String): String {
 }
 
 internal fun KSDeclaration.isStdType() = qualifiedName?.getQualifier()?.startsWith("kotlin") == true
-
-internal fun FileSpec.Builder.typeWrite(
-    param: KSValueParameter, value: String,
-): String = param.type.resolve().let {
-    val name = it.toClassName().simpleName.toPascalCase()
-    val extName = "write${name}Arg"
-
-    when {
-        it.declaration.isStdType() -> {
-            addImport("eu.vendeli.rethis.utils", extName)
-
-            "buffer.$extName($value, charset)"
-        }
-
-        it.declaration.isEnum() -> {
-            "buffer.writeStringArg($value.name, charset)"
-        }
-
-        it.declaration.isDataObject() -> {
-            "buffer.writeStringArg($value.toString(), charset)"
-        }
-
-        else -> {
-            "buffer.$extName($value, charset)"
-        }
-    }
-}
 
 internal fun KSAnnotated.hasCustomEncoder(): Boolean {
     val customDecoder = getAnnotation<RedisMeta.CustomCodec>()?.get("encoder")

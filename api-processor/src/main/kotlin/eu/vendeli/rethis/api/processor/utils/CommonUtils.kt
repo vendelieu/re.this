@@ -1,7 +1,7 @@
 package eu.vendeli.rethis.api.processor.utils
 
-import eu.vendeli.rethis.api.processor.type.LibSpecTree
-import eu.vendeli.rethis.api.processor.type.RedisCommandApiSpec
+import eu.vendeli.rethis.api.processor.types.LibSpecTree
+import eu.vendeli.rethis.api.processor.types.RedisCommandApiSpec
 
 internal fun RedisCommandApiSpec.tryInferOperation(): String? = when {
     commandFlags?.any { it.equals("readonly", true) } == true -> "READ"

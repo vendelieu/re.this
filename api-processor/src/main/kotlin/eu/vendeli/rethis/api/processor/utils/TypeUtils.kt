@@ -2,7 +2,7 @@ package eu.vendeli.rethis.api.processor.utils
 
 import com.google.devtools.ksp.symbol.*
 import com.squareup.kotlinpoet.ClassName
-import eu.vendeli.rethis.api.processor.type.CommandArgument
+import eu.vendeli.rethis.api.processor.types.CommandArgument
 import eu.vendeli.rethis.api.spec.common.annotations.RedisOption
 import eu.vendeli.rethis.api.spec.common.types.RespCode
 

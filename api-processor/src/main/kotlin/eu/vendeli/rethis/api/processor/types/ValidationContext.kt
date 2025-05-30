@@ -1,4 +1,4 @@
-package eu.vendeli.rethis.api.processor.type
+package eu.vendeli.rethis.api.processor.types
 
 import com.google.devtools.ksp.processing.KSPLogger
 import com.google.devtools.ksp.symbol.KSAnnotated
