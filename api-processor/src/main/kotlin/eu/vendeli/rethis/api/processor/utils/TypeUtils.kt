@@ -9,23 +9,23 @@ import eu.vendeli.rethis.api.spec.common.types.RespCode
 internal val charsetClassName = ClassName("io.ktor.utils.io.charsets", "Charset")
 
 internal val decodersMap: Map<RespCode, Pair<String?, String>> = mapOf(
-    RespCode.SIMPLE_STRING to ("SimpleStringDecoder" to "SimpleStringDecoder.decode(input, charset)"),
-    RespCode.VERBATIM_STRING to ("SimpleArrayDecoder" to "VerbatimStringDecoder.decode(input, charset)"),
+    RespCode.SIMPLE_STRING to ("SimpleStringDecoder" to "SimpleStringDecoder.decode(input, charset, TYPE_INFO)"),
+    RespCode.VERBATIM_STRING to ("SimpleArrayDecoder" to "VerbatimStringDecoder.decode(input, charset, TYPE_INFO)"),
 
-    RespCode.BULK to ("BulkStringDecoder" to "BulkDecoder.decode(input, charset)"),
+    RespCode.BULK to ("BulkStringDecoder" to "BulkStringDecoder.decode(input, charset, TYPE_INFO)"),
 
-    RespCode.INTEGER to ("IntegerDecoder" to "IntegerDecoder.decode(input, charset)"),
-    RespCode.DOUBLE to ("DoubleDecoder" to "DoubleDecoder.decode(input, charset)"),
-    RespCode.BOOLEAN to ("BooleanDecoder" to "BooleanDecoder.decode(input, charset)"),
-    RespCode.BIG_NUMBER to ("BigDecimalDecoder" to "BigDecimalDecoder.decode(input, charset)"),
+    RespCode.INTEGER to ("IntegerDecoder" to "IntegerDecoder.decode(input, charset, TYPE_INFO)"),
+    RespCode.DOUBLE to ("DoubleDecoder" to "DoubleDecoder.decode(input, charset, TYPE_INFO)"),
+    RespCode.BOOLEAN to ("BooleanDecoder" to "BooleanDecoder.decode(input, charset, TYPE_INFO)"),
+    RespCode.BIG_NUMBER to ("BigDecimalDecoder" to "BigDecimalDecoder.decode(input, charset, TYPE_INFO)"),
 
-    RespCode.SET to ("SetDecoder" to "SetDecoder.decode(input, charset)"),
-    RespCode.ARRAY to ("ArrayDecoder" to "ArrayDecoder.decode(input, charset)"),
+    RespCode.SET to ("SetDecoder" to "SetDecoder.decode<%s>(input, charset, TYPE_INFO)"),
+    RespCode.ARRAY to ("ArrayDecoder" to "ArrayDecoder.decode<%s>(input, charset, TYPE_INFO)"),
 
-    RespCode.MAP to ("MapDecoder" to "MapDecoder.decode(input, charset)"),
+    RespCode.MAP to ("MapDecoder" to "MapDecoder.decode<%s, %s>(input, charset, TYPE_INFO)"),
 
-    RespCode.SIMPLE_ERROR to ("ErrorDecoder" to "SimpleErrorDecoder.decode(input, charset)"),
-    RespCode.BULK_ERROR to ("SimpleArrayDecoder" to "BulkErrorDecoder.decode(input, charset)"),
+    RespCode.SIMPLE_ERROR to ("ErrorDecoder" to "SimpleErrorDecoder.decode(input, charset, TYPE_INFO)"),
+    RespCode.BULK_ERROR to ("SimpleArrayDecoder" to "BulkErrorDecoder.decode(input, charset, TYPE_INFO)"),
 
     RespCode.NULL to (null to "null"),
 )

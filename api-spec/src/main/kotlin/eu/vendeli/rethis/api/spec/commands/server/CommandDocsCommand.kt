@@ -5,6 +5,6 @@ import eu.vendeli.rethis.api.spec.common.annotations.RedisOptional
 import eu.vendeli.rethis.api.spec.common.types.*
 
 @RedisCommand("COMMAND DOCS", RedisOperation.READ, [RespCode.ARRAY, RespCode.MAP])
-fun interface CommandDocsCommand : RedisCommandSpec<List<Map<String, RType>>> {
+fun interface CommandDocsCommand : RedisCommandSpec<Map<String, RType>> {
     suspend fun encode(@RedisOptional vararg commandName: String): CommandRequest<Nothing>
 }

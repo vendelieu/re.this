@@ -5,6 +5,6 @@ import eu.vendeli.rethis.api.spec.common.annotations.RedisOptional
 import eu.vendeli.rethis.api.spec.common.types.*
 
 @RedisCommand("LATENCY HISTOGRAM", RedisOperation.READ, [RespCode.ARRAY, RespCode.MAP])
-fun interface LatencyHistogramCommand : RedisCommandSpec<List<Map<String, RType>>> {
+fun interface LatencyHistogramCommand : RedisCommandSpec<Map<String, RType>> {
     suspend fun encode(@RedisOptional vararg command: String): CommandRequest<Nothing>
 }

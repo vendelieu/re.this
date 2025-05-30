@@ -26,10 +26,16 @@ fun FileSpec.Builder.addCommandFunctions(
             .returns(type.copy(isNullable))
             .addCode(
                 CodeBlock.builder().apply {
-                    addStatement("val request = $codecName.encode(cfg.charset, ${parameters.keys.joinToString()})")
+                    addStatement(
+                        "val request = $codecName.encode(cfg.charset, ${
+                            parameters.entries.joinToString {
+                                if (it.value.second.contains(KModifier.VARARG)) "*${it.key}" else it.key
+                            }
+                        })",
+                    )
                     addStatement(
                         "return connectionPool.use {\n\t" +
-                            "$codecName.decode(it.doRequest(request.buffer), cfg.charset)\n}"
+                            "$codecName.decode(it.doRequest(request.buffer), cfg.charset)\n}",
                     )
                 }.build(),
             )

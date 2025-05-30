@@ -68,6 +68,11 @@ internal fun KSAnnotated.hasCustomEncoder(): Boolean {
     return customDecoder != null && customDecoder != Unit::class.simpleName
 }
 
+internal fun KSAnnotated.hasCustomDecoder(): Boolean {
+    val customDecoder = getAnnotation<RedisMeta.CustomCodec>()?.get("decoder")
+    return customDecoder != null && customDecoder != Nothing::class.simpleName
+}
+
 @Suppress("UNCHECKED_CAST")
 internal inline fun <reified R> Any?.safeCast(): R? = this as? R
 

@@ -2,8 +2,10 @@ package eu.vendeli.rethis.api.spec.commands.string
 
 import eu.vendeli.rethis.api.spec.common.annotations.RedisCommand
 import eu.vendeli.rethis.api.spec.common.annotations.RedisKey
+import eu.vendeli.rethis.api.spec.common.annotations.RedisMeta
 import eu.vendeli.rethis.api.spec.common.annotations.RedisOption
 import eu.vendeli.rethis.api.spec.common.annotations.RedisOptional
+import eu.vendeli.rethis.api.spec.common.decoders.LcsDecoder
 import eu.vendeli.rethis.api.spec.common.request.string.LcsMode
 import eu.vendeli.rethis.api.spec.common.request.string.MinMatchLen
 import eu.vendeli.rethis.api.spec.common.response.LcsResult
@@ -18,6 +20,7 @@ import eu.vendeli.rethis.api.spec.common.types.RespCode
     [RespCode.MAP, RespCode.ARRAY],
     extensions = [LcsMode.IDX::class, MinMatchLen::class]
 )
+@RedisMeta.CustomCodec(decoder = LcsDecoder::class)
 fun interface LcsDetailedCommand : RedisCommandSpec<LcsResult> {
     suspend fun encode(
         @RedisKey key1: String,

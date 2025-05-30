@@ -6,8 +6,8 @@ sealed class BitcountOption
 
 @RedisOption
 class Range(
-    start: Long,
-    end: Long,
+    val start: Long,
+    val end: Long,
 ) : BitcountOption()
 
 @RedisOption

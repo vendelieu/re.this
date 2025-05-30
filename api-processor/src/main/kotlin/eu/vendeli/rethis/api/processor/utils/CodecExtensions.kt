@@ -1,9 +1,9 @@
 package eu.vendeli.rethis.api.processor.utils
 
+import com.google.devtools.ksp.symbol.KSTypeArgument
 import com.google.devtools.ksp.symbol.KSValueParameter
 import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
-import com.squareup.kotlinpoet.ksp.toClassName
 import com.squareup.kotlinpoet.ksp.toTypeName
 import eu.vendeli.rethis.api.spec.common.annotations.RedisOptional
 import eu.vendeli.rethis.api.spec.common.types.CommandRequest
@@ -35,7 +35,7 @@ internal fun TypeSpec.Builder.addEncodeFunction(
                     keyParam?.type?.resolve()?.toTypeName() ?: NOTHING,
                 ),
             )
-            .addCode(fileSpec.buildEncoderCode(annotation, params, keyParam))
+            .addCode(fileSpec.buildEncoderCode(this, annotation, params, keyParam))
             .build(),
     )
     return this
@@ -43,8 +43,9 @@ internal fun TypeSpec.Builder.addEncodeFunction(
 
 internal fun TypeSpec.Builder.addDecodeFunction(
     respCode: List<RespCode>,
-    type: TypeName,
+    specType: KSTypeArgument,
 ): TypeSpec.Builder {
+    val type = specType.toTypeName()
     val isReturnBool = type.copy(true) == BOOLEAN.copy(true)
     val isNullableResponse = RespCode.NULL in respCode
 
@@ -59,14 +60,20 @@ internal fun TypeSpec.Builder.addDecodeFunction(
                     addStatement("val code = RespCode.fromCode(input.readByte())")
                     addStatement(
                         "return when(code) {\n\t${
-                            respCode.joinToString("\n\t") {
+                            respCode.joinToString("\n\t") { c ->
                                 val decoderTail = when {
-                                    it == RespCode.SIMPLE_STRING && isReturnBool -> " == \"OK\""
-                                    it == RespCode.INTEGER && isReturnBool -> " == 1L"
+                                    c == RespCode.SIMPLE_STRING && isReturnBool -> " == \"OK\""
+                                    c == RespCode.INTEGER && isReturnBool -> " == 1L"
 
                                     else -> ""
                                 }
-                                "RespCode.$it -> " + decodersMap[it]!!.second + decoderTail
+                                val arguments = specType.type?.resolve()?.let { t ->
+                                    t.takeIf {
+                                        it.arguments.isNotEmpty()
+                                    }?.arguments?.map { it.type?.resolve() } ?: listOf(t)
+                                }?.filterNotNull()?.toTypedArray()!!
+
+                                "RespCode.$c -> " + decodersMap[c]!!.second.format(*arguments) + decoderTail
                             }
                         }\n\telse -> throw UnexpectedResponseType(\"Expected $respCode but got \$code\")\n}",
                     )
@@ -98,6 +105,7 @@ internal fun buildStaticHeaderInitializer(header: String): String {
 }
 
 private fun FileSpec.Builder.buildEncoderCode(
+    typeSpec: TypeSpec.Builder,
     annotation: Map<String, String>,
     parameters: List<KSValueParameter>,
     keyParam: KSValueParameter?,
@@ -114,6 +122,12 @@ private fun FileSpec.Builder.buildEncoderCode(
                 stablePartsSize++
             } else {
                 isThereOptionals = true
+                if (it.isVararg) {
+                    optionalsSize.append(
+                        "if (${it.name!!.asString()}.isNotEmpty()) { size += ${it.name!!.asString()}.size }\n",
+                    )
+                    return@forEach
+                }
                 optionalsSize.append("if (${it.name!!.asString()} != null) { size++ }\n")
             }
         }
@@ -126,20 +140,8 @@ private fun FileSpec.Builder.buildEncoderCode(
         addStatement("COMMAND_HEADER.copyTo(buffer)\n")
     }
 
-    parameters.forEach { param ->
-        when {
-            param.hasAnnotation<RedisOptional>() ->
-                addStatement("%N?.also { ${typeWrite(param, "it")} }", param.name!!.asString())
-
-            param.isVararg -> addStatement(
-                "buffer.writeVarargs${
-                    param.type.resolve().arguments.first().type!!.resolve().toClassName().simpleName
-                }(%N)",
-                param.name!!.asString(),
-            )
-
-            else -> addStatement(typeWrite(param, param.name!!.asString()))
-        }
+    parameters.forEach {
+        typeSpec.generateStatement(it.name!!.asString(), it.type.resolve(), this, it.isVararg, this@buildEncoderCode)
     }
 
     addCommandSpecCreation(annotation["operation"]?.substringAfter(".") ?: "READ", keyParam)

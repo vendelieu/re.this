@@ -6,7 +6,6 @@ import com.google.devtools.ksp.processing.SymbolProcessor
 import com.google.devtools.ksp.symbol.KSAnnotated
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSFunctionDeclaration
-import com.google.devtools.ksp.symbol.KSType
 import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ksp.toTypeName
 import eu.vendeli.rethis.api.processor.utils.*
@@ -33,7 +32,7 @@ class RedisCommandProcessor(
         val ret = mutableListOf<KSAnnotated>()
         resolver.getSymbolsWithAnnotation(RedisCommand::class.qualifiedName!!)
             .filterIsInstance<KSClassDeclaration>()
-            .also {c ->
+            .also { c ->
                 c.groupBy {
                     it.getAnnotation<RedisCommand>()?.get("name")!!
                 }.entries.forEach {
@@ -43,7 +42,6 @@ class RedisCommandProcessor(
             .forEach { cmd ->
                 try {
                     processCommand(cmd)
-                    return emptyList()
                 } catch (e: Exception) {
                     logger.error("Error processing ${cmd.qualifiedName}: ${e.message}")
                     ret.add(cmd)
@@ -68,15 +66,11 @@ class RedisCommandProcessor(
 
         val parameters = encodeFunction.parameters
         val keyParam = parameters.find { it.hasAnnotation<RedisKey>() }
-        val type = cmd.superTypes.first().resolve().arguments.first().toTypeName() // RedisCommandSpec<T>
+        val specType = cmd.superTypes.first().resolve().arguments.first() // RedisCommandSpec<T>
+        val type = specType.toTypeName()
         val staticParts = buildStaticCommandParts(*commandName.split(' ').toTypedArray(), parameters = parameters)
         val responseTypes = commandArguments.parseResponseTypes()!!
 
-        val optionContainer = commandArguments.firstOrNull {
-            it.name?.asString() == "options"
-        }?.value?.let {
-            it as? KSType as? KSClassDeclaration
-        }
         val specSigArguments = parameters.associate { param ->
             param.name!!.asString() to Pair(
                 param.type.resolve().toTypeName(),
@@ -107,8 +101,9 @@ class RedisCommandProcessor(
                         .build(),
                 )
                 .addEncodeFunction(codecFileSpec, annotation, specSigArguments, parameters, keyParam)
-                .addDecodeFunction(responseTypes, type)
-                .apply { codecFileSpec.generateOptionEncoders(optionContainer) }
+                .apply {
+                    if (!cmd.hasCustomDecoder()) addDecodeFunction(responseTypes, specType)
+                }
                 .build(),
         ).apply {
             addImport("io.ktor.util.reflect", "TypeInfo", "typeInfo")
@@ -129,7 +124,7 @@ class RedisCommandProcessor(
             .indent(" ".repeat(4))
 
         commandFileSpec.addCommandFunctions(
-            coderName, commandName, specSigArguments, type, cmdPackagePart, responseTypes
+            coderName, commandName, specSigArguments, type, cmdPackagePart, responseTypes,
         )
 
         codecFileSpec.build().runCatching { writeTo(File(clientDir)) }
