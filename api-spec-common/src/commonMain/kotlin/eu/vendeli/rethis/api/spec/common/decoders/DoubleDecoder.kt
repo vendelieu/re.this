@@ -5,6 +5,6 @@ import io.ktor.util.reflect.*
 import io.ktor.utils.io.charsets.*
 import kotlinx.io.Buffer
 
-sealed class ResponseDecoder<T : Any>(val type: RespCode) {
-    abstract suspend fun decode(input: Buffer, charset: Charset, typeInfo: TypeInfo): T
+object DoubleDecoder : ResponseDecoder<Double>(RespCode.SIMPLE_STRING) {
+    override suspend fun decode(input: Buffer, charset: Charset, typeInfo: TypeInfo): Double = TODO()
 }

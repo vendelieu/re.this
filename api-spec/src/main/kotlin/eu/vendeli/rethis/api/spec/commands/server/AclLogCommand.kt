@@ -12,7 +12,7 @@ import eu.vendeli.rethis.api.spec.common.types.RespCode
     "ACL LOG",
     RedisOperation.READ,
     [RespCode.SIMPLE_STRING, RespCode.ARRAY],
-) // todo handle string ok as empty string
+) // todo handle string ok as empty list
 fun interface AclLogCommand : RedisCommandSpec<List<String>> {
     suspend fun encode(
         @RedisOptional count: Long?,

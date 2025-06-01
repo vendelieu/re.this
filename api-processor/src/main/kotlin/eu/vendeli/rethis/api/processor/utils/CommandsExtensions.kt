@@ -27,9 +27,9 @@ fun FileSpec.Builder.addCommandFunctions(
             .addCode(
                 CodeBlock.builder().apply {
                     addStatement(
-                        "val request = $codecName.encode(cfg.charset, ${
-                            parameters.entries.joinToString {
-                                if (it.value.second.contains(KModifier.VARARG)) "*${it.key}" else it.key
+                        "val request = $codecName.encode(charset = cfg.charset${
+                            parameters.entries.joinToString(prefix = ", ") {
+                                "${it.key} = " + if (it.value.second.contains(KModifier.VARARG)) "*${it.key}" else it.key
                             }
                         })",
                     )

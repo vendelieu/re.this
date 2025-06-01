@@ -9,7 +9,7 @@ import eu.vendeli.rethis.api.spec.common.types.RedisOperation
 import eu.vendeli.rethis.api.spec.common.types.RespCode
 
 @RedisCommand("BRPOP", RedisOperation.WRITE, [RespCode.ARRAY, RespCode.NULL], isBlocking = true)
-fun interface BrPopCommand : RedisCommandSpec<PopResult> {
+fun interface BrPopCommand : RedisCommandSpec<List<PopResult>> {
     suspend fun encode(
         @RedisKey vararg key: String,
         timeout: Double

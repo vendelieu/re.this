@@ -13,6 +13,7 @@ import eu.vendeli.rethis.api.processor.utils.RedisSpecLoader.loadSpecs
 import eu.vendeli.rethis.api.processor.validator.RedisSpecValidator
 import eu.vendeli.rethis.api.spec.common.annotations.RedisCommand
 import eu.vendeli.rethis.api.spec.common.annotations.RedisKey
+import eu.vendeli.rethis.api.spec.common.types.RespCode
 import io.ktor.util.reflect.*
 import kotlinx.io.Buffer
 import java.io.File
@@ -43,7 +44,7 @@ class RedisCommandProcessor(
                 try {
                     processCommand(cmd)
                 } catch (e: Exception) {
-                    logger.error("Error processing ${cmd.qualifiedName}: ${e.message}")
+                    logger.error("Error processing ${cmd.qualifiedName?.asString()}: ${e.message}\n${e.stackTraceToString()}")
                     ret.add(cmd)
                 }
             }
@@ -91,13 +92,13 @@ class RedisCommandProcessor(
                         .build(),
                 )
                 .addProperty(
-                    PropertySpec.builder("COMMAND_HEADER", Buffer::class, KModifier.PRIVATE)
-                        .initializer(buildStaticHeaderInitializer(staticParts))
+                    PropertySpec.builder("BLOCKING_STATUS", BOOLEAN, KModifier.PRIVATE, KModifier.CONST)
+                        .initializer("%L", annotation["isBlocking"] ?: "false")
                         .build(),
                 )
                 .addProperty(
-                    PropertySpec.builder("BLOCKING_STATUS", BOOLEAN, KModifier.PRIVATE, KModifier.CONST)
-                        .initializer("%L", annotation["isBlocking"] ?: "false")
+                    PropertySpec.builder("COMMAND_HEADER", Buffer::class, KModifier.PRIVATE)
+                        .initializer(buildStaticHeaderInitializer(staticParts))
                         .build(),
                 )
                 .addEncodeFunction(codecFileSpec, annotation, specSigArguments, parameters, keyParam)
@@ -118,6 +119,9 @@ class RedisCommandProcessor(
                     addImport("eu.vendeli.rethis.api.spec.common.decoders", decoder)
                 }
             }
+            if (responseTypes.contains(RespCode.ARRAY) && responseTypes.contains(RespCode.MAP)) {
+                addImport("eu.vendeli.rethis.api.spec.common.decoders", "ArrayMapDecoder")
+            }
         }
 
         val commandFileSpec = FileSpec.builder(commandPackage + cmdPackagePart, annotation["name"]!!.toPascalCase())
@@ -127,7 +131,7 @@ class RedisCommandProcessor(
             coderName, commandName, specSigArguments, type, cmdPackagePart, responseTypes,
         )
 
-        codecFileSpec.build().runCatching { writeTo(File(clientDir)) }
-        commandFileSpec.build().runCatching { writeTo(File(clientDir)) }
+        codecFileSpec.build().runCatching { writeTo(File(clientDir)) }.onFailure { it.printStackTrace() }
+        commandFileSpec.build().runCatching { writeTo(File(clientDir)) }.onFailure { it.printStackTrace() }
     }
 }

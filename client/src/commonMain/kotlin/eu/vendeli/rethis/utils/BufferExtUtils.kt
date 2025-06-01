@@ -1,10 +1,13 @@
 package eu.vendeli.rethis.utils
 
 import eu.vendeli.rethis.api.spec.common.types.RespCode
+import eu.vendeli.rethis.api.spec.common.types.TimeUnit
 import eu.vendeli.rethis.utils.Const.EOL
 import io.ktor.utils.io.charsets.*
 import io.ktor.utils.io.core.*
+import kotlinx.datetime.Instant
 import kotlinx.io.Buffer
+import kotlin.time.Duration
 
 private fun Buffer.appendEOL() {
     writeFully(EOL)
@@ -64,3 +67,15 @@ private fun Buffer.writeRedisValue(
     }
 }
 
+fun Buffer.writeDurationArg(value: Duration, charset: Charset, timeUnit: TimeUnit) = when (timeUnit) {
+    TimeUnit.MILLISECONDS -> writeBA(value.inWholeMilliseconds.toString().toByteArray(charset), charset)
+    TimeUnit.SECONDS -> writeBA(value.inWholeSeconds.toString().toByteArray(charset), charset)
+}
+
+fun Buffer.writeInstantArg(value: Instant, charset: Charset, timeUnit: TimeUnit) = when (timeUnit) {
+    TimeUnit.MILLISECONDS -> writeBA(value.toEpochMilliseconds().toString().toByteArray(charset), charset)
+    TimeUnit.SECONDS -> writeBA(value.epochSeconds.toString().toByteArray(charset), charset)
+}
+
+fun Buffer.writeBooleanArg(value: Boolean, charset: Charset) =
+    writeBA(value.let { if (it) "t" else "f" }.toByteArray(charset), charset)

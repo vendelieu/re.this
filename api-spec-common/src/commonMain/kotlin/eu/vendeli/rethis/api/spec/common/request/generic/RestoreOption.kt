@@ -1,6 +1,8 @@
 package eu.vendeli.rethis.api.spec.common.request.generic
 
+import eu.vendeli.rethis.api.spec.common.annotations.RedisMeta
 import eu.vendeli.rethis.api.spec.common.annotations.RedisOption
+import eu.vendeli.rethis.api.spec.common.types.TimeUnit
 import kotlin.time.Duration
 
 sealed class RestoreOption {
@@ -12,7 +14,7 @@ sealed class RestoreOption {
 
     @RedisOption.Token("IDLETIME")
     class IdleTime(
-        val seconds: Duration,
+        val seconds: @RedisMeta.OutgoingTimeUnit(TimeUnit.SECONDS) Duration,
     ) : RestoreOption()
 
     @RedisOption.Token("FREQ")

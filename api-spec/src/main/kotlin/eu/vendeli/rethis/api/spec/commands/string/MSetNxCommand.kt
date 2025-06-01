@@ -11,6 +11,6 @@ import eu.vendeli.rethis.api.spec.common.types.RespCode
 @RedisCommand("MSETNX", RedisOperation.WRITE, [RespCode.INTEGER], extensions = [KeyValue::class])
 fun interface MSetNxCommand : RedisCommandSpec<Boolean> {
     suspend fun encode(
-        @RedisKey vararg data: KeyValue,
+        @RedisKey vararg data: KeyValue, // todo support getting key type from nested data
     ): CommandRequest<List<String>>
 }

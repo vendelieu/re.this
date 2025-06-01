@@ -1,7 +1,9 @@
 package eu.vendeli.rethis.api.spec.common.request.connection
 
+import eu.vendeli.rethis.api.spec.common.annotations.RedisMeta
 import eu.vendeli.rethis.api.spec.common.annotations.RedisOption
 import eu.vendeli.rethis.api.spec.common.annotations.RedisOptionContainer
+import eu.vendeli.rethis.api.spec.common.types.TimeUnit
 import kotlinx.datetime.Instant
 
 @RedisOptionContainer
@@ -25,5 +27,5 @@ sealed class ClientKillOptions {
     data class SkipMe(val yes: Boolean) : ClientKillOptions()
 
     @RedisOption.Token("MAXAGE")
-    data class MaxAge(val instant: Instant) : ClientKillOptions()
+    data class MaxAge(val instant: @RedisMeta.OutgoingTimeUnit(TimeUnit.SECONDS) Instant) : ClientKillOptions()
 }

@@ -41,13 +41,17 @@ internal fun TypeSpec.Builder.addEncodeFunction(
     return this
 }
 
+private fun RespCode.isString() = this == RespCode.SIMPLE_STRING || this == RespCode.BULK
 internal fun TypeSpec.Builder.addDecodeFunction(
     respCode: List<RespCode>,
     specType: KSTypeArgument,
 ): TypeSpec.Builder {
     val type = specType.toTypeName()
     val isReturnBool = type.copy(true) == BOOLEAN.copy(true)
+    val isReturnDouble = type.copy(true) == DOUBLE.copy(true)
+
     val isNullableResponse = RespCode.NULL in respCode
+    val isImplicitMapResponse = RespCode.MAP in respCode && RespCode.ARRAY in respCode
 
     addFunction(
         FunSpec.builder("decode")
@@ -58,26 +62,35 @@ internal fun TypeSpec.Builder.addDecodeFunction(
             .addCode(
                 CodeBlock.builder().apply {
                     addStatement("val code = RespCode.fromCode(input.readByte())")
-                    addStatement(
-                        "return when(code) {\n\t${
-                            respCode.joinToString("\n\t") { c ->
-                                val decoderTail = when {
-                                    c == RespCode.SIMPLE_STRING && isReturnBool -> " == \"OK\""
-                                    c == RespCode.INTEGER && isReturnBool -> " == 1L"
+                    beginControlFlow("return when(code)")
+                    respCode.forEach { code ->
+                        val arguments = specType.type?.resolve()?.let { t ->
+                            t.takeIf {
+                                it.arguments.isNotEmpty()
+                            }?.arguments?.map { it.type?.resolve() } ?: listOf(t)
+                        }?.filterNotNull()?.toTypedArray()!!
+                        val tailStatement = when {
+                            code.isString() && isReturnBool -> "== \"OK\""
+                            code == RespCode.INTEGER && isReturnBool -> "== 1L"
+                            code.isString() && isReturnDouble -> ".toDouble()"
+                            else -> ""
+                        }
 
-                                    else -> ""
-                                }
-                                val arguments = specType.type?.resolve()?.let { t ->
-                                    t.takeIf {
-                                        it.arguments.isNotEmpty()
-                                    }?.arguments?.map { it.type?.resolve() } ?: listOf(t)
-                                }?.filterNotNull()?.toTypedArray()!!
+                        beginControlFlow("RespCode.%L ->", code)
 
-                                "RespCode.$c -> " + decodersMap[c]!!.second.format(*arguments) + decoderTail
-                            }
-                        }\n\telse -> throw UnexpectedResponseType(\"Expected $respCode but got \$code\")\n}",
-                    )
+                        if (isImplicitMapResponse && code == RespCode.ARRAY) {
+                            addStatement("ArrayMapDecoder.decode<%s, %s>(input, charset, TYPE_INFO)".format(*arguments))
+                        } else {
+                            addStatement(decodersMap[code]!!.second.format(*arguments) + tailStatement)
+                        }
 
+                        endControlFlow()
+                    }
+                    beginControlFlow("else ->")
+                    addStatement("throw UnexpectedResponseType(\"Expected $respCode but got \$code\")")
+                    endControlFlow()
+
+                    endControlFlow()
                 }.build(),
             )
             .build(),
@@ -104,51 +117,7 @@ internal fun buildStaticHeaderInitializer(header: String): String {
         "\n}"
 }
 
-private fun FileSpec.Builder.buildEncoderCode(
-    typeSpec: TypeSpec.Builder,
-    annotation: Map<String, String>,
-    parameters: List<KSValueParameter>,
-    keyParam: KSValueParameter?,
-): CodeBlock = CodeBlock.builder().apply {
-    var isThereOptionals = false
-    if (parameters.isEmpty()) {
-        addStatement("val buffer = COMMAND_HEADER")
-    } else {
-        addStatement("val buffer = %T()", Buffer::class)
-        var stablePartsSize = annotation["name"]!!.split(" ").size
-        val optionalsSize = StringBuilder()
-        parameters.forEach {
-            if (!it.hasAnnotation<RedisOptional>() && !it.type.resolve().isMarkedNullable) {
-                stablePartsSize++
-            } else {
-                isThereOptionals = true
-                if (it.isVararg) {
-                    optionalsSize.append(
-                        "if (${it.name!!.asString()}.isNotEmpty()) { size += ${it.name!!.asString()}.size }\n",
-                    )
-                    return@forEach
-                }
-                optionalsSize.append("if (${it.name!!.asString()} != null) { size++ }\n")
-            }
-        }
-        if (isThereOptionals) {
-            addStatement("var size = $stablePartsSize")
-            addStatement(optionalsSize.toString())
-            addStatement("buffer.writeString(\"\$size\")")
-        }
-
-        addStatement("COMMAND_HEADER.copyTo(buffer)\n")
-    }
-
-    parameters.forEach {
-        typeSpec.generateStatement(it.name!!.asString(), it.type.resolve(), this, it.isVararg, this@buildEncoderCode)
-    }
-
-    addCommandSpecCreation(annotation["operation"]?.substringAfter(".") ?: "READ", keyParam)
-}.build()
-
-
-private fun CodeBlock.Builder.addCommandSpecCreation(
+internal fun CodeBlock.Builder.addCommandSpecCreation(
     operationName: String,
     keyParam: KSValueParameter?,
 ) {

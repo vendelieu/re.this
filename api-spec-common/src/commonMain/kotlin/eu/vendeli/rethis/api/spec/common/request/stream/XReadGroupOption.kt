@@ -1,8 +1,10 @@
 package eu.vendeli.rethis.api.spec.common.request.stream
 
 import eu.vendeli.rethis.api.spec.common.annotations.RedisKey
+import eu.vendeli.rethis.api.spec.common.annotations.RedisMeta
 import eu.vendeli.rethis.api.spec.common.annotations.RedisOption
 import eu.vendeli.rethis.api.spec.common.annotations.RedisOptionContainer
+import eu.vendeli.rethis.api.spec.common.types.TimeUnit
 import kotlin.time.Duration
 
 @RedisOptionContainer
@@ -11,7 +13,7 @@ sealed class XReadGroupOption {
     class Count(val count: Long) : XReadGroupOption()
 
     @RedisOption.Token("BLOCK")
-    class Block(val milliseconds: Duration) : XReadGroupOption()
+    class Block(val milliseconds: @RedisMeta.OutgoingTimeUnit(TimeUnit.MILLISECONDS) Duration) : XReadGroupOption()
 
     @RedisOption.Token("NOACK")
     data object NoAck : XReadGroupOption()

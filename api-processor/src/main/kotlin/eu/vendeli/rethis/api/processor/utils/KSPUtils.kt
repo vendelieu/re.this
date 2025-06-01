@@ -4,6 +4,7 @@ import com.google.devtools.ksp.processing.KSPLogger
 import com.google.devtools.ksp.symbol.KSAnnotated
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSDeclaration
+import com.google.devtools.ksp.symbol.KSType
 import eu.vendeli.rethis.api.processor.types.RedisCommandApiSpec
 import eu.vendeli.rethis.api.processor.types.collectAllArguments
 import eu.vendeli.rethis.api.spec.common.annotations.RedisMeta
@@ -31,8 +32,6 @@ internal inline fun String?.ifNullOrEmpty(defaultValue: () -> String): String {
     return if (this == null || isEmpty()) defaultValue() else this
 }
 
-internal fun KSDeclaration.isStdType() = qualifiedName?.getQualifier()?.startsWith("kotlin") == true
-
 internal fun KSAnnotated.hasCustomEncoder(): Boolean {
     val customDecoder = getAnnotation<RedisMeta.CustomCodec>()?.get("encoder")
     return customDecoder != null && customDecoder != Unit::class.simpleName
@@ -41,6 +40,12 @@ internal fun KSAnnotated.hasCustomEncoder(): Boolean {
 internal fun KSAnnotated.hasCustomDecoder(): Boolean {
     val customDecoder = getAnnotation<RedisMeta.CustomCodec>()?.get("decoder")
     return customDecoder != null && customDecoder != Nothing::class.simpleName
+}
+
+internal fun KSType.getTimeUnit(): String = annotations.firstOrNull {
+    it.shortName.asString() == RedisMeta.OutgoingTimeUnit::class.simpleName
+}?.arguments?.firstOrNull()?.value?.toString().let {
+    if (it == "SECONDS") "SECONDS" else "MILLISECONDS"
 }
 
 @Suppress("UNCHECKED_CAST")

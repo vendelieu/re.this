@@ -10,7 +10,7 @@ internal val charsetClassName = ClassName("io.ktor.utils.io.charsets", "Charset"
 
 internal val decodersMap: Map<RespCode, Pair<String?, String>> = mapOf(
     RespCode.SIMPLE_STRING to ("SimpleStringDecoder" to "SimpleStringDecoder.decode(input, charset, TYPE_INFO)"),
-    RespCode.VERBATIM_STRING to ("SimpleArrayDecoder" to "VerbatimStringDecoder.decode(input, charset, TYPE_INFO)"),
+    RespCode.VERBATIM_STRING to ("VerbatimStringDecoder" to "VerbatimStringDecoder.decode(input, charset, TYPE_INFO)"),
 
     RespCode.BULK to ("BulkStringDecoder" to "BulkStringDecoder.decode(input, charset, TYPE_INFO)"),
 
@@ -24,8 +24,8 @@ internal val decodersMap: Map<RespCode, Pair<String?, String>> = mapOf(
 
     RespCode.MAP to ("MapDecoder" to "MapDecoder.decode<%s, %s>(input, charset, TYPE_INFO)"),
 
-    RespCode.SIMPLE_ERROR to ("ErrorDecoder" to "SimpleErrorDecoder.decode(input, charset, TYPE_INFO)"),
-    RespCode.BULK_ERROR to ("SimpleArrayDecoder" to "BulkErrorDecoder.decode(input, charset, TYPE_INFO)"),
+    RespCode.SIMPLE_ERROR to ("SimpleErrorDecoder" to "SimpleErrorDecoder.decode(input, charset, TYPE_INFO)"),
+    RespCode.BULK_ERROR to ("BulkErrorDecoder" to "BulkErrorDecoder.decode(input, charset, TYPE_INFO)"),
 
     RespCode.NULL to (null to "null"),
 )
@@ -64,7 +64,13 @@ internal fun KSDeclaration.isDataObject() =
 internal fun KSDeclaration.isSealed() =
     this is KSClassDeclaration && classKind == ClassKind.CLASS && modifiers.contains(Modifier.SEALED)
 
+internal fun KSDeclaration.isStdType() = qualifiedName?.getQualifier()?.startsWith("kotlin") == true
+internal fun KSDeclaration.isTimeType() = qualifiedName?.getQualifier()?.let {
+    it.startsWith("kotlin.time") || it.startsWith("kotlinx.datetime")
+} == true
+
 internal fun KSDeclaration.isEnum() = this is KSClassDeclaration && classKind == ClassKind.ENUM_CLASS
+internal fun KSDeclaration.isBool() = qualifiedName?.asString().let { it == "kotlin.Boolean" || it == "boolean" }
 
 internal fun List<CommandArgument>.flattenArguments(): List<CommandArgument> = flatMap { argument ->
     listOf(argument) + argument.arguments.flattenArguments()
