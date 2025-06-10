@@ -8,5 +8,5 @@ import eu.vendeli.rethis.api.spec.common.types.RespCode
 
 @RedisCommand("CONFIG REWRITE", RedisOperation.WRITE, [RespCode.SIMPLE_STRING])
 fun interface ConfigRewriteCommand : RedisCommandSpec<Boolean> {
-    suspend fun encode(): CommandRequest<Nothing>
+    suspend fun encode(): CommandRequest
 }

@@ -5,5 +5,5 @@ import eu.vendeli.rethis.api.spec.common.types.*
 
 @RedisCommand("LATENCY LATEST", RedisOperation.READ, [RespCode.ARRAY])
 fun interface LatencyLatestCommand : RedisCommandSpec<List<Map<String, RType>>> {
-    suspend fun encode(): CommandRequest<Nothing>
+    suspend fun encode(): CommandRequest
 }

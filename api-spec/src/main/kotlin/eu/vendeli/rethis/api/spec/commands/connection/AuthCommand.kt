@@ -12,5 +12,5 @@ fun interface AuthCommand : RedisCommandSpec<Boolean> {
     suspend fun encode(
         @RedisOptional username: String?,
         password: String
-    ): CommandRequest<Nothing>
+    ): CommandRequest
 }

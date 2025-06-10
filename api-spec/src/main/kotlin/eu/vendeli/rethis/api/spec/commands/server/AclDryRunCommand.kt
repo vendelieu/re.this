@@ -13,5 +13,5 @@ fun interface AclDryRunCommand : RedisCommandSpec<String> {
         username: String,
         command: String,
         @RedisOptional vararg arg: String,
-    ): CommandRequest<Nothing>
+    ): CommandRequest
 }

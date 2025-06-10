@@ -8,5 +8,5 @@ import eu.vendeli.rethis.api.spec.common.types.RespCode
 
 @RedisCommand("CLUSTER COUNT-FAILURE-REPORTS", RedisOperation.READ, [RespCode.INTEGER])
 fun interface ClusterCountFailureReportsCommand : RedisCommandSpec<Long> {
-    suspend fun encode(nodeId: String): CommandRequest<Nothing>
+    suspend fun encode(nodeId: String): CommandRequest
 }

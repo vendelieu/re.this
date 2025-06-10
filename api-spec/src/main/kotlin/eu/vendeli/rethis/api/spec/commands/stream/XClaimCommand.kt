@@ -1,7 +1,6 @@
 package eu.vendeli.rethis.api.spec.commands.stream
 
 import eu.vendeli.rethis.api.spec.common.annotations.RedisCommand
-import eu.vendeli.rethis.api.spec.common.annotations.RedisKey
 import eu.vendeli.rethis.api.spec.common.annotations.RedisOption
 import eu.vendeli.rethis.api.spec.common.annotations.RedisOptional
 import eu.vendeli.rethis.api.spec.common.request.stream.XClaimOption
@@ -15,7 +14,7 @@ import eu.vendeli.rethis.api.spec.common.types.*
 )
 fun interface XClaimCommand : RedisCommandSpec<List<RType>> {
     suspend fun encode(
-        @RedisKey key: String,
+        key: String,
         group: String,
         consumer: String,
         minIdleTime: String,
@@ -26,5 +25,5 @@ fun interface XClaimCommand : RedisCommandSpec<List<RType>> {
         @RedisOptional @RedisOption.Token("FORCE") force: Boolean?,
         @RedisOptional @RedisOption.Token("JUSTID") justId: Boolean?,
         @RedisOptional lastId: XClaimOption.LastId?,
-    ): CommandRequest<String>
+    ): CommandRequest
 }

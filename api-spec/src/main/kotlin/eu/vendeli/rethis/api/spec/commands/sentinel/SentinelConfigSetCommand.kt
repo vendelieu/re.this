@@ -8,5 +8,5 @@ import eu.vendeli.rethis.api.spec.common.types.RespCode
 
 @RedisCommand("SENTINEL CONFIG SET", RedisOperation.WRITE, [RespCode.SIMPLE_STRING])
 fun interface SentinelConfigSetCommand : RedisCommandSpec<Boolean> {
-    suspend fun encode(name: String, value: String): CommandRequest<Nothing>
+    suspend fun encode(name: String, value: String): CommandRequest
 }

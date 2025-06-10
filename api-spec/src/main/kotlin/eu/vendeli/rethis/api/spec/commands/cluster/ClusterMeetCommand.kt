@@ -9,5 +9,5 @@ import eu.vendeli.rethis.api.spec.common.types.RespCode
 
 @RedisCommand("CLUSTER MEET", RedisOperation.WRITE, [RespCode.SIMPLE_STRING])
 fun interface ClusterMeetCommand : RedisCommandSpec<Boolean> {
-    suspend fun encode(ip: String, port: Long, @RedisOptional clusterBusPort: Long?): CommandRequest<Nothing>
+    suspend fun encode(ip: String, port: Long, @RedisOptional clusterBusPort: Long?): CommandRequest
 }

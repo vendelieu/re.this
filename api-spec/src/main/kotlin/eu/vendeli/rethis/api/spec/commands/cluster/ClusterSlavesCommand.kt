@@ -8,5 +8,5 @@ import eu.vendeli.rethis.api.spec.common.types.RespCode
 
 @RedisCommand("CLUSTER SLAVES", RedisOperation.READ, [RespCode.ARRAY])
 fun interface ClusterSlavesCommand : RedisCommandSpec<List<String>> {
-    suspend fun encode(nodeId: String): CommandRequest<Nothing>
+    suspend fun encode(nodeId: String): CommandRequest
 }

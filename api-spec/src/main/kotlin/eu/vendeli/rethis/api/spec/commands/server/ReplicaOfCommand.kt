@@ -9,5 +9,5 @@ import eu.vendeli.rethis.api.spec.common.types.RespCode
 
 @RedisCommand("REPLICAOF", RedisOperation.WRITE, [RespCode.SIMPLE_STRING], extensions = [ReplicaOfArgs::class])
 fun interface ReplicaOfCommand : RedisCommandSpec<Boolean> {
-    suspend fun encode(args: ReplicaOfArgs): CommandRequest<Nothing>
+    suspend fun encode(args: ReplicaOfArgs): CommandRequest
 }

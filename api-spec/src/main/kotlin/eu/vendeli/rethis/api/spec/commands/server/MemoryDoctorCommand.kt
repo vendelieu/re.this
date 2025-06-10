@@ -8,5 +8,5 @@ import eu.vendeli.rethis.api.spec.common.types.RespCode
 
 @RedisCommand("MEMORY DOCTOR", RedisOperation.READ, [RespCode.BULK, RespCode.VERBATIM_STRING])
 fun interface MemoryDoctorCommand : RedisCommandSpec<String> {
-    suspend fun encode(): CommandRequest<Nothing>
+    suspend fun encode(): CommandRequest
 }

@@ -11,5 +11,5 @@ import eu.vendeli.rethis.api.spec.common.types.RespCode
 fun interface PubSubChannelsCommand : RedisCommandSpec<List<String>> {
     suspend fun encode(
         @RedisOptional pattern: String?
-    ): CommandRequest<Nothing>
+    ): CommandRequest
 }

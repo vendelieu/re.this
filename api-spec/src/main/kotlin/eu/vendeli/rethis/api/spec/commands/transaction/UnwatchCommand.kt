@@ -8,5 +8,5 @@ import eu.vendeli.rethis.api.spec.common.types.RespCode
 
 @RedisCommand("UNWATCH", RedisOperation.WRITE, [RespCode.SIMPLE_STRING])
 fun interface UnwatchCommand : RedisCommandSpec<Boolean> {
-    suspend fun encode(): CommandRequest<Nothing>
+    suspend fun encode(): CommandRequest
 }

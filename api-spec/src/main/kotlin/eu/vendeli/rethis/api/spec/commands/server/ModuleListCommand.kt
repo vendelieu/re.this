@@ -5,5 +5,5 @@ import eu.vendeli.rethis.api.spec.common.types.*
 
 @RedisCommand("MODULE LIST", RedisOperation.READ, [RespCode.ARRAY])
 fun interface ModuleListCommand : RedisCommandSpec<List<Map<String, RType>>> {
-    suspend fun encode(): CommandRequest<Nothing>
+    suspend fun encode(): CommandRequest
 }

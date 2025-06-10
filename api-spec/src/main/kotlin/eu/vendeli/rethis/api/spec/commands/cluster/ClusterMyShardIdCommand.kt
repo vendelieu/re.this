@@ -8,5 +8,5 @@ import eu.vendeli.rethis.api.spec.common.types.RespCode
 
 @RedisCommand("CLUSTER MYSHARDID", RedisOperation.READ, [RespCode.BULK])
 fun interface ClusterMyShardIdCommand : RedisCommandSpec<String> {
-    suspend fun encode(): CommandRequest<Nothing>
+    suspend fun encode(): CommandRequest
 }

@@ -8,5 +8,5 @@ import eu.vendeli.rethis.api.spec.common.types.RespCode
 
 @RedisCommand("CLUSTER SAVECONFIG", RedisOperation.WRITE, [RespCode.SIMPLE_STRING])
 fun interface ClusterSaveConfigCommand : RedisCommandSpec<Boolean> {
-    suspend fun encode(): CommandRequest<Nothing>
+    suspend fun encode(): CommandRequest
 }

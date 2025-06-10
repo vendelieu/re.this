@@ -10,5 +10,5 @@ fun interface FunctionListCommand : RedisCommandSpec<List<RType>> {
     suspend fun encode(
         @RedisOptional @RedisOption.Token("LIBRARYNAME") libraryNamePattern: String?,
         @RedisOptional @RedisOption.Token("WITHCODE") withCode: Boolean?
-    ): CommandRequest<Nothing>
+    ): CommandRequest
 }

@@ -14,5 +14,5 @@ fun interface ClientListCommand : RedisCommandSpec<String> {
     suspend fun encode(
         @RedisOptional clientType: ClientType?,
         @RedisOptional @RedisOption.Token("ID") vararg clientId: Long,
-    ): CommandRequest<Nothing>
+    ): CommandRequest
 }

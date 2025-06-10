@@ -13,5 +13,5 @@ fun interface ScanCommand : RedisCommandSpec<ScanResult<String>> {
     suspend fun encode(
         cursor: Long,
         @RedisOptional vararg option: ScanOption,
-    ): CommandRequest<Nothing>
+    ): CommandRequest
 }

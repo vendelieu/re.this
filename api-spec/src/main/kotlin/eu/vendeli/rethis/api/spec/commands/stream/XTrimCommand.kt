@@ -1,7 +1,6 @@
 package eu.vendeli.rethis.api.spec.commands.stream
 
 import eu.vendeli.rethis.api.spec.common.annotations.RedisCommand
-import eu.vendeli.rethis.api.spec.common.annotations.RedisKey
 import eu.vendeli.rethis.api.spec.common.annotations.RedisOptional
 import eu.vendeli.rethis.api.spec.common.request.stream.Exactement
 import eu.vendeli.rethis.api.spec.common.request.stream.TrimmingStrategy
@@ -14,10 +13,10 @@ import eu.vendeli.rethis.api.spec.common.types.RespCode
 @RedisCommand("XTRIM", RedisOperation.WRITE, [RespCode.INTEGER], extensions = [TrimmingStrategy::class, Exactement::class, XOption.Limit::class])
 fun interface XTrimCommand : RedisCommandSpec<Long> {
     suspend fun encode(
-        @RedisKey key: String,
+        key: String,
         threshold: String,
         strategy: TrimmingStrategy,
         @RedisOptional operator: Exactement?,
         @RedisOptional trim: XOption.Limit?
-    ): CommandRequest<String>
+    ): CommandRequest
 }

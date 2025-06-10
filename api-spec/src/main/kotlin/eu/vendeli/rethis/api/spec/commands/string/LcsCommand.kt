@@ -1,7 +1,6 @@
 package eu.vendeli.rethis.api.spec.commands.string
 
 import eu.vendeli.rethis.api.spec.common.annotations.RedisCommand
-import eu.vendeli.rethis.api.spec.common.annotations.RedisKey
 import eu.vendeli.rethis.api.spec.common.types.CommandRequest
 import eu.vendeli.rethis.api.spec.common.types.RedisCommandSpec
 import eu.vendeli.rethis.api.spec.common.types.RedisOperation
@@ -10,7 +9,7 @@ import eu.vendeli.rethis.api.spec.common.types.RespCode
 @RedisCommand("LCS", RedisOperation.READ, [RespCode.BULK])
 fun interface LcsCommand : RedisCommandSpec<String> {
     suspend fun encode(
-        @RedisKey key1: String,
-        @RedisKey key2: String
-    ): CommandRequest<List<String>>
+        key1: String,
+        key2: String
+    ): CommandRequest
 }

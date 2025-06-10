@@ -7,7 +7,7 @@ package eu.vendeli.rethis.api.spec.common.utils
  * - [Wikipedia](https://en.wikipedia.org/wiki/Cyclic_redundancy_check)
  * - [CRC catalog](http://reveng.sourceforge.net/crc-catalogue/16.htm)
  */
-internal object CRC16 {
+object CRC16 {
     private val CRC16_TABLE = IntArray(256).apply {
         for (i in 0 until 256) {
             var crc = i shl 8

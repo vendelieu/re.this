@@ -10,5 +10,5 @@ import eu.vendeli.rethis.api.spec.common.types.RespCode
 fun interface SelectCommand : RedisCommandSpec<Boolean> {
     suspend fun encode(
         index: Long
-    ): CommandRequest<Nothing>
+    ): CommandRequest
 }

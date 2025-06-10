@@ -8,5 +8,5 @@ import eu.vendeli.rethis.api.spec.common.types.RespCode
 
 @RedisCommand("MEMORY MALLOC-STATS", RedisOperation.READ, [RespCode.BULK])
 fun interface MemoryMallocStatsCommand : RedisCommandSpec<String> {
-    suspend fun encode(): CommandRequest<Nothing>
+    suspend fun encode(): CommandRequest
 }

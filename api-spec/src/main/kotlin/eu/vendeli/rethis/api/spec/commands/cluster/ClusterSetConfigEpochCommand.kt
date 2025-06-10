@@ -8,5 +8,5 @@ import eu.vendeli.rethis.api.spec.common.types.RespCode
 
 @RedisCommand("CLUSTER SET-CONFIG-EPOCH", RedisOperation.WRITE, [RespCode.SIMPLE_STRING])
 fun interface ClusterSetConfigEpochCommand : RedisCommandSpec<Boolean> {
-    suspend fun encode(configEpoch: Long): CommandRequest<Nothing>
+    suspend fun encode(configEpoch: Long): CommandRequest
 }

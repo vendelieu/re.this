@@ -8,5 +8,5 @@ import eu.vendeli.rethis.api.spec.common.types.RespCode
 
 @RedisCommand("CLUSTER FORGET", RedisOperation.WRITE, [RespCode.SIMPLE_STRING])
 fun interface ClusterForgetCommand : RedisCommandSpec<Boolean> {
-    suspend fun encode(nodeId: String): CommandRequest<Nothing>
+    suspend fun encode(nodeId: String): CommandRequest
 }

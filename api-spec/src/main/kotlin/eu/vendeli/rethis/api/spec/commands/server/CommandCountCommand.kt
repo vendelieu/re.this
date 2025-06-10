@@ -8,5 +8,5 @@ import eu.vendeli.rethis.api.spec.common.types.RespCode
 
 @RedisCommand("COMMAND COUNT", RedisOperation.READ, [RespCode.INTEGER])
 fun interface CommandCountCommand : RedisCommandSpec<Long> {
-    suspend fun encode(): CommandRequest<Nothing>
+    suspend fun encode(): CommandRequest
 }

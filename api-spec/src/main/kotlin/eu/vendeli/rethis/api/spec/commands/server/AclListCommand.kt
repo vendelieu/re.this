@@ -8,5 +8,5 @@ import eu.vendeli.rethis.api.spec.common.types.RespCode
 
 @RedisCommand("ACL LIST", RedisOperation.READ, [RespCode.ARRAY])
 fun interface AclListCommand : RedisCommandSpec<List<String>> {
-    suspend fun encode(): CommandRequest<Nothing>
+    suspend fun encode(): CommandRequest
 }

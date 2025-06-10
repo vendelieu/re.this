@@ -1,6 +1,5 @@
 package eu.vendeli.rethis.api.spec.common.request.stream
 
-import eu.vendeli.rethis.api.spec.common.annotations.RedisKey
 import eu.vendeli.rethis.api.spec.common.annotations.RedisMeta
 import eu.vendeli.rethis.api.spec.common.annotations.RedisOption
 import eu.vendeli.rethis.api.spec.common.annotations.RedisOptionContainer
@@ -21,7 +20,7 @@ sealed class XReadGroupOption {
 
 @RedisOption.Token("STREAMS")
 class XReadGroupKeyIds(
-    @RedisKey val key: List<String>,
+    val key: List<String>,
     val id: List<String>,
 ) {
     init {

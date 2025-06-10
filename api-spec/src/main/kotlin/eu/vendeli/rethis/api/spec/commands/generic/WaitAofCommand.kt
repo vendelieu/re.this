@@ -13,5 +13,5 @@ fun interface WaitAofCommand : RedisCommandSpec<WaitAofResult> {
         numlocal: Long,
         numreplicas: Long,
         timeout: Long
-    ): CommandRequest<Nothing>
+    ): CommandRequest
 }

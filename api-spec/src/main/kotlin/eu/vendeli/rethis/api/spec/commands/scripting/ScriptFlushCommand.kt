@@ -10,5 +10,5 @@ import eu.vendeli.rethis.api.spec.common.types.RespCode
 
 @RedisCommand("SCRIPT FLUSH", RedisOperation.WRITE, [RespCode.SIMPLE_STRING], extensions = [FlushType::class])
 fun interface ScriptFlushCommand : RedisCommandSpec<Boolean> {
-    suspend fun encode(@RedisOptional flushType: FlushType?): CommandRequest<Nothing>
+    suspend fun encode(@RedisOptional flushType: FlushType?): CommandRequest
 }

@@ -5,5 +5,5 @@ import eu.vendeli.rethis.api.spec.common.types.*
 
 @RedisCommand("SENTINEL REPLICAS", RedisOperation.READ, [RespCode.ARRAY])
 fun interface SentinelReplicasCommand : RedisCommandSpec<List<Map<String, RType>>> {
-    suspend fun encode(masterName: String): CommandRequest<Nothing>
+    suspend fun encode(masterName: String): CommandRequest
 }

@@ -8,5 +8,5 @@ import eu.vendeli.rethis.api.spec.common.types.RespCode
 
 @RedisCommand("SCRIPT LOAD", RedisOperation.WRITE, [RespCode.BULK])
 fun interface ScriptLoadCommand : RedisCommandSpec<String> {
-    suspend fun encode(script: String): CommandRequest<Nothing>
+    suspend fun encode(script: String): CommandRequest
 }

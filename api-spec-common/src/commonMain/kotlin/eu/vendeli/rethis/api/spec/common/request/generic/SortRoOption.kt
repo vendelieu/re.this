@@ -1,13 +1,12 @@
 package eu.vendeli.rethis.api.spec.common.request.generic
 
-import eu.vendeli.rethis.api.spec.common.annotations.RedisKey
 import eu.vendeli.rethis.api.spec.common.annotations.RedisOption
 import eu.vendeli.rethis.api.spec.common.annotations.RedisOptionContainer
 
 sealed class SortRoOption {
     @RedisOption.Token("BY")
     class By(
-        @RedisKey val byPattern: String,
+        val byPattern: String,
     ) : SortRoOption()
 
     @RedisOption.Token("LIMIT")
@@ -18,7 +17,7 @@ sealed class SortRoOption {
 
     @RedisOption.Token("GET")
     class Get(
-        @RedisKey vararg val getPattern: String,
+        vararg val getPattern: String,
     ) : SortRoOption()
 
     @RedisOptionContainer

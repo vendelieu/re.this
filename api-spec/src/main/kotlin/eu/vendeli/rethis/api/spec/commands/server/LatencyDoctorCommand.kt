@@ -8,5 +8,5 @@ import eu.vendeli.rethis.api.spec.common.types.RespCode
 
 @RedisCommand("LATENCY DOCTOR", RedisOperation.READ, [RespCode.BULK, RespCode.VERBATIM_STRING])
 fun interface LatencyDoctorCommand : RedisCommandSpec<String> {
-    suspend fun encode(): CommandRequest<Nothing>
+    suspend fun encode(): CommandRequest
 }

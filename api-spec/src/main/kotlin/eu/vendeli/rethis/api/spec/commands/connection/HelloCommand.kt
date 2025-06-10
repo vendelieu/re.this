@@ -12,5 +12,5 @@ fun interface HelloCommand : RedisCommandSpec<Map<String, RType?>> {
         @RedisOptional protover: Long?,
         @RedisOptional auth: HelloAuth?,
         @RedisOptional @RedisOption.Token("SETNAME") clientname: String?,
-    ): CommandRequest<Nothing>
+    ): CommandRequest
 }

@@ -11,5 +11,5 @@ fun interface PublishCommand : RedisCommandSpec<Long> {
     suspend fun encode(
         channel: String,
         message: String
-    ): CommandRequest<Nothing>
+    ): CommandRequest
 }

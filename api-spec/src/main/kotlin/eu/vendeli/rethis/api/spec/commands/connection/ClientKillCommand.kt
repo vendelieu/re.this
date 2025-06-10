@@ -14,5 +14,5 @@ import eu.vendeli.rethis.api.spec.common.types.RespCode
 fun interface ClientKillCommand : RedisCommandSpec<Long> {
     suspend fun encode(
         @RedisOptional filter: ClientKillOptions?,
-    ): CommandRequest<Nothing>
+    ): CommandRequest
 }

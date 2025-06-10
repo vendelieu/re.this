@@ -1,7 +1,6 @@
 package eu.vendeli.rethis.api.spec.commands.string
 
 import eu.vendeli.rethis.api.spec.common.annotations.RedisCommand
-import eu.vendeli.rethis.api.spec.common.annotations.RedisKey
 import eu.vendeli.rethis.api.spec.common.annotations.RedisMeta
 import eu.vendeli.rethis.api.spec.common.annotations.RedisOption
 import eu.vendeli.rethis.api.spec.common.annotations.RedisOptional
@@ -23,10 +22,10 @@ import eu.vendeli.rethis.api.spec.common.types.RespCode
 @RedisMeta.CustomCodec(decoder = LcsDecoder::class)
 fun interface LcsDetailedCommand : RedisCommandSpec<LcsResult> {
     suspend fun encode(
-        @RedisKey key1: String,
-        @RedisKey key2: String,
+        key1: String,
+        key2: String,
         mode: LcsMode.IDX,
         @RedisOptional len: MinMatchLen?,
         @RedisOptional @RedisOption.Token("WITHMATCHLEN") withMatchLen: Boolean?
-    ): CommandRequest<List<String>>
+    ): CommandRequest
 }

@@ -9,5 +9,5 @@ import eu.vendeli.rethis.api.spec.common.types.RespCode
 
 @RedisCommand("ACL CAT", RedisOperation.READ, [RespCode.ARRAY, RespCode.SIMPLE_ERROR])
 fun interface AclCatCommand : RedisCommandSpec<List<String>> {
-    suspend fun encode(@RedisOptional category: String?): CommandRequest<Nothing>
+    suspend fun encode(@RedisOptional category: String?): CommandRequest
 }

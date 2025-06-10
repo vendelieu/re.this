@@ -8,5 +8,5 @@ import eu.vendeli.rethis.api.spec.common.types.RespCode
 
 @RedisCommand("KEYS", RedisOperation.READ, [RespCode.ARRAY])
 fun interface KeysCommand : RedisCommandSpec<List<String>> {
-    suspend fun encode(pattern: String): CommandRequest<Nothing>
+    suspend fun encode(pattern: String): CommandRequest
 }

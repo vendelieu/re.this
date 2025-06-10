@@ -8,5 +8,5 @@ import eu.vendeli.rethis.api.spec.common.types.RespCode
 
 @RedisCommand("CLIENT GETNAME", RedisOperation.READ, [RespCode.BULK, RespCode.NULL])
 fun interface ClientGetNameCommand : RedisCommandSpec<String> {
-    suspend fun encode(): CommandRequest<Nothing>
+    suspend fun encode(): CommandRequest
 }

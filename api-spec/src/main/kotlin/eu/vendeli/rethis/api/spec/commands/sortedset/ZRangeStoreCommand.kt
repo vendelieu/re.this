@@ -1,7 +1,6 @@
 package eu.vendeli.rethis.api.spec.commands.sortedset
 
 import eu.vendeli.rethis.api.spec.common.annotations.RedisCommand
-import eu.vendeli.rethis.api.spec.common.annotations.RedisKey
 import eu.vendeli.rethis.api.spec.common.annotations.RedisOption
 import eu.vendeli.rethis.api.spec.common.annotations.RedisOptional
 import eu.vendeli.rethis.api.spec.common.request.sortedset.ZRangeOption
@@ -19,12 +18,12 @@ import eu.vendeli.rethis.api.spec.common.types.RespCode
 )
 fun interface ZRangeStoreCommand : RedisCommandSpec<Long> {
     suspend fun encode(
-        @RedisKey dst: String,
-        @RedisKey src: String,
+        dst: String,
+        src: String,
         min: String,
         max: String,
         @RedisOptional rangeType: ZRangeOption.Type?,
         @RedisOptional @RedisOption.Token("REV") rev: Boolean?,
         @RedisOptional limit: ZRangeStoreLimit?
-    ): CommandRequest<List<String>>
+    ): CommandRequest
 }

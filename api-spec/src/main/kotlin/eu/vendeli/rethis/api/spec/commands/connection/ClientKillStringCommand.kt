@@ -13,5 +13,5 @@ fun interface ClientKillStringCommand : RedisCommandSpec<Boolean> {
     suspend fun encode(
         addr: String,
         port: Long
-    ): CommandRequest<Nothing>
+    ): CommandRequest
 }

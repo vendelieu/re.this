@@ -12,5 +12,5 @@ import eu.vendeli.rethis.api.spec.common.types.RespCode
 fun interface FailoverCommand : RedisCommandSpec<Boolean> {
     suspend fun encode(
         @RedisOptional vararg option: FailoverOptions,
-    ): CommandRequest<Nothing>
+    ): CommandRequest
 }

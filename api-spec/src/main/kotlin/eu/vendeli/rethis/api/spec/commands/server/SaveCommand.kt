@@ -8,5 +8,5 @@ import eu.vendeli.rethis.api.spec.common.types.RespCode
 
 @RedisCommand("SAVE", RedisOperation.WRITE, [RespCode.SIMPLE_STRING])
 fun interface SaveCommand : RedisCommandSpec<Boolean> {
-    suspend fun encode(): CommandRequest<Nothing>
+    suspend fun encode(): CommandRequest
 }

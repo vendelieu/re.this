@@ -8,5 +8,5 @@ import eu.vendeli.rethis.api.spec.common.types.RespCode
 
 @RedisCommand("ACL USERS", RedisOperation.READ, [RespCode.ARRAY])
 fun interface AclUsersCommand : RedisCommandSpec<List<String>> {
-    suspend fun encode(): CommandRequest<Nothing>
+    suspend fun encode(): CommandRequest
 }

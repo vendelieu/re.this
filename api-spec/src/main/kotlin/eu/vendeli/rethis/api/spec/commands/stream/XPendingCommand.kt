@@ -1,7 +1,6 @@
 package eu.vendeli.rethis.api.spec.commands.stream
 
 import eu.vendeli.rethis.api.spec.common.annotations.RedisCommand
-import eu.vendeli.rethis.api.spec.common.annotations.RedisKey
 import eu.vendeli.rethis.api.spec.common.annotations.RedisOption
 import eu.vendeli.rethis.api.spec.common.annotations.RedisOptional
 import eu.vendeli.rethis.api.spec.common.request.stream.XPendingMainFilter
@@ -15,10 +14,10 @@ import eu.vendeli.rethis.api.spec.common.types.*
 )
 fun interface XPendingCommand : RedisCommandSpec<List<RType>> {
     suspend fun encode(
-        @RedisKey key: String,
+        key: String,
         group: String,
         @RedisOptional @RedisOption.Token("IDLE") minIdleTime: Long?,
         @RedisOptional filter: XPendingMainFilter?,
         @RedisOptional consumer: String?,
-    ): CommandRequest<String>
+    ): CommandRequest
 }
