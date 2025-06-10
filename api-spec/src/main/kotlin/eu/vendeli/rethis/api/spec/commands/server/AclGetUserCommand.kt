@@ -5,5 +5,5 @@ import eu.vendeli.rethis.api.spec.common.types.*
 
 @RedisCommand("ACL GETUSER", RedisOperation.READ, [RespCode.ARRAY, RespCode.MAP, RespCode.NULL])
 fun interface AclGetUserCommand : RedisCommandSpec<Map<String, RType?>> {
-    suspend fun encode(username: String): CommandRequest<Nothing>
+    suspend fun encode(username: String): CommandRequest
 }

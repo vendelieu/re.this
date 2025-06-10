@@ -8,5 +8,5 @@ import eu.vendeli.rethis.api.spec.common.types.RespCode
 
 @RedisCommand("MODULE UNLOAD", RedisOperation.WRITE, [RespCode.SIMPLE_STRING])
 fun interface ModuleUnloadCommand : RedisCommandSpec<Boolean> {
-    suspend fun encode(name: String): CommandRequest<Nothing>
+    suspend fun encode(name: String): CommandRequest
 }

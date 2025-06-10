@@ -17,5 +17,5 @@ fun interface AclLogCommand : RedisCommandSpec<List<String>> {
     suspend fun encode(
         @RedisOptional count: Long?,
         @RedisOptional @RedisOption.Token("RESET") reset: Boolean?,
-    ): CommandRequest<Nothing>
+    ): CommandRequest
 }

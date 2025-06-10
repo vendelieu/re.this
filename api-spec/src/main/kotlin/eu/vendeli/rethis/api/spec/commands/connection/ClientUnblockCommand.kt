@@ -13,5 +13,5 @@ fun interface ClientUnblockCommand : RedisCommandSpec<Boolean> {
     suspend fun encode(
         clientId: Long,
         @RedisOptional unblockType: ClientUnblockType?
-    ): CommandRequest<Nothing>
+    ): CommandRequest
 }

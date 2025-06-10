@@ -5,5 +5,5 @@ import eu.vendeli.rethis.api.spec.common.types.*
 
 @RedisCommand("FUNCTION STATS", RedisOperation.READ, [RespCode.MAP, RespCode.ARRAY])
 fun interface FunctionStatsCommand : RedisCommandSpec<Map<String, RType?>> {
-    suspend fun encode(): CommandRequest<Nothing>
+    suspend fun encode(): CommandRequest
 }

@@ -7,40 +7,39 @@ import com.google.devtools.ksp.symbol.*
 import eu.vendeli.rethis.api.processor.utils.*
 import eu.vendeli.rethis.api.spec.common.annotations.RedisOption
 
-sealed class LibSpecTree {
-    open val parent: LibSpecTree? = null
+sealed class LibSpecNode {
+    open val parent: LibSpecNode? = null
     abstract val symbol: KSAnnotated
-    open val children: MutableList<LibSpecTree> = mutableListOf()
-    var validated: Boolean = false
+    open val children: MutableList<LibSpecNode> = mutableListOf()
 
-    data class TokenNode(
-        override val parent: LibSpecTree? = null,
+    class TokenNode(
+        override val parent: LibSpecNode? = null,
         val name: String,
         override val symbol: KSAnnotated,
-        override val children: MutableList<LibSpecTree> = mutableListOf(),
-    ) : LibSpecTree()
+        override val children: MutableList<LibSpecNode> = mutableListOf(),
+    ) : LibSpecNode()
 
-    data class ParameterNode(
-        override val parent: LibSpecTree? = null,
+    class ParameterNode(
+        override val parent: LibSpecNode? = null,
         val name: String,
         override val symbol: KSValueParameter,
-        override val children: MutableList<LibSpecTree> = mutableListOf(),
-    ) : LibSpecTree()
+        override val children: MutableList<LibSpecNode> = mutableListOf(),
+    ) : LibSpecNode()
 
-    data class ContainerNode(
-        override val parent: LibSpecTree? = null,
+    class ContainerNode(
+        override val parent: LibSpecNode? = null,
         override val symbol: KSDeclaration,
-        override val children: MutableList<LibSpecTree> = mutableListOf(),
-    ) : LibSpecTree()
+        override val children: MutableList<LibSpecNode> = mutableListOf(),
+    ) : LibSpecNode()
 }
 
 /**
  * Starting from this node, recursively spit out the first ParameterNode
  * whose `.name` equals the given name.
  */
-fun LibSpecTree.findParameterByName(name: String): LibSpecTree.ParameterNode? {
+fun LibSpecNode.findParameterByName(name: String): LibSpecNode.ParameterNode? {
     // 1) If I’m a ParameterNode and my name matches, return me
-    if (this is LibSpecTree.ParameterNode && this.name == name && !validated) return this
+    if (this is LibSpecNode.ParameterNode && this.name == name) return this
 
     // 2) Otherwise, search each child in turn
     for (child in this.children) {
@@ -53,8 +52,8 @@ fun LibSpecTree.findParameterByName(name: String): LibSpecTree.ParameterNode? {
 /**
  * Same idea, but for TokenNode by its token literal.
  */
-fun LibSpecTree.findTokenByName(token: String): LibSpecTree.TokenNode? {
-    if (this is LibSpecTree.TokenNode && this.name == token) return this
+fun LibSpecNode.findTokenByName(token: String): LibSpecNode.TokenNode? {
+    if (this is LibSpecNode.TokenNode && this.name == token) return this
     for (child in this.children) {
         val found = child.findTokenByName(token)
         if (found != null) return found
@@ -64,8 +63,8 @@ fun LibSpecTree.findTokenByName(token: String): LibSpecTree.TokenNode? {
 
 
 object LibSpecTreeBuilder {
-    fun build(function: KSFunctionDeclaration): LibSpecTree.ContainerNode {
-        val root = LibSpecTree.ContainerNode(parent = null, symbol = function)
+    fun build(function: KSFunctionDeclaration): LibSpecNode.ContainerNode {
+        val root = LibSpecNode.ContainerNode(parent = null, symbol = function)
         function.parameters.forEach { handleValueParam(it, root) }
         return root
     }
@@ -73,7 +72,7 @@ object LibSpecTreeBuilder {
     // 1. Handle a value parameter
     private fun handleValueParam(
         param: KSValueParameter,
-        parent: LibSpecTree,
+        parent: LibSpecNode,
     ) {
         // Determine name override or default
         val name = param.effectiveName()
@@ -82,7 +81,7 @@ object LibSpecTreeBuilder {
         val currentParent = param.preserveToken(parent)
 
         // Create the ParameterNode with proper order
-        val paramNode = LibSpecTree.ParameterNode(currentParent, name, param)
+        val paramNode = LibSpecNode.ParameterNode(currentParent, name, param)
         currentParent.children += paramNode
 
         // Recurse into its nested type (for sealed enums, data objects, etc.)
@@ -91,7 +90,7 @@ object LibSpecTreeBuilder {
 
     private fun handleDeclaration(
         pType: KSType,
-        parent: LibSpecTree,
+        parent: LibSpecNode,
     ) {
         // 1) Recurse into generic arguments first
         pType.arguments.forEach { arg ->
@@ -118,7 +117,7 @@ object LibSpecTreeBuilder {
                 .filterIsInstance<KSClassDeclaration>()
                 .filter { it.classKind == ClassKind.ENUM_ENTRY }
                 .forEach { entry ->
-                    currentParent.children += LibSpecTree.TokenNode(
+                    currentParent.children += LibSpecNode.TokenNode(
                         parent = currentParent,
                         name = entry.tokenName(),
                         symbol = entry,
@@ -126,7 +125,7 @@ object LibSpecTreeBuilder {
                 }
             // Data object without explicit token
             decl.isDataObject() && !decl.hasAnnotation<RedisOption.Token>() -> {
-                currentParent.children += LibSpecTree.TokenNode(
+                currentParent.children += LibSpecNode.TokenNode(
                     parent = currentParent,
                     name = decl.effectiveName(),
                     symbol = decl,
@@ -144,9 +143,9 @@ object LibSpecTreeBuilder {
 
     @OptIn(KspExperimental::class)
     private fun KSAnnotated.preserveToken(
-        givenNode: LibSpecTree,
-    ): LibSpecTree = getAnnotationsByType(RedisOption.Token::class).map {
-        val tokNode = LibSpecTree.TokenNode(
+        givenNode: LibSpecNode,
+    ): LibSpecNode = getAnnotationsByType(RedisOption.Token::class).map {
+        val tokNode = LibSpecNode.TokenNode(
             parent = givenNode,
             name = it.name,
             symbol = this,

@@ -8,5 +8,5 @@ import eu.vendeli.rethis.api.spec.common.types.RespCode
 
 @RedisCommand("CLUSTER FLUSHSLOTS", RedisOperation.WRITE, [RespCode.SIMPLE_STRING])
 fun interface ClusterFlushSlotsCommand : RedisCommandSpec<Boolean> {
-    suspend fun encode(): CommandRequest<Nothing>
+    suspend fun encode(): CommandRequest
 }

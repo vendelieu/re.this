@@ -18,6 +18,6 @@ import eu.vendeli.rethis.api.spec.common.types.RespCode
 fun interface ShutdownCommand : RedisCommandSpec<Boolean> {
     suspend fun encode(
         @RedisOptional saveSelector: SaveSelector?,
-        @RedisOptional vararg options: ShutdownOptions?,
-    ): CommandRequest<Nothing>
+        @RedisOptional vararg options: ShutdownOptions,
+    ): CommandRequest
 }

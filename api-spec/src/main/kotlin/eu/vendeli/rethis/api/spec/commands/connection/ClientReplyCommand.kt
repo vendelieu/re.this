@@ -9,5 +9,5 @@ import eu.vendeli.rethis.api.spec.common.types.RespCode
 
 @RedisCommand("CLIENT REPLY", RedisOperation.WRITE, [RespCode.SIMPLE_STRING], extensions = [ClientReplyMode::class])
 fun interface ClientReplyCommand : RedisCommandSpec<Boolean> {
-    suspend fun encode(action: ClientReplyMode): CommandRequest<Nothing>
+    suspend fun encode(action: ClientReplyMode): CommandRequest
 }

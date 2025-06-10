@@ -9,5 +9,5 @@ import eu.vendeli.rethis.api.spec.common.types.RespCode
 
 @RedisCommand("ACL GENPASS", RedisOperation.READ, [RespCode.BULK])
 fun interface AclGenPassCommand : RedisCommandSpec<String> {
-    suspend fun encode(@RedisOptional bits: Long?): CommandRequest<Nothing>
+    suspend fun encode(@RedisOptional bits: Long?): CommandRequest
 }

@@ -8,5 +8,5 @@ import eu.vendeli.rethis.api.spec.common.types.RespCode
 
 @RedisCommand("LATENCY GRAPH", RedisOperation.READ, [RespCode.BULK])
 fun interface LatencyGraphCommand : RedisCommandSpec<String> {
-    suspend fun encode(event: String): CommandRequest<Nothing>
+    suspend fun encode(event: String): CommandRequest
 }

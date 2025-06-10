@@ -9,5 +9,5 @@ import eu.vendeli.rethis.api.spec.common.types.RedisOperation
 
 @RedisCommand("PUNSUBSCRIBE", RedisOperation.WRITE, [])
 fun interface PUnsubscribeCommand : RedisCommandSpec<RType> {
-    suspend fun encode(@RedisOptional vararg pattern: String): CommandRequest<Nothing>
+    suspend fun encode(@RedisOptional vararg pattern: String): CommandRequest
 }

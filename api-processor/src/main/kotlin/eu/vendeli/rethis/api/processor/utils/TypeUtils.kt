@@ -2,11 +2,14 @@ package eu.vendeli.rethis.api.processor.utils
 
 import com.google.devtools.ksp.symbol.*
 import com.squareup.kotlinpoet.ClassName
+import com.squareup.kotlinpoet.asClassName
 import eu.vendeli.rethis.api.processor.types.CommandArgument
 import eu.vendeli.rethis.api.spec.common.annotations.RedisOption
+import eu.vendeli.rethis.api.spec.common.types.CommandRequest
 import eu.vendeli.rethis.api.spec.common.types.RespCode
 
 internal val charsetClassName = ClassName("io.ktor.utils.io.charsets", "Charset")
+internal val commandRequestClassName = CommandRequest::class.asClassName()
 
 internal val decodersMap: Map<RespCode, Pair<String?, String>> = mapOf(
     RespCode.SIMPLE_STRING to ("SimpleStringDecoder" to "SimpleStringDecoder.decode(input, charset, TYPE_INFO)"),

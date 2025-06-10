@@ -5,5 +5,5 @@ import eu.vendeli.rethis.api.spec.common.types.*
 
 @RedisCommand("MEMORY STATS", RedisOperation.READ, [RespCode.ARRAY, RespCode.MAP])
 fun interface MemoryStatsCommand : RedisCommandSpec<Map<String, RType>> {
-    suspend fun encode(): CommandRequest<Nothing>
+    suspend fun encode(): CommandRequest
 }

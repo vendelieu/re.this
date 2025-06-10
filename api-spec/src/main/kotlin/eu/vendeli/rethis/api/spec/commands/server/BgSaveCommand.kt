@@ -10,5 +10,5 @@ import eu.vendeli.rethis.api.spec.common.types.RespCode
 
 @RedisCommand("BGSAVE", RedisOperation.WRITE, [RespCode.SIMPLE_STRING])
 fun interface BgSaveCommand : RedisCommandSpec<Boolean> {
-    suspend fun encode(@RedisOptional @RedisOption.Token("SCHEDULE") schedule: Boolean?): CommandRequest<Nothing>
+    suspend fun encode(@RedisOptional @RedisOption.Token("SCHEDULE") schedule: Boolean?): CommandRequest
 }

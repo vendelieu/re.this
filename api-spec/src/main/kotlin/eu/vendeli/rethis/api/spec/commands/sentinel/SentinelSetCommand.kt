@@ -11,5 +11,5 @@ fun interface SentinelSetCommand : RedisCommandSpec<Boolean> {
     suspend fun encode(
         masterName: String,
         vararg optionValuePairs: Pair<String, String>
-    ): CommandRequest<Nothing>
+    ): CommandRequest
 }

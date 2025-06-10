@@ -8,5 +8,5 @@ import eu.vendeli.rethis.api.spec.common.types.RespCode
 
 @RedisCommand("SENTINEL CKQUORUM", RedisOperation.READ, [RespCode.SIMPLE_STRING])
 fun interface SentinelCkQuorumCommand : RedisCommandSpec<Boolean> {
-    suspend fun encode(masterName: String): CommandRequest<Nothing>
+    suspend fun encode(masterName: String): CommandRequest
 }

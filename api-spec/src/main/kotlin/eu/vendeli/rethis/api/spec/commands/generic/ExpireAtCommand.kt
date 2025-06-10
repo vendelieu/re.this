@@ -1,7 +1,6 @@
 package eu.vendeli.rethis.api.spec.commands.generic
 
 import eu.vendeli.rethis.api.spec.common.annotations.RedisCommand
-import eu.vendeli.rethis.api.spec.common.annotations.RedisKey
 import eu.vendeli.rethis.api.spec.common.annotations.RedisOptional
 import eu.vendeli.rethis.api.spec.common.request.common.UpdateStrategyOption
 import eu.vendeli.rethis.api.spec.common.types.CommandRequest
@@ -13,8 +12,8 @@ import kotlinx.datetime.Instant
 @RedisCommand("EXPIREAT", RedisOperation.WRITE, [RespCode.INTEGER], extensions = [UpdateStrategyOption::class])
 fun interface ExpireAtCommand : RedisCommandSpec<Boolean> {
     suspend fun encode(
-        @RedisKey key: String,
+        key: String,
         unixTimeSeconds: Instant,
         @RedisOptional condition: UpdateStrategyOption?
-    ): CommandRequest<String>
+    ): CommandRequest
 }

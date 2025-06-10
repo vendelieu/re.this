@@ -8,5 +8,5 @@ import eu.vendeli.rethis.api.spec.common.types.RespCode
 
 @RedisCommand("SENTINEL INFO-CACHE", RedisOperation.READ, [RespCode.MAP])
 fun interface SentinelInfoCacheCommand : RedisCommandSpec<Map<String, String>> {
-    suspend fun encode(): CommandRequest<Nothing>
+    suspend fun encode(): CommandRequest
 }

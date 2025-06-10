@@ -10,5 +10,5 @@ import eu.vendeli.rethis.api.spec.common.types.RespCode
 
 @RedisCommand("CLUSTER RESET", RedisOperation.WRITE, [RespCode.SIMPLE_STRING], extensions = [ClusterResetMode::class])
 fun interface ClusterResetCommand : RedisCommandSpec<Boolean> {
-    suspend fun encode(@RedisOptional resetType: ClusterResetMode?): CommandRequest<Nothing>
+    suspend fun encode(@RedisOptional resetType: ClusterResetMode?): CommandRequest
 }

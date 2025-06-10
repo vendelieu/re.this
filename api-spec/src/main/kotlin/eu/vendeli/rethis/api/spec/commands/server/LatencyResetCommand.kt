@@ -9,5 +9,5 @@ import eu.vendeli.rethis.api.spec.common.types.RespCode
 
 @RedisCommand("LATENCY RESET", RedisOperation.WRITE, [RespCode.INTEGER])
 fun interface LatencyResetCommand : RedisCommandSpec<Long> {
-    suspend fun encode(@RedisOptional vararg event: String): CommandRequest<Nothing>
+    suspend fun encode(@RedisOptional vararg event: String): CommandRequest
 }

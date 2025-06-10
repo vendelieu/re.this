@@ -1,7 +1,6 @@
 package eu.vendeli.rethis.api.spec.commands.geospatial
 
 import eu.vendeli.rethis.api.spec.common.annotations.RedisCommand
-import eu.vendeli.rethis.api.spec.common.annotations.RedisKey
 import eu.vendeli.rethis.api.spec.common.annotations.RedisOption
 import eu.vendeli.rethis.api.spec.common.annotations.RedisOptional
 import eu.vendeli.rethis.api.spec.common.request.geospatial.GeoAddOption
@@ -19,9 +18,9 @@ import eu.vendeli.rethis.api.spec.common.types.RespCode
 )
 fun interface GeoAddCommand : RedisCommandSpec<Long> {
     suspend fun encode(
-        @RedisKey key: String,
+        key: String,
         vararg data: GeoMember,
         @RedisOptional condition: GeoAddOption.UpsertMode?,
         @RedisOptional @RedisOption.Token("CH") change: Boolean?,
-    ): CommandRequest<String>
+    ): CommandRequest
 }

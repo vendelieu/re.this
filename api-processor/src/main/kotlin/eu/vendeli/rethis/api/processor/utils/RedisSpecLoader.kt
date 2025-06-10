@@ -1,8 +1,10 @@
 package eu.vendeli.rethis.api.processor.utils
 
+import eu.vendeli.rethis.api.processor.context.RSpecRaw
+import eu.vendeli.rethis.api.processor.context.SpecResponses
+import eu.vendeli.rethis.api.processor.core.RedisCommandProcessor.Companion.context
 import eu.vendeli.rethis.api.processor.types.RedisCommandApiSpec
-import eu.vendeli.rethis.api.processor.types.RedisCommandFullSpec
-import io.ktor.util.logging.*
+import eu.vendeli.rethis.api.spec.common.types.RespCode
 import kotlinx.serialization.json.Json
 import java.net.URI
 import java.net.http.HttpClient
@@ -10,26 +12,45 @@ import java.net.http.HttpRequest
 import java.net.http.HttpResponse
 
 internal object RedisSpecLoader {
-    private val logger = KtorSimpleLogger(javaClass.name)
     private val json = Json {
         ignoreUnknownKeys = true
     }
     private val client = HttpClient.newBuilder().build()
-    private const val SPEC_BASE_URL = "https://raw.githubusercontent.com/redis/docs/refs/heads/main/data/"
+    private const val SPEC_BASE_URL =
+        "https://raw.githubusercontent.com/redis/docs/4b1ff1c1c8a6d6b6f70c64d4f0aa091fc0fe00a5/data/"
 
-    fun loadSpecs(): RedisCommandFullSpec = runCatching {
+    fun loadSpecs() {
+        enrichContextWithCommands()
+        enrichContextWithResponses()
+    }
+
+    private fun enrichContextWithResponses() = runCatching {
+        val r2Responses = loadResponses("resp2_replies.json")
+        val r3Responses = loadResponses("resp3_replies.json")
+
+        val allResponses = mutableMapOf<String, Set<RespCode>>()
+
+        r2Responses.forEach { cmd, responses ->
+            allResponses[cmd] = responses.mapNotNull { it.inferResponseType() }.toSet()
+        }
+
+        r3Responses.forEach { cmd, responses ->
+            allResponses[cmd] = responses.mapNotNull { it.inferResponseType() }.toSet()
+        }
+
+        context += SpecResponses(allResponses)
+    }.getOrElse {
+        throw RuntimeException("Failed to load Redis response specs: ${it.message}", it)
+    }
+
+    private fun enrichContextWithCommands() = runCatching {
         val commands = loadCommands().apply {
             putAll(loadCommands("commands_redisjson.json"))
         }
 
-        val resp2 = loadResponses("resp2_replies.json")
-        val resp3 = loadResponses("resp3_replies.json")
-
-        logger.info("Loaded ${commands.size} commands and RESP2 ${resp2.size} + RESP3 ${resp3.size}")
-
-        RedisCommandFullSpec(commands, resp2, resp3)
+        context += RSpecRaw(commands)
     }.getOrElse {
-        throw RuntimeException("Failed to load Redis specs: ${it.message}", it)
+        throw RuntimeException("Failed to load Redis command specs: ${it.message}", it)
     }
 
     private fun loadCommands(module: String = "commands.json"): MutableMap<String, RedisCommandApiSpec> {

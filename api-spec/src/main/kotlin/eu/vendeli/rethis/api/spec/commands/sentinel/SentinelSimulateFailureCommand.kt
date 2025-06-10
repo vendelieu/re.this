@@ -14,5 +14,5 @@ import eu.vendeli.rethis.api.spec.common.types.RespCode
     extensions = [SentinelSimulateFailureMode::class],
 )
 fun interface SentinelSimulateFailureCommand : RedisCommandSpec<Boolean> {
-    suspend fun encode(mode: SentinelSimulateFailureMode): CommandRequest<Nothing>
+    suspend fun encode(mode: SentinelSimulateFailureMode): CommandRequest
 }

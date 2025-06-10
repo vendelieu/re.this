@@ -5,5 +5,5 @@ import eu.vendeli.rethis.api.spec.common.types.*
 
 @RedisCommand("ROLE", RedisOperation.READ, [RespCode.ARRAY])
 fun interface RoleCommand : RedisCommandSpec<List<RType>> {
-    suspend fun encode(): CommandRequest<Nothing>
+    suspend fun encode(): CommandRequest
 }

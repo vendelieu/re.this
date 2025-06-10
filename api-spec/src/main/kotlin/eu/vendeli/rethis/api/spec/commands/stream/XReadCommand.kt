@@ -1,7 +1,6 @@
 package eu.vendeli.rethis.api.spec.commands.stream
 
 import eu.vendeli.rethis.api.spec.common.annotations.RedisCommand
-import eu.vendeli.rethis.api.spec.common.annotations.RedisKey
 import eu.vendeli.rethis.api.spec.common.annotations.RedisOption
 import eu.vendeli.rethis.api.spec.common.annotations.RedisOptional
 import eu.vendeli.rethis.api.spec.common.types.*
@@ -14,9 +13,9 @@ import eu.vendeli.rethis.api.spec.common.types.*
 )
 fun interface XReadCommand : RedisCommandSpec<Map<String, RType?>> {
     suspend fun encode(
-        @RedisKey @RedisOption.Token("STREAMS") key: List<String>,
+        @RedisOption.Token("STREAMS") key: List<String>,
         id: List<String>,
         @RedisOptional @RedisOption.Token("COUNT") count: Long?,
         @RedisOptional @RedisOption.Token("BLOCK") milliseconds: Long?,
-    ): CommandRequest<List<String>>
+    ): CommandRequest
 }

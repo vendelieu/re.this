@@ -9,5 +9,5 @@ import eu.vendeli.rethis.api.spec.common.types.RespCode
 
 @RedisCommand("ACL SETUSER", RedisOperation.WRITE, [RespCode.SIMPLE_STRING])
 fun interface AclSetUserCommand : RedisCommandSpec<Boolean> {
-    suspend fun encode(username: String, @RedisOptional vararg rule: String): CommandRequest<Nothing>
+    suspend fun encode(username: String, @RedisOptional vararg rule: String): CommandRequest
 }

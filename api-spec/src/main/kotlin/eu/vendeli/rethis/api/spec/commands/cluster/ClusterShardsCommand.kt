@@ -5,5 +5,5 @@ import eu.vendeli.rethis.api.spec.common.types.*
 
 @RedisCommand("CLUSTER SHARDS", RedisOperation.READ, [RespCode.ARRAY])
 fun interface ClusterShardsCommand : RedisCommandSpec<List<Map<String, RType>>> {
-    suspend fun encode(): CommandRequest<Nothing>
+    suspend fun encode(): CommandRequest
 }

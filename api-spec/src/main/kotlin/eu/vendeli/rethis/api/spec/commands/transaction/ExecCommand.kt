@@ -5,5 +5,5 @@ import eu.vendeli.rethis.api.spec.common.types.*
 
 @RedisCommand("EXEC", RedisOperation.WRITE, [RespCode.ARRAY, RespCode.NULL])
 fun interface ExecCommand : RedisCommandSpec<List<RType>> {
-    suspend fun encode(): CommandRequest<Nothing>
+    suspend fun encode(): CommandRequest
 }

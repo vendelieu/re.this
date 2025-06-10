@@ -13,5 +13,5 @@ fun interface FunctionLoadCommand : RedisCommandSpec<String> {
     suspend fun encode(
         functionCode: String,
         @RedisOptional @RedisOption.Token("REPLACE") replace: Boolean?,
-    ): CommandRequest<Nothing>
+    ): CommandRequest
 }

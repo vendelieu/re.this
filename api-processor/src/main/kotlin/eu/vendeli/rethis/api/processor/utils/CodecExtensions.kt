@@ -3,55 +3,32 @@ package eu.vendeli.rethis.api.processor.utils
 import com.google.devtools.ksp.symbol.KSTypeArgument
 import com.google.devtools.ksp.symbol.KSValueParameter
 import com.squareup.kotlinpoet.*
-import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import com.squareup.kotlinpoet.ksp.toTypeName
+import eu.vendeli.rethis.api.processor.core.RedisCommandProcessor.Companion.context
 import eu.vendeli.rethis.api.spec.common.annotations.RedisOptional
-import eu.vendeli.rethis.api.spec.common.types.CommandRequest
 import eu.vendeli.rethis.api.spec.common.types.RedisOperation
 import eu.vendeli.rethis.api.spec.common.types.RespCode
 import kotlinx.io.Buffer
-
-internal fun TypeSpec.Builder.addEncodeFunction(
-    fileSpec: FileSpec.Builder,
-    annotation: Map<String, String>,
-    parameters: Map<String, Pair<TypeName, List<KModifier>>>,
-    params: List<KSValueParameter>,
-    keyParam: KSValueParameter?,
-): TypeSpec.Builder {
-    addFunction(
-        FunSpec.builder("encode")
-            .addModifiers(KModifier.SUSPEND)
-            .apply {
-                addParameter(
-                    "charset",
-                    charsetClassName,
-                )
-                parameters.forEach { param ->
-                    addParameter(param.key, param.value.first, param.value.second)
-                }
-            }
-            .returns(
-                CommandRequest::class.asClassName().parameterizedBy(
-                    keyParam?.type?.resolve()?.toTypeName() ?: NOTHING,
-                ),
-            )
-            .addCode(fileSpec.buildEncoderCode(this, annotation, params, keyParam))
-            .build(),
-    )
-    return this
-}
 
 private fun RespCode.isString() = this == RespCode.SIMPLE_STRING || this == RespCode.BULK
 internal fun TypeSpec.Builder.addDecodeFunction(
     respCode: List<RespCode>,
     specType: KSTypeArgument,
 ): TypeSpec.Builder {
+    if (context.currentCommand.hasCustomDecoder) {
+        return this
+    }
     val type = specType.toTypeName()
     val isReturnBool = type.copy(true) == BOOLEAN.copy(true)
     val isReturnDouble = type.copy(true) == DOUBLE.copy(true)
 
     val isNullableResponse = RespCode.NULL in respCode
     val isImplicitMapResponse = RespCode.MAP in respCode && RespCode.ARRAY in respCode
+
+    addImport(
+        "eu.vendeli.rethis.api.spec.common.types.RespCode",
+        "eu.vendeli.rethis.api.spec.common.types.UnexpectedResponseType",
+    )
 
     addFunction(
         FunSpec.builder("decode")
@@ -79,9 +56,14 @@ internal fun TypeSpec.Builder.addDecodeFunction(
                         beginControlFlow("RespCode.%L ->", code)
 
                         if (isImplicitMapResponse && code == RespCode.ARRAY) {
+                            addImport("eu.vendeli.rethis.api.spec.common.decoders.ArrayMapDecoder")
                             addStatement("ArrayMapDecoder.decode<%s, %s>(input, charset, TYPE_INFO)".format(*arguments))
                         } else {
-                            addStatement(decodersMap[code]!!.second.format(*arguments) + tailStatement)
+                            val decoder = decodersMap[code]!!
+                            decoder.first?.let {
+                                addImport("eu.vendeli.rethis.api.spec.common.decoders.$it")
+                            }
+                            addStatement(decoder.second.format(*arguments) + tailStatement)
                         }
 
                         endControlFlow()
@@ -111,39 +93,24 @@ internal fun buildStaticCommandParts(
     return "$sizePart\\r\\n$commandPart\\r\\n"
 }
 
-internal fun buildStaticHeaderInitializer(header: String): String {
-    return "Buffer().apply {\n" +
-        "\twriteString(\"${header}\")" +
-        "\n}"
-}
+internal fun buildStaticHeaderInitializer(header: String): CodeBlock = CodeBlock.Builder().apply {
+    beginControlFlow("Buffer().apply {")
+    addStatement("writeString(\"%L\")", header)
+    endControlFlow()
+}.build()
 
 internal fun CodeBlock.Builder.addCommandSpecCreation(
     operationName: String,
-    keyParam: KSValueParameter?,
 ) {
-    if (keyParam != null) {
-        addStatement(
-            """
-            return CommandRequest<%T>(
-                buffer = buffer,
-                operation = %T.%L,
-                typeInfo = TYPE_INFO,
-                isBlocking = BLOCKING_STATUS,
-            ).withKey(%N)
-            """.trimIndent(),
-            keyParam.type.toTypeName(), RedisOperation::class, operationName, keyParam.name!!.asString(),
-        )
-    } else {
-        addStatement(
-            """
-            return CommandRequest.keyless(
+    addStatement(
+        """
+            return CommandRequest(
                 buffer = buffer,
                 operation = %T.%L,
                 typeInfo = TYPE_INFO,
                 isBlocking = BLOCKING_STATUS,
             )
             """.trimIndent(),
-            RedisOperation::class, operationName,
-        )
-    }
+        RedisOperation::class, operationName,
+    )
 }

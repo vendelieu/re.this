@@ -8,5 +8,5 @@ import eu.vendeli.rethis.api.spec.common.types.RespCode
 
 @RedisCommand("SENTINEL GET-MASTER-ADDR-BY-NAME", RedisOperation.READ, [RespCode.ARRAY])
 fun interface SentinelGetMasterAddrCommand : RedisCommandSpec<List<String>> {
-    suspend fun encode(masterName: String): CommandRequest<Nothing>
+    suspend fun encode(masterName: String): CommandRequest
 }

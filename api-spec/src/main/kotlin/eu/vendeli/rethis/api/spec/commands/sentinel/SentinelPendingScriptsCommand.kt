@@ -5,5 +5,5 @@ import eu.vendeli.rethis.api.spec.common.types.*
 
 @RedisCommand("SENTINEL PENDING-SCRIPTS", RedisOperation.READ, [RespCode.ARRAY])
 fun interface SentinelPendingScriptsCommand : RedisCommandSpec<List<Map<String, RType>>> {
-    suspend fun encode(): CommandRequest<Nothing>
+    suspend fun encode(): CommandRequest
 }

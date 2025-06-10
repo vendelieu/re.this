@@ -3,10 +3,9 @@ package eu.vendeli.rethis.api.processor.utils
 import com.google.devtools.ksp.processing.KSPLogger
 import com.google.devtools.ksp.symbol.KSAnnotated
 import com.google.devtools.ksp.symbol.KSClassDeclaration
-import com.google.devtools.ksp.symbol.KSDeclaration
 import com.google.devtools.ksp.symbol.KSType
+import com.google.devtools.ksp.symbol.KSTypeReference
 import eu.vendeli.rethis.api.processor.types.RedisCommandApiSpec
-import eu.vendeli.rethis.api.processor.types.collectAllArguments
 import eu.vendeli.rethis.api.spec.common.annotations.RedisMeta
 import eu.vendeli.rethis.api.spec.common.types.RespCode
 import eu.vendeli.rethis.api.spec.common.types.ValidityCheck
@@ -48,6 +47,11 @@ internal fun KSType.getTimeUnit(): String = annotations.firstOrNull {
     if (it == "SECONDS") "SECONDS" else "MILLISECONDS"
 }
 
+internal fun KSTypeReference.collectionAwareType(): KSType = resolve().let {
+    if (it.isCollection()) it.arguments.first().type!!.resolve()
+    else it
+}
+
 @Suppress("UNCHECKED_CAST")
 internal inline fun <reified R> Any?.safeCast(): R? = this as? R
 
@@ -59,7 +63,7 @@ internal fun KSPLogger.report(
     responseValidationResult: Pair<Set<RespCode>, Set<RespCode>>,
 ) {
     // Unprocessed arguments
-    val unprocessed = spec.collectAllArguments().map { it.name }.filterNot { it in processedEntries }
+    val unprocessed = spec.allArguments.map { it.name }.filterNot { it in processedEntries }
 
     // Error entries
     val hasErrors = errors.any { it.value.isNotEmpty() }

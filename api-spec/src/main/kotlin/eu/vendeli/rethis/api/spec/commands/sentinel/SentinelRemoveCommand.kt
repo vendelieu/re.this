@@ -8,5 +8,5 @@ import eu.vendeli.rethis.api.spec.common.types.RespCode
 
 @RedisCommand("SENTINEL REMOVE", RedisOperation.WRITE, [RespCode.SIMPLE_STRING])
 fun interface SentinelRemoveCommand : RedisCommandSpec<Boolean> {
-    suspend fun encode(masterName: String): CommandRequest<Nothing>
+    suspend fun encode(masterName: String): CommandRequest
 }

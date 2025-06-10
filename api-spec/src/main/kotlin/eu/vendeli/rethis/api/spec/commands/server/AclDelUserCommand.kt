@@ -8,5 +8,5 @@ import eu.vendeli.rethis.api.spec.common.types.RespCode
 
 @RedisCommand("ACL DELUSER", RedisOperation.WRITE, [RespCode.INTEGER])
 fun interface AclDelUserCommand : RedisCommandSpec<Long> {
-    suspend fun encode(vararg username: String): CommandRequest<Nothing>
+    suspend fun encode(vararg username: String): CommandRequest
 }

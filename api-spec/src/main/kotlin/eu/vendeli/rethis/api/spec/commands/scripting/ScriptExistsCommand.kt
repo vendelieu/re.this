@@ -8,5 +8,5 @@ import eu.vendeli.rethis.api.spec.common.types.RespCode
 
 @RedisCommand("SCRIPT EXISTS", RedisOperation.READ, [RespCode.ARRAY])
 fun interface ScriptExistsCommand : RedisCommandSpec<List<Boolean>> {
-    suspend fun encode(vararg sha1: String): CommandRequest<Nothing>
+    suspend fun encode(vararg sha1: String): CommandRequest
 }

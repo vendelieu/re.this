@@ -8,5 +8,5 @@ import eu.vendeli.rethis.api.spec.common.types.RespCode
 
 @RedisCommand("CLUSTER COUNTKEYSINSLOT", RedisOperation.READ, [RespCode.INTEGER])
 fun interface ClusterCountKeysInSlotCommand : RedisCommandSpec<Long> {
-    suspend fun encode(slot: Long): CommandRequest<Nothing>
+    suspend fun encode(slot: Long): CommandRequest
 }

@@ -13,5 +13,5 @@ fun interface ClientPauseCommand : RedisCommandSpec<Boolean> {
     suspend fun encode(
         timeout: Long,
         @RedisOptional mode: ClientPauseMode?
-    ): CommandRequest<Nothing>
+    ): CommandRequest
 }

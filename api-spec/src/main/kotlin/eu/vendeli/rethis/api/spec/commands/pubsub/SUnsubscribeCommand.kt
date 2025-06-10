@@ -9,5 +9,5 @@ import eu.vendeli.rethis.api.spec.common.types.RedisOperation
 
 @RedisCommand("SUNSUBSCRIBE", RedisOperation.WRITE, [])
 fun interface SUnsubscribeCommand : RedisCommandSpec<RType> {
-    suspend fun encode(@RedisOptional vararg shardchannel: String): CommandRequest<Nothing>
+    suspend fun encode(@RedisOptional vararg shardchannel: String): CommandRequest
 }

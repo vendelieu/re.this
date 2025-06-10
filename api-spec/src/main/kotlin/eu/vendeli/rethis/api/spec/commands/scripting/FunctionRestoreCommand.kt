@@ -16,5 +16,5 @@ fun interface FunctionRestoreCommand : RedisCommandSpec<Boolean> {
     suspend fun encode(
         @RedisMeta.IgnoreCheck([ValidityCheck.TYPE]) serializedValue: ByteArray,
         @RedisOptional policy: FunctionRestoreOption?,
-    ): CommandRequest<Nothing>
+    ): CommandRequest
 }

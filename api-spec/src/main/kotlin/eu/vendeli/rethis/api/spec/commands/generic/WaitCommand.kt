@@ -11,5 +11,5 @@ fun interface WaitCommand : RedisCommandSpec<Long> {
     suspend fun encode(
         numreplicas: Long,
         timeout: Long
-    ): CommandRequest<Nothing>
+    ): CommandRequest
 }

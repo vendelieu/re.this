@@ -1,7 +1,6 @@
 package eu.vendeli.rethis.api.spec.commands.sortedset
 
 import eu.vendeli.rethis.api.spec.common.annotations.RedisCommand
-import eu.vendeli.rethis.api.spec.common.annotations.RedisKey
 import eu.vendeli.rethis.api.spec.common.annotations.RedisOption
 import eu.vendeli.rethis.api.spec.common.annotations.RedisOptional
 import eu.vendeli.rethis.api.spec.common.request.common.UpdateStrategyOption
@@ -19,10 +18,10 @@ import eu.vendeli.rethis.api.spec.common.types.RespCode
 )
 fun interface ZAddCommand : RedisCommandSpec<Long> {
     suspend fun encode(
-        @RedisKey key: String,
-        vararg members: ZMember,
-        @RedisOptional existenceRule: UpdateStrategyOption.ExistenceRule?,
-        @RedisOptional comparisonRule: UpdateStrategyOption.ComparisonRule?,
-        @RedisOptional @RedisOption.Token("CH") ch: Boolean?,
-    ): CommandRequest<String>
+        key: String,
+        vararg data: ZMember,
+        @RedisOptional condition: UpdateStrategyOption.ExistenceRule?,
+        @RedisOptional comparison: UpdateStrategyOption.ComparisonRule?,
+        @RedisOptional @RedisOption.Token("CH") change: Boolean?,
+    ): CommandRequest
 }

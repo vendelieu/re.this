@@ -6,5 +6,5 @@ import eu.vendeli.rethis.api.spec.common.types.*
 
 @RedisCommand("SLOWLOG GET", RedisOperation.READ, [RespCode.ARRAY])
 fun interface SlowLogGetCommand : RedisCommandSpec<List<Map<String, RType>>> {
-    suspend fun encode(@RedisOptional count: Long?): CommandRequest<Nothing>
+    suspend fun encode(@RedisOptional count: Long?): CommandRequest
 }

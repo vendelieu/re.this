@@ -8,5 +8,5 @@ import eu.vendeli.rethis.api.spec.common.types.RespCode
 
 @RedisCommand("SWAPDB", RedisOperation.WRITE, [RespCode.SIMPLE_STRING])
 fun interface SwapDbCommand : RedisCommandSpec<Boolean> {
-    suspend fun encode(index1: Long, index2: Long): CommandRequest<Nothing>
+    suspend fun encode(index1: Long, index2: Long): CommandRequest
 }

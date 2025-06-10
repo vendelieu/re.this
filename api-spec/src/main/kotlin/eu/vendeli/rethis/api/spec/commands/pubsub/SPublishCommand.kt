@@ -11,5 +11,5 @@ fun interface SPublishCommand : RedisCommandSpec<Long> {
     suspend fun encode(
         shardchannel: String,
         message: String
-    ): CommandRequest<Nothing>
+    ): CommandRequest
 }

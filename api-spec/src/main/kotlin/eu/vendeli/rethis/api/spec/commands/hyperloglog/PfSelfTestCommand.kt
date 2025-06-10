@@ -5,5 +5,5 @@ import eu.vendeli.rethis.api.spec.common.types.*
 
 @RedisCommand("PFSELFTEST", RedisOperation.READ, [RespCode.SIMPLE_STRING])
 fun interface PfSelfTestCommand : RedisCommandSpec<RType> {
-    suspend fun encode(): CommandRequest<Nothing>
+    suspend fun encode(): CommandRequest
 }

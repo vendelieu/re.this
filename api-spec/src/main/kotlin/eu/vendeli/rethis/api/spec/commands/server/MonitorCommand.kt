@@ -8,5 +8,5 @@ import eu.vendeli.rethis.api.spec.common.types.RedisOperation
 
 @RedisCommand("MONITOR", RedisOperation.READ, [])
 fun interface MonitorCommand : RedisCommandSpec<RType> {
-    suspend fun encode(): CommandRequest<Nothing>
+    suspend fun encode(): CommandRequest
 }

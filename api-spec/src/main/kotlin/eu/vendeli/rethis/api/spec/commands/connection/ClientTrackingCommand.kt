@@ -19,5 +19,5 @@ fun interface ClientTrackingCommand : RedisCommandSpec<Boolean> {
     suspend fun encode(
         status: ClientStandby,
         @RedisOptional vararg options: ClientTrackingMode,
-    ): CommandRequest<Nothing>
+    ): CommandRequest
 }

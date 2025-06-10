@@ -8,5 +8,5 @@ import eu.vendeli.rethis.api.spec.common.types.RespCode
 
 @RedisCommand("BGREWRITEAOF", RedisOperation.WRITE, [RespCode.SIMPLE_STRING, RespCode.BULK])
 fun interface BgRewriteAofCommand : RedisCommandSpec<Boolean> {
-    suspend fun encode(): CommandRequest<Nothing>
+    suspend fun encode(): CommandRequest
 }

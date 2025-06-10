@@ -10,5 +10,5 @@ import eu.vendeli.rethis.api.spec.common.types.RespCode
 
 @RedisCommand("PUBSUB NUMSUB", RedisOperation.READ, [RespCode.ARRAY])
 fun interface PubSubNumSubCommand : RedisCommandSpec<List<PubSubNumEntry>> {
-    suspend fun encode(@RedisOptional vararg channel: String): CommandRequest<Nothing>
+    suspend fun encode(@RedisOptional vararg channel: String): CommandRequest
 }

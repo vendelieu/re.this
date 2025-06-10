@@ -1,7 +1,6 @@
 package eu.vendeli.rethis.api.spec.commands.stream
 
 import eu.vendeli.rethis.api.spec.common.annotations.RedisCommand
-import eu.vendeli.rethis.api.spec.common.annotations.RedisKey
 import eu.vendeli.rethis.api.spec.common.annotations.RedisOption
 import eu.vendeli.rethis.api.spec.common.annotations.RedisOptional
 import eu.vendeli.rethis.api.spec.common.request.stream.XReadGroupKeyIds
@@ -21,5 +20,5 @@ fun interface XReadGroupCommand : RedisCommandSpec<Map<String, RType?>> {
         consumer: String,
         keyIds: XReadGroupKeyIds,
         @RedisOptional vararg option: XReadGroupOption,
-    ): CommandRequest<List<String>>
+    ): CommandRequest
 }

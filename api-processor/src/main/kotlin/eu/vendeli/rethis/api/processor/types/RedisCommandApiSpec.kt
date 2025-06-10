@@ -14,16 +14,20 @@ internal data class RedisCommandApiSpec(
     @SerialName("key_specs") val keySpecs: List<KeySpec>? = null,
     val complexity: String? = null,
     val arity: Int? = null,
-)
+) {
+    val specTree: List<RSpecNode> by lazy { RSpecTreeBuilder(arguments.orEmpty()).build() }
 
-internal fun RedisCommandApiSpec.collectAllArguments(): List<CommandArgument> = arguments?.flatMap {
-    sequence {
-        var stack = listOf(it)
-        while (stack.isNotEmpty()) {
-            val current = stack.first()
-            stack = stack.drop(1)
-            yield(current)
-            stack = current.arguments + stack
-        }
-    }.toList()
-} ?: emptyList()
+    val allArguments: List<CommandArgument> by lazy { collectAllArguments() }
+    private fun collectAllArguments(): List<CommandArgument> = arguments?.flatMap {
+        sequence {
+            var stack = listOf(it)
+            while (stack.isNotEmpty()) {
+                val current = stack.first()
+                stack = stack.drop(1)
+                yield(current)
+                stack = current.arguments + stack
+            }
+        }.toList()
+    } ?: emptyList()
+}
+

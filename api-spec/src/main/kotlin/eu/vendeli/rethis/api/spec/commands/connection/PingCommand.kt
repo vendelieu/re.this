@@ -11,5 +11,5 @@ import eu.vendeli.rethis.api.spec.common.types.RespCode
 fun interface PingCommand : RedisCommandSpec<String> {
     suspend fun encode(
         @RedisOptional message: String?
-    ): CommandRequest<Nothing>
+    ): CommandRequest
 }

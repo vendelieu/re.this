@@ -9,5 +9,5 @@ import eu.vendeli.rethis.api.spec.common.types.RespCode
 
 @RedisCommand("CLUSTER DELSLOTSRANGE", RedisOperation.WRITE, [RespCode.SIMPLE_STRING], extensions = [SlotRange::class])
 fun interface ClusterDelSlotsRangeCommand : RedisCommandSpec<Boolean> {
-    suspend fun encode(vararg ranges: SlotRange): CommandRequest<Nothing>
+    suspend fun encode(vararg ranges: SlotRange): CommandRequest
 }
