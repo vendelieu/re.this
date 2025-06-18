@@ -8,23 +8,23 @@ import kotlinx.datetime.Instant
 
 sealed class ClientKillOptions {
     @RedisOption.Token("ADDR")
-    data class Address(val ip: String, val port: Int) : ClientKillOptions()
+    class Address(val ip: String, val port: Int) : ClientKillOptions()
 
     @RedisOption.Token("LADDR")
-    data class LAddr(val ip: String, val port: Int) : ClientKillOptions()
+    class LAddr(val ip: String, val port: Int) : ClientKillOptions()
 
     @RedisOption.Token("ID")
-    data class Id(val clientId: Long) : ClientKillOptions()
+    class Id(val clientId: Long) : ClientKillOptions()
 
     @RedisOption.Token("TYPE")
-    data class Type(val connectionType: String) : ClientKillOptions()
+    class Type(val connectionType: String) : ClientKillOptions()
 
     @RedisOption.Token("USER")
-    data class User(val username: String) : ClientKillOptions()
+    class User(val username: String) : ClientKillOptions()
 
     @RedisOption.Token("SKIPME")
-    data class SkipMe(val yes: Boolean) : ClientKillOptions()
+    class SkipMe(val yes: Boolean) : ClientKillOptions()
 
     @RedisOption.Token("MAXAGE")
-    data class MaxAge(val instant: @RedisMeta.OutgoingTimeUnit(TimeUnit.SECONDS) Instant) : ClientKillOptions()
+    class MaxAge(val instant: @RedisMeta.OutgoingTimeUnit(TimeUnit.SECONDS) Instant) : ClientKillOptions()
 }
