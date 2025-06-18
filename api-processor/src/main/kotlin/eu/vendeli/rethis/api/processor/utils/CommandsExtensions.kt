@@ -19,8 +19,12 @@ fun FileSpec.Builder.addCommandFunctions(
         FunSpec.builder(commandName.toCamelCase())
             .addModifiers(KModifier.SUSPEND)
             .receiver(ReThis::class).apply {
-                parameters.forEach {
-                    addParameter(it.key, it.value.first, it.value.second)
+                parameters.map { p ->
+                    ParameterSpec.builder(p.key, p.value.first, p.value.second).also {
+                        if (p.value.first.isNullable) it.defaultValue("null")
+                    }.build()
+                }.let {
+                    addParameters(it)
                 }
             }
             .returns(type.copy(isNullable))
@@ -33,10 +37,9 @@ fun FileSpec.Builder.addCommandFunctions(
                             }
                         })",
                     )
-                    addStatement(
-                        "return connectionPool.use {\n\t" +
-                            "$codecName.decode(it.doRequest(request.buffer), cfg.charset)\n}",
-                    )
+                    beginControlFlow("return connectionPool.use")
+                    addStatement("$codecName.decode(it.doRequest(request.buffer), cfg.charset)")
+                    endControlFlow()
                 }.build(),
             )
             .build(),

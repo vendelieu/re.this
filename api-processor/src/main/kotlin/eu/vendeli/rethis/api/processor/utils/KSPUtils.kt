@@ -53,10 +53,9 @@ internal fun KSType.getTimeUnit(): String = annotations.firstOrNull {
     if (it == "SECONDS") "SECONDS" else "MILLISECONDS"
 }
 
-internal fun KSTypeReference.collectionAwareType(): KSType = resolve().let {
-    if (it.isCollection()) it.arguments.first().type!!.resolve()
-    else it
-}
+internal fun KSType.collectionAwareType(): KSType =
+    if (isCollection()) arguments.first().type!!.resolve()
+    else this
 
 @OptIn(KspExperimental::class)
 internal fun KSAnnotated.saveTokens(node: EnrichedNode) {

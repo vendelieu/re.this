@@ -97,7 +97,7 @@ internal object RedisProcessor {
             writeTo(File(context.meta.clientDir))
         }.onFailure { it.printStackTrace() }
         commandFileSpec.build().runCatching {
-//            writeTo(File(context.meta.clientDir)) // todo return
+            writeTo(File(context.meta.clientDir)) // todo return
         }.onFailure { it.printStackTrace() }
     }
 

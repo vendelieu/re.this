@@ -70,12 +70,13 @@ private fun CodeGenContext.inferWriting(
     node: EnrichedNode,
     complex: Boolean,
 ) {
-    val writeFn = "write${fieldType.declaration.simpleName.asString()}Arg"
+    val resolvedType = fieldType.collectionAwareType()
+    val writeFn = "write${resolvedType.declaration.simpleName.asString()}Arg"
     val pName = if (complex) "$pointer.$fieldAccess" else pointedParameter(fieldAccess)
-    val isBoolToken = fieldType.declaration.isBool() && node.tokens.isNotEmpty()
+    val isBoolToken = resolvedType.declaration.isBool() && node.tokens.isNotEmpty()
 
     if (isBoolToken) builder.beginControlFlow("if($pName)")
-    if (!fieldType.declaration.isEnum() && !fieldType.declaration.isDataObject()) {
+    if (!resolvedType.declaration.isEnum() && !resolvedType.declaration.isDataObject()) {
         addImport("eu.vendeli.rethis.utils.writeStringArg")
         node.tokens.forEach {
             if (context.currentCommand.haveVaryingSize) appendLine("size += 1")
@@ -91,23 +92,23 @@ private fun CodeGenContext.inferWriting(
     if (context.currentCommand.haveVaryingSize) builder.addStatement("size += 1")
 
     when {
-        fieldType.declaration.isStdType() -> {
+        resolvedType.declaration.isStdType() -> {
             addImport("eu.vendeli.rethis.utils.$writeFn")
             val additionalParams = buildList {
                 when {
-                    fieldType.declaration.isTimeType() -> {
+                    resolvedType.declaration.isTimeType() -> {
                         addImport("eu.vendeli.rethis.api.spec.common.types.TimeUnit")
-                        add("TimeUnit.${fieldType.getTimeUnit()}")
+                        add("TimeUnit.${resolvedType.getTimeUnit()}")
                     }
                 }
             }.joinToString(prefix = ", ")
             appendLine("buffer.%L(%L, charset$additionalParams)", writeFn, pName)
         }
 
-        fieldType.declaration.isDataObject() -> {
+        resolvedType.declaration.isDataObject() -> {
             addImport("eu.vendeli.rethis.utils.writeStringArg")
             val actualTokens = node.tokens.map { it.name }
-            val declarationToken = fieldType.declaration.effectiveName()
+            val declarationToken = resolvedType.declaration.effectiveName()
 
             if (actualTokens.singleOrNull() == declarationToken) {
                 appendLine("buffer.writeStringArg(%L.toString(), charset)", pointer ?: fieldAccess)
@@ -116,7 +117,7 @@ private fun CodeGenContext.inferWriting(
             }
         }
 
-        fieldType.declaration.isEnum() -> {
+        resolvedType.declaration.isEnum() -> {
             addImport("eu.vendeli.rethis.utils.writeStringArg")
             appendLine("buffer.writeStringArg(%L.toString(), charset)", pointer ?: fieldAccess)
         }
