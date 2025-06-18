@@ -2,11 +2,10 @@ package eu.vendeli.rethis.api.spec.common.request.connection
 
 import eu.vendeli.rethis.api.spec.common.annotations.RedisMeta
 import eu.vendeli.rethis.api.spec.common.annotations.RedisOption
-import eu.vendeli.rethis.api.spec.common.annotations.RedisOptionContainer
 import eu.vendeli.rethis.api.spec.common.types.TimeUnit
 import kotlinx.datetime.Instant
 
-@RedisOptionContainer
+
 sealed class ClientKillOptions {
     @RedisOption.Token("ADDR")
     data class Address(val ip: String, val port: Int) : ClientKillOptions()

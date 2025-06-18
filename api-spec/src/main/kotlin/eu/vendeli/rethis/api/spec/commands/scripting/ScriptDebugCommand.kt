@@ -7,7 +7,7 @@ import eu.vendeli.rethis.api.spec.common.types.RedisCommandSpec
 import eu.vendeli.rethis.api.spec.common.types.RedisOperation
 import eu.vendeli.rethis.api.spec.common.types.RespCode
 
-@RedisCommand("SCRIPT DEBUG", RedisOperation.WRITE, [RespCode.SIMPLE_STRING], extensions = [ScriptDebugMode::class])
+@RedisCommand("SCRIPT DEBUG", RedisOperation.WRITE, [RespCode.SIMPLE_STRING])
 fun interface ScriptDebugCommand : RedisCommandSpec<Boolean> {
     suspend fun encode(mode: ScriptDebugMode): CommandRequest
 }

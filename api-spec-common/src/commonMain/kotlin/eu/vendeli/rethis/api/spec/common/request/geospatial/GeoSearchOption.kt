@@ -1,12 +1,11 @@
 package eu.vendeli.rethis.api.spec.common.request.geospatial
 
 import eu.vendeli.rethis.api.spec.common.annotations.RedisOption
-import eu.vendeli.rethis.api.spec.common.annotations.RedisOptionContainer
 import eu.vendeli.rethis.api.spec.common.response.GeoUnit
 
 sealed class GeoSearchOption
 
-@RedisOptionContainer
+
 sealed class CenterPoint : GeoSearchOption()
 
 @RedisOption.Token("FROMMEMBER")
@@ -20,7 +19,7 @@ class FromLongitudeLatitude(
     val latitude: Double,
 ) : CenterPoint()
 
-@RedisOptionContainer
+
 sealed class Shape : GeoSearchOption()
 
 @RedisOption.Token("BYRADIUS")

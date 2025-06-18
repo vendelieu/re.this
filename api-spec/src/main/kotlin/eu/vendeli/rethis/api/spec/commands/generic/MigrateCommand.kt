@@ -1,7 +1,6 @@
 package eu.vendeli.rethis.api.spec.commands.generic
 
 import eu.vendeli.rethis.api.spec.common.annotations.RedisCommand
-import eu.vendeli.rethis.api.spec.common.annotations.RedisOptional
 import eu.vendeli.rethis.api.spec.common.request.generic.MigrateKey
 import eu.vendeli.rethis.api.spec.common.request.generic.MigrateOption
 import eu.vendeli.rethis.api.spec.common.types.CommandRequest
@@ -14,7 +13,6 @@ import kotlin.time.Duration
     "MIGRATE",
     RedisOperation.WRITE,
     [RespCode.SIMPLE_STRING],
-    extensions = [MigrateOption::class, MigrateKey::class],
 )
 fun interface MigrateCommand : RedisCommandSpec<String> {
     suspend fun encode(
@@ -23,6 +21,6 @@ fun interface MigrateCommand : RedisCommandSpec<String> {
         keySelector: MigrateKey,
         destinationDb: Long,
         timeout: Duration,
-        @RedisOptional vararg option: MigrateOption,
+        vararg option: MigrateOption,
     ): CommandRequest
 }

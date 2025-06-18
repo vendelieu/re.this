@@ -13,7 +13,6 @@ import eu.vendeli.rethis.api.spec.common.types.RespCode
     RedisOperation.WRITE,
     [RespCode.BULK, RespCode.NULL],
     isBlocking = true,
-    extensions = [MoveDirection::class],
 )
 fun interface BlMoveCommand : RedisCommandSpec<String> {
     suspend fun encode(

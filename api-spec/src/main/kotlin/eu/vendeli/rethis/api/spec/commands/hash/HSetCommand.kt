@@ -7,7 +7,7 @@ import eu.vendeli.rethis.api.spec.common.types.RedisCommandSpec
 import eu.vendeli.rethis.api.spec.common.types.RedisOperation
 import eu.vendeli.rethis.api.spec.common.types.RespCode
 
-@RedisCommand("HSET", RedisOperation.WRITE, [RespCode.INTEGER], extensions = [FieldValue::class])
+@RedisCommand("HSET", RedisOperation.WRITE, [RespCode.INTEGER])
 fun interface HSetCommand : RedisCommandSpec<Long> {
     suspend fun encode(
         key: String,

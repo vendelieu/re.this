@@ -1,7 +1,6 @@
 package eu.vendeli.rethis.api.spec.common.request.generic
 
 import eu.vendeli.rethis.api.spec.common.annotations.RedisOption
-import eu.vendeli.rethis.api.spec.common.annotations.RedisOptionContainer
 
 sealed class SortRoOption {
     @RedisOption.Token("BY")
@@ -20,15 +19,12 @@ sealed class SortRoOption {
         vararg val getPattern: String,
     ) : SortRoOption()
 
-    @RedisOptionContainer
+
     sealed class Order : SortRoOption()
 
-    @RedisOption
     data object ASC : Order()
 
-    @RedisOption
     data object DESC : Order()
 
-    @RedisOption
     data object ALPHA : SortRoOption()
 }

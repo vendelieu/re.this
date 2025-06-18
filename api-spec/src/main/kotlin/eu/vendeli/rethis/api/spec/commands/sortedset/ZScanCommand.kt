@@ -2,7 +2,6 @@ package eu.vendeli.rethis.api.spec.commands.sortedset
 
 import eu.vendeli.rethis.api.spec.common.annotations.RedisCommand
 import eu.vendeli.rethis.api.spec.common.annotations.RedisOption
-import eu.vendeli.rethis.api.spec.common.annotations.RedisOptional
 import eu.vendeli.rethis.api.spec.common.response.ScanResult
 import eu.vendeli.rethis.api.spec.common.types.CommandRequest
 import eu.vendeli.rethis.api.spec.common.types.RedisCommandSpec
@@ -14,7 +13,7 @@ fun interface ZScanCommand : RedisCommandSpec<ScanResult<Pair<String, String>>> 
     suspend fun encode(
         key: String,
         cursor: Long,
-        @RedisOptional @RedisOption.Token("MATCH") pattern: String?,
-        @RedisOptional @RedisOption.Token("COUNT") count: Long?,
+        @RedisOption.Token("MATCH") pattern: String?,
+        @RedisOption.Token("COUNT") count: Long?,
     ): CommandRequest
 }

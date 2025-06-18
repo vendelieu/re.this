@@ -8,7 +8,7 @@ import eu.vendeli.rethis.api.spec.common.types.RedisCommandSpec
 import eu.vendeli.rethis.api.spec.common.types.RedisOperation
 import eu.vendeli.rethis.api.spec.common.types.RespCode
 
-@RedisCommand("LMOVE", RedisOperation.WRITE, [RespCode.BULK], extensions = [MoveDirection::class])
+@RedisCommand("LMOVE", RedisOperation.WRITE, [RespCode.BULK])
 fun interface LMoveCommand : RedisCommandSpec<String> {
     suspend fun encode(
         source: String,

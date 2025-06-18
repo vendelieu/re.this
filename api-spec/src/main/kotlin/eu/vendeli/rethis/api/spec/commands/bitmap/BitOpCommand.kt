@@ -7,7 +7,7 @@ import eu.vendeli.rethis.api.spec.common.types.RedisCommandSpec
 import eu.vendeli.rethis.api.spec.common.types.RedisOperation
 import eu.vendeli.rethis.api.spec.common.types.RespCode
 
-@RedisCommand("BITOP", RedisOperation.WRITE, [RespCode.INTEGER], extensions = [BitOpOption.OperationType::class])
+@RedisCommand("BITOP", RedisOperation.WRITE, [RespCode.INTEGER])
 fun interface BitOpCommand : RedisCommandSpec<Long> {
     suspend fun encode(
         operation: BitOpOption.OperationType,

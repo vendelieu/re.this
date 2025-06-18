@@ -7,7 +7,7 @@ import eu.vendeli.rethis.api.spec.common.types.RedisCommandSpec
 import eu.vendeli.rethis.api.spec.common.types.RedisOperation
 import eu.vendeli.rethis.api.spec.common.types.RespCode
 
-@RedisCommand("MSETNX", RedisOperation.WRITE, [RespCode.INTEGER], extensions = [KeyValue::class])
+@RedisCommand("MSETNX", RedisOperation.WRITE, [RespCode.INTEGER])
 fun interface MSetNxCommand : RedisCommandSpec<Boolean> {
     suspend fun encode(
         vararg data: KeyValue, // todo support getting key type from nested data

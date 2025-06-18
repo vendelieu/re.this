@@ -7,7 +7,7 @@ import eu.vendeli.rethis.api.spec.common.types.RedisCommandSpec
 import eu.vendeli.rethis.api.spec.common.types.RedisOperation
 import eu.vendeli.rethis.api.spec.common.types.RespCode
 
-@RedisCommand("LINSERT", RedisOperation.WRITE, [RespCode.INTEGER], extensions = [LInsertPlace::class])
+@RedisCommand("LINSERT", RedisOperation.WRITE, [RespCode.INTEGER])
 fun interface LInsertCommand : RedisCommandSpec<Long> {
     suspend fun encode(
         key: String,

@@ -2,12 +2,11 @@ package eu.vendeli.rethis.api.spec.common.request.string
 
 import eu.vendeli.rethis.api.spec.common.annotations.RedisMeta
 import eu.vendeli.rethis.api.spec.common.annotations.RedisOption
-import eu.vendeli.rethis.api.spec.common.annotations.RedisOptionContainer
 import eu.vendeli.rethis.api.spec.common.types.TimeUnit
 import kotlinx.datetime.Instant
 import kotlin.time.Duration
 
-@RedisOptionContainer
+
 sealed class GetExOption {
     @RedisOption.Token("EX")
     class Ex(

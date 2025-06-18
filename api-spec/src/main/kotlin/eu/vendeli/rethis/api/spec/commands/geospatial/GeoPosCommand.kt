@@ -1,7 +1,6 @@
 package eu.vendeli.rethis.api.spec.commands.geospatial
 
 import eu.vendeli.rethis.api.spec.common.annotations.RedisCommand
-import eu.vendeli.rethis.api.spec.common.annotations.RedisOptional
 import eu.vendeli.rethis.api.spec.common.response.GeoPosition
 import eu.vendeli.rethis.api.spec.common.types.CommandRequest
 import eu.vendeli.rethis.api.spec.common.types.RedisCommandSpec
@@ -12,6 +11,6 @@ import eu.vendeli.rethis.api.spec.common.types.RespCode
 fun interface GeoPosCommand : RedisCommandSpec<List<List<GeoPosition>?>> {
     suspend fun encode(
         key: String,
-        @RedisOptional vararg member: String
+        vararg member: String
     ): CommandRequest
 }

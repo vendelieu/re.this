@@ -1,21 +1,22 @@
 package eu.vendeli.rethis.api.spec.commands.generic
 
 import eu.vendeli.rethis.api.spec.common.annotations.RedisCommand
-import eu.vendeli.rethis.api.spec.common.annotations.RedisMeta
-import eu.vendeli.rethis.api.spec.common.annotations.RedisOptional
+import eu.vendeli.rethis.api.spec.common.annotations.RedisOption
 import eu.vendeli.rethis.api.spec.common.request.generic.SortOption
-import eu.vendeli.rethis.api.spec.common.types.*
+import eu.vendeli.rethis.api.spec.common.types.CommandRequest
+import eu.vendeli.rethis.api.spec.common.types.RedisCommandSpec
+import eu.vendeli.rethis.api.spec.common.types.RedisOperation
+import eu.vendeli.rethis.api.spec.common.types.RespCode
 
 @RedisCommand(
     "SORT",
     RedisOperation.WRITE,
     [RespCode.INTEGER],
-    extensions = [SortOption.Store::class, SortOption::class],
 )
 fun interface SortStoreCommand : RedisCommandSpec<Long> {
     suspend fun encode(
         key: String,
-        @RedisMeta.IgnoreCheck([ValidityCheck.OPTIONALITY]) store: SortOption.Store,
-        @RedisOptional vararg option: SortOption,
+        @RedisOption.Token("STORE") @RedisOption.Name("destination") storeDestination: String,
+        vararg option: SortOption,
     ): CommandRequest
 }

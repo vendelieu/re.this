@@ -2,14 +2,13 @@ package eu.vendeli.rethis.api.spec.common.request.string
 
 import eu.vendeli.rethis.api.spec.common.annotations.RedisMeta
 import eu.vendeli.rethis.api.spec.common.annotations.RedisOption
-import eu.vendeli.rethis.api.spec.common.annotations.RedisOptionContainer
 import eu.vendeli.rethis.api.spec.common.types.TimeUnit
 import kotlinx.datetime.Instant
 import kotlin.time.Duration
 
 sealed class SetOption
 
-@RedisOptionContainer
+
 sealed class SetExpire : SetOption() {
     @RedisOption.Token("EX")
     class Ex(
@@ -31,18 +30,13 @@ sealed class SetExpire : SetOption() {
         val unixTimeMilliseconds: @RedisMeta.OutgoingTimeUnit(TimeUnit.MILLISECONDS) Instant,
     ) : SetExpire()
 
-    @RedisOption
     data object KEEPTTL : SetExpire()
 }
 
-@RedisOptionContainer
-sealed class UpsertMode : SetOption() {
-    @RedisOption
-    data object NX : UpsertMode()
 
-    @RedisOption
+sealed class UpsertMode : SetOption() {
+    data object NX : UpsertMode()
     data object XX : UpsertMode()
 }
 
-@RedisOption
 data object GET : SetOption()

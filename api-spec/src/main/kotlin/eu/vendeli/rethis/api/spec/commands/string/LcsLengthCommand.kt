@@ -11,7 +11,6 @@ import eu.vendeli.rethis.api.spec.common.types.RespCode
     "LCS", 
     RedisOperation.READ,
     [RespCode.INTEGER],
-    extensions = [LcsMode.LEN::class]
 )
 fun interface LcsLengthCommand : RedisCommandSpec<Long> {
     suspend fun encode(

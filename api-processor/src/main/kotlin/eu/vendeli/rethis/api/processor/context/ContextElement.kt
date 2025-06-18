@@ -3,12 +3,16 @@ package eu.vendeli.rethis.api.processor.context
 import com.google.devtools.ksp.processing.KSPLogger
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSFunctionDeclaration
+import com.squareup.kotlinpoet.CodeBlock
 import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.TypeSpec
 import com.squareup.kotlinpoet.ksp.toTypeName
+import eu.vendeli.rethis.api.processor.core.RedisCommandProcessor.Companion.context
 import eu.vendeli.rethis.api.processor.types.*
+import eu.vendeli.rethis.api.processor.utils.enrichedTree
 import eu.vendeli.rethis.api.processor.utils.hasCustomDecoder
 import eu.vendeli.rethis.api.processor.utils.hasCustomEncoder
+import eu.vendeli.rethis.api.processor.utils.safeCast
 import eu.vendeli.rethis.api.spec.common.types.RespCode
 
 internal interface ContextElement {
@@ -106,6 +110,15 @@ internal class CurrentCommand(val command: RCommandData, val klass: KSClassDecla
     val specType = klass.superTypes.first().resolve().arguments.first() // RedisCommandSpec<T>
     val type = specType.toTypeName()
 
+    val haveVaryingSize by lazy {
+        context.enrichedTree.children.any { ch ->
+            ch.attr.any { attr ->
+                attr.safeCast<EnrichedTreeAttr.Multiple>()?.let { it.vararg || it.collection } == true ||
+                    attr.safeCast<EnrichedTreeAttr.Optional>()?.local == OptionalityType.Nullable
+            }
+        }
+    }
+
     companion object : ContextKey<CurrentCommand> {
         override val isPerCommand = true
     }
@@ -119,57 +132,88 @@ internal class Imports(val imports: MutableSet<String> = mutableSetOf()) : Conte
     }
 }
 
-internal class LibSpecTree(val tree: LibSpecNode) : ContextElement {
-    override val key = LibSpecTree
+internal class ETree(val tree: EnrichedNode) : ContextElement {
+    override val key = ETree
 
-    companion object : ContextKey<LibSpecTree> {
+    companion object : ContextKey<ETree> {
         override val isPerCommand = true
     }
 }
 
-internal class CodecMeta(
-    val codecPackage: String,
-    val codecName: String,
+
+internal class CodeGenContext(
+    val builder: CodeBlock.Builder,
+    private var nameCtr: Int = 0,
 ) : ContextElement {
-    override val key = CodecMeta
+    private var thisExpr: String = ""
+    override val key = CodeGenContext
+    val blockStack = ArrayDeque<Pair<BlockType, String>>()
 
-    companion object : ContextKey<CodecMeta> {
-        override val isPerCommand = true
+    private fun freshName(): String {
+        val newName = "it" + nameCtr++
+        thisExpr = newName
+        return newName
     }
-}
 
-internal class CodecExtensions(val extensions: MutableSet<String> = mutableSetOf()) : ContextElement {
-    override val key = CodecExtensions
+    fun buildBlock(fieldName: String, type: BlockType, block: () -> Unit) {
+        val oldPointer = thisExpr
+        thisExpr = when {
+            type == BlockType.WHEN && thisExpr.isNotBlank() -> thisExpr
+            type == BlockType.WHEN -> fieldName
+            else -> freshName()
+        }
+        // before block should be old pointer or param
 
-    companion object : ContextKey<CodecExtensions> {
-        override val isPerCommand = true
+        val prevName = blockStack.lastOrNull()?.second
+        val newName = pointedParameter(fieldName, oldPointer)
+        val paramPointer = if (prevName != fieldName && newName.substringAfter('.') != fieldName) ".$fieldName" else ""
+
+        val guard = when (type) {
+            BlockType.LET -> "${newName}$paramPointer?.let { $thisExpr ->"
+            BlockType.FOR -> "${newName}$paramPointer.forEach { $thisExpr ->"
+            BlockType.WHEN -> "when (${pointer ?: fieldName}$paramPointer)"
+        }
+
+        blockStack.addLast(type to fieldName)
+        builder.beginControlFlow(guard)
+        block()
+        builder.endControlFlow()
+        require(blockStack.removeLast().first == type)
+
+        thisExpr = oldPointer
     }
-}
 
-internal class NodeLink : ContextElement {
-    override val key = NodeLink
 
-    val map = mutableMapOf<LibSpecNode, RSpecNode>()
-
-    companion object : ContextKey<NodeLink> {
-        override val isPerCommand = true
+    fun appendLine(line: String, vararg args: Any?) {
+        builder.addStatement(line, *args)
     }
-}
 
-internal class CodecWriteActions(val actions: MutableList<WriteAction> = mutableListOf()) : ContextElement {
-    override val key = CodecWriteActions
+    val pointer: String?
+        get() = thisExpr.takeIf { !it.isBlank() }
 
-    val helpersNeeded = mutableMapOf<String, KSClassDeclaration>()
+    fun pointedParameter(name: String, pointer: String = thisExpr): String {
+        val parameter = mutableListOf<String?>()
+        when {
+            blockStack.isEmpty() || blockStack.singleOrNull()?.first == BlockType.WHEN -> {
+                parameter.add(pointer.takeIf { it.isNotBlank() })
+                parameter.add(name)
+            }
 
-    companion object : ContextKey<CodecWriteActions> {
-        override val isPerCommand = true
+            blockStack.last().first != BlockType.WHEN -> parameter.add(pointer)
+            else -> {
+                parameter.add(pointer.takeIf { it.isNotBlank() })
+                parameter.add(name)
+            }
+        }
+
+        return parameter.filterNotNull().joinToString(".")
     }
-}
 
-internal class KeyCollector(val keys: MutableList<LibSpecNode.ParameterNode> = mutableListOf()) : ContextElement {
-    override val key = KeyCollector
+    enum class BlockType {
+        WHEN, LET, FOR
+    }
 
-    companion object : ContextKey<KeyCollector> {
+    companion object : ContextKey<CodeGenContext> {
         override val isPerCommand = true
     }
 }

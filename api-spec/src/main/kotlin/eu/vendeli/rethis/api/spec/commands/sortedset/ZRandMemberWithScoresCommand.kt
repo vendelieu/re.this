@@ -2,7 +2,6 @@ package eu.vendeli.rethis.api.spec.commands.sortedset
 
 import eu.vendeli.rethis.api.spec.common.annotations.RedisCommand
 import eu.vendeli.rethis.api.spec.common.annotations.RedisOption
-import eu.vendeli.rethis.api.spec.common.annotations.RedisOptional
 import eu.vendeli.rethis.api.spec.common.response.ZMember
 import eu.vendeli.rethis.api.spec.common.types.CommandRequest
 import eu.vendeli.rethis.api.spec.common.types.RedisCommandSpec
@@ -14,6 +13,6 @@ fun interface ZRandMemberWithScoresCommand : RedisCommandSpec<List<List<ZMember>
     suspend fun encode(
         key: String,
         count: Long,
-        @RedisOptional @RedisOption.Token("WITHSCORES") withScores: Boolean?
+        @RedisOption.Token("WITHSCORES") withScores: Boolean?
     ): CommandRequest
 }

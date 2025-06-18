@@ -11,7 +11,6 @@ import eu.vendeli.rethis.api.spec.common.types.RespCode
     "SENTINEL SIMULATE-FAILURE",
     RedisOperation.WRITE,
     [RespCode.SIMPLE_STRING],
-    extensions = [SentinelSimulateFailureMode::class],
 )
 fun interface SentinelSimulateFailureCommand : RedisCommandSpec<Boolean> {
     suspend fun encode(mode: SentinelSimulateFailureMode): CommandRequest

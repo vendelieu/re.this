@@ -1,19 +1,16 @@
 package eu.vendeli.rethis.api.spec.common.request.generic
 
 import eu.vendeli.rethis.api.spec.common.annotations.RedisOption
-import eu.vendeli.rethis.api.spec.common.annotations.RedisOptionContainer
 
 sealed class MigrateOption {
-    @RedisOptionContainer
+
     sealed class Strategy : MigrateOption()
 
-    @RedisOption
     data object COPY : Strategy()
 
-    @RedisOption
     data object REPLACE : Strategy()
 
-    @RedisOptionContainer
+
     sealed class Authorization : MigrateOption()
 
     @RedisOption.Token("AUTH")

@@ -1,8 +1,6 @@
 package eu.vendeli.rethis.api.processor.types
 
 import com.google.devtools.ksp.symbol.KSAnnotated
-import com.google.devtools.ksp.symbol.KSType
-import com.squareup.kotlinpoet.ClassName
 import eu.vendeli.rethis.api.processor.utils.inferEnumValue
 import eu.vendeli.rethis.api.processor.utils.parseResponseTypes
 import eu.vendeli.rethis.api.processor.utils.safeCast
@@ -15,7 +13,6 @@ data class RCommandData(
     val operation: RedisOperation = RedisOperation.READ,
     val responseTypes: List<RespCode>,
     val isBlocking: Boolean = false,
-    val extensions: List<ClassName>,
 )
 
 fun KSAnnotated.getCommandData(): RCommandData = annotations.filter {
@@ -30,17 +27,11 @@ fun KSAnnotated.getCommandData(): RCommandData = annotations.filter {
     val isBlocking = a.arguments.first {
         it.name?.getShortName() == RedisCommand::isBlocking.name
     }.value.safeCast<Boolean>()
-    val extensions = a.arguments.first {
-        it.name?.getShortName() == RedisCommand::extensions.name
-    }.value.safeCast<List<*>>()?.map { it.safeCast<KSType>()!! }?.map {
-        ClassName(it.declaration.packageName.asString(), it.declaration.simpleName.asString())
-    }
 
     RCommandData(
         name = name,
         operation = operation,
         responseTypes = responseTypes ?: emptyList(),
         isBlocking = isBlocking ?: false,
-        extensions = extensions ?: emptyList(),
     )
 }

@@ -29,7 +29,7 @@ fun FileSpec.Builder.addCommandFunctions(
                     addStatement(
                         "val request = $codecName.encode(charset = cfg.charset${
                             parameters.entries.joinToString(prefix = ", ") {
-                                "${it.key} = " + if (it.value.second.contains(KModifier.VARARG)) "*${it.key}" else it.key
+                                "${it.key} = ${it.key}"
                             }
                         })",
                     )

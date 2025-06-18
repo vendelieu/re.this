@@ -7,7 +7,7 @@ import eu.vendeli.rethis.api.spec.common.types.RedisCommandSpec
 import eu.vendeli.rethis.api.spec.common.types.RedisOperation
 import eu.vendeli.rethis.api.spec.common.types.RespCode
 
-@RedisCommand("CLUSTER SETSLOT", RedisOperation.WRITE, [RespCode.SIMPLE_STRING], extensions = [ClusterSetSlotOption::class])
+@RedisCommand("CLUSTER SETSLOT", RedisOperation.WRITE, [RespCode.SIMPLE_STRING])
 fun interface ClusterSetSlotCommand : RedisCommandSpec<Boolean> {
     suspend fun encode(slot: Long, subcommand: ClusterSetSlotOption): CommandRequest
 }

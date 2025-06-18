@@ -13,6 +13,5 @@ sealed class HScanOption {
         val count: Long,
     ) : HScanOption()
 
-    @RedisOption
     data object NOVALUES : HScanOption()
 }

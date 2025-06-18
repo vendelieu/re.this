@@ -11,10 +11,8 @@ internal interface RSpecVisitor {
 
 internal sealed class RSpecNode {
     abstract val name: String
+    abstract val arg: CommandArgument
     open val path: List<Int> = emptyList()
-    open val optional: Boolean = false
-    open val multiple: Boolean = false
-    abstract val token: String?
     open val parentNode: RSpecNode? = null
     open val children: List<RSpecNode> = emptyList()
 
@@ -24,13 +22,10 @@ internal sealed class RSpecNode {
     abstract fun accept(visitor: RSpecVisitor)
 
     data class Simple(
-        val keyIdx: Int? = null,
         val type: String,
         override val name: String,
+        override val arg: CommandArgument,
         override val path: List<Int>,
-        override val optional: Boolean,
-        override val multiple: Boolean,
-        override val token: String? = null,
         override val parentNode: RSpecNode? = null,
     ) : RSpecNode() {
         override fun accept(visitor: RSpecVisitor) =
@@ -39,8 +34,8 @@ internal sealed class RSpecNode {
 
     data class PureToken(
         override val name: String,
+        override val arg: CommandArgument,
         override val path: List<Int>,
-        override val token: String,
         override val parentNode: RSpecNode? = null,
     ) : RSpecNode() {
         override fun accept(visitor: RSpecVisitor) =
@@ -49,10 +44,8 @@ internal sealed class RSpecNode {
 
     data class OneOf(
         override val name: String,
+        override val arg: CommandArgument,
         override val path: List<Int>,
-        override val optional: Boolean,
-        override val multiple: Boolean,
-        override val token: String? = null,
         override val parentNode: RSpecNode? = null,
         override val children: List<RSpecNode>,
     ) : RSpecNode() {
@@ -62,10 +55,8 @@ internal sealed class RSpecNode {
 
     data class Block(
         override val name: String,
+        override val arg: CommandArgument,
         override val path: List<Int>,
-        override val token: String?,
-        override val optional: Boolean,
-        override val multiple: Boolean,
         override val parentNode: RSpecNode? = null,
         override val children: List<RSpecNode>,
     ) : RSpecNode() {
@@ -84,34 +75,32 @@ internal class RSpecTreeBuilder(private val raw: List<CommandArgument>) {
     ): RSpecNode = when (arg.type) {
         "oneof" -> RSpecNode.OneOf(
             name = arg.name,
+            arg = arg,
             path = path,
-            optional = arg.optional,
-            multiple = arg.multiple,
-            token = arg.token,
             parentNode = parent,
             children = arg.arguments.mapIndexed { childIdx, childArg -> toNode(childArg, path + childIdx) },
         )
 
         "block" -> RSpecNode.Block(
-            arg.name,
-            path,
-            arg.token,
-            arg.optional,
-            arg.multiple,
-            parent,
-            arg.arguments.mapIndexed { childIdx, childArg -> toNode(childArg, path + childIdx) },
+            name = arg.name,
+            arg = arg,
+            path = path,
+            parentNode = parent,
+            children = arg.arguments.mapIndexed { childIdx, childArg -> toNode(childArg, path + childIdx) },
         )
 
-        "pure-token" -> RSpecNode.PureToken(name = arg.name, path = path, token = arg.token!!, parentNode = parent)
+        "pure-token" -> RSpecNode.PureToken(
+            name = arg.name,
+            arg = arg,
+            path = path,
+            parentNode = parent,
+        )
 
         else -> RSpecNode.Simple(
-            keyIdx = arg.keySpecIndex,
             type = arg.type,
             name = arg.name,
+            arg = arg,
             path = path,
-            optional = arg.optional,
-            multiple = arg.multiple,
-            token = arg.token,
             parentNode = parent,
         )
     }

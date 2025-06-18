@@ -67,7 +67,9 @@ internal fun KSDeclaration.isDataObject() =
 internal fun KSDeclaration.isSealed() =
     this is KSClassDeclaration && classKind == ClassKind.CLASS && modifiers.contains(Modifier.SEALED)
 
-internal fun KSDeclaration.isStdType() = qualifiedName?.getQualifier()?.startsWith("kotlin") == true
+internal fun KSAnnotated.isStdType() =
+    this is KSClassDeclaration && qualifiedName?.getQualifier()?.startsWith("kotlin") == true
+
 internal fun KSDeclaration.isTimeType() = qualifiedName?.getQualifier()?.let {
     it.startsWith("kotlin.time") || it.startsWith("kotlinx.datetime")
 } == true

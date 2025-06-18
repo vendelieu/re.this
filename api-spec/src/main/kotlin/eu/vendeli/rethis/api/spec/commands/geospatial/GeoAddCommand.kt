@@ -2,7 +2,6 @@ package eu.vendeli.rethis.api.spec.commands.geospatial
 
 import eu.vendeli.rethis.api.spec.common.annotations.RedisCommand
 import eu.vendeli.rethis.api.spec.common.annotations.RedisOption
-import eu.vendeli.rethis.api.spec.common.annotations.RedisOptional
 import eu.vendeli.rethis.api.spec.common.request.geospatial.GeoAddOption
 import eu.vendeli.rethis.api.spec.common.response.GeoMember
 import eu.vendeli.rethis.api.spec.common.types.CommandRequest
@@ -14,13 +13,12 @@ import eu.vendeli.rethis.api.spec.common.types.RespCode
     "GEOADD",
     RedisOperation.WRITE,
     [RespCode.INTEGER],
-    extensions = [GeoMember::class, GeoAddOption.UpsertMode::class],
 )
 fun interface GeoAddCommand : RedisCommandSpec<Long> {
     suspend fun encode(
         key: String,
         vararg data: GeoMember,
-        @RedisOptional condition: GeoAddOption.UpsertMode?,
-        @RedisOptional @RedisOption.Token("CH") change: Boolean?,
+        condition: GeoAddOption.UpsertMode?,
+        @RedisOption.Token("CH") change: Boolean?,
     ): CommandRequest
 }

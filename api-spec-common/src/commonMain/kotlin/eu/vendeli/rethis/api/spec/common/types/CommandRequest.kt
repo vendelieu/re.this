@@ -10,9 +10,9 @@ data class CommandRequest(
     val isBlocking: Boolean = false,
 ) {
     private var _key: Int? = null
-    val computedSlot: Int? get() = _key?.let { it % 16384 }
+    val computedSlot: Int? get() = _key
 
-    fun withKey(key: Int): CommandRequest {
+    fun withSlot(key: Int): CommandRequest {
         _key = key
         return this
     }

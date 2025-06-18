@@ -1,6 +1,7 @@
 package eu.vendeli.rethis.api.processor.utils
 
-import eu.vendeli.rethis.api.processor.types.LibSpecNode
+import eu.vendeli.rethis.api.processor.types.EnrichedNode
+import eu.vendeli.rethis.api.processor.types.EnrichedTreeAttr
 import eu.vendeli.rethis.api.processor.types.RedisCommandApiSpec
 
 internal fun RedisCommandApiSpec.tryInferOperation(): String? = when {
@@ -9,35 +10,42 @@ internal fun RedisCommandApiSpec.tryInferOperation(): String? = when {
     else -> null
 }
 
-internal fun printNodePath(node: LibSpecNode) {
-    // Build the chain from this node up to the root
-    val path = generateSequence(node) { it.parent }.toList().asReversed()
-    // Print each element, indenting by depth
-    path.forEachIndexed { depth, n ->
-        val indent = "  ".repeat(depth)
-        val label = when (n) {
-            is LibSpecNode.ContainerNode -> "Container: ${n.symbol.simpleName.asString()}"
-            is LibSpecNode.TokenNode -> "Token:     ${n.name}"
-            is LibSpecNode.ParameterNode -> "Param:     ${n.name}"
+internal fun printEnrichedTree(root: EnrichedNode, indent: Int = 0) {
+    val indentStr = "  ".repeat(indent)
+
+    // Extract name safely
+    val nodeName = root.attr.filterIsInstance<EnrichedTreeAttr.Name>().firstOrNull()?.name
+        ?: root.attr.filterIsInstance<EnrichedTreeAttr.Symbol>().firstOrNull()?.symbol ?: "Unnamed"
+
+    // Build attribute flags
+    val flags = buildList {
+        if (root.attr.any { it is EnrichedTreeAttr.Key }) add("K")
+        if (root.attr.any { it is EnrichedTreeAttr.SizeParam }) add("S")
+        root.attr.filterIsInstance<EnrichedTreeAttr.Optional>().firstOrNull()?.let {
+            add("O[${it.inherited?.name?.firstOrNull() ?: '-'},${it.local?.name?.firstOrNull() ?: '-'}]")
         }
-        println(indent + label)
+        root.attr.filterIsInstance<EnrichedTreeAttr.Multiple>().firstOrNull()?.let {
+            add("M[${if (it.vararg) 'V' else '-'},${if (it.collection) 'C' else '-'}]")
+        }
     }
-}
 
-internal fun printNodeChildren(
-    node: LibSpecNode,
-    indent: String = "",
-) {
-    // Print this node
-    val label = when (node) {
-        is LibSpecNode.ContainerNode -> "Container: ${node.symbol.simpleName.asString()}"
-        is LibSpecNode.TokenNode -> "Token:     ${node.name}"
-        is LibSpecNode.ParameterNode -> "Param:     ${node.name}"
-    }
-    println(indent + label)
+    // Collect properties
+    val properties = buildList {
+        val tokens = root.tokens.map { it.name }
+        if (tokens.isNotEmpty()) add("tokens=[${tokens.joinToString()}]")
 
-    // Recurse into each child, increasing indentation
-    node.children.forEach { child ->
-        printNodeChildren(child, "$indent  ")
+        root.attr.filterIsInstance<EnrichedTreeAttr.Symbol>().firstOrNull()?.let {
+            add("sym=${it.type.name.first()}(${it.symbol})")
+        }
+
+        if (root.rSpec != null) add("rSpec")
     }
+
+    // Compose final output
+    val flagStr = flags.joinToString(", ", "[", "]")
+    val propStr = properties.joinToString(", ")
+    println("$indentStr$nodeName $flagStr${if (propStr.isNotEmpty()) " ($propStr)" else ""}")
+
+    // Print children recursively
+    root.children.forEach { printEnrichedTree(it, indent + 1) }
 }

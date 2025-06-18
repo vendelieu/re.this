@@ -2,7 +2,6 @@ package eu.vendeli.rethis.api.spec.commands.hash
 
 import eu.vendeli.rethis.api.spec.common.annotations.RedisCommand
 import eu.vendeli.rethis.api.spec.common.annotations.RedisMeta
-import eu.vendeli.rethis.api.spec.common.annotations.RedisOptional
 import eu.vendeli.rethis.api.spec.common.request.common.UpdateStrategyOption
 import eu.vendeli.rethis.api.spec.common.types.CommandRequest
 import eu.vendeli.rethis.api.spec.common.types.RedisCommandSpec
@@ -14,13 +13,12 @@ import kotlin.time.Duration
     "HEXPIRE",
     RedisOperation.WRITE,
     [RespCode.ARRAY, RespCode.SIMPLE_ERROR],
-    extensions = [UpdateStrategyOption::class],
 )
 fun interface HExpireCommand : RedisCommandSpec<List<Long>> {
     suspend fun encode(
         key: String,
         seconds: Duration,
         @RedisMeta.WithSizeParam("numfields") vararg field: String,
-        @RedisOptional condition: UpdateStrategyOption?,
+        condition: UpdateStrategyOption?,
     ): CommandRequest
 }

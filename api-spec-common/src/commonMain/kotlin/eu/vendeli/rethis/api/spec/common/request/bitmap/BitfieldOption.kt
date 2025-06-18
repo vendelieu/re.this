@@ -1,9 +1,8 @@
 package eu.vendeli.rethis.api.spec.common.request.bitmap
 
 import eu.vendeli.rethis.api.spec.common.annotations.RedisOption
-import eu.vendeli.rethis.api.spec.common.annotations.RedisOptionContainer
 
-@RedisOptionContainer
+
 sealed class BitfieldOption {
     @RedisOption.Token("GET")
     class Get(
@@ -13,7 +12,7 @@ sealed class BitfieldOption {
 
     @RedisOption.Token("OVERFLOW")
     class Overflow(
-        val type: Type,
+        @RedisOption.Name("overflowBlock") val type: Type,
     ) : BitfieldOption() {
         enum class Type { WRAP, SAT, FAIL }
     }

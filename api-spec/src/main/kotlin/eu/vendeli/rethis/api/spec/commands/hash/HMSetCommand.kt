@@ -7,7 +7,7 @@ import eu.vendeli.rethis.api.spec.common.types.RedisCommandSpec
 import eu.vendeli.rethis.api.spec.common.types.RedisOperation
 import eu.vendeli.rethis.api.spec.common.types.RespCode
 
-@RedisCommand("HMSET", RedisOperation.WRITE, [RespCode.SIMPLE_STRING], extensions = [FieldValue::class])
+@RedisCommand("HMSET", RedisOperation.WRITE, [RespCode.SIMPLE_STRING])
 fun interface HMSetCommand : RedisCommandSpec<Boolean> {
     suspend fun encode(
         key: String,

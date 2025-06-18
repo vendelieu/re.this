@@ -5,12 +5,12 @@ import com.google.devtools.ksp.symbol.KSValueParameter
 import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ksp.toTypeName
 import eu.vendeli.rethis.api.processor.core.RedisCommandProcessor.Companion.context
-import eu.vendeli.rethis.api.spec.common.annotations.RedisOptional
 import eu.vendeli.rethis.api.spec.common.types.RedisOperation
 import eu.vendeli.rethis.api.spec.common.types.RespCode
 import kotlinx.io.Buffer
 
 private fun RespCode.isString() = this == RespCode.SIMPLE_STRING || this == RespCode.BULK
+
 internal fun TypeSpec.Builder.addDecodeFunction(
     respCode: List<RespCode>,
     specType: KSTypeArgument,
@@ -87,30 +87,27 @@ internal fun buildStaticCommandParts(
 ): String {
     val size = mainCommandPart.size + parameters.size
     val commandPart = mainCommandPart.joinToString("\\r\\n") { "$${it.length}\\r\\n$it" }
-    val sizePart = if (
-        parameters.any { it.hasAnnotation<RedisOptional>() || it.type.resolve().isMarkedNullable }
-    ) "" else "*$size"
+    val sizePart = if (context.currentCommand.haveVaryingSize) "" else "*$size"
     return "$sizePart\\r\\n$commandPart\\r\\n"
 }
 
 internal fun buildStaticHeaderInitializer(header: String): CodeBlock = CodeBlock.Builder().apply {
-    beginControlFlow("Buffer().apply {")
+    beginControlFlow("Buffer().apply")
     addStatement("writeString(\"%L\")", header)
     endControlFlow()
 }.build()
 
-internal fun CodeBlock.Builder.addCommandSpecCreation(
-    operationName: String,
-) {
+internal fun CodeBlock.Builder.addCommandSpecCreation() {
+    addStatement("")
+    if (context.currentCommand.haveVaryingSize) {
+        beginControlFlow("buffer = Buffer().apply")
+        addStatement("writeString(\"*\$size\")")
+        addStatement("transferFrom(buffer)")
+        endControlFlow()
+    }
     addStatement(
-        """
-            return CommandRequest(
-                buffer = buffer,
-                operation = %T.%L,
-                typeInfo = TYPE_INFO,
-                isBlocking = BLOCKING_STATUS,
-            )
-            """.trimIndent(),
-        RedisOperation::class, operationName,
+        "return CommandRequest(buffer, %T.%L, TYPE_INFO, BLOCKING_STATUS)",
+        RedisOperation::class,
+        context.currentCommand.command.operation.name,
     )
 }

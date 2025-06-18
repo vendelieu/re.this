@@ -7,7 +7,7 @@ import eu.vendeli.rethis.api.spec.common.types.RedisCommandSpec
 import eu.vendeli.rethis.api.spec.common.types.RedisOperation
 import eu.vendeli.rethis.api.spec.common.types.RespCode
 
-@RedisCommand("MSET", RedisOperation.WRITE, [RespCode.SIMPLE_STRING], extensions = [KeyValue::class])
+@RedisCommand("MSET", RedisOperation.WRITE, [RespCode.SIMPLE_STRING])
 fun interface MSetCommand : RedisCommandSpec<Boolean> {
     suspend fun encode(
         vararg data: KeyValue,
