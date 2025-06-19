@@ -65,9 +65,11 @@ internal fun WriteOp.emitOp(encode: Boolean, complex: Boolean = false) {
             branches.forEach { (subType, branchOps) ->
                 addImport(subType.declaration.qualifiedName!!.asString())
                 ctx.builder.beginControlFlow("is ${subType.name} -> ")
-                if (encode) subType.declaration.getAnnotationsByType(RedisOption.Token::class).forEach {
-                    if(context.currentCommand.haveVaryingSize) ctx.appendLine("size += 1")
-                    ctx.appendLine("buffer.writeStringArg(\"${it.name}\", charset)")
+                if (encode && !subType.declaration.isDataObject()) {
+                    subType.declaration.getAnnotationsByType(RedisOption.Token::class).forEach {
+                        if (context.currentCommand.haveVaryingSize) ctx.appendLine("size += 1")
+                        ctx.appendLine("buffer.writeStringArg(\"${it.name}\", charset)")
+                    }
                 }
                 branchOps.forEach { it.emitOp(encode) }
                 ctx.builder.endControlFlow()
