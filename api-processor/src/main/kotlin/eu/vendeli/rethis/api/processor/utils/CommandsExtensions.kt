@@ -10,7 +10,7 @@ fun FileSpec.Builder.addCommandFunctions(
     parameters: Map<String, Pair<TypeName, List<KModifier>>>,
     type: TypeName,
     cmdPackagePart: String,
-    responseTypes: List<RespCode>,
+    responseTypes: Set<RespCode>,
 ) {
     val isNullable = RespCode.NULL in responseTypes
     addImport("eu.vendeli.rethis.codecs.$cmdPackagePart", codecName)

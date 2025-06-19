@@ -1,5 +1,6 @@
 package eu.vendeli.rethis.api.spec.commands.server
 
+import eu.vendeli.rethis.api.spec.common.annotations.RIgnoreSpecAbsence
 import eu.vendeli.rethis.api.spec.common.annotations.RedisCommand
 import eu.vendeli.rethis.api.spec.common.request.server.SaveSelector
 import eu.vendeli.rethis.api.spec.common.request.server.ShutdownOptions
@@ -16,6 +17,6 @@ import eu.vendeli.rethis.api.spec.common.types.RespCode
 fun interface ShutdownCommand : RedisCommandSpec<Boolean> {
     suspend fun encode(
         saveSelector: SaveSelector?,
-        vararg options: ShutdownOptions,
+        @RIgnoreSpecAbsence vararg options: ShutdownOptions,
     ): CommandRequest
 }

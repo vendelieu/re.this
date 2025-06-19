@@ -6,8 +6,9 @@ import eu.vendeli.rethis.api.spec.common.request.hash.HScanOption
 import eu.vendeli.rethis.api.spec.common.response.ScanResult
 import eu.vendeli.rethis.api.spec.common.types.*
 
-@RedisCommand("HSCAN", RedisOperation.READ, [RespCode.ARRAY]) // todo custom encoder
+@RedisCommand("HSCAN", RedisOperation.READ, [RespCode.ARRAY])
 @RedisMeta.IgnoreCheck([ValidityCheck.RESPONSE])
+@RedisMeta.CustomCodec(decoder = Nothing::class) // todo add
 fun interface HScanCommand : RedisCommandSpec<ScanResult<Pair<String, String>>> {
     suspend fun encode(
         key: String,

@@ -8,6 +8,7 @@ import eu.vendeli.rethis.api.spec.common.types.*
 
 @RedisCommand("SSCAN", RedisOperation.READ, [RespCode.ARRAY])
 @RedisMeta.IgnoreCheck([ValidityCheck.RESPONSE])
+@RedisMeta.CustomCodec(decoder = Nothing::class) // todo add
 fun interface SScanCommand : RedisCommandSpec<ScanResult<String>> {
     suspend fun encode(
         key: String,

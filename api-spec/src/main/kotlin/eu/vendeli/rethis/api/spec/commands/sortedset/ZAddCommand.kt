@@ -12,7 +12,7 @@ import eu.vendeli.rethis.api.spec.common.types.RespCode
 @RedisCommand(
     "ZADD",
     RedisOperation.WRITE,
-    [RespCode.INTEGER, RespCode.BULK, RespCode.NULL],
+    [RespCode.INTEGER, RespCode.NULL],
 )
 fun interface ZAddCommand : RedisCommandSpec<Long> {
     suspend fun encode(

@@ -7,6 +7,6 @@ import eu.vendeli.rethis.api.spec.common.types.RedisOperation
 import eu.vendeli.rethis.api.spec.common.types.RespCode
 
 @RedisCommand("DUMP", RedisOperation.READ, [RespCode.BULK, RespCode.NULL])
-fun interface DumpCommand : RedisCommandSpec<ByteArray> {
+fun interface DumpCommand : RedisCommandSpec<String> {
     suspend fun encode(key: String): CommandRequest
 }

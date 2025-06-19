@@ -12,7 +12,7 @@ import kotlinx.io.Buffer
 private fun RespCode.isString() = this == RespCode.SIMPLE_STRING || this == RespCode.BULK
 
 internal fun TypeSpec.Builder.addDecodeFunction(
-    respCode: List<RespCode>,
+    respCode: Set<RespCode>,
     specType: KSTypeArgument,
 ): TypeSpec.Builder {
     if (context.currentCommand.hasCustomDecoder) {
@@ -55,15 +55,24 @@ internal fun TypeSpec.Builder.addDecodeFunction(
 
                         beginControlFlow("RespCode.%L ->", code)
 
-                        if (isImplicitMapResponse && code == RespCode.ARRAY) {
-                            addImport("eu.vendeli.rethis.api.spec.common.decoders.ArrayMapDecoder")
-                            addStatement("ArrayMapDecoder.decode<%s, %s>(input, charset, TYPE_INFO)".format(*arguments))
-                        } else {
-                            val decoder = decodersMap[code]!!
-                            decoder.first?.let {
-                                addImport("eu.vendeli.rethis.api.spec.common.decoders.$it")
+                        when {
+                            isImplicitMapResponse && code == RespCode.ARRAY -> {
+                                addImport("eu.vendeli.rethis.api.spec.common.decoders.ArrayMapDecoder")
+                                addStatement("ArrayMapDecoder.decode<%s, %s>(input, charset, TYPE_INFO)".format(*arguments))
                             }
-                            addStatement(decoder.second.format(*arguments) + tailStatement)
+
+                            RespCode.SET in respCode && code == RespCode.ARRAY -> {
+                                addImport("eu.vendeli.rethis.api.spec.common.decoders.SetDecoder")
+                                addStatement("SetDecoder.decode<%s>(input, charset, TYPE_INFO)".format(*arguments))
+                            }
+
+                            else -> {
+                                val decoder = decodersMap[code]!!
+                                decoder.first?.let {
+                                    addImport("eu.vendeli.rethis.api.spec.common.decoders.$it")
+                                }
+                                addStatement(decoder.second.format(*arguments) + tailStatement)
+                            }
                         }
 
                         endControlFlow()

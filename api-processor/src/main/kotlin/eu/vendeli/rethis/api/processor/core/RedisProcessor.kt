@@ -59,13 +59,14 @@ internal object RedisProcessor {
         val fileSpec = FileSpec.builder(context.meta.codecsPackage + cmdPackagePart, codecName)
             .indent(" ".repeat(4))
         val typeSpec = TypeSpec.objectBuilder(codecName)
+        val rTypes = context.currentCommand.command.responseTypes.toSet()
 
         context += CodecFileSpec(fileSpec)
         context += CodecObjectTypeSpec(typeSpec)
 
         addEncoderCode()
         context.typeSpec.addDecodeFunction(
-            context.currentCommand.command.responseTypes.toList(),
+            rTypes,
             context.currentCommand.specType,
         )
 
@@ -82,22 +83,20 @@ internal object RedisProcessor {
             context.meta.commandPackage + cmdPackagePart, currentCmd.command.name.toPascalCase(),
         ).indent(" ".repeat(4))
 
-        val responseTypes = currentCmd.command.responseTypes.toList()
-
         commandFileSpec.addCommandFunctions(
             codecName = codecName,
             commandName = currentCmd.command.name,
             parameters = specSigArguments,
             type = currentCmd.type,
             cmdPackagePart = cmdPackagePart,
-            responseTypes = responseTypes,
+            responseTypes = rTypes,
         )
 
         context.fileSpec.build().runCatching {
             writeTo(File(context.meta.clientDir))
         }.onFailure { it.printStackTrace() }
         commandFileSpec.build().runCatching {
-            writeTo(File(context.meta.clientDir)) // todo return
+//            writeTo(File(context.meta.clientDir)) // todo return
         }.onFailure { it.printStackTrace() }
     }
 

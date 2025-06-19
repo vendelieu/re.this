@@ -4,7 +4,7 @@ import eu.vendeli.rethis.api.spec.common.annotations.RedisCommand
 import eu.vendeli.rethis.api.spec.common.types.*
 
 @RedisCommand("JSON.ARRPOP", RedisOperation.WRITE, [RespCode.ARRAY])
-fun interface JsonArrPopCommand : RedisCommandSpec<RType> {
+fun interface JsonArrPopCommand : RedisCommandSpec<List<RType>> {
     suspend fun encode(
         key: String,
         path: String?,

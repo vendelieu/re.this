@@ -1,9 +1,13 @@
 package eu.vendeli.rethis.api.spec.commands.list
 
+import eu.vendeli.rethis.api.spec.common.annotations.RIgnoreSpecAbsence
 import eu.vendeli.rethis.api.spec.common.annotations.RedisCommand
-import eu.vendeli.rethis.api.spec.common.annotations.RedisMeta
+import eu.vendeli.rethis.api.spec.common.annotations.RedisOption
 import eu.vendeli.rethis.api.spec.common.request.list.LPosOption
-import eu.vendeli.rethis.api.spec.common.types.*
+import eu.vendeli.rethis.api.spec.common.types.CommandRequest
+import eu.vendeli.rethis.api.spec.common.types.RedisCommandSpec
+import eu.vendeli.rethis.api.spec.common.types.RedisOperation
+import eu.vendeli.rethis.api.spec.common.types.RespCode
 
 @RedisCommand(
     "LPOS",
@@ -14,7 +18,7 @@ fun interface LPosCountCommand : RedisCommandSpec<List<Long>> {
     suspend fun encode(
         key: String,
         element: String,
-        @RedisMeta.IgnoreCheck([ValidityCheck.OPTIONALITY]) count: LPosOption.Count,
-        vararg option: LPosOption.CommonOption,
+        @RedisOption.Token("COUNT") numMatches: Long,
+        @RIgnoreSpecAbsence vararg option: LPosOption,
     ): CommandRequest
 }

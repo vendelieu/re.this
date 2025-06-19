@@ -69,7 +69,7 @@ internal object LibTreePlanter {
 
         val rNode = context.currentRSpec.allNodes.find { it.normalizedName == p.effectiveName() } ?: run {
             if (!p.hasAnnotation<RIgnoreSpecAbsence>()) {
-                context.logger.warn("Param `${p.effectiveName()}` not found in RSpec [${context.currentCommand.command.name}]")
+                context.logger.warn("Param `${p.effectiveName()}` not found in RSpec [${context.currentCommand.command.name}, ${context.currentCommand.klass.simpleName.asString()}]")
             }
             return
         }
