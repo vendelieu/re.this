@@ -9,7 +9,7 @@ import eu.vendeli.rethis.api.spec.common.types.RedisOperation
 import eu.vendeli.rethis.api.spec.common.types.RespCode
 
 @RedisCommand("WAITAOF", RedisOperation.WRITE, [RespCode.ARRAY], isBlocking = true)
-@RedisMeta.CustomCodec(decoder = Nothing::class) // todo add
+@RedisMeta.CustomCodec(decoder = ResponseDecoder::class) // todo add
 fun interface WaitAofCommand : RedisCommandSpec<WaitAofResult> {
     suspend fun encode(
         numlocal: Long,

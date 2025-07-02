@@ -9,6 +9,6 @@ fun interface HRandFieldCountCommand : RedisCommandSpec<List<RType>> {
     suspend fun encode(
         key: String,
         count: Long,
-        @RedisOption.Token("WITHVALUES") withValues: Boolean?
+        @RedisOption.Token("WITHVALUES") @RedisOption.Name("withvalues") withValues: Boolean?
     ): CommandRequest
 }

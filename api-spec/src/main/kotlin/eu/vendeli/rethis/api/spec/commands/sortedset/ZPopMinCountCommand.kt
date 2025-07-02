@@ -9,7 +9,7 @@ import eu.vendeli.rethis.api.spec.common.types.RedisOperation
 import eu.vendeli.rethis.api.spec.common.types.RespCode
 
 @RedisCommand("ZPOPMIN", RedisOperation.WRITE, [RespCode.ARRAY])
-@RedisMeta.CustomCodec(decoder = Nothing::class) // todo add
+@RedisMeta.CustomCodec(decoder = ResponseDecoder::class) // todo add
 fun interface ZPopMinCountCommand : RedisCommandSpec<List<List<ZMember>>> {
     suspend fun encode(
         key: String,

@@ -11,7 +11,6 @@ import eu.vendeli.rethis.api.spec.common.types.RedisOperation
 fun interface EvalShaCommand : RedisCommandSpec<RType> {
     suspend fun encode(
         sha1: String,
-        numKeys: Long,
         @RedisMeta.WithSizeParam("numkeys") vararg key: String,
         arg: List<String>
     ): CommandRequest

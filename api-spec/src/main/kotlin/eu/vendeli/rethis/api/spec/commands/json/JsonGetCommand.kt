@@ -1,5 +1,6 @@
 package eu.vendeli.rethis.api.spec.commands.json
 
+import eu.vendeli.rethis.api.spec.common.annotations.RIgnoreSpecAbsence
 import eu.vendeli.rethis.api.spec.common.annotations.RedisCommand
 import eu.vendeli.rethis.api.spec.common.request.json.JsonGetOption
 import eu.vendeli.rethis.api.spec.common.types.CommandRequest
@@ -11,6 +12,6 @@ import eu.vendeli.rethis.api.spec.common.types.RespCode
 fun interface JsonGetCommand : RedisCommandSpec<String> {
     suspend fun encode(
         key: String,
-        vararg options: JsonGetOption,
+        @RIgnoreSpecAbsence vararg options: JsonGetOption,
     ): CommandRequest
 }

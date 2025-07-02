@@ -1,5 +1,6 @@
 package eu.vendeli.rethis.api.spec.commands.generic
 
+import eu.vendeli.rethis.api.spec.common.annotations.RIgnoreSpecAbsence
 import eu.vendeli.rethis.api.spec.common.annotations.RedisCommand
 import eu.vendeli.rethis.api.spec.common.annotations.RedisOption
 import eu.vendeli.rethis.api.spec.common.request.generic.SortOption
@@ -17,6 +18,6 @@ fun interface SortStoreCommand : RedisCommandSpec<Long> {
     suspend fun encode(
         key: String,
         @RedisOption.Token("STORE") @RedisOption.Name("destination") storeDestination: String,
-        vararg option: SortOption,
+        @RIgnoreSpecAbsence vararg option: SortOption,
     ): CommandRequest
 }

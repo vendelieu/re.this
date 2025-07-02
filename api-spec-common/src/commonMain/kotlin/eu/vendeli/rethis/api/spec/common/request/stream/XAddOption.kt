@@ -8,9 +8,8 @@ sealed class XAddOption {
         val strategy: TrimmingStrategy,
         val operator: Exactement? = null,
         val threshold: String,
-        val limit: XOption.Limit? = null,
+        @RedisOption.Token("LIMIT") val count: Long? = null,
     ) : XAddOption()
-
 
     sealed class Identifier : XAddOption()
 

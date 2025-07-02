@@ -21,6 +21,6 @@ fun interface ZRangeCommand : RedisCommandSpec<List<String>> {
         @RedisOption.Name("sortby") sortBy: ZRangeOption.Type?,
         @RedisOption.Token("REV") rev: Boolean?,
         limit: ZRangeOption.Limit?,
-        @RedisOption.Token("WITHSCORES") withScores: Boolean?,
+        @RedisOption.Token("WITHSCORES") @RedisOption.Name("withscores") withScores: Boolean?,
     ): CommandRequest
 }

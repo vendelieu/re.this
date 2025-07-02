@@ -1,5 +1,6 @@
 package eu.vendeli.rethis.api.spec.commands.generic
 
+import eu.vendeli.rethis.api.spec.common.annotations.RIgnoreSpecAbsence
 import eu.vendeli.rethis.api.spec.common.annotations.RedisCommand
 import eu.vendeli.rethis.api.spec.common.request.generic.MigrateKey
 import eu.vendeli.rethis.api.spec.common.request.generic.MigrateOption
@@ -21,6 +22,6 @@ fun interface MigrateCommand : RedisCommandSpec<String> {
         keySelector: MigrateKey,
         destinationDb: Long,
         timeout: Duration,
-        vararg option: MigrateOption,
+        @RIgnoreSpecAbsence vararg option: MigrateOption,
     ): CommandRequest
 }

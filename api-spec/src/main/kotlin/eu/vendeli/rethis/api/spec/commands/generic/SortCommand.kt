@@ -1,5 +1,6 @@
 package eu.vendeli.rethis.api.spec.commands.generic
 
+import eu.vendeli.rethis.api.spec.common.annotations.RIgnoreSpecAbsence
 import eu.vendeli.rethis.api.spec.common.annotations.RedisCommand
 import eu.vendeli.rethis.api.spec.common.request.generic.SortOption
 import eu.vendeli.rethis.api.spec.common.types.CommandRequest
@@ -11,6 +12,6 @@ import eu.vendeli.rethis.api.spec.common.types.RespCode
 fun interface SortCommand : RedisCommandSpec<List<String>> {
     suspend fun encode(
         key: String,
-        vararg option: SortOption
+        @RIgnoreSpecAbsence vararg option: SortOption
     ): CommandRequest
 }

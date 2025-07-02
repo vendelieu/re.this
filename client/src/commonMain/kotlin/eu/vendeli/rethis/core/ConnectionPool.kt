@@ -1,161 +1,186 @@
 package eu.vendeli.rethis.core
 
 import eu.vendeli.rethis.ReThis
+import eu.vendeli.rethis.configuration.ReThisConfiguration
 import eu.vendeli.rethis.types.common.RConnection
-import eu.vendeli.rethis.types.common.rConnection
-import eu.vendeli.rethis.types.common.toArgument
+import eu.vendeli.rethis.utils.CLIENT_NAME
 import eu.vendeli.rethis.utils.IO_OR_UNCONFINED
-import eu.vendeli.rethis.utils.writeRedisValue
-import io.ktor.network.selector.*
 import io.ktor.network.sockets.*
-import io.ktor.network.tls.*
 import io.ktor.util.logging.*
+import io.ktor.utils.io.charsets.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.onFailure
-import kotlinx.io.Buffer
-import kotlin.contracts.ExperimentalContracts
-import kotlin.contracts.InvocationKind
-import kotlin.contracts.contract
+import kotlinx.coroutines.channels.onSuccess
+import kotlin.concurrent.atomics.AtomicInt
+import kotlin.concurrent.atomics.ExperimentalAtomicApi
+import kotlin.concurrent.atomics.decrementAndFetch
+import kotlin.concurrent.atomics.incrementAndFetch
+import kotlin.math.ceil
+import kotlin.math.min
+import kotlin.math.roundToInt
 
+// todo add metrics
+@OptIn(ExperimentalAtomicApi::class)
 internal class ConnectionPool(
-    internal val client: ReThis,
+    private val address: SocketAddress,
+    private val client: ReThis,
 ) {
-    internal val logger = KtorSimpleLogger("eu.vendeli.rethis.ConnectionPool")
-
-    @OptIn(ExperimentalCoroutinesApi::class)
-    internal val isEmpty: Boolean get() = connections.isEmpty
-
-    private val poolJob = Job(client.rootJob)
-    private val poolScope = CoroutineScope(
-        client.cfg.connectionConfiguration.dispatcher + poolJob + CoroutineName("ReThis|ConnectionPool"),
+    private val cfg: ReThisConfiguration = client.cfg
+    private val name = "$CLIENT_NAME|${cfg::class.simpleName}Pool@${this::class.hashCode()}"
+    private val logger = KtorSimpleLogger(name) // TODO give option to change logger
+    private val scope = CoroutineScope(
+        Dispatchers.IO_OR_UNCONFINED + CoroutineName(name) + Job(client.rootJob)
     )
-    private val connections = Channel<RConnection>(client.cfg.connectionConfiguration.poolSize)
-    private val selector = SelectorManager(poolScope.coroutineContext)
+    private val idleConnectionsCount = AtomicInt(0)
+    private val borrowCount = AtomicInt(0)
+
+    private val idleConnections = Channel<RConnection>(
+        cfg.pool.maxIdleConnections.coerceAtMost(cfg.maxConnections),
+    ) { client.connectionFactory.dispose(it) }
+    private val pending = Channel<CompletableDeferred<RConnection>>(cfg.pool.maxPendingConnections) {
+        it.completeExceptionally(IllegalStateException("Pool is closed"))
+    }
 
     init {
-        poolScope.launch { prepare() }
+        logger.info("Initializing connection pool")
+        logger.debug("Pool configuration: ${cfg.pool}")
+        populatePool()
+        runObserver()
     }
 
-    internal suspend fun createConn(): RConnection {
-        logger.trace { "Creating connection to ${client.address}" }
-        val conn = aSocket(selector)
-            .tcp()
-            .connect(client.address.socket) {
-                client.cfg.socketConfiguration.run {
-                    timeout?.let { socketTimeout = it }
-                    linger?.let { lingerSeconds = it }
-                    this@connect.keepAlive = keepAlive
-                    this@connect.noDelay = noDelay
-                }
-            }.let { socket ->
-                client.cfg.tlsConfig?.let {
-                    socket.tls(selector.coroutineContext, it)
-                } ?: socket
-            }.rConnection()
-
-        val reqBuffer = Buffer()
-        var requests = 0
-
-        if (client.cfg.auth != null) client.cfg.auth?.run {
-            logger.trace { "Authenticating to ${client.address}." }
-            reqBuffer.writeRedisValue(listOfNotNull("AUTH".toArgument(), username?.toArgument(), password.toArgument()))
-            requests++
-        }
-
-        client.cfg.db?.takeIf { it > 0 }?.let {
-            logger.trace { "Selecting database $it to ${client.address}." }
-            reqBuffer.writeRedisValue(listOf("SELECT".toArgument(), it.toArgument()))
-            requests++
-        }
-
-        reqBuffer.writeRedisValue(listOf("HELLO".toArgument(), client.protocol.literal.toArgument()))
-        requests++
-
-        logger.trace { "Sending connection establishment requests ($requests)" }
-        conn.sendRequest(reqBuffer).readBatchResponse(requests)
-
-        return conn
-    }
-
-    @Suppress("OPT_IN_USAGE")
-    fun prepare() = poolScope.launch(Dispatchers.IO_OR_UNCONFINED) {
-        logger.info("Filling ConnectionPool with connections (${client.cfg.connectionConfiguration.poolSize})")
-        if (connections.isEmpty) repeat(client.cfg.connectionConfiguration.poolSize) {
-            launch { connections.trySend(createConn()) }
-        }
-    }
-
-    suspend fun acquire(): RConnection = connections.receive()
-
-    fun release(connection: RConnection) {
-        handle(connection)
-    }
-
-    private fun handle(connection: RConnection) = poolScope.launch(Dispatchers.IO_OR_UNCONFINED) {
-        logger.trace { "Releasing connection ${connection.socket}" }
-        if (connection.input.isClosedForRead) { // connection is corrupted
-            logger.warn("Connection ${connection.socket} is corrupted, refilling")
-            launch {
-                connection.socket.close()
-                refill()
-            }
-        } else {
-            connections.trySend(connection).onFailure {
-                logger.warn("Pool is full, closing connection ${connection.socket}")
-                connection.socket.close()
+    private fun populatePool() = scope.launch {
+        repeat(cfg.pool.minIdleConnections) {
+            val conn = client.connectionFactory.createConnOrNull(address) ?: return@repeat
+            idleConnections.trySend(conn).onSuccess {
+                idleConnectionsCount.incrementAndFetch()
+            }.onFailure {
+                client.connectionFactory.dispose(conn)
             }
         }
     }
 
-    private suspend fun refill() {
-        val cfg = client.cfg.connectionConfiguration
-        if (cfg.reconnectAttempts <= 0) return
-        var attempt = 0
-        var ex: Throwable? = null
+    fun haveIdleConnections() = idleConnectionsCount.load() < cfg.pool.maxIdleConnections
 
-        while (attempt < cfg.reconnectAttempts) {
-            attempt++
-            logger.trace { "Refilling ConnectionPool. Attempt $attempt" }
-            runCatching { createConn() }
-                .onSuccess {
-                    connections.send(it)
-                    logger.trace { "Connection refilled with $it" }
-                    return
-                }.onFailure {
-                    if (ex != null) ex.addSuppressed(it) else ex = it
-                }
-
-            logger.debug("Connection refill failed, remaining attempts: ${cfg.reconnectAttempts - attempt}")
-            delay(attempt * cfg.reconnectDelay)
+    suspend fun acquire(): RConnection = withTimeout(cfg.pool.connectionAcquirePeriod) aq@{
+        borrowCount.incrementAndFetch()
+        // fastest path
+        val idleConn = idleConnections.tryReceive().getOrNull()?.healthyOrNull()
+        if (idleConn != null) {
+            return@aq idleConn
         }
 
-        val logMsg = "Connection refills failed, maximum attempts reached"
-        if (ex == null) logger.warn(logMsg)
-        else logger.warn(logMsg, ex)
+        // medium path
+        val conn = client.connectionFactory.createConnOrNull(address)
+        if (conn != null) {
+            return@aq conn
+        }
+
+        // slow path
+        val deferred = CompletableDeferred<RConnection>()
+        pending.send(deferred)
+        return@aq deferred.await()
+    }
+
+    fun release(conn: RConnection) {
+        pending.tryReceive().onSuccess {
+            it.complete(conn)
+            return
+        }
+
+        conn.fillPool()
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    suspend fun disconnect() {
-        logger.debug("Disconnecting from Redis")
-        while (!connections.isEmpty) {
-            connections.receive().socket.close()
+    suspend fun closeGracefully() {
+        pending.close()
+        idleConnections.close()
+        // Wait 30 seconds for current operations
+        withTimeoutOrNull(cfg.pool.gracefulClosePeriod) {
+            // it's ok to use isEmpty here because we're not processing pending connections but waiting to close
+            while (!pending.isEmpty) delay(100)
+        }
+        close()
+    }
+
+    fun close() {
+        pending.cancel()
+        idleConnections.cancel()
+        scope.cancel()
+
+        while (true) {
+            val element = idleConnections.tryReceive().getOrNull() ?: break
+            client.connectionFactory.dispose(element)
         }
     }
-}
 
-@OptIn(ExperimentalContracts::class)
-internal suspend inline fun <R> ConnectionPool.use(block: (RConnection) -> R): R {
-    contract {
-        callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+    private fun runObserver() = scope.launch(SupervisorJob()) {
+        while (isActive) {
+            delay(cfg.pool.checkInterval)
+            adjustPoolSize()
+        }
     }
-    val connection = acquire()
-    logger.trace { "Using ${connection.socket} for request" }
-    return try {
-        block(connection)
-    } catch (e: Throwable) {
-        throw e
-    } finally {
-        release(connection)
+
+    // borrows per second
+    private fun getBurstRate(): Float =
+        borrowCount.load().toFloat() / (cfg.pool.checkInterval.inWholeSeconds.toFloat())
+
+    private suspend fun adjustPoolSize() {
+        val burstRate = getBurstRate()
+        val idleNow = idleConnectionsCount.load()
+        val pressure = burstRate - idleNow
+
+        if (pressure > 0f) expandPool(ceil(pressure).toInt())
+        else if (idleNow > cfg.pool.minIdleConnections) shrinkPool()
+
+        borrowCount.store(0)
+    }
+
+    private suspend fun expandPool(by: Int) {
+        if (!client.connectionFactory.isReachedLimit()) repeat(by) {
+            val conn = client.connectionFactory.createConnOrNull(address) ?: return
+            pending.tryReceive().onSuccess {
+                it.complete(conn)
+                return
+            }
+            conn.fillPool()
+        } else {
+            logger.debug("Pool expanding attempt failed. Max connections reached.")
+        }
+    }
+
+    private fun shrinkPool() {
+        val idleNow = idleConnectionsCount.load()
+        val excess = idleNow - cfg.pool.minIdleConnections
+        if (excess <= 0) return
+
+        val toDrop = min((excess * cfg.pool.shrinkRatio).roundToInt(), cfg.pool.maxShrinkSize)
+        repeat(toDrop) {
+            idleConnections.tryReceive().getOrNull()?.let { conn ->
+                client.connectionFactory.dispose(conn)
+                idleConnectionsCount.decrementAndFetch()
+            }
+        }
+    }
+
+    private fun RConnection.fillPool() {
+        idleConnections.trySend(this).onSuccess {
+            idleConnectionsCount.incrementAndFetch()
+        }.onFailure {
+            client.connectionFactory.dispose(this)
+        }
+    }
+
+    private suspend inline fun RConnection.healthyOrNull(): RConnection? {
+        if (!cfg.pool.connectionHealthCheck) return this
+
+//        runCatching { // todo return
+//            doRequest(PingCommandCodec.encode(charset = Charsets.UTF_8, message = null).buffer)
+//        }.onFailure {
+//            client.connectionFactory.dispose(this)
+//            return null
+//        }
+
+        return this
     }
 }

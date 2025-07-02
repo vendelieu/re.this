@@ -12,6 +12,6 @@ fun interface ZRevRankWithScoreCommand : RedisCommandSpec<List<Long>> {
     suspend fun encode(
         key: String,
         member: String,
-        @RedisOption.Token("WITHSCORE") withScore: Boolean,
+        @RedisOption.Token("WITHSCORE") @RedisOption.Name("withscore") withScore: Boolean,
     ): CommandRequest
 }

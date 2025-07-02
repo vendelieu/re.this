@@ -11,7 +11,7 @@ annotation class RedisMeta {
     @Target(AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.CLASS)
     @Retention(AnnotationRetention.SOURCE)
     annotation class CustomCodec(
-        val decoder: KClass<out ResponseDecoder<*>> = Nothing::class,
+        val decoder: KClass<out ResponseDecoder<*>> = ResponseDecoder::class,
         val encoder: KClass<*> = Unit::class,
     )
 

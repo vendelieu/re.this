@@ -7,7 +7,7 @@ import io.ktor.utils.io.core.*
 import kotlinx.io.Buffer
 import kotlin.jvm.JvmName
 
-object ArrayDecoder : ResponseDecoder<String>(RespCode.SIMPLE_STRING) {
+object ArrayDecoder : ResponseDecoder<String>() {
     override suspend fun decode(input: Buffer, charset: Charset, typeInfo: TypeInfo): String = input.readText(charset)
 
     @JvmName("decodeList")

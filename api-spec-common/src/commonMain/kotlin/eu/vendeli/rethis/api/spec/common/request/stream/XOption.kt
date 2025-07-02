@@ -2,13 +2,7 @@ package eu.vendeli.rethis.api.spec.common.request.stream
 
 import eu.vendeli.rethis.api.spec.common.annotations.RedisOption
 
-sealed class XOption {
-    @RedisOption.Token("LIMIT")
-    class Limit(
-        val count: Long,
-    ) : XOption()
-}
-
+sealed class XOption
 
 sealed class TrimmingStrategy : XOption()
 

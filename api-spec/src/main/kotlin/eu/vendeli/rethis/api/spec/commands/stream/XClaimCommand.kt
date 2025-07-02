@@ -1,5 +1,6 @@
 package eu.vendeli.rethis.api.spec.commands.stream
 
+import eu.vendeli.rethis.api.spec.common.annotations.RIgnoreSpecAbsence
 import eu.vendeli.rethis.api.spec.common.annotations.RedisCommand
 import eu.vendeli.rethis.api.spec.common.annotations.RedisOption
 import eu.vendeli.rethis.api.spec.common.request.stream.XClaimOption
@@ -17,11 +18,11 @@ fun interface XClaimCommand : RedisCommandSpec<List<RType>> {
         consumer: String,
         minIdleTime: String,
         vararg id: String,
-        idle: XClaimOption.Idle?,
-        time: XClaimOption.Time?,
-        retryCount: XClaimOption.RetryCount?,
+        @RIgnoreSpecAbsence idle: XClaimOption.Idle?,
+        @RIgnoreSpecAbsence time: XClaimOption.Time?,
+        @RIgnoreSpecAbsence retryCount: XClaimOption.RetryCount?,
         @RedisOption.Token("FORCE") force: Boolean?,
-        @RedisOption.Token("JUSTID") justId: Boolean?,
-        lastId: XClaimOption.LastId?,
+        @RedisOption.Token("JUSTID") @RedisOption.Name("justid") justId: Boolean?,
+        @RedisOption.Name("lastid") lastId: XClaimOption.LastId?,
     ): CommandRequest
 }

@@ -1,5 +1,6 @@
 package eu.vendeli.rethis.api.spec.commands.string
 
+import eu.vendeli.rethis.api.spec.common.annotations.RIgnoreSpecAbsence
 import eu.vendeli.rethis.api.spec.common.annotations.RedisCommand
 import eu.vendeli.rethis.api.spec.common.request.string.SetOption
 import eu.vendeli.rethis.api.spec.common.types.CommandRequest
@@ -16,6 +17,6 @@ fun interface SetCommand : RedisCommandSpec<String> {
     suspend fun encode(
         key: String,
         value: String,
-        vararg options: SetOption,
+        @RIgnoreSpecAbsence vararg options: SetOption,
     ): CommandRequest
 }

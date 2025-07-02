@@ -6,6 +6,6 @@ import io.ktor.utils.io.charsets.*
 import kotlinx.io.Buffer
 import kotlinx.io.readDecimalLong
 
-object IntegerDecoder : ResponseDecoder<Long>(RespCode.INTEGER) {
+object IntegerDecoder : ResponseDecoder<Long>() {
     override suspend fun decode(input: Buffer, charset: Charset, typeInfo: TypeInfo): Long = input.readDecimalLong()
 }

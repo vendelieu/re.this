@@ -9,7 +9,7 @@ import eu.vendeli.rethis.api.spec.common.types.RedisOperation
 import eu.vendeli.rethis.api.spec.common.types.RespCode
 
 @RedisCommand("BLPOP", RedisOperation.WRITE, [RespCode.ARRAY, RespCode.NULL], isBlocking = true)
-@RedisMeta.CustomCodec(decoder = Nothing::class) // todo add
+@RedisMeta.CustomCodec(decoder = ResponseDecoder::class) // todo add
 fun interface BlPopCommand : RedisCommandSpec<PopResult> {
     suspend fun encode(
         vararg key: String,

@@ -14,7 +14,7 @@ import eu.vendeli.rethis.api.spec.common.types.RespCode
     [RespCode.ARRAY, RespCode.NULL],
     isBlocking = true,
 )
-@RedisMeta.CustomCodec(decoder = Nothing::class) // todo add
+@RedisMeta.CustomCodec(decoder = ResponseDecoder::class) // todo add
 fun interface BzPopMinCommand : RedisCommandSpec<ZPopResult> {
     suspend fun encode(
         timeout: Double,

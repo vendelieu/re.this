@@ -1,5 +1,6 @@
 package eu.vendeli.rethis.api.spec.commands.string
 
+import eu.vendeli.rethis.api.spec.common.annotations.RIgnoreSpecAbsence
 import eu.vendeli.rethis.api.spec.common.annotations.RedisCommand
 import eu.vendeli.rethis.api.spec.common.annotations.RedisMeta
 import eu.vendeli.rethis.api.spec.common.annotations.RedisOption
@@ -22,8 +23,8 @@ fun interface LcsDetailedCommand : RedisCommandSpec<LcsResult> {
     suspend fun encode(
         key1: String,
         key2: String,
-        mode: LcsMode.IDX,
+        @RIgnoreSpecAbsence mode: LcsMode.IDX,
         len: MinMatchLen?,
-        @RedisOption.Token("WITHMATCHLEN") withMatchLen: Boolean?
+        @RedisOption.Token("WITHMATCHLEN") @RedisOption.Name("withmatchlen") withMatchLen: Boolean?
     ): CommandRequest
 }

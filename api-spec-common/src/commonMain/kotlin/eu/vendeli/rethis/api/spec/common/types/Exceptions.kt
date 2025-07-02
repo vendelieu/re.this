@@ -25,7 +25,8 @@ class InvalidStateException(
 ) : ReThisException()
 
 class UnexpectedResponseType(
-    override val message: String? = null
+    override val message: String? = null,
+    override val cause: Throwable? = null
 ) : ReThisException()
 
 inline fun processingException(cause: Throwable? = null, message: () -> String? = { null }): Nothing =

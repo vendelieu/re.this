@@ -5,6 +5,6 @@ import io.ktor.util.reflect.*
 import io.ktor.utils.io.charsets.*
 import kotlinx.io.Buffer
 
-object SimpleErrorDecoder : ResponseDecoder<Nothing>(RespCode.SIMPLE_ERROR) {
+object SimpleErrorDecoder : ResponseDecoder<Nothing>() {
     override suspend fun decode(input: Buffer, charset: Charset, typeInfo: TypeInfo): Nothing = TODO()
 }

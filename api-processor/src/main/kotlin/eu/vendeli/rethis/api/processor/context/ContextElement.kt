@@ -10,6 +10,7 @@ import com.squareup.kotlinpoet.ksp.toTypeName
 import eu.vendeli.rethis.api.processor.core.RedisCommandProcessor.Companion.context
 import eu.vendeli.rethis.api.processor.types.*
 import eu.vendeli.rethis.api.processor.utils.enrichedTree
+import eu.vendeli.rethis.api.processor.utils.getCustom
 import eu.vendeli.rethis.api.processor.utils.hasCustomDecoder
 import eu.vendeli.rethis.api.processor.utils.hasCustomEncoder
 import eu.vendeli.rethis.api.processor.utils.safeCast
@@ -107,6 +108,8 @@ internal class CurrentCommand(val command: RCommandData, val klass: KSClassDecla
     val hasCustomEncoder = klass.hasCustomEncoder()
     val hasCustomDecoder = klass.hasCustomDecoder()
 
+    val customCodec = klass.runCatching { getCustom() }.getOrNull()
+
     val specType = klass.superTypes.first().resolve().arguments.first() // RedisCommandSpec<T>
     val type = specType.toTypeName()
 
@@ -157,9 +160,9 @@ internal class CodeGenContext(
 
     fun buildBlock(fieldName: String, type: BlockType, block: () -> Unit) {
         val oldPointer = thisExpr
-        thisExpr = when {
-            type == BlockType.WHEN && thisExpr.isNotBlank() -> thisExpr
-            type == BlockType.WHEN -> fieldName
+        thisExpr = when (type) {
+            BlockType.WHEN if thisExpr.isNotBlank() -> thisExpr
+            BlockType.WHEN -> fieldName
             else -> freshName()
         }
         // before block should be old pointer or param
@@ -188,8 +191,11 @@ internal class CodeGenContext(
         builder.addStatement(line, *args)
     }
 
-    val pointer: String?
+    var pointer: String?
         get() = thisExpr.takeIf { !it.isBlank() }
+        set(value) {
+            if (value != null) thisExpr = value
+        }
 
     fun pointedParameter(name: String, pointer: String = thisExpr): String {
         val parameter = mutableListOf<String?>()

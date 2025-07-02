@@ -35,7 +35,7 @@ internal object RedisProcessor {
         if (cmd.name.startsWith("SENTINEL")) return
 
         validate(currentCmd)
-        if (currentCmd.hasCustomEncoder) {
+        if (currentCmd.hasCustomEncoder) { // todo don't skip but substitute
             addProcessedResponses(cmd.name, currentCmd.command.responseTypes)
             return
         }
@@ -85,7 +85,6 @@ internal object RedisProcessor {
 
         commandFileSpec.addCommandFunctions(
             codecName = codecName,
-            commandName = currentCmd.command.name,
             parameters = specSigArguments,
             type = currentCmd.type,
             cmdPackagePart = cmdPackagePart,
@@ -96,7 +95,7 @@ internal object RedisProcessor {
             writeTo(File(context.meta.clientDir))
         }.onFailure { it.printStackTrace() }
         commandFileSpec.build().runCatching {
-//            writeTo(File(context.meta.clientDir)) // todo return
+            writeTo(File(context.meta.clientDir))
         }.onFailure { it.printStackTrace() }
     }
 
@@ -134,7 +133,7 @@ internal object RedisProcessor {
         )
 
         context.typeSpec
-            .addProperty(
+            .addProperty( // todo remove completely if still not used
                 PropertySpec.builder("TYPE_INFO", TypeInfo::class, KModifier.PRIVATE)
                     .initializer("typeInfo<%T>()", context.currentCommand.type)
                     .build(),

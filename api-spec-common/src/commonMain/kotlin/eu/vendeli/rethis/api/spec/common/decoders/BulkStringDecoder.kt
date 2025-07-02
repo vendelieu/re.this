@@ -5,6 +5,6 @@ import io.ktor.util.reflect.*
 import io.ktor.utils.io.charsets.*
 import kotlinx.io.Buffer
 
-object BulkStringDecoder : ResponseDecoder<String>(RespCode.SIMPLE_STRING) {
+object BulkStringDecoder : ResponseDecoder<String>() {
     override suspend fun decode(input: Buffer, charset: Charset, typeInfo: TypeInfo): String = TODO()
 }

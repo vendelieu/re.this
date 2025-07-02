@@ -15,6 +15,6 @@ fun interface ZUnionCommand : RedisCommandSpec<List<String>> {
         @RedisMeta.WithSizeParam("numkeys") vararg key: String,
         @RedisOption.Token("WEIGHTS") weight: List<Long>?,
         aggregate: ZAggregate?,
-        @RedisOption.Token("WITHSCORES") withScores: Boolean?,
+        @RedisOption.Token("WITHSCORES") @RedisOption.Name("withscores") withScores: Boolean?,
     ): CommandRequest
 }

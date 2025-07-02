@@ -6,7 +6,6 @@ import com.google.devtools.ksp.processing.KSPLogger
 import com.google.devtools.ksp.symbol.KSAnnotated
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSType
-import com.google.devtools.ksp.symbol.KSTypeReference
 import eu.vendeli.rethis.api.processor.core.RedisCommandProcessor.Companion.context
 import eu.vendeli.rethis.api.processor.types.EnrichedNode
 import eu.vendeli.rethis.api.processor.types.EnrichedTreeAttr
@@ -46,6 +45,9 @@ internal fun KSAnnotated.hasCustomDecoder(): Boolean {
     val customDecoder = getAnnotation<RedisMeta.CustomCodec>()?.get("decoder")
     return customDecoder != null && customDecoder != Nothing::class.simpleName
 }
+
+@OptIn(KspExperimental::class)
+internal fun KSAnnotated.getCustom(): RedisMeta.CustomCodec? = getAnnotationsByType(RedisMeta.CustomCodec::class).firstOrNull()
 
 internal fun KSType.getTimeUnit(): String = annotations.firstOrNull {
     it.shortName.asString() == RedisMeta.OutgoingTimeUnit::class.simpleName

@@ -12,6 +12,6 @@ fun interface ZRandMemberCountCommand : RedisCommandSpec<List<String>> {
     suspend fun encode(
         key: String,
         count: Long,
-        @RedisOption.Token("WITHSCORES") withScores: Boolean?,
+        @RedisOption.Token("WITHSCORES") @RedisOption.Name("withscores") withScores: Boolean?,
     ): CommandRequest
 }

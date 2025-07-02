@@ -10,7 +10,7 @@ import eu.vendeli.rethis.api.spec.common.types.RedisOperation
 import eu.vendeli.rethis.api.spec.common.types.RespCode
 
 @RedisCommand("ZSCAN", RedisOperation.READ, [RespCode.ARRAY])
-@RedisMeta.CustomCodec(decoder = Nothing::class) // todo add
+@RedisMeta.CustomCodec(decoder = ResponseDecoder::class) // todo add
 fun interface ZScanCommand : RedisCommandSpec<ScanResult<Pair<String, String>>> {
     suspend fun encode(
         key: String,

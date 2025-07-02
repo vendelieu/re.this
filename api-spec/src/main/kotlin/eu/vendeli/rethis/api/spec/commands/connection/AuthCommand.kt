@@ -10,6 +10,6 @@ import eu.vendeli.rethis.api.spec.common.types.RespCode
 fun interface AuthCommand : RedisCommandSpec<Boolean> {
     suspend fun encode(
         username: String?,
-        password: String
+        password: CharArray
     ): CommandRequest
 }

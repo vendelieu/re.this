@@ -5,5 +5,5 @@ import eu.vendeli.rethis.api.spec.common.annotations.RedisOption
 @RedisOption.Token("AUTH")
 class HelloAuth(
     val username: String,
-    val password: String,
+    val password: CharArray,
 )

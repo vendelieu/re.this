@@ -6,7 +6,7 @@ import io.ktor.utils.io.charsets.*
 import kotlinx.io.Buffer
 import kotlin.jvm.JvmName
 
-object MapDecoder : ResponseDecoder<Map<*, *>>(RespCode.SIMPLE_STRING) {
+object MapDecoder : ResponseDecoder<Map<*, *>>() {
     override suspend fun decode(input: Buffer, charset: Charset, typeInfo: TypeInfo): Map<*, *> = TODO()
 
     @JvmName("decodeMap")

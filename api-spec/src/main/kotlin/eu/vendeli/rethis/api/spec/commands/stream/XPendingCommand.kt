@@ -14,8 +14,6 @@ fun interface XPendingCommand : RedisCommandSpec<List<RType>> {
     suspend fun encode(
         key: String,
         group: String,
-        @RedisOption.Token("IDLE") minIdleTime: Long?,
-        filter: XPendingMainFilter?,
-        consumer: String?,
+        filters: XPendingMainFilter?,
     ): CommandRequest
 }

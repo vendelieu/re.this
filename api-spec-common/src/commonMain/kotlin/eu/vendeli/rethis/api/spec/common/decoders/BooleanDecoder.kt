@@ -6,6 +6,6 @@ import io.ktor.utils.io.charsets.*
 import io.ktor.utils.io.core.*
 import kotlinx.io.Buffer
 
-object BooleanDecoder : ResponseDecoder<String>(RespCode.SIMPLE_STRING) {
+object BooleanDecoder : ResponseDecoder<String>() {
     override suspend fun decode(input: Buffer, charset: Charset, typeInfo: TypeInfo): String = input.readText(charset)
 }

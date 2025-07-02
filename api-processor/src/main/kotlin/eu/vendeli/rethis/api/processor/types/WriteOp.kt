@@ -88,16 +88,19 @@ internal fun WriteOp.emitOp(encode: Boolean, complex: Boolean = false) {
                     when {
                         type.isNotEmpty() -> handleWrapping(type)
                         else -> {
-                            if (tokens.isNotEmpty()) addImport("eu.vendeli.rethis.utils.writeStringArg")
-                            tokens.forEach {
-                                if (context.currentCommand.haveVaryingSize) ctx.appendLine("size += 1")
-                                ctx.appendLine("buffer.writeStringArg(\"${it.name}\", charset)")
+                            if (encode) {
+                                if (tokens.isNotEmpty()) addImport("eu.vendeli.rethis.utils.writeStringArg")
+                                tokens.forEach {
+                                    if (context.currentCommand.haveVaryingSize) ctx.appendLine("size += 1")
+                                    ctx.appendLine("buffer.writeStringArg(\"${it.name}\", charset)")
+                                }
                             }
+
                             inner.forEach { it.emitOp(encode, isComplex) }
                         }
                     }
                 }
-                when (type.removeFirstOrNull() ?: return) {
+                when (type.removeFirstOrNull()) {
                     WriteOpProps.NULLABLE -> {
                         ctx.buildBlock(paramName, BlockType.LET) { action() }
                     }
@@ -106,10 +109,17 @@ internal fun WriteOp.emitOp(encode: Boolean, complex: Boolean = false) {
                         addImport("eu.vendeli.rethis.utils.writeIntArg")
                         ctx.appendLine("buffer.writeIntArg(%L.size, charset)", ctx.pointedParameter(paramName))
                         action()
+                    } else {
+                        action()
                     }
 
                     WriteOpProps.COLLECTION -> {
                         ctx.buildBlock(paramName, BlockType.FOR) { action() }
+                    }
+
+                    else -> {
+                        if (isComplex) ctx.pointer = paramName
+                        action()
                     }
                 }
             }

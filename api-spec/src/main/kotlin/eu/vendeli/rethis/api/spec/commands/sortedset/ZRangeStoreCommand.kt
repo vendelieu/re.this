@@ -20,7 +20,7 @@ fun interface ZRangeStoreCommand : RedisCommandSpec<Long> {
         src: String,
         min: String,
         max: String,
-        rangeType: ZRangeOption.Type?,
+        @RedisOption.Name("sortby") sortBy: ZRangeOption.Type?,
         @RedisOption.Token("REV") rev: Boolean?,
         limit: ZRangeStoreLimit?
     ): CommandRequest

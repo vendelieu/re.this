@@ -1,5 +1,6 @@
 package eu.vendeli.rethis.api.spec.commands.string
 
+import eu.vendeli.rethis.api.spec.common.annotations.RIgnoreSpecAbsence
 import eu.vendeli.rethis.api.spec.common.annotations.RedisCommand
 import eu.vendeli.rethis.api.spec.common.request.string.LcsMode
 import eu.vendeli.rethis.api.spec.common.types.CommandRequest
@@ -16,6 +17,6 @@ fun interface LcsLengthCommand : RedisCommandSpec<Long> {
     suspend fun encode(
         key1: String,
         key2: String,
-        mode: LcsMode.LEN
+        @RIgnoreSpecAbsence mode: LcsMode.LEN
     ): CommandRequest
 }

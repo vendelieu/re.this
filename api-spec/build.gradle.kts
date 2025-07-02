@@ -16,14 +16,12 @@ dependencies {
     ksp(project(":api-processor"))
 }
 
-
 ksp {
     arg(
         "clientProjectDir",
         rootDir.resolve("client/src/commonMain/kotlin/").absolutePath,
     )
 }
-
 
 tasks.test {
     useJUnitPlatform()

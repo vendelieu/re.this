@@ -6,10 +6,12 @@ import com.squareup.kotlinpoet.FunSpec
 import com.squareup.kotlinpoet.KModifier
 import com.squareup.kotlinpoet.ksp.toTypeName
 import eu.vendeli.rethis.api.processor.context.CodeGenContext
+import eu.vendeli.rethis.api.processor.core.LibTreePlanter
 import eu.vendeli.rethis.api.processor.core.RedisCommandProcessor.Companion.context
+import eu.vendeli.rethis.api.processor.types.WriteOp
+import eu.vendeli.rethis.api.processor.types.WriteOpProps
 import eu.vendeli.rethis.api.processor.types.emitOp
 import eu.vendeli.rethis.api.processor.types.filterWithoutKey
-import eu.vendeli.rethis.api.processor.core.LibTreePlanter
 
 @OptIn(KspExperimental::class)
 internal fun addEncoderCode() {
@@ -77,17 +79,29 @@ internal fun addEncoderCode() {
 
         addStatement("var slot: Int? = null")
         context += CodeGenContext(this)
-        ops.map { it.filterWithoutKey() }.forEach { it?.emitOp(encode = false) }
-        addStatement("val request = %L", requestStatement)
+        val slotOps = ops.mapNotNull { it.filterWithoutKey() }
+        slotOps.forEach { it.emitOp(encode = false) }
 
+        val collectionCheck: (WriteOp) -> Boolean = {
+            it is WriteOp.WrappedCall && it.props.contains(WriteOpProps.COLLECTION)
+        }
+        slotOps.singleOrNull { op ->
+            collectionCheck(op) || op is WriteOp.WrappedCall && op.props.isEmpty()
+                && op.inner.singleOrNull { collectionCheck(it) } != null
+        }?.also {
+            addImport("eu.vendeli.rethis.api.spec.common.types.KeyAbsentException")
+            addStatement("if(slot == null) throw KeyAbsentException(\"Expected key is not provided\")")
+        }
+
+        addStatement("val request = %L", requestStatement)
         addStatement(
-            "return if (slot == null) request else request.withSlot(slot %% 16384)",
+            "return request.withSlot(slot %% 16384)",
         )
     }.build()
 
     context.typeSpec.addFunction(
         FunSpec.builder("encodeWithSlot")
-            .addModifiers(KModifier.SUSPEND, KModifier.PUBLIC)
+            .addModifiers(KModifier.SUSPEND, KModifier.INLINE)
             .apply {
                 addParameter("charset", charsetClassName)
                 specSigArguments.forEach { param ->

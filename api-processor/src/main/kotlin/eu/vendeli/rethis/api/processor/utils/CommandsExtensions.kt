@@ -6,7 +6,6 @@ import eu.vendeli.rethis.api.spec.common.types.RespCode
 
 fun FileSpec.Builder.addCommandFunctions(
     codecName: String,
-    commandName: String,
     parameters: Map<String, Pair<TypeName, List<KModifier>>>,
     type: TypeName,
     cmdPackagePart: String,
@@ -14,9 +13,8 @@ fun FileSpec.Builder.addCommandFunctions(
 ) {
     val isNullable = RespCode.NULL in responseTypes
     addImport("eu.vendeli.rethis.codecs.$cmdPackagePart", codecName)
-    addImport("eu.vendeli.rethis.core", "use")
     addFunction(
-        FunSpec.builder(commandName.toCamelCase())
+        FunSpec.builder(codecName.removeSuffix("CommandCodec").replaceFirstChar { it.lowercase() })
             .addModifiers(KModifier.SUSPEND)
             .receiver(ReThis::class).apply {
                 parameters.map { p ->
@@ -30,16 +28,15 @@ fun FileSpec.Builder.addCommandFunctions(
             .returns(type.copy(isNullable))
             .addCode(
                 CodeBlock.builder().apply {
-                    addStatement(
-                        "val request = $codecName.encode(charset = cfg.charset${
-                            parameters.entries.joinToString(prefix = ", ") {
-                                "${it.key} = ${it.key}"
-                            }
-                        })",
-                    )
-                    beginControlFlow("return connectionPool.use")
-                    addStatement("$codecName.decode(it.doRequest(request.buffer), cfg.charset)")
+                    val parameters = parameters.entries.joinToString(prefix = ", ") {
+                        "${it.key} = ${it.key}"
+                    }
+                    beginControlFlow("val request = if(cfg.withSlots)")
+                    addStatement("$codecName.encodeWithSlot(charset = cfg.charset$parameters)")
+                    nextControlFlow("else")
+                    addStatement("$codecName.encode(charset = cfg.charset$parameters)")
                     endControlFlow()
+                    addStatement("return $codecName.decode(provider.execute(request), cfg.charset)")
                 }.build(),
             )
             .build(),

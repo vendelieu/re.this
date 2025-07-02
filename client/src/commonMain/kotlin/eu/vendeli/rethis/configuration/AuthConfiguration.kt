@@ -9,7 +9,7 @@ import eu.vendeli.rethis.annotations.ConfigurationDSL
  * @property username the username to use for authentication, defaults to null
  */
 @ConfigurationDSL
-class AuthConfiguration(
+internal class AuthConfiguration(
     var password: CharArray,
     var username: String? = null,
 ) {

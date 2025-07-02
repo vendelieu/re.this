@@ -1,67 +1,42 @@
 package eu.vendeli.rethis.configuration
 
 import eu.vendeli.rethis.annotations.ConfigurationDSL
-import eu.vendeli.rethis.types.common.ConfigType
+import eu.vendeli.rethis.types.common.RespVer
 import io.ktor.network.tls.*
 import io.ktor.utils.io.charsets.*
-import kotlinx.serialization.json.Json
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.seconds
 
-/**
- * A configuration class for the client.
- *
- * @property db The database index to switch to after connecting.
- * @property charset The character set to use for communication.
- * @property tlsConfig The TLS configuration to use when connecting.
- */
 @ConfigurationDSL
-sealed class ReThisConfiguration(
-    var db: Int? = null,
-    var charset: Charset = Charsets.UTF_8,
-    var tlsConfig: TLSConfig? = null,
-    internal var auth: AuthConfiguration? = null,
-    internal val connectionConfiguration: ConnectionConfiguration = ConnectionConfiguration(),
-    internal val socketConfiguration: SocketConfiguration = SocketConfiguration(),
-) {
-    internal abstract val type: ConfigType
-    /**
-     * Configures authentication for the client.
-     *
-     * @param password The password to use for authentication.
-     * @param username The username to use for authentication, defaults to null.
-     */
+sealed class ReThisConfiguration(internal val protocol: RespVer) {
+    internal var auth: AuthConfiguration? = null
+    internal var tls: TLSConfig? = null
+    internal var socket: SocketConfiguration = SocketConfiguration()
+    internal var pool: PoolConfiguration = PoolConfiguration()
+    internal var retry: RetryConfiguration = RetryConfiguration()
+    internal open val withSlots = false
+
+    var db: Int? = null
+    var charset: Charset = Charsets.UTF_8
+    var dispatcher: CoroutineDispatcher = Dispatchers.Default
+    var gracefulShutdownPeriod: Duration = 40.seconds
+    var maxConnections: Int = 5000
+
     fun auth(password: CharArray, username: String? = null) {
         auth = AuthConfiguration(password, username)
     }
 
-    /**
-     * Configures the connection settings.
-     *
-     * @param block A lambda to configure the connection settings.
-     */
-    fun connection(block: ConnectionConfiguration.() -> Unit) {
-        connectionConfiguration.block()
+    fun tls(block: () -> TLSConfig) {
+        tls = block.invoke()
     }
 
-    /**
-     * Configures the socket options.
-     *
-     * @param block A lambda to configure the socket settings.
-     */
-    fun socket(block: SocketConfiguration.() -> Unit) {
-        socketConfiguration.block()
+    fun pool(block: PoolConfiguration.() -> Unit) {
+        pool.block()
     }
 
-    @Suppress("ktlint:standard:backing-property-naming")
-    private var _jsonModule: Json? = null
-    internal val jsonModule by lazy { _jsonModule ?: Json.Default }
-
-    /**
-     * Configures the JSON serializer module.
-     *
-     * @param module The JSON module to use for serializing and deserializing objects.
-     */
-    fun jsonModule(module: Json) {
-        _jsonModule = module
+    fun retry(block: RetryConfiguration.() -> Unit) {
+        retry.block()
     }
 }
-

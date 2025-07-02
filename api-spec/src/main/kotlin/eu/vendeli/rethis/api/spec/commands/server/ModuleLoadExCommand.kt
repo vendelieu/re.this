@@ -1,5 +1,6 @@
 package eu.vendeli.rethis.api.spec.commands.server
 
+import eu.vendeli.rethis.api.spec.common.annotations.RIgnoreSpecAbsence
 import eu.vendeli.rethis.api.spec.common.annotations.RedisCommand
 import eu.vendeli.rethis.api.spec.common.request.server.ModuleOption
 import eu.vendeli.rethis.api.spec.common.types.CommandRequest
@@ -9,5 +10,5 @@ import eu.vendeli.rethis.api.spec.common.types.RespCode
 
 @RedisCommand("MODULE LOADEX", RedisOperation.WRITE, [RespCode.SIMPLE_STRING])
 fun interface ModuleLoadExCommand : RedisCommandSpec<Boolean> {
-    suspend fun encode(path: String, vararg options: ModuleOption): CommandRequest
+    suspend fun encode(path: String, @RIgnoreSpecAbsence vararg options: ModuleOption): CommandRequest
 }

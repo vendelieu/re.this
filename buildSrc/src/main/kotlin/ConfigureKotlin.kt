@@ -13,8 +13,8 @@ fun Project.configureKotlin(block: KotlinMultiplatformExtension.() -> Unit) {
         compilerOptions {
             extraWarnings.set(true)
             freeCompilerArgs.addAll(
-                "-Xsuppress-warning=CAN_BE_VAL",
-                "-Xsuppress-warning=NOTHING_TO_INLINE",
+                "-Xwarning-level=CAN_BE_VAL:disabled",
+                "-Xwarning-level=NOTHING_TO_INLINE:disabled",
                 "-opt-in=eu.vendeli.rethis.annotations.ReThisInternal",
             )
         }

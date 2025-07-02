@@ -8,7 +8,7 @@ import eu.vendeli.rethis.api.spec.common.types.RedisOperation
 import eu.vendeli.rethis.api.spec.common.types.RespCode
 
 @RedisCommand("ZRANK", RedisOperation.READ, [RespCode.INTEGER, RespCode.NULL])
-@RedisMeta.CustomCodec(decoder = Nothing::class) // todo add
+@RedisMeta.CustomCodec(decoder = ResponseDecoder::class) // todo add
 fun interface ZRankCommand : RedisCommandSpec<Long> {
     suspend fun encode(
         key: String,

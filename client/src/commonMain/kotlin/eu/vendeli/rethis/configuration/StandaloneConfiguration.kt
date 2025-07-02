@@ -1,7 +1,5 @@
 package eu.vendeli.rethis.configuration
 
-import eu.vendeli.rethis.types.common.ConfigType
+import eu.vendeli.rethis.types.common.RespVer
 
-class StandaloneConfiguration : ReThisConfiguration() {
-    override val type = ConfigType.STANDALONE
-}
+class StandaloneConfiguration(protocol: RespVer) : ReThisConfiguration(protocol)

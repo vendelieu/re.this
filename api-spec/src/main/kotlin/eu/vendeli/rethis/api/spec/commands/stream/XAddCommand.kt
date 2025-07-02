@@ -20,6 +20,6 @@ fun interface XAddCommand : RedisCommandSpec<String> {
         @RedisOption.Token("NOMKSTREAM") nomkstream: Boolean?,
         trim: XAddOption.Trim?,
         idSelector: XAddOption.Identifier,
-        vararg entry: FieldValue,
+        vararg data: FieldValue,
     ): CommandRequest
 }

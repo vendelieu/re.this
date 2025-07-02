@@ -5,7 +5,7 @@ import io.ktor.util.reflect.*
 import io.ktor.utils.io.charsets.*
 import kotlinx.io.Buffer
 
-object ModuleOptionArgsEncoder : ResponseDecoder<String>(RespCode.SIMPLE_STRING) {
+object ModuleOptionArgsEncoder : ResponseDecoder<String>() {
     override suspend fun decode(input: Buffer, charset: Charset, typeInfo: TypeInfo): String {
         return TODO("Not yet implemented")
     }

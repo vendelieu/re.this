@@ -15,14 +15,34 @@ internal fun TypeSpec.Builder.addDecodeFunction(
     respCode: Set<RespCode>,
     specType: KSTypeArgument,
 ): TypeSpec.Builder {
+    val type = specType.toTypeName()
+    val isNullableResponse = RespCode.NULL in respCode
+
     if (context.currentCommand.hasCustomDecoder) {
+        val customDecoder = context.currentCommand.customCodec?.runCatching {
+            decoder
+        }?.getOrNull() ?: return this
+
+        FunSpec.builder("decode")
+            .addParameter("input", Buffer::class)
+            .addParameter("charset", charsetClassName)
+            .addModifiers(KModifier.SUSPEND)
+            .returns(type.copy(isNullableResponse))
+            .addCode(
+                CodeBlock.builder().apply {
+                    addImport(customDecoder.qualifiedName!!)
+                    addStatement("return %L.decode(input, charset, TYPE_INFO)", customDecoder.simpleName)
+                }.build(),
+            )
+            .build().also {
+                addFunction(it)
+            }
         return this
     }
-    val type = specType.toTypeName()
+
     val isReturnBool = type.copy(true) == BOOLEAN.copy(true)
     val isReturnDouble = type.copy(true) == DOUBLE.copy(true)
 
-    val isNullableResponse = RespCode.NULL in respCode
     val isImplicitMapResponse = RespCode.MAP in respCode && RespCode.ARRAY in respCode
 
     addImport(
@@ -47,8 +67,8 @@ internal fun TypeSpec.Builder.addDecodeFunction(
                             }?.arguments?.map { it.type?.resolve() } ?: listOf(t)
                         }?.filterNotNull()?.toTypedArray()!!
                         val tailStatement = when {
-                            code.isString() && isReturnBool -> "== \"OK\""
-                            code == RespCode.INTEGER && isReturnBool -> "== 1L"
+                            code.isString() && isReturnBool -> " == \"OK\""
+                            code == RespCode.INTEGER && isReturnBool -> " == 1L"
                             code.isString() && isReturnDouble -> ".toDouble()"
                             else -> ""
                         }
@@ -78,7 +98,9 @@ internal fun TypeSpec.Builder.addDecodeFunction(
                         endControlFlow()
                     }
                     beginControlFlow("else ->")
-                    addStatement("throw UnexpectedResponseType(\"Expected $respCode but got \$code\")")
+                    addImport("eu.vendeli.rethis.utils.tryInferCause")
+                    addStatement("val cause = input.tryInferCause(code)")
+                    addStatement($$"throw UnexpectedResponseType(\"Expected $$respCode but got $code\", cause)")
                     endControlFlow()
 
                     endControlFlow()

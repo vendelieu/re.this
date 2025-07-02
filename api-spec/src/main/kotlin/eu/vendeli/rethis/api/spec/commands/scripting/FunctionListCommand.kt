@@ -8,6 +8,6 @@ import eu.vendeli.rethis.api.spec.common.types.*
 fun interface FunctionListCommand : RedisCommandSpec<List<RType>> {
     suspend fun encode(
         @RedisOption.Token("LIBRARYNAME") libraryNamePattern: String?,
-        @RedisOption.Token("WITHCODE") withCode: Boolean?
+        @RedisOption.Token("WITHCODE") @RedisOption.Name("withcode") withCode: Boolean?
     ): CommandRequest
 }

@@ -8,13 +8,13 @@ import eu.vendeli.rethis.api.spec.common.types.RedisOperation
 import eu.vendeli.rethis.api.spec.common.types.RespCode
 
 @RedisCommand(
-    "GETEX", 
+    "GETEX",
     RedisOperation.WRITE,
     [RespCode.BULK, RespCode.NULL],
 )
 fun interface GetExCommand : RedisCommandSpec<String> {
     suspend fun encode(
         key: String,
-        vararg option: GetExOption
+        vararg expiration: GetExOption,
     ): CommandRequest
 }
