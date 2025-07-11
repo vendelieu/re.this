@@ -1,0 +1,21 @@
+package eu.vendeli.rethis.topology
+
+import eu.vendeli.rethis.ReThis
+import eu.vendeli.rethis.api.spec.common.types.CommandRequest
+import eu.vendeli.rethis.configuration.RetryConfiguration
+import eu.vendeli.rethis.providers.ConnectionProvider
+import eu.vendeli.rethis.types.common.Address
+
+internal class StandaloneTopologyManager(
+    node: Address,
+    client: ReThis,
+) : TopologyManager {
+    override val retryCfg: RetryConfiguration = client.cfg.retry
+    private val provider = client.connectionProviderFactory.create(node)
+
+    override suspend fun route(request: CommandRequest): ConnectionProvider = provider
+
+    override suspend fun handleFailure(exception: Throwable) {}
+
+    override fun close() = provider.close()
+}

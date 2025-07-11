@@ -31,12 +31,13 @@ fun FileSpec.Builder.addCommandFunctions(
                     val parameters = parameters.entries.joinToString(prefix = ", ") {
                         "${it.key} = ${it.key}"
                     }
+                    addImport("eu.vendeli.rethis.topology", "handle")
                     beginControlFlow("val request = if(cfg.withSlots)")
                     addStatement("$codecName.encodeWithSlot(charset = cfg.charset$parameters)")
                     nextControlFlow("else")
                     addStatement("$codecName.encode(charset = cfg.charset$parameters)")
                     endControlFlow()
-                    addStatement("return $codecName.decode(provider.execute(request), cfg.charset)")
+                    addStatement("return $codecName.decode(topology.handle(request), cfg.charset)")
                 }.build(),
             )
             .build(),

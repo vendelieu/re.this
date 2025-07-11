@@ -19,12 +19,10 @@ configureKotlin {
             implementation(libs.kotlinx.io.core)
             implementation(libs.serde.json.io)
             implementation(project(":api-spec-common"))
-            implementation("co.touchlab:stately-concurrent-collections:2.1.0")
 
             api(libs.ktor.network.tls)
             api(libs.bignum)
             api(libs.coroutines.core)
-            api(libs.kotlinx.datetime)
         }
 
         jvmTest.dependencies {

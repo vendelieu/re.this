@@ -97,8 +97,9 @@ internal fun TypeSpec.Builder.addDecodeFunction(
 
                         endControlFlow()
                     }
+
                     beginControlFlow("else ->")
-                    addImport("eu.vendeli.rethis.utils.tryInferCause")
+                    addImport("eu.vendeli.rethis.api.spec.common.utils.tryInferCause")
                     addStatement("val cause = input.tryInferCause(code)")
                     addStatement($$"throw UnexpectedResponseType(\"Expected $$respCode but got $code\", cause)")
                     endControlFlow()
@@ -132,7 +133,7 @@ internal fun CodeBlock.Builder.addCommandSpecCreation() {
     addStatement("")
     if (context.currentCommand.haveVaryingSize) {
         beginControlFlow("buffer = Buffer().apply")
-        addStatement("writeString(\"*\$size\")")
+        addStatement($$"writeString(\"*$size\")")
         addStatement("transferFrom(buffer)")
         endControlFlow()
     }

@@ -32,7 +32,6 @@ internal object RedisProcessor {
             cmd.reportError("No current command found in context")
             return
         }
-        if (cmd.name.startsWith("SENTINEL")) return
 
         validate(currentCmd)
         if (currentCmd.hasCustomEncoder) { // todo don't skip but substitute

@@ -1,4 +1,4 @@
-package eu.vendeli.rethis.utils
+package eu.vendeli.rethis.api.spec.common.utils
 
 import eu.vendeli.rethis.api.spec.common.types.*
 import io.ktor.utils.io.core.*
@@ -42,12 +42,12 @@ private fun String.tryInferSimpleError(): ReThisException? = when {
         RedirectMovedException(message = "MOVED redirection required", slot = slot, host = newHost, port = newPort)
     }
 
-    startsWith("CLUSTERDOWN") && this.contains("-UNBOUND") -> DownUnboundSlotException(
+    startsWith("CLUSTERDOWN") && contains("-UNBOUND") -> DownUnboundSlotException(
         "CLUSTERDOWN, unbound slot",
         this,
     )
 
-    startsWith("CLUSTERDOWN") && this.contains("-READONLY") -> DownReadOnlyStateException(
+    startsWith("CLUSTERDOWN") && contains("-READONLY") -> DownReadOnlyStateException(
         "CLUSTERDOWN, allow reads",
         this,
     )

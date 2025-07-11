@@ -1,6 +1,9 @@
 package eu.vendeli.rethis.utils
 
 import io.ktor.utils.io.core.*
+import kotlinx.io.Buffer
+
+val EMPTY_BUFFER = Buffer()
 
 const val CLIENT_NAME: String = "Re.This"
 const val DEFAULT_HOST: String = "127.0.0.1"

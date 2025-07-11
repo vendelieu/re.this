@@ -1,0 +1,449 @@
+{
+  "SENTINEL CONFIG GET": {
+    "summary": "Get the current value of a global Sentinel configuration parameter. The specified name may be a wildcard, similar to the Redis CONFIG GET command.",
+    "since": "6.2.0",
+    "group": "sentinel",
+    "complexity": "O(M) where M is the number of parameters matching the pattern.",
+    "acl_categories": [
+      "@admin",
+      "@slow"
+    ],
+    "arity": 4,
+    "arguments": [
+      {
+        "name": "pattern",
+        "type": "string",
+        "display_text": "name"
+      }
+    ],
+    "command_flags": [
+      "admin",
+      "noscript"
+    ]
+  },
+  "SENTINEL CONFIG SET": {
+    "summary": "Set the value of a global Sentinel configuration parameter.",
+    "since": "6.2.0",
+    "group": "sentinel",
+    "complexity": "O(1)",
+    "acl_categories": [
+      "@admin",
+      "@dangerous"
+    ],
+    "arity": 5,
+    "arguments": [
+      {
+        "name": "name",
+        "type": "string",
+        "display_text": "name"
+      },
+      {
+        "name": "value",
+        "type": "string",
+        "display_text": "value"
+      }
+    ],
+    "command_flags": [
+      "admin",
+      "noscript"
+    ]
+  },
+  "SENTINEL CKQUORUM": {
+    "summary": "Check if the current Sentinel configuration can reach the quorum needed to failover a master, and the majority needed to authorize the failover.",
+    "since": "2.8.0",
+    "group": "sentinel",
+    "complexity": "O(1)",
+    "acl_categories": [
+      "@admin",
+      "@slow"
+    ],
+    "arity": 3,
+    "arguments": [
+      {
+        "name": "master-name",
+        "type": "string",
+        "display_text": "master name"
+      }
+    ],
+    "command_flags": [
+      "admin",
+      "noscript"
+    ]
+  },
+  "SENTINEL FLUSHCONFIG": {
+    "summary": "Force Sentinel to rewrite its configuration on disk, including the current Sentinel state.",
+    "since": "2.8.0",
+    "group": "sentinel",
+    "complexity": "O(1)",
+    "acl_categories": [
+      "@admin",
+      "@dangerous"
+    ],
+    "arity": 2,
+    "command_flags": [
+      "admin",
+      "noscript"
+    ]
+  },
+  "SENTINEL FAILOVER": {
+    "summary": "Force a failover as if the master was not reachable, without asking for agreement from other Sentinels.",
+    "since": "2.8.0",
+    "group": "sentinel",
+    "complexity": "O(1)",
+    "acl_categories": [
+      "@admin",
+      "@dangerous"
+    ],
+    "arity": 3,
+    "arguments": [
+      {
+        "name": "master-name",
+        "type": "string",
+        "display_text": "master name"
+      }
+    ],
+    "command_flags": [
+      "admin",
+      "noscript"
+    ]
+  },
+  "SENTINEL GET-MASTER-ADDR-BY-NAME": {
+    "summary": "Return the IP and port number of the master with that name. If a failover is in progress or just completed, returns the address of the promoted replica.",
+    "since": "2.8.0",
+    "group": "sentinel",
+    "complexity": "O(1)",
+    "acl_categories": [
+      "@admin",
+      "@fast"
+    ],
+    "arity": 3,
+    "arguments": [
+      {
+        "name": "master-name",
+        "type": "string",
+        "display_text": "master name"
+      }
+    ],
+    "command_flags": [
+      "admin",
+      "noscript"
+    ]
+  },
+  "SENTINEL INFO-CACHE": {
+    "summary": "Return cached INFO output from masters and replicas.",
+    "since": "3.2.0",
+    "group": "sentinel",
+    "complexity": "O(N) where N is the number of monitored instances.",
+    "acl_categories": [
+      "@admin",
+      "@slow"
+    ],
+    "arity": 2,
+    "command_flags": [
+      "admin",
+      "noscript"
+    ]
+  },
+  "SENTINEL IS-MASTER-DOWN-BY-ADDR": {
+    "summary": "Check if the master specified by ip:port is down from the current Sentinel's point of view.",
+    "since": "2.8.0",
+    "group": "sentinel",
+    "complexity": "O(1)",
+    "acl_categories": [
+      "@admin",
+      "@dangerous"
+    ],
+    "arity": 4,
+    "arguments": [
+      {
+        "name": "ip",
+        "type": "string",
+        "display_text": "ip"
+      },
+      {
+        "name": "port",
+        "type": "integer",
+        "display_text": "port"
+      }
+    ],
+    "command_flags": [
+      "admin",
+      "noscript"
+    ]
+  },
+  "SENTINEL MASTER": {
+    "summary": "Show the state and info of the specified master.",
+    "since": "2.8.0",
+    "group": "sentinel",
+    "complexity": "O(1)",
+    "acl_categories": [
+      "@admin",
+      "@slow"
+    ],
+    "arity": 3,
+    "arguments": [
+      {
+        "name": "master-name",
+        "type": "string",
+        "display_text": "master name"
+      }
+    ],
+    "command_flags": [
+      "admin",
+      "noscript"
+    ]
+  },
+  "SENTINEL MASTERS": {
+    "summary": "Show a list of monitored masters and their state.",
+    "since": "2.8.0",
+    "group": "sentinel",
+    "complexity": "O(M) where M is the number of monitored masters.",
+    "acl_categories": [
+      "@admin",
+      "@slow"
+    ],
+    "arity": 2,
+    "command_flags": [
+      "admin",
+      "noscript"
+    ]
+  },
+  "SENTINEL MONITOR": {
+    "summary": "Start monitoring a new master.",
+    "since": "2.8.0",
+    "group": "sentinel",
+    "complexity": "O(1)",
+    "acl_categories": [
+      "@admin",
+      "@dangerous"
+    ],
+    "arity": 6,
+    "arguments": [
+      {
+        "name": "master-name",
+        "type": "string",
+        "display_text": "master name"
+      },
+      {
+        "name": "ip",
+        "type": "string",
+        "display_text": "ip"
+      },
+      {
+        "name": "port",
+        "type": "integer",
+        "display_text": "port"
+      },
+      {
+        "name": "quorum",
+        "type": "integer",
+        "display_text": "quorum"
+      }
+    ],
+    "command_flags": [
+      "admin",
+      "noscript"
+    ]
+  },
+  "SENTINEL MYID": {
+    "summary": "Return the ID of the current Sentinel instance.",
+    "since": "6.2.0",
+    "group": "sentinel",
+    "complexity": "O(1)",
+    "acl_categories": [
+      "@admin",
+      "@fast"
+    ],
+    "arity": 2,
+    "command_flags": [
+      "admin",
+      "noscript"
+    ]
+  },
+  "SENTINEL PENDING-SCRIPTS": {
+    "summary": "Return information about pending scripts.",
+    "since": "2.8.0",
+    "group": "sentinel",
+    "complexity": "O(N) where N is the number of pending scripts.",
+    "acl_categories": [
+      "@admin",
+      "@slow"
+    ],
+    "arity": 2,
+    "command_flags": [
+      "admin",
+      "noscript"
+    ]
+  },
+  "SENTINEL REMOVE": {
+    "summary": "Stop monitoring a master.",
+    "since": "2.8.0",
+    "group": "sentinel",
+    "complexity": "O(1)",
+    "acl_categories": [
+      "@admin",
+      "@dangerous"
+    ],
+    "arity": 3,
+    "arguments": [
+      {
+        "name": "master-name",
+        "type": "string",
+        "display_text": "master name"
+      }
+    ],
+    "command_flags": [
+      "admin",
+      "noscript"
+    ]
+  },
+  "SENTINEL REPLICAS": {
+    "summary": "Show a list of replicas for this master, and their state.",
+    "since": "5.0.0",
+    "group": "sentinel",
+    "complexity": "O(R) where R is the number of replicas for the master.",
+    "acl_categories": [
+      "@admin",
+      "@slow"
+    ],
+    "arity": 3,
+    "arguments": [
+      {
+        "name": "master-name",
+        "type": "string",
+        "display_text": "master name"
+      }
+    ],
+    "command_flags": [
+      "admin",
+      "noscript"
+    ]
+  },
+  "SENTINEL SENTINELS": {
+    "summary": "Show a list of Sentinel instances monitoring this master, and their state.",
+    "since": "2.8.0",
+    "group": "sentinel",
+    "complexity": "O(S) where S is the number of Sentinels for the master.",
+    "acl_categories": [
+      "@admin",
+      "@slow"
+    ],
+    "arity": 3,
+    "arguments": [
+      {
+        "name": "master-name",
+        "type": "string",
+        "display_text": "master name"
+      }
+    ],
+    "command_flags": [
+      "admin",
+      "noscript"
+    ]
+  },
+  "SENTINEL SET": {
+    "summary": "Set Sentinel's monitoring configuration for a master at runtime.",
+    "since": "2.8.0",
+    "group": "sentinel",
+    "complexity": "O(1)",
+    "acl_categories": [
+      "@admin",
+      "@dangerous"
+    ],
+    "arity": 5,
+    "arguments": [
+      {
+        "name": "name",
+        "type": "string",
+        "display_text": "master name"
+      },
+
+      {
+        "name": "option-value",
+        "type": "block",
+        "optional": true,
+        "multiple": true,
+        "arguments": [
+          {
+            "name": "field",
+            "type": "string",
+            "display_text": "option"
+          },
+          {
+            "name": "value",
+            "type": "string",
+            "display_text": "value"
+          }
+        ]
+      }
+    ],
+    "command_flags": [
+      "admin",
+      "noscript"
+    ]
+  },
+  "SENTINEL SIMULATE-FAILURE": {
+    "summary": "Simulate different Sentinel crash scenarios.",
+    "since": "3.2.0",
+    "group": "sentinel",
+    "complexity": "O(1)",
+    "acl_categories": [
+      "@admin",
+      "@dangerous"
+    ],
+    "arity": 3,
+    "arguments": [
+      {
+        "name": "type",
+        "type": "oneof",
+        "display_text": "scenario",
+        "arguments": [
+          {
+            "name": "crash-after-election",
+            "type": "pure-token",
+            "display_text": "crash-after-election",
+            "token": "crash-after-election"
+          },
+          {
+            "name": "crash-after-promotion",
+            "type": "pure-token",
+            "display_text": "crash-after-promotion",
+            "token": "crash-after-promotion"
+          },
+          {
+            "name": "help",
+            "type": "pure-token",
+            "display_text": "help",
+            "token": "help"
+          }
+        ]
+      }
+    ],
+    "command_flags": [
+      "admin",
+      "noscript"
+    ]
+  },
+  "SENTINEL RESET": {
+    "summary": "Reset all masters with names matching the given glob-style pattern, clearing their state and removing any discovered replicas and Sentinels.",
+    "since": "2.8.0",
+    "group": "sentinel",
+    "complexity": "O(M) where M is the number of masters matching the pattern.",
+    "acl_categories": [
+      "@admin",
+      "@dangerous"
+    ],
+    "arity": 3,
+    "arguments": [
+      {
+        "name": "pattern",
+        "type": "string",
+        "display_text": "pattern"
+      }
+    ],
+    "command_flags": [
+      "admin",
+      "noscript"
+    ]
+  }
+}

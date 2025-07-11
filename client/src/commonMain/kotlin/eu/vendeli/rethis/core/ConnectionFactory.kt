@@ -1,6 +1,5 @@
 package eu.vendeli.rethis.core
 
-import eu.vendeli.rethis.api.spec.common.request.connection.HelloAuth
 import eu.vendeli.rethis.configuration.ReThisConfiguration
 import eu.vendeli.rethis.types.common.RConnection
 import eu.vendeli.rethis.types.common.rConnection
@@ -10,7 +9,6 @@ import io.ktor.network.selector.*
 import io.ktor.network.sockets.*
 import io.ktor.network.tls.*
 import io.ktor.util.logging.*
-import io.ktor.utils.io.charsets.*
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -61,7 +59,6 @@ internal class ConnectionFactory(
     }
 
     suspend fun prepareConnection(conn: RConnection) {
-        // maybe give option to choose way of auth
 //        val helloBuffer = HelloCommandCodec.encode( // todo return
 //            Charsets.UTF_8,
 //            cfg.protocol.literal.toLong(),

@@ -1,6 +1,6 @@
-package eu.vendeli.rethis.api.spec.common.decoders
+package eu.vendeli.rethis.api.spec.common.decoders.aggregate
 
-import eu.vendeli.rethis.api.spec.common.types.RespCode
+import eu.vendeli.rethis.api.spec.common.decoders.ResponseDecoder
 import io.ktor.util.reflect.*
 import io.ktor.utils.io.charsets.*
 import io.ktor.utils.io.core.*

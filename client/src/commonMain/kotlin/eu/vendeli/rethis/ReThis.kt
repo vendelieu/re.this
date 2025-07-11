@@ -1,13 +1,14 @@
 package eu.vendeli.rethis
 
 import eu.vendeli.rethis.annotations.ReThisDSL
-import eu.vendeli.rethis.configuration.AuthConfiguration
-import eu.vendeli.rethis.configuration.ReThisConfiguration
-import eu.vendeli.rethis.configuration.StandaloneConfiguration
+import eu.vendeli.rethis.configuration.*
 import eu.vendeli.rethis.core.ActiveSubscriptions
 import eu.vendeli.rethis.core.ConnectionFactory
-import eu.vendeli.rethis.providers.ConnectionProvider
-import eu.vendeli.rethis.providers.StandaloneProvider
+import eu.vendeli.rethis.providers.DefaultConnectionProviderFactory
+import eu.vendeli.rethis.topology.ClusterTopologyManager
+import eu.vendeli.rethis.topology.SentinelTopologyManager
+import eu.vendeli.rethis.topology.StandaloneTopologyManager
+import eu.vendeli.rethis.topology.TopologyManager
 import eu.vendeli.rethis.types.common.Address
 import eu.vendeli.rethis.types.common.RespVer
 import eu.vendeli.rethis.types.common.UrlAddress
@@ -23,35 +24,28 @@ import kotlinx.coroutines.cancel
 @ReThisDSL
 class ReThis internal constructor(
     internal val cfg: ReThisConfiguration,
-    providerBlock: ReThis.() -> ConnectionProvider,
+    topologyBlock: ReThis.() -> TopologyManager,
 ) {
     internal val logger = KtorSimpleLogger("eu.vendeli.rethis.ReThis")
     internal val rootJob = SupervisorJob()
     internal val connectionFactory = ConnectionFactory(cfg, rootJob)
-    internal val provider = providerBlock(this)
+    internal val topology = topologyBlock()
+    internal val connectionProviderFactory = DefaultConnectionProviderFactory(this)
 
     private val scope = CoroutineScope(rootJob + cfg.dispatcher + CoroutineName(CLIENT_NAME))
 
     val subscriptions = ActiveSubscriptions()
 
-    suspend fun shutdownGracefully() {
-        logger.info("Shutting down gracefully")
-
-        subscriptions.unsubscribeAll()
-        provider.closeGracefully()
-        scope.cancel()
-    }
-
     fun shutdown() {
         logger.info("Shutting down")
 
         subscriptions.unsubscribeAll()
-        provider.close()
+        topology.close()
         scope.cancel()
     }
 
-    // todo pipeline
-    // todo transaction
+    // pipeline
+    // transaction
 
     companion object {
         fun standalone(
@@ -62,7 +56,30 @@ class ReThis internal constructor(
             val cfg = StandaloneConfiguration(protocol)
             cfg.configurator()
 
-            return ReThis(cfg) { StandaloneProvider(address.socket, this) }
+            return ReThis(cfg) { StandaloneTopologyManager(address, this) }
+        }
+
+        fun cluster(
+            initialNodes: List<Address>,
+            protocol: RespVer = RespVer.V2,
+            configurator: ClusterConfiguration.() -> Unit = {},
+        ): ReThis {
+            val cfg = ClusterConfiguration(protocol)
+            cfg.configurator()
+
+            return ReThis(cfg) { ClusterTopologyManager(initialNodes, this, cfg) }
+        }
+
+        fun sentinel(
+            masterName: String,
+            sentinelNodes: List<Address>,
+            protocol: RespVer = RespVer.V2,
+            configurator: SentinelConfiguration.() -> Unit = {},
+        ): ReThis {
+            val cfg = SentinelConfiguration(protocol)
+            cfg.configurator()
+
+            return ReThis(cfg) { SentinelTopologyManager(masterName, sentinelNodes, this, cfg) }
         }
     }
 }
@@ -90,5 +107,5 @@ fun ReThis(
 
     cfg.configurator()
 
-    return ReThis(cfg) { StandaloneProvider(addr.address.socket, this) }
+    return ReThis(cfg) { StandaloneTopologyManager(addr.address, this) }
 }

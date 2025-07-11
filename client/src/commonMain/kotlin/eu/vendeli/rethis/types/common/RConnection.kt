@@ -2,20 +2,16 @@ package eu.vendeli.rethis.types.common
 
 import io.ktor.network.sockets.*
 import io.ktor.utils.io.*
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
 import kotlinx.io.Buffer
 import kotlinx.io.InternalIoApi
 
-internal data class RConnection(
+data class RConnection(
     val socket: Socket,
     val input: ByteReadChannel,
     val output: ByteWriteChannel,
 ) {
-    private val state = Mutex()
-
     @OptIn(InternalAPI::class, InternalIoApi::class)
-    suspend fun doRequest(payload: Buffer): Buffer = state.withLock {
+    suspend fun doRequest(payload: Buffer): Buffer {
         output.runCatching {
             writeBuffer.transferFrom(payload)
             flush()
@@ -25,11 +21,11 @@ internal data class RConnection(
             throw it
         }
         input.awaitContent()
-        Buffer().apply { transferFrom(input.readBuffer) }
+        return Buffer().apply { transferFrom(input.readBuffer) }
     }
 
     @OptIn(InternalAPI::class, InternalIoApi::class)
-    suspend fun doRequest(payload: List<Buffer>): Buffer = state.withLock {
+    suspend fun doRequest(payload: List<Buffer>): Buffer {
         output.runCatching {
             payload.forEach { writeBuffer.transferFrom(it) }
             flush()
@@ -39,7 +35,7 @@ internal data class RConnection(
             throw it
         }
         input.awaitContent()
-        Buffer().apply { transferFrom(input.readBuffer) }
+        return Buffer().apply { transferFrom(input.readBuffer) }
     }
 }
 

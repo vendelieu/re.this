@@ -13,5 +13,5 @@ import eu.vendeli.rethis.api.spec.common.types.RespCode
     [RespCode.SIMPLE_STRING],
 )
 fun interface SentinelSimulateFailureCommand : RedisCommandSpec<Boolean> {
-    suspend fun encode(mode: SentinelSimulateFailureMode): CommandRequest
+    suspend fun encode(type: SentinelSimulateFailureMode): CommandRequest
 }

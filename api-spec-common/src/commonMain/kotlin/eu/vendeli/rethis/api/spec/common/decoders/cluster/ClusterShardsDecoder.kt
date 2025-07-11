@@ -1,25 +1,26 @@
-package eu.vendeli.rethis.api.spec.common.decoders
+package eu.vendeli.rethis.api.spec.common.decoders.cluster
 
+import eu.vendeli.rethis.api.spec.common.decoders.ResponseDecoder
 import eu.vendeli.rethis.api.spec.common.request.cluster.SlotRange
 import eu.vendeli.rethis.api.spec.common.response.cluster.Shard
 import eu.vendeli.rethis.api.spec.common.response.cluster.ShardNode
 import eu.vendeli.rethis.api.spec.common.types.RespCode
 import eu.vendeli.rethis.api.spec.common.types.ResponseParsingException
-import io.ktor.util.reflect.*
+import eu.vendeli.rethis.api.spec.common.utils.tryInferCause
 import io.ktor.utils.io.charsets.*
 import kotlinx.io.Buffer
 import kotlinx.io.readLine
 import kotlinx.io.readLineStrict
 
-object ClusterShardsDecoder : ResponseDecoder<List<Shard>>() {
+object ClusterShardsDecoder : ResponseDecoder<List<Shard>> {
     override suspend fun decode(
         input: Buffer,
         charset: Charset,
-        typeInfo: TypeInfo,
+        withCode: Boolean,
     ): List<Shard> {
-        val code = input.readByte()
-        if (code != RespCode.ARRAY.code) throw ResponseParsingException(
-            "Invalid response structure, expected array token, given $code",
+        val code = RespCode.fromCode(input.readByte())
+        if (code != RespCode.ARRAY) throw ResponseParsingException(
+            "Invalid response structure, expected array token, given $code", input.tryInferCause(code),
         )
 
         val size = input.readLineStrict().toInt()

@@ -1,13 +1,11 @@
 package eu.vendeli.rethis.core
 
-import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.configuration.ReThisConfiguration
 import eu.vendeli.rethis.types.common.RConnection
 import eu.vendeli.rethis.utils.CLIENT_NAME
 import eu.vendeli.rethis.utils.IO_OR_UNCONFINED
 import io.ktor.network.sockets.*
 import io.ktor.util.logging.*
-import io.ktor.utils.io.charsets.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.onFailure
@@ -24,20 +22,21 @@ import kotlin.math.roundToInt
 @OptIn(ExperimentalAtomicApi::class)
 internal class ConnectionPool(
     private val address: SocketAddress,
-    private val client: ReThis,
+    private val cfg: ReThisConfiguration,
+    private val connectionFactory: ConnectionFactory,
+    rootJob: Job,
 ) {
-    private val cfg: ReThisConfiguration = client.cfg
     private val name = "$CLIENT_NAME|${cfg::class.simpleName}Pool@${this::class.hashCode()}"
     private val logger = KtorSimpleLogger(name) // TODO give option to change logger
     private val scope = CoroutineScope(
-        Dispatchers.IO_OR_UNCONFINED + CoroutineName(name) + Job(client.rootJob)
+        Dispatchers.IO_OR_UNCONFINED + CoroutineName(name) + Job(rootJob),
     )
     private val idleConnectionsCount = AtomicInt(0)
     private val borrowCount = AtomicInt(0)
 
     private val idleConnections = Channel<RConnection>(
         cfg.pool.maxIdleConnections.coerceAtMost(cfg.maxConnections),
-    ) { client.connectionFactory.dispose(it) }
+    ) { connectionFactory.dispose(it) }
     private val pending = Channel<CompletableDeferred<RConnection>>(cfg.pool.maxPendingConnections) {
         it.completeExceptionally(IllegalStateException("Pool is closed"))
     }
@@ -51,11 +50,11 @@ internal class ConnectionPool(
 
     private fun populatePool() = scope.launch {
         repeat(cfg.pool.minIdleConnections) {
-            val conn = client.connectionFactory.createConnOrNull(address) ?: return@repeat
+            val conn = connectionFactory.createConnOrNull(address) ?: return@repeat
             idleConnections.trySend(conn).onSuccess {
                 idleConnectionsCount.incrementAndFetch()
             }.onFailure {
-                client.connectionFactory.dispose(conn)
+                connectionFactory.dispose(conn)
             }
         }
     }
@@ -71,7 +70,7 @@ internal class ConnectionPool(
         }
 
         // medium path
-        val conn = client.connectionFactory.createConnOrNull(address)
+        val conn = connectionFactory.createConnOrNull(address)
         if (conn != null) {
             return@aq conn
         }
@@ -110,7 +109,7 @@ internal class ConnectionPool(
 
         while (true) {
             val element = idleConnections.tryReceive().getOrNull() ?: break
-            client.connectionFactory.dispose(element)
+            connectionFactory.dispose(element)
         }
     }
 
@@ -137,8 +136,8 @@ internal class ConnectionPool(
     }
 
     private suspend fun expandPool(by: Int) {
-        if (!client.connectionFactory.isReachedLimit()) repeat(by) {
-            val conn = client.connectionFactory.createConnOrNull(address) ?: return
+        if (!connectionFactory.isReachedLimit()) repeat(by) {
+            val conn = connectionFactory.createConnOrNull(address) ?: return
             pending.tryReceive().onSuccess {
                 it.complete(conn)
                 return
@@ -157,7 +156,7 @@ internal class ConnectionPool(
         val toDrop = min((excess * cfg.pool.shrinkRatio).roundToInt(), cfg.pool.maxShrinkSize)
         repeat(toDrop) {
             idleConnections.tryReceive().getOrNull()?.let { conn ->
-                client.connectionFactory.dispose(conn)
+                connectionFactory.dispose(conn)
                 idleConnectionsCount.decrementAndFetch()
             }
         }
@@ -167,7 +166,7 @@ internal class ConnectionPool(
         idleConnections.trySend(this).onSuccess {
             idleConnectionsCount.incrementAndFetch()
         }.onFailure {
-            client.connectionFactory.dispose(this)
+            connectionFactory.dispose(this)
         }
     }
 

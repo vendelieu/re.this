@@ -1,6 +1,8 @@
 package eu.vendeli.rethis.configuration
 
 import eu.vendeli.rethis.annotations.ConfigurationDSL
+import eu.vendeli.rethis.types.common.ReadFrom
+import eu.vendeli.rethis.types.common.ReadFromStrategy
 import eu.vendeli.rethis.types.common.RespVer
 import io.ktor.network.tls.*
 import io.ktor.utils.io.charsets.*
@@ -16,7 +18,11 @@ sealed class ReThisConfiguration(internal val protocol: RespVer) {
     internal var socket: SocketConfiguration = SocketConfiguration()
     internal var pool: PoolConfiguration = PoolConfiguration()
     internal var retry: RetryConfiguration = RetryConfiguration()
+
     internal open val withSlots = false
+
+    var usePooling = true
+    var readFromStrategy: ReadFromStrategy = TODO() // use default MASTER
 
     var db: Int? = null
     var charset: Charset = Charsets.UTF_8

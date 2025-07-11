@@ -4,9 +4,9 @@ import eu.vendeli.rethis.api.spec.common.types.RespCode
 import eu.vendeli.rethis.api.spec.common.types.TimeUnit
 import io.ktor.utils.io.charsets.*
 import io.ktor.utils.io.core.*
-import kotlinx.datetime.Instant
 import kotlinx.io.Buffer
 import kotlin.time.Duration
+import kotlin.time.Instant
 
 private fun Buffer.appendEOL() {
     writeFully(EOL)

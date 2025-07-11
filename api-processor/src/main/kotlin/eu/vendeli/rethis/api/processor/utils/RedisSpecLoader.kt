@@ -5,7 +5,9 @@ import eu.vendeli.rethis.api.processor.context.SpecResponses
 import eu.vendeli.rethis.api.processor.core.RedisCommandProcessor.Companion.context
 import eu.vendeli.rethis.api.processor.types.RedisCommandApiSpec
 import eu.vendeli.rethis.api.spec.common.types.RespCode
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.decodeFromStream
 import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
@@ -43,10 +45,14 @@ internal object RedisSpecLoader {
         throw RuntimeException("Failed to load Redis response specs: ${it.message}", it)
     }
 
+    @OptIn(ExperimentalSerializationApi::class)
     private fun enrichContextWithCommands() = runCatching {
         val commands = loadCommands().apply {
             putAll(loadCommands("commands_redisjson.json"))
         }
+
+        val sentinelRes = javaClass.classLoader.getResourceAsStream("sentinel_spec.json")!!
+        commands.putAll(json.decodeFromStream<MutableMap<String, RedisCommandApiSpec>>(sentinelRes))
 
         context += RSpecRaw(commands)
     }.getOrElse {
