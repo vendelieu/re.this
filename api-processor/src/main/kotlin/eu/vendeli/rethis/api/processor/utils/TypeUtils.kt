@@ -8,7 +8,7 @@ import com.squareup.kotlinpoet.asClassName
 import eu.vendeli.rethis.api.processor.types.CommandArgument
 import eu.vendeli.rethis.api.spec.common.annotations.RedisOption
 import eu.vendeli.rethis.api.spec.common.decoders.aggregate.*
-import eu.vendeli.rethis.api.spec.common.decoders.common.*
+import eu.vendeli.rethis.api.spec.common.decoders.general.*
 import eu.vendeli.rethis.api.spec.common.types.CommandRequest
 import eu.vendeli.rethis.api.spec.common.types.RType
 import eu.vendeli.rethis.api.spec.common.types.RespCode

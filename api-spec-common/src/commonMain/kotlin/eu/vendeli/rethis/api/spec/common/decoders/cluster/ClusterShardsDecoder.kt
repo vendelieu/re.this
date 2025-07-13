@@ -1,5 +1,6 @@
 package eu.vendeli.rethis.api.spec.common.decoders.cluster
 
+import eu.vendeli.rethis.api.spec.common.annotations.RedisMeta
 import eu.vendeli.rethis.api.spec.common.decoders.ResponseDecoder
 import eu.vendeli.rethis.api.spec.common.request.cluster.SlotRange
 import eu.vendeli.rethis.api.spec.common.response.cluster.Shard

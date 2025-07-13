@@ -1,5 +1,6 @@
-package eu.vendeli.rethis.api.spec.common.decoders.common
+package eu.vendeli.rethis.api.spec.common.decoders.general
 
+import eu.vendeli.rethis.api.spec.common.annotations.RedisMeta
 import eu.vendeli.rethis.api.spec.common.decoders.ResponseDecoder
 import eu.vendeli.rethis.api.spec.common.types.RespCode
 import eu.vendeli.rethis.api.spec.common.types.ResponseParsingException
@@ -9,12 +10,13 @@ import kotlinx.io.Buffer
 import kotlinx.io.readLine
 import kotlinx.io.readLineStrict
 
-object BulkStringDecoder : ResponseDecoder<String> {
+
+object VerbatimStringDecoder : ResponseDecoder<String> {
     override suspend fun decode(input: Buffer, charset: Charset, withCode: Boolean): String {
         if (withCode) {
             val code = RespCode.fromCode(input.readByte())
-            if (code != RespCode.BULK) throw ResponseParsingException(
-                "Invalid response structure, expected bulk string token, given $code",
+            if (code != RespCode.VERBATIM_STRING) throw ResponseParsingException(
+                "Invalid response structure, expected verbatim string token, given $code",
                 input.tryInferCause(code),
             )
         }
@@ -28,8 +30,8 @@ object BulkStringDecoder : ResponseDecoder<String> {
     suspend fun decodeNullable(input: Buffer, charset: Charset, withCode: Boolean = true): String? {
         if (withCode) {
             val code = RespCode.fromCode(input.readByte())
-            if (code != RespCode.BULK) throw ResponseParsingException(
-                "Invalid response structure, expected bulk string token, given $code",
+            if (code != RespCode.VERBATIM_STRING) throw ResponseParsingException(
+                "Invalid response structure, expected verbatim string token, given $code",
                 input.tryInferCause(code),
             )
         }

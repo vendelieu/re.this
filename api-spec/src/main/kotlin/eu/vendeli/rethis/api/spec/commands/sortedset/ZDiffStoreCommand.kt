@@ -13,4 +13,4 @@ fun interface ZDiffStoreCommand : RedisCommandSpec<Long> {
         destination: String,
         @RedisMeta.WithSizeParam("numkeys") vararg key: String
     ): CommandRequest
-} // todo add numkeys parameter encoding
+}

@@ -1,12 +1,18 @@
 package eu.vendeli.rethis.api.spec.common.utils
 
-import eu.vendeli.rethis.api.spec.common.decoders.common.BulkStringDecoder
-import eu.vendeli.rethis.api.spec.common.decoders.common.VerbatimStringDecoder
+import eu.vendeli.rethis.api.spec.common.decoders.general.BulkStringDecoder
+import eu.vendeli.rethis.api.spec.common.decoders.general.VerbatimStringDecoder
 import eu.vendeli.rethis.api.spec.common.types.RespCode
 import eu.vendeli.rethis.api.spec.common.types.ResponseParsingException
 import io.ktor.utils.io.charsets.*
 import kotlinx.io.Buffer
 import kotlin.jvm.JvmName
+
+@Suppress("UNCHECKED_CAST")
+internal inline fun <reified R> Any?.safeCast(): R? = this as? R
+
+@Suppress("UNCHECKED_CAST")
+internal inline fun <reified R> Any?.cast(): R = this as R
 
 internal suspend inline fun MutableCollection<String>.parseStrings(size: Int, input: Buffer, charset: Charset) {
     repeat(size) {
