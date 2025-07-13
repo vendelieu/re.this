@@ -15,10 +15,29 @@ object ArrayStringDecoder : ResponseDecoder<List<String>> {
         charset: Charset,
         withCode: Boolean,
     ): List<String> {
-        val code = RespCode.fromCode(input.readByte())
-        if (code != RespCode.ARRAY) throw ResponseParsingException(
-            "Invalid response structure, expected array token, given $code", input.tryInferCause(code),
-        )
+        if (withCode) {
+            val code = RespCode.fromCode(input.readByte())
+            if (code != RespCode.ARRAY) throw ResponseParsingException(
+                "Invalid response structure, expected array token, given $code", input.tryInferCause(code),
+            )
+        }
+        val size = input.readLineStrict().toInt()
+        if (size == 0) return emptyList()
+
+        return buildList { parseStrings(size, input, charset) }
+    }
+
+    suspend fun decodeNullable(
+        input: Buffer,
+        charset: Charset,
+        withCode: Boolean = true,
+    ): List<String?> {
+        if (withCode) {
+            val code = RespCode.fromCode(input.readByte())
+            if (code != RespCode.ARRAY) throw ResponseParsingException(
+                "Invalid response structure, expected array token, given $code", input.tryInferCause(code),
+            )
+        }
         val size = input.readLineStrict().toInt()
         if (size == 0) return emptyList()
 

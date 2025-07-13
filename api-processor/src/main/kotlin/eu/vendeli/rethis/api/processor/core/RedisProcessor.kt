@@ -1,10 +1,6 @@
 package eu.vendeli.rethis.api.processor.core
 
-import com.squareup.kotlinpoet.BOOLEAN
-import com.squareup.kotlinpoet.FileSpec
-import com.squareup.kotlinpoet.KModifier
-import com.squareup.kotlinpoet.PropertySpec
-import com.squareup.kotlinpoet.TypeSpec
+import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ksp.toTypeName
 import eu.vendeli.rethis.api.processor.context.CodecFileSpec
 import eu.vendeli.rethis.api.processor.context.CodecObjectTypeSpec
@@ -12,7 +8,6 @@ import eu.vendeli.rethis.api.processor.context.CurrentCommand
 import eu.vendeli.rethis.api.processor.core.RedisCommandProcessor.Companion.context
 import eu.vendeli.rethis.api.processor.types.RCommandData
 import eu.vendeli.rethis.api.processor.utils.*
-import io.ktor.util.reflect.TypeInfo
 import kotlinx.io.Buffer
 import java.io.File
 
@@ -132,11 +127,6 @@ internal object RedisProcessor {
         )
 
         context.typeSpec
-            .addProperty( // todo remove completely if still not used
-                PropertySpec.builder("TYPE_INFO", TypeInfo::class, KModifier.PRIVATE)
-                    .initializer("typeInfo<%T>()", context.currentCommand.type)
-                    .build(),
-            )
             .addProperty(
                 PropertySpec.builder("BLOCKING_STATUS", BOOLEAN, KModifier.PRIVATE, KModifier.CONST)
                     .initializer("%L", context.currentCommand.command.isBlocking)

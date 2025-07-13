@@ -4,7 +4,6 @@ import eu.vendeli.rethis.api.spec.common.decoders.ResponseDecoder
 import eu.vendeli.rethis.api.spec.common.types.RespCode
 import eu.vendeli.rethis.api.spec.common.types.ResponseParsingException
 import eu.vendeli.rethis.api.spec.common.utils.tryInferCause
-import io.ktor.util.reflect.*
 import io.ktor.utils.io.charsets.*
 import kotlinx.io.Buffer
 import kotlinx.io.readLine
@@ -19,7 +18,23 @@ object BulkStringDecoder : ResponseDecoder<String> {
                 input.tryInferCause(code),
             )
         }
-        input.readLine() // skip size
+        if (input.readLineStrict().toInt() < 0) throw ResponseParsingException(
+            "Invalid response structure, expected string token got null",
+        )
+
         return input.readLineStrict()
+    }
+
+    suspend fun decodeNullable(input: Buffer, charset: Charset, withCode: Boolean = true): String? {
+        if (withCode) {
+            val code = RespCode.fromCode(input.readByte())
+            if (code != RespCode.BULK) throw ResponseParsingException(
+                "Invalid response structure, expected bulk string token, given $code",
+                input.tryInferCause(code),
+            )
+        }
+        if (input.readLineStrict().toInt() < 0) return null
+
+        return input.readLine()
     }
 }

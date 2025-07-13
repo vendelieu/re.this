@@ -9,11 +9,7 @@ import com.squareup.kotlinpoet.TypeSpec
 import com.squareup.kotlinpoet.ksp.toTypeName
 import eu.vendeli.rethis.api.processor.core.RedisCommandProcessor.Companion.context
 import eu.vendeli.rethis.api.processor.types.*
-import eu.vendeli.rethis.api.processor.utils.enrichedTree
-import eu.vendeli.rethis.api.processor.utils.getCustom
-import eu.vendeli.rethis.api.processor.utils.hasCustomDecoder
-import eu.vendeli.rethis.api.processor.utils.hasCustomEncoder
-import eu.vendeli.rethis.api.processor.utils.safeCast
+import eu.vendeli.rethis.api.processor.utils.*
 import eu.vendeli.rethis.api.spec.common.types.RespCode
 
 internal interface ContextElement {
@@ -112,6 +108,11 @@ internal class CurrentCommand(val command: RCommandData, val klass: KSClassDecla
 
     val specType = klass.superTypes.first().resolve().arguments.first() // RedisCommandSpec<T>
     val type = specType.toTypeName()
+    val arguments = specType.type?.resolve()?.let { t ->
+        t.takeIf {
+            it.arguments.isNotEmpty()
+        }?.arguments?.map { it.type?.resolve() } ?: listOf(t)
+    }?.filterNotNull()?.toTypedArray()!!
 
     val haveVaryingSize by lazy {
         context.enrichedTree.children.any { ch ->

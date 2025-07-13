@@ -3,6 +3,7 @@ package eu.vendeli.rethis.api.spec.commands.list
 import eu.vendeli.rethis.api.spec.common.annotations.RedisCommand
 import eu.vendeli.rethis.api.spec.common.annotations.RedisMeta
 import eu.vendeli.rethis.api.spec.common.annotations.RedisOption
+import eu.vendeli.rethis.api.spec.common.decoders.ResponseDecoder
 import eu.vendeli.rethis.api.spec.common.response.MPopResult
 import eu.vendeli.rethis.api.spec.common.response.MoveDirection
 import eu.vendeli.rethis.api.spec.common.types.CommandRequest
@@ -16,6 +17,7 @@ import eu.vendeli.rethis.api.spec.common.types.RespCode
     [RespCode.ARRAY, RespCode.NULL],
     isBlocking = true,
 )
+@RedisMeta.CustomCodec(decoder = ResponseDecoder::class) // todo add
 fun interface BlmPopCommand : RedisCommandSpec<List<MPopResult>> {
     suspend fun encode(
         timeout: Double,

@@ -3,7 +3,7 @@ package eu.vendeli.rethis.api.spec.common.request.stream
 import eu.vendeli.rethis.api.spec.common.annotations.RedisMeta
 import eu.vendeli.rethis.api.spec.common.annotations.RedisOption
 import eu.vendeli.rethis.api.spec.common.types.TimeUnit
-import kotlinx.datetime.Instant
+import kotlin.time.Instant
 
 sealed class XClaimOption {
     @RedisOption.Token("IDLE")

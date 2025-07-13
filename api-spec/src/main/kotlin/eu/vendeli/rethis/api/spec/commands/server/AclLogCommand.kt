@@ -1,7 +1,9 @@
 package eu.vendeli.rethis.api.spec.commands.server
 
 import eu.vendeli.rethis.api.spec.common.annotations.RedisCommand
+import eu.vendeli.rethis.api.spec.common.annotations.RedisMeta
 import eu.vendeli.rethis.api.spec.common.annotations.RedisOption
+import eu.vendeli.rethis.api.spec.common.decoders.ResponseDecoder
 import eu.vendeli.rethis.api.spec.common.types.CommandRequest
 import eu.vendeli.rethis.api.spec.common.types.RedisCommandSpec
 import eu.vendeli.rethis.api.spec.common.types.RedisOperation
@@ -12,6 +14,7 @@ import eu.vendeli.rethis.api.spec.common.types.RespCode
     RedisOperation.READ,
     [RespCode.SIMPLE_STRING, RespCode.ARRAY],
 ) // todo handle string ok as empty list
+@RedisMeta.CustomCodec(decoder = ResponseDecoder::class) // todo add
 fun interface AclLogCommand : RedisCommandSpec<List<String>> {
     suspend fun encode(
         count: Long?,

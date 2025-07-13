@@ -6,7 +6,7 @@ import eu.vendeli.rethis.api.spec.common.request.connection.HelloAuth
 import eu.vendeli.rethis.api.spec.common.types.*
 
 @RedisCommand("HELLO", RedisOperation.READ, [RespCode.MAP, RespCode.SIMPLE_ERROR])
-fun interface HelloCommand : RedisCommandSpec<Map<String, RType?>> {
+fun interface HelloCommand : RedisCommandSpec<Map<String, RType>> {
     suspend fun encode(
         protover: Long?,
         auth: HelloAuth?,

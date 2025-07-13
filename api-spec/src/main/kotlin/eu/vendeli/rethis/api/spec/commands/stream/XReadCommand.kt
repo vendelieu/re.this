@@ -10,7 +10,7 @@ import eu.vendeli.rethis.api.spec.common.types.*
     [RespCode.ARRAY, RespCode.MAP, RespCode.NULL],
     isBlocking = true,
 )
-fun interface XReadCommand : RedisCommandSpec<Map<String, RType?>> {
+fun interface XReadCommand : RedisCommandSpec<Map<String, RType>> {
     suspend fun encode(
         @RedisOption.Token("STREAMS") key: List<String>,
         id: List<String>,

@@ -4,7 +4,10 @@ import eu.vendeli.rethis.api.spec.common.annotations.RedisCommand
 import eu.vendeli.rethis.api.spec.common.annotations.RedisMeta
 import eu.vendeli.rethis.api.spec.common.decoders.cluster.ClusterSlotsDecoder
 import eu.vendeli.rethis.api.spec.common.response.cluster.Cluster
-import eu.vendeli.rethis.api.spec.common.types.*
+import eu.vendeli.rethis.api.spec.common.types.CommandRequest
+import eu.vendeli.rethis.api.spec.common.types.RedisCommandSpec
+import eu.vendeli.rethis.api.spec.common.types.RedisOperation
+import eu.vendeli.rethis.api.spec.common.types.RespCode
 
 @RedisCommand("CLUSTER SLOTS", RedisOperation.READ, [RespCode.ARRAY])
 @RedisMeta.CustomCodec(decoder = ClusterSlotsDecoder::class)

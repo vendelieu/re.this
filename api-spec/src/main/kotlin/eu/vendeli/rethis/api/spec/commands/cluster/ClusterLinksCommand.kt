@@ -4,6 +4,6 @@ import eu.vendeli.rethis.api.spec.common.annotations.RedisCommand
 import eu.vendeli.rethis.api.spec.common.types.*
 
 @RedisCommand("CLUSTER LINKS", RedisOperation.READ, [RespCode.ARRAY])
-fun interface ClusterLinksCommand : RedisCommandSpec<List<Map<String, RType>>> {
+fun interface ClusterLinksCommand : RedisCommandSpec<List<RType>> {
     suspend fun encode(): CommandRequest
 }

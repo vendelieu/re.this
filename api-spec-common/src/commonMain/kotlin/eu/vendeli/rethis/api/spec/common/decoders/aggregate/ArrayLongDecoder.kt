@@ -15,15 +15,46 @@ object ArrayLongDecoder : ResponseDecoder<List<Long>> {
         charset: Charset,
         withCode: Boolean,
     ): List<Long> {
-        val code = RespCode.fromCode(input.readByte())
-        if (code != RespCode.ARRAY) throw ResponseParsingException(
-            "Invalid response structure, expected array token, given $code", input.tryInferCause(code),
-        )
+        if (withCode) {
+            val code = RespCode.fromCode(input.readByte())
+            if (code != RespCode.ARRAY) throw ResponseParsingException(
+                "Invalid response structure, expected array token, given $code", input.tryInferCause(code),
+            )
+        }
         val size = input.readLineStrict().toInt()
         if (size == 0) return emptyList()
 
         return buildList {
             repeat(size) { add(IntegerDecoder.decode(input, charset)) }
+        }
+    }
+
+    suspend fun decodeNullable(
+        input: Buffer,
+        charset: Charset,
+        withCode: Boolean = true,
+    ): List<Long?> {
+        if (withCode) {
+            val code = RespCode.fromCode(input.readByte())
+            if (code != RespCode.ARRAY) throw ResponseParsingException(
+                "Invalid response structure, expected array token, given $code", input.tryInferCause(code),
+            )
+        }
+        val size = input.readLineStrict().toInt()
+        if (size == 0) return emptyList()
+
+        return buildList {
+            val code = RespCode.fromCode(input.readByte())
+            when (code) {
+                RespCode.NULL -> add(null)
+
+                RespCode.INTEGER -> add(IntegerDecoder.decode(input, charset))
+
+                else -> throw ResponseParsingException(
+                    "Invalid response structure, expected string token, given $code",
+                    input.tryInferCause(code),
+                )
+            }
         }
     }
 }

@@ -13,7 +13,7 @@ import eu.vendeli.rethis.api.spec.common.types.*
     [RespCode.ARRAY, RespCode.MAP, RespCode.NULL],
     isBlocking = true,
 )
-fun interface XReadGroupCommand : RedisCommandSpec<Map<String, RType?>> {
+fun interface XReadGroupCommand : RedisCommandSpec<Map<String, RType>> {
     suspend fun encode(
         @RedisOption.Token("GROUP") group: String,
         consumer: String,

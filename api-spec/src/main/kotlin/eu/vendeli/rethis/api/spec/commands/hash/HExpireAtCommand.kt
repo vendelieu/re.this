@@ -7,7 +7,7 @@ import eu.vendeli.rethis.api.spec.common.types.CommandRequest
 import eu.vendeli.rethis.api.spec.common.types.RedisCommandSpec
 import eu.vendeli.rethis.api.spec.common.types.RedisOperation
 import eu.vendeli.rethis.api.spec.common.types.RespCode
-import kotlinx.datetime.Instant
+import kotlin.time.Instant
 
 @RedisCommand(
     "HEXPIREAT",

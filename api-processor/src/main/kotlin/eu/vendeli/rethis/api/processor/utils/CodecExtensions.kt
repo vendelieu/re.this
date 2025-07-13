@@ -2,14 +2,16 @@ package eu.vendeli.rethis.api.processor.utils
 
 import com.google.devtools.ksp.symbol.KSTypeArgument
 import com.google.devtools.ksp.symbol.KSValueParameter
-import com.squareup.kotlinpoet.*
+import com.squareup.kotlinpoet.CodeBlock
+import com.squareup.kotlinpoet.FunSpec
+import com.squareup.kotlinpoet.KModifier
+import com.squareup.kotlinpoet.TypeSpec
 import com.squareup.kotlinpoet.ksp.toTypeName
 import eu.vendeli.rethis.api.processor.core.RedisCommandProcessor.Companion.context
+import eu.vendeli.rethis.api.spec.common.decoders.ResponseDecoder
 import eu.vendeli.rethis.api.spec.common.types.RedisOperation
 import eu.vendeli.rethis.api.spec.common.types.RespCode
 import kotlinx.io.Buffer
-
-private fun RespCode.isString() = this == RespCode.SIMPLE_STRING || this == RespCode.BULK
 
 internal fun TypeSpec.Builder.addDecodeFunction(
     respCode: Set<RespCode>,
@@ -30,8 +32,12 @@ internal fun TypeSpec.Builder.addDecodeFunction(
             .returns(type.copy(isNullableResponse))
             .addCode(
                 CodeBlock.builder().apply {
+                    if (customDecoder.qualifiedName == ResponseDecoder::class.qualifiedName) {
+                        addStatement("return TODO()")
+                        return@apply
+                    }
                     addImport(customDecoder.qualifiedName!!)
-                    addStatement("return %L.decode(input, charset, TYPE_INFO)", customDecoder.simpleName)
+                    addStatement("return %L.decode(input, charset)", customDecoder.simpleName)
                 }.build(),
             )
             .build().also {
@@ -39,11 +45,6 @@ internal fun TypeSpec.Builder.addDecodeFunction(
             }
         return this
     }
-
-    val isReturnBool = type.copy(true) == BOOLEAN.copy(true)
-    val isReturnDouble = type.copy(true) == DOUBLE.copy(true)
-
-    val isImplicitMapResponse = RespCode.MAP in respCode && RespCode.ARRAY in respCode
 
     addImport(
         "eu.vendeli.rethis.api.spec.common.types.RespCode",
@@ -59,49 +60,12 @@ internal fun TypeSpec.Builder.addDecodeFunction(
             .addCode(
                 CodeBlock.builder().apply {
                     addStatement("val code = RespCode.fromCode(input.readByte())")
+
                     beginControlFlow("return when(code)")
-                    respCode.forEach { code ->
-                        val arguments = specType.type?.resolve()?.let { t ->
-                            t.takeIf {
-                                it.arguments.isNotEmpty()
-                            }?.arguments?.map { it.type?.resolve() } ?: listOf(t)
-                        }?.filterNotNull()?.toTypedArray()!!
-                        val tailStatement = when {
-                            code.isString() && isReturnBool -> " == \"OK\""
-                            code == RespCode.INTEGER && isReturnBool -> " == 1L"
-                            code.isString() && isReturnDouble -> ".toDouble()"
-                            else -> ""
-                        }
-
-                        beginControlFlow("RespCode.%L ->", code)
-
-                        when {
-                            isImplicitMapResponse && code == RespCode.ARRAY -> {
-                                addImport("eu.vendeli.rethis.api.spec.common.decoders.ArrayMapDecoder")
-                                addStatement("ArrayMapDecoder.decode<%s, %s>(input, charset, TYPE_INFO)".format(*arguments))
-                            }
-
-                            RespCode.SET in respCode && code == RespCode.ARRAY -> {
-                                addImport("eu.vendeli.rethis.api.spec.common.decoders.SetDecoder")
-                                addStatement("SetDecoder.decode<%s>(input, charset, TYPE_INFO)".format(*arguments))
-                            }
-
-                            else -> {
-                                val decoder = decodersMap[code]!!
-                                decoder.first?.let {
-                                    addImport("eu.vendeli.rethis.api.spec.common.decoders.$it")
-                                }
-                                addStatement(decoder.second.format(*arguments) + tailStatement)
-                            }
-                        }
-
-                        endControlFlow()
-                    }
-
+                    respCode.forEach { writeDecoder(it) }
                     beginControlFlow("else ->")
                     addImport("eu.vendeli.rethis.api.spec.common.utils.tryInferCause")
-                    addStatement("val cause = input.tryInferCause(code)")
-                    addStatement($$"throw UnexpectedResponseType(\"Expected $$respCode but got $code\", cause)")
+                    addStatement($$"throw UnexpectedResponseType(\"Expected $$respCode but got $code\", input.tryInferCause(code))")
                     endControlFlow()
 
                     endControlFlow()
@@ -138,7 +102,7 @@ internal fun CodeBlock.Builder.addCommandSpecCreation() {
         endControlFlow()
     }
     addStatement(
-        "return CommandRequest(buffer, %T.%L, TYPE_INFO, BLOCKING_STATUS)",
+        "return CommandRequest(buffer, %T.%L, BLOCKING_STATUS)",
         RedisOperation::class,
         context.currentCommand.command.operation.name,
     )

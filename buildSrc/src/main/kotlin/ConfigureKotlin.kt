@@ -15,6 +15,7 @@ fun Project.configureKotlin(block: KotlinMultiplatformExtension.() -> Unit) {
             freeCompilerArgs.addAll(
                 "-Xwarning-level=CAN_BE_VAL:disabled",
                 "-Xwarning-level=NOTHING_TO_INLINE:disabled",
+                "-Xwarning-level=REDUNDANT_VISIBILITY_MODIFIER:disabled",
                 "-opt-in=eu.vendeli.rethis.annotations.ReThisInternal",
                 "-Xannotation-default-target=param-property",
                 "-opt-in=kotlin.time.ExperimentalTime",

@@ -18,7 +18,23 @@ object VerbatimStringDecoder : ResponseDecoder<String> {
                 input.tryInferCause(code),
             )
         }
-        input.readLine() // skip size
+        if (input.readLineStrict().toInt() < 0) throw ResponseParsingException(
+            "Invalid response structure, expected string token got null",
+        )
+
         return input.readLineStrict()
+    }
+
+    suspend fun decodeNullable(input: Buffer, charset: Charset, withCode: Boolean = true): String? {
+        if (withCode) {
+            val code = RespCode.fromCode(input.readByte())
+            if (code != RespCode.VERBATIM_STRING) throw ResponseParsingException(
+                "Invalid response structure, expected verbatim string token, given $code",
+                input.tryInferCause(code),
+            )
+        }
+        if (input.readLineStrict().toInt() < 0) return null
+
+        return input.readLine()
     }
 }

@@ -12,7 +12,6 @@ repositories {
 
 dependencies {
     compileOnly(project(":api-spec-common"))
-    compileOnly(libs.kotlinx.datetime)
     ksp(project(":api-processor"))
 }
 
