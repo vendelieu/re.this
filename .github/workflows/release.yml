@@ -80,7 +80,7 @@ jobs:
           include: "**README.md"
 
       - name: Push changes
-        uses: stefanzweifel/git-auto-commit-action@v5
+        uses: stefanzweifel/git-auto-commit-action@v6
         with:
           commit_message: Bump library version.
           branch: master
