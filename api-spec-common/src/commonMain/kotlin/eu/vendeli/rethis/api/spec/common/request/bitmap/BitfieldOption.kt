@@ -2,7 +2,6 @@ package eu.vendeli.rethis.api.spec.common.request.bitmap
 
 import eu.vendeli.rethis.api.spec.common.annotations.RedisOption
 
-
 sealed class BitfieldOption {
     @RedisOption.Token("GET")
     class Get(

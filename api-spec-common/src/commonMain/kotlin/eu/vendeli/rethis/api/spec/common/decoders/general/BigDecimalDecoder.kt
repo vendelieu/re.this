@@ -1,7 +1,6 @@
 package eu.vendeli.rethis.api.spec.common.decoders.general
 
 import com.ionspin.kotlin.bignum.decimal.BigDecimal
-import eu.vendeli.rethis.api.spec.common.annotations.RedisMeta
 import eu.vendeli.rethis.api.spec.common.decoders.ResponseDecoder
 import eu.vendeli.rethis.api.spec.common.types.RespCode
 import eu.vendeli.rethis.api.spec.common.types.ResponseParsingException

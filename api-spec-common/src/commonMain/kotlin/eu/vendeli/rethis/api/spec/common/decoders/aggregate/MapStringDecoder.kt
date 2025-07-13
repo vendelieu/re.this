@@ -1,6 +1,5 @@
 package eu.vendeli.rethis.api.spec.common.decoders.aggregate
 
-import eu.vendeli.rethis.api.spec.common.annotations.RedisMeta
 import eu.vendeli.rethis.api.spec.common.decoders.ResponseDecoder
 import eu.vendeli.rethis.api.spec.common.decoders.general.BulkStringDecoder
 import eu.vendeli.rethis.api.spec.common.types.RespCode

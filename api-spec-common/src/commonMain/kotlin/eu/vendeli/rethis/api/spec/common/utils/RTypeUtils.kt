@@ -2,7 +2,7 @@ package eu.vendeli.rethis.api.spec.common.utils
 
 import com.ionspin.kotlin.bignum.integer.BigInteger
 import eu.vendeli.rethis.api.spec.common.types.*
-import io.ktor.util.logging.KtorSimpleLogger
+import io.ktor.util.logging.*
 import io.ktor.utils.io.charsets.*
 import io.ktor.utils.io.core.*
 import kotlinx.io.Buffer
