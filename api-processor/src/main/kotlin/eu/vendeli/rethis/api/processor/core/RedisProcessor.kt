@@ -29,10 +29,7 @@ internal object RedisProcessor {
         }
 
         validate(currentCmd)
-        if (currentCmd.hasCustomEncoder) { // todo don't skip but substitute
-            addProcessedResponses(cmd.name, currentCmd.command.responseTypes)
-            return
-        }
+        addProcessedResponses(cmd.name, currentCmd.command.responseTypes)
 
         val specSigArguments = currentCmd.encodeFunction.parameters.associate { param ->
             param.name!!.asString() to Pair(

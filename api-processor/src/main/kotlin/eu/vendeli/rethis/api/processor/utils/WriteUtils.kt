@@ -37,8 +37,17 @@ private fun recurse(node: EnrichedNode): List<WriteOp> {
         val directCall = WriteOp.DirectCall(
             isKey = node.attr.contains(EnrichedTreeAttr.Key),
             slotBlock = {
+                val toString = if (
+                    kt.name != "String" &&
+                    kt.arguments.firstOrNull { t -> t.type?.resolve()?.name == "String" } == null
+                ) ".toString()" else ""
                 appendLine(
-                    "slot = validateSlot(slot, CRC16.lookup(${pointedParameter(name)}.toString().toByteArray(charset)))",
+                    "slot = validateSlot(slot, CRC16.lookup(${
+                        pointedParameter(
+                            name,
+                            isComplex = it,
+                        )
+                    }$toString.toByteArray(charset)))",
                 )
             },
             encodeBlock = { inferWriting(kt, name, node, it) },

@@ -9,6 +9,7 @@ import eu.vendeli.rethis.api.processor.types.EnrichedNode
 import eu.vendeli.rethis.api.processor.types.EnrichedTreeAttr
 import eu.vendeli.rethis.api.spec.common.annotations.RedisMeta
 import eu.vendeli.rethis.api.spec.common.annotations.RedisOption
+import eu.vendeli.rethis.api.spec.common.decoders.ResponseDecoder
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
@@ -33,16 +34,21 @@ internal inline fun String?.ifNullOrEmpty(defaultValue: () -> String): String {
 
 internal fun KSAnnotated.hasCustomEncoder(): Boolean {
     val customDecoder = getAnnotation<RedisMeta.CustomCodec>()?.get("encoder")
-    return customDecoder != null && customDecoder != Unit::class.simpleName
+    return customDecoder != null &&
+        customDecoder != Unit::class.simpleName &&
+        customDecoder != Any::class.simpleName
 }
 
 internal fun KSAnnotated.hasCustomDecoder(): Boolean {
     val customDecoder = getAnnotation<RedisMeta.CustomCodec>()?.get("decoder")
-    return customDecoder != null && customDecoder != Nothing::class.simpleName
+    return customDecoder != null &&
+        customDecoder != Nothing::class.simpleName &&
+        !customDecoder.startsWith(ResponseDecoder::class.simpleName!!)
 }
 
 @OptIn(KspExperimental::class)
-internal fun KSAnnotated.getCustom(): RedisMeta.CustomCodec? = getAnnotationsByType(RedisMeta.CustomCodec::class).firstOrNull()
+internal fun KSAnnotated.getCustom(): RedisMeta.CustomCodec? =
+    getAnnotationsByType(RedisMeta.CustomCodec::class).firstOrNull()
 
 internal fun KSType.getTimeUnit(): String = annotations.firstOrNull {
     it.shortName.asString() == RedisMeta.OutgoingTimeUnit::class.simpleName

@@ -93,7 +93,7 @@ internal fun buildStaticHeaderInitializer(header: String): CodeBlock = CodeBlock
     endControlFlow()
 }.build()
 
-internal fun CodeBlock.Builder.addCommandSpecCreation() {
+internal fun CodeBlock.Builder.addCommandSpecDeclaration() {
     addStatement("")
     if (context.currentCommand.haveVaryingSize) {
         beginControlFlow("buffer = Buffer().apply")

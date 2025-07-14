@@ -31,8 +31,7 @@ class ReThis internal constructor(
     internal val connectionFactory = ConnectionFactory(cfg, rootJob)
     internal val topology = topologyBlock()
     internal val connectionProviderFactory = DefaultConnectionProviderFactory(this)
-
-    private val scope = CoroutineScope(rootJob + cfg.dispatcher + CoroutineName(CLIENT_NAME))
+    internal val scope = CoroutineScope(rootJob + cfg.dispatcher + CoroutineName(CLIENT_NAME))
 
     val subscriptions = ActiveSubscriptions()
 

@@ -34,17 +34,18 @@ class ClusterTopologyManager(
     }
 
     private fun initialize() = scope.launch {
-        fullRefreshOnce()
+        fullRefresh()
 
         if (cfg.periodicRefresh) {
             while (isActive) {
                 delay(cfg.periodicRefreshInterval)
-                fullRefreshOnce()
+                fullRefresh()
             }
         }
     }
 
-    private suspend fun fullRefreshOnce() = refreshMutex.withLock {
+    private suspend fun fullRefresh() = refreshMutex.withLock {
+        if (!scope.isActive) throw ClusterException("Topology is closed")
         // 1) Fetch CLUSTER SLOTS
         val entries = fetchClusterSlots()
 

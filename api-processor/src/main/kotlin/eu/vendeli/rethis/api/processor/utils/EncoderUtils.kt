@@ -22,8 +22,6 @@ internal fun addEncoderCode() {
         "eu.vendeli.rethis.api.spec.common.utils.CRC16",
         "eu.vendeli.rethis.api.spec.common.types.CommandRequest",
         "eu.vendeli.rethis.api.spec.common.types.RedisOperation",
-        "io.ktor.util.reflect.TypeInfo",
-        "io.ktor.util.reflect.typeInfo",
         "io.ktor.utils.io.core.toByteArray",
     )
 
@@ -38,17 +36,21 @@ internal fun addEncoderCode() {
     val root = context.enrichedTree
     val ops = buildWritePlan(root)
 
-    encodeCode.addStatement("va%L buffer = Buffer()", if (context.currentCommand.haveVaryingSize) "r" else "l")
+    if (!context.currentCommand.hasCustomEncoder) {
+        encodeCode.addStatement("va%L buffer = Buffer()", if (context.currentCommand.haveVaryingSize) "r" else "l")
 
-    if (context.currentCommand.haveVaryingSize) {
-        encodeCode.addStatement("var size = 0")
+        if (context.currentCommand.haveVaryingSize) {
+            encodeCode.addStatement("var size = 0")
+        }
+        encodeCode.addStatement("COMMAND_HEADER.copyTo(buffer)")
+
+        context += CodeGenContext(encodeCode)
+        ops.forEach { it.emitOp(encode = true) }
+
+        encodeCode.addCommandSpecDeclaration()
+    } else {
+        encodeCode.addStatement("return %L", context.currentCommand.customCodec!!.encoder)
     }
-    encodeCode.addStatement("COMMAND_HEADER.copyTo(buffer)")
-
-    context += CodeGenContext(encodeCode)
-    ops.forEach { it.emitOp(encode = true) }
-
-    encodeCode.addCommandSpecCreation()
 
     context.typeSpec.addFunction(
         FunSpec.builder("encode")

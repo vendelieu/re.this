@@ -8,23 +8,46 @@ import kotlin.time.Instant
 
 sealed class ClientKillOptions {
     @RedisOption.Token("ADDR")
-    class Address(val ip: String, val port: Int) : ClientKillOptions()
+    class Address(@RedisOption.Name("addr") val ipPort: String) : ClientKillOptions()
 
     @RedisOption.Token("LADDR")
-    class LAddr(val ip: String, val port: Int) : ClientKillOptions()
+    class LAddr(@RedisOption.Name("laddr") val ipPort: String) : ClientKillOptions()
 
     @RedisOption.Token("ID")
     class Id(val clientId: Long) : ClientKillOptions()
-
-    @RedisOption.Token("TYPE")
-    class Type(val connectionType: String) : ClientKillOptions()
 
     @RedisOption.Token("USER")
     class User(val username: String) : ClientKillOptions()
 
     @RedisOption.Token("SKIPME")
-    class SkipMe(val yes: Boolean) : ClientKillOptions()
+    sealed class SkipMe : ClientKillOptions() {
+        @RedisOption.Token("YES")
+        data object Yes : SkipMe()
+
+        @RedisOption.Token("NO")
+        data object No : SkipMe()
+    }
 
     @RedisOption.Token("MAXAGE")
-    class MaxAge(val instant: @RedisMeta.OutgoingTimeUnit(TimeUnit.SECONDS) Instant) : ClientKillOptions()
+    class MaxAge(
+        @RedisOption.Name("maxage") val instant: @RedisMeta.OutgoingTimeUnit(TimeUnit.SECONDS) Instant,
+    ) : ClientKillOptions()
+}
+
+@RedisOption.Token("TYPE")
+sealed class ClientType : ClientKillOptions() {
+    @RedisOption.Token("NORMAL")
+    data object Normal : ClientType()
+
+    @RedisOption.Token("MASTER")
+    data object Master : ClientType()
+
+    @RedisOption.Token("SLAVE")
+    data object Slave : ClientType()
+
+    @RedisOption.Token("REPLICA")
+    data object Replica : ClientType()
+
+    @RedisOption.Token("PUBSUB")
+    data object PubSub : ClientType()
 }

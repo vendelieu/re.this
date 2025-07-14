@@ -198,7 +198,7 @@ internal class CodeGenContext(
             if (value != null) thisExpr = value
         }
 
-    fun pointedParameter(name: String, pointer: String = thisExpr): String {
+    fun pointedParameter(name: String, pointer: String = thisExpr, isComplex: Boolean = false): String {
         val parameter = mutableListOf<String?>()
         when {
             blockStack.isEmpty() || blockStack.singleOrNull()?.first == BlockType.WHEN -> {
@@ -212,6 +212,7 @@ internal class CodeGenContext(
                 parameter.add(name)
             }
         }
+        if (isComplex && parameter.last() != name) parameter.add(name)
 
         return parameter.filterNotNull().joinToString(".")
     }
