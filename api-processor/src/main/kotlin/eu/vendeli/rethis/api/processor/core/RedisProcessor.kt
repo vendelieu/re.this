@@ -70,9 +70,7 @@ internal object RedisProcessor {
             fileSpec.addImport(import.dropLast(1).joinToString("."), name)
         }
 
-        val commandFileSpec = FileSpec.builder(
-            context.meta.commandPackage + cmdPackagePart, currentCmd.command.name.toPascalCase(),
-        ).indent(" ".repeat(4))
+        val commandFileSpec = context.commandFileSpec.getFor(currentCmd.command.name)
 
         commandFileSpec.addCommandFunctions(
             codecName = codecName,
@@ -83,9 +81,6 @@ internal object RedisProcessor {
         )
 
         context.fileSpec.build().runCatching {
-            writeTo(File(context.meta.clientDir))
-        }.onFailure { it.printStackTrace() }
-        commandFileSpec.build().runCatching {
             writeTo(File(context.meta.clientDir))
         }.onFailure { it.printStackTrace() }
     }

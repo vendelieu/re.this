@@ -11,8 +11,10 @@ import eu.vendeli.rethis.api.processor.core.RedisCommandProcessor.Companion.cont
 import eu.vendeli.rethis.api.processor.types.*
 import eu.vendeli.rethis.api.processor.utils.*
 import eu.vendeli.rethis.api.spec.common.types.RespCode
+import java.io.File
 
 internal interface ContextElement {
+    fun onFinish() {}
     val key: ContextKey<out ContextElement>
 }
 
@@ -76,6 +78,29 @@ internal class ValidationResult() : ContextElement {
     fun getErrors(): Map<String, List<String>> = errors.filterValues { it.isNotEmpty() }
 
     companion object : ContextKey<ValidationResult>
+}
+
+internal class CommandFileSpec(
+    val commandFile: MutableMap<String, FileSpec.Builder> = mutableMapOf(),
+) : ContextElement {
+    override val key = CommandFileSpec
+
+    fun getFor(command: String): FileSpec.Builder = commandFile.getOrPut(command) {
+        val cmdPackagePart = "." + context.currentCommand.klass.packageName.asString().substringAfterLast(".")
+        FileSpec.builder(
+            context.meta.commandPackage + cmdPackagePart, context.currentCommand.command.name.toPascalCase(),
+        ).indent(" ".repeat(4))
+    }
+
+    override fun onFinish() {
+        commandFile.forEach { spec ->
+            spec.value.build().runCatching {
+                writeTo(File(context.meta.clientDir))
+            }.onFailure { it.printStackTrace() }
+        }
+    }
+
+    companion object : ContextKey<CommandFileSpec>
 }
 
 internal class CodecFileSpec(val fileSpec: FileSpec.Builder) : ContextElement {

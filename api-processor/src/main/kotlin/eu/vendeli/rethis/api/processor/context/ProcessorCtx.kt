@@ -25,6 +25,10 @@ internal class ProcessorContext {
         storage.clear()
     }
 
+    fun proceedOnFinish() {
+        storage.values.forEach { it.onFinish() }
+    }
+
     operator fun plusAssign(element: ContextElement) = put(element)
 
     operator fun minusAssign(element: ContextElement) = remove(element.key)

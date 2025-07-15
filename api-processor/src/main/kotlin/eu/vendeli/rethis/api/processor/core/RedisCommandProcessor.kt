@@ -42,6 +42,9 @@ class RedisCommandProcessor(
             context.clearPerCommand()
         }
 
+        context.proceedOnFinish()
+        context.clearAll()
+
         return emptyList()
     }
 

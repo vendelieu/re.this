@@ -14,6 +14,7 @@ internal val ProcessorContext.meta get() = this[ProcessorMeta]!!
 internal val ProcessorContext.validation get() = this[ValidationResult]!!
 internal val ProcessorContext.responses get() = this[SpecResponses]!!
 internal val ProcessorContext.resolvedSpecs get() = this[ResolvedSpecs]!!
+internal val ProcessorContext.commandFileSpec get() = this[CommandFileSpec]!!
 
 internal val ProcessorContext.curImports get() = this[Imports]!!.imports
 internal val ProcessorContext.rSpec get() = this[RSpecRaw]!!.specs
@@ -58,6 +59,7 @@ internal fun RedisCommandProcessor.loadGlobalCtx() {
         codecsPackage = codecsPackage,
         commandPackage = commandPackage,
     )
+    context += CommandFileSpec()
     context += ValidationResult()
 }
 

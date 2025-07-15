@@ -47,7 +47,7 @@ class SentinelTopologyManager(
 
     private suspend fun subscribeToSentinels() = sentinelNodes.forEach { sn ->
         scope.launch {
-            // subscribe to switch-master
+            // todo subscribe to switch-master
         }
     }
 
