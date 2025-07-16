@@ -1,7 +1,6 @@
 import CommonParams.REPO_URL
 import com.vanniktech.maven.publish.JavadocJar
 import com.vanniktech.maven.publish.KotlinMultiplatform
-import com.vanniktech.maven.publish.SonatypeHost
 
 plugins {
     id("com.vanniktech.maven.publish")
@@ -14,7 +13,7 @@ apply(plugin = "org.jetbrains.kotlin.multiplatform")
 
 mavenPublishing {
     coordinates("eu.vendeli", project.name, ver)
-    publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL, true)
+    publishToMavenCentral()
     val javaDoc = if (releaseMode) {
         signAllPublications()
 

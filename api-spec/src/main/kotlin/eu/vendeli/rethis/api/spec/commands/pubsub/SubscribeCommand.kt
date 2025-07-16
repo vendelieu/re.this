@@ -5,13 +5,12 @@ import eu.vendeli.rethis.api.spec.common.annotations.RedisMeta
 import eu.vendeli.rethis.api.spec.common.types.CommandRequest
 import eu.vendeli.rethis.api.spec.common.types.RedisCommandSpec
 import eu.vendeli.rethis.api.spec.common.types.RedisOperation
-import eu.vendeli.rethis.api.spec.common.types.RespCode
 
+@RedisMeta.SkipCommand
 @RedisMeta.EnforcedKey
-@RedisCommand("PUBLISH", RedisOperation.WRITE, [RespCode.INTEGER])
-fun interface PublishCommand : RedisCommandSpec<Long> {
+@RedisCommand("SUBSCRIBE", RedisOperation.READ, [])
+fun interface SubscribeCommand : RedisCommandSpec<Unit> {
     suspend fun encode(
-        @RedisMeta.EnforcedKey channel: String,
-        message: String
+        @RedisMeta.EnforcedKey vararg channel: String,
     ): CommandRequest
 }

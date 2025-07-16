@@ -26,4 +26,8 @@ annotation class RedisMeta {
     @Target(AnnotationTarget.TYPE)
     @Retention(AnnotationRetention.SOURCE)
     annotation class OutgoingTimeUnit(val unit: TimeUnit)
+
+    @Target(AnnotationTarget.CLASS)
+    @Retention(AnnotationRetention.SOURCE)
+    annotation class SkipCommand
 }

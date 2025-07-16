@@ -59,6 +59,7 @@ internal fun TypeSpec.Builder.addDecodeFunction(
             .returns(type.copy(isNullableResponse))
             .addCode(
                 CodeBlock.builder().apply {
+                    if (respCode.isEmpty()) return@apply
                     addStatement("val code = RespCode.fromCode(input.readByte())")
 
                     beginControlFlow("return when(code)")

@@ -7,6 +7,6 @@ import eu.vendeli.rethis.api.spec.common.types.RedisCommandSpec
 import eu.vendeli.rethis.api.spec.common.types.RedisOperation
 
 @RedisCommand("UNSUBSCRIBE", RedisOperation.WRITE, [])
-fun interface UnsubscribeCommand : RedisCommandSpec<RType> {
+fun interface UnsubscribeCommand : RedisCommandSpec<Unit> {
     suspend fun encode(vararg channel: String): CommandRequest
 }

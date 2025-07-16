@@ -2,6 +2,8 @@ package eu.vendeli.rethis.api.processor.utils
 
 import com.squareup.kotlinpoet.*
 import eu.vendeli.rethis.ReThis
+import eu.vendeli.rethis.api.processor.core.RedisCommandProcessor.Companion.context
+import eu.vendeli.rethis.api.spec.common.annotations.RedisMeta
 import eu.vendeli.rethis.api.spec.common.types.RespCode
 
 fun FileSpec.Builder.addCommandFunctions(
@@ -11,6 +13,7 @@ fun FileSpec.Builder.addCommandFunctions(
     cmdPackagePart: String,
     responseTypes: Set<RespCode>,
 ) {
+    if (context.currentCommand.klass.hasAnnotation<RedisMeta.SkipCommand>()) return
     val isNullable = RespCode.NULL in responseTypes
     addImport("eu.vendeli.rethis.codecs.$cmdPackagePart", codecName)
     addFunction(
