@@ -8,10 +8,9 @@ import eu.vendeli.rethis.api.spec.common.types.RedisCommandSpec
 import eu.vendeli.rethis.api.spec.common.types.RedisOperation
 
 @RedisMeta.SkipCommand
-@RedisMeta.EnforcedKey
 @RedisCommand("SSUBSCRIBE", RedisOperation.READ, [])
 fun interface SSubscribeCommand : RedisCommandSpec<Unit> {
     suspend fun encode(
-        @RedisMeta.EnforcedKey @RedisOption.Name("shardchannel") vararg shardChannel: String,
+        @RedisOption.Name("shardchannel") vararg shardChannel: String,
     ): CommandRequest
 }

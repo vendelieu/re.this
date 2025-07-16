@@ -1,17 +1,15 @@
 package eu.vendeli.rethis.api.spec.commands.pubsub
 
 import eu.vendeli.rethis.api.spec.common.annotations.RedisCommand
-import eu.vendeli.rethis.api.spec.common.annotations.RedisMeta
 import eu.vendeli.rethis.api.spec.common.types.CommandRequest
 import eu.vendeli.rethis.api.spec.common.types.RedisCommandSpec
 import eu.vendeli.rethis.api.spec.common.types.RedisOperation
 import eu.vendeli.rethis.api.spec.common.types.RespCode
 
-@RedisMeta.EnforcedKey
 @RedisCommand("PUBLISH", RedisOperation.WRITE, [RespCode.INTEGER])
 fun interface PublishCommand : RedisCommandSpec<Long> {
     suspend fun encode(
-        @RedisMeta.EnforcedKey channel: String,
+        channel: String,
         message: String
     ): CommandRequest
 }

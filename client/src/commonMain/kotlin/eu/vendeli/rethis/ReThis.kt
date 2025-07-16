@@ -2,8 +2,8 @@ package eu.vendeli.rethis
 
 import eu.vendeli.rethis.annotations.ReThisDSL
 import eu.vendeli.rethis.configuration.*
-import eu.vendeli.rethis.core.ActiveSubscriptions
 import eu.vendeli.rethis.core.ConnectionFactory
+import eu.vendeli.rethis.core.SubscriptionManager
 import eu.vendeli.rethis.providers.DefaultConnectionProviderFactory
 import eu.vendeli.rethis.topology.ClusterTopologyManager
 import eu.vendeli.rethis.topology.SentinelTopologyManager
@@ -33,7 +33,7 @@ class ReThis internal constructor(
     internal val connectionProviderFactory = DefaultConnectionProviderFactory(this)
     internal val scope = CoroutineScope(rootJob + cfg.dispatcher + CoroutineName(CLIENT_NAME))
 
-    val subscriptions = ActiveSubscriptions()
+    val subscriptions = SubscriptionManager()
 
     fun shutdown() {
         logger.info("Shutting down")
