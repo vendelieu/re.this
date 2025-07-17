@@ -18,6 +18,9 @@ abstract class ConnectionProvider {
     abstract suspend fun borrowConnection(): RConnection
     abstract suspend fun releaseConnection(conn: RConnection)
     abstract fun hasSpareConnection(): Boolean
+
+    override fun equals(other: Any?): Boolean = node == (other as? ConnectionProvider)?.node
+    override fun hashCode(): Int = node.hashCode()
 }
 
 

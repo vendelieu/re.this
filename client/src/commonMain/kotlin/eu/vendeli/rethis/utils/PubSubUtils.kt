@@ -2,7 +2,9 @@ package eu.vendeli.rethis.utils
 
 import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.api.spec.common.decoders.pubsub.SubEventDecoder
+import eu.vendeli.rethis.providers.ConnectionProvider
 import eu.vendeli.rethis.types.common.Subscription
+import eu.vendeli.rethis.types.common.SubscriptionWorker
 import eu.vendeli.rethis.types.coroutine.CoLocalConn
 import io.ktor.utils.io.*
 import kotlinx.coroutines.currentCoroutineContext
@@ -10,16 +12,17 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
-// todo handle sentinel mode separately
-internal suspend inline fun ReThis.registerSubscription(
+internal suspend fun ReThis.registerSubscription(
     target: String,
     subscription: Subscription,
+    provider: ConnectionProvider? = null,
 ) {
-    subscriptions.registerSubscription(target, subscription)
-    if (subscriptions.subscriptionJobs[target] != null) return
-
     val request = subscription.type.request(target)
-    val provider = topology.route(request)
+    val provider = provider ?: topology.route(request)
+
+    subscriptions.registerSubscription(target, subscription)
+    if (subscriptions.isHandlerRegistered(target, provider)) return
+
     val connection = provider.borrowConnection()
     val handlerJob = scope.launch(CoLocalConn(connection)) {
         val conn = currentCoroutineContext()[CoLocalConn]!!.connection
@@ -61,5 +64,5 @@ internal suspend inline fun ReThis.registerSubscription(
         }
     }
 
-    subscriptions.registerHandler(target, handlerJob)
+    subscriptions.registerHandler(target, SubscriptionWorker(provider, handlerJob))
 }

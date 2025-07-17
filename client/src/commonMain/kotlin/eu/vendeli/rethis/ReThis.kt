@@ -1,10 +1,17 @@
 package eu.vendeli.rethis
 
 import eu.vendeli.rethis.annotations.ReThisDSL
+import eu.vendeli.rethis.api.spec.common.types.InvalidStateException
+import eu.vendeli.rethis.api.spec.common.types.RType
+import eu.vendeli.rethis.api.spec.common.types.ReThisException
+import eu.vendeli.rethis.codecs.transaction.DiscardCommandCodec
+import eu.vendeli.rethis.codecs.transaction.ExecCommandCodec
+import eu.vendeli.rethis.codecs.transaction.MultiCommandCodec
 import eu.vendeli.rethis.configuration.*
 import eu.vendeli.rethis.core.ConnectionFactory
 import eu.vendeli.rethis.core.SubscriptionManager
 import eu.vendeli.rethis.providers.DefaultConnectionProviderFactory
+import eu.vendeli.rethis.providers.withConnection
 import eu.vendeli.rethis.topology.ClusterTopologyManager
 import eu.vendeli.rethis.topology.SentinelTopologyManager
 import eu.vendeli.rethis.topology.StandaloneTopologyManager
@@ -12,6 +19,7 @@ import eu.vendeli.rethis.topology.TopologyManager
 import eu.vendeli.rethis.types.common.Address
 import eu.vendeli.rethis.types.common.RespVer
 import eu.vendeli.rethis.types.common.UrlAddress
+import eu.vendeli.rethis.types.coroutine.CoLocalConn
 import eu.vendeli.rethis.utils.CLIENT_NAME
 import eu.vendeli.rethis.utils.DEFAULT_HOST
 import eu.vendeli.rethis.utils.DEFAULT_PORT
@@ -20,6 +28,8 @@ import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.launch
 
 @ReThisDSL
 class ReThis internal constructor(
@@ -44,7 +54,45 @@ class ReThis internal constructor(
     }
 
     // pipeline
-    // transaction
+
+    suspend fun transaction(block: suspend ReThis.() -> Unit): List<RType>? {
+        val coLocalCon = currentCoroutineContext()[CoLocalConn]
+        if (coLocalCon != null) {
+            logger.warn("Nested transaction detected")
+            block()
+            return emptyList()
+        }
+
+        val multiCommand = MultiCommandCodec.encode(cfg.charset)
+        return topology.route(multiCommand).withConnection { conn ->
+            val tx = MultiCommandCodec.decode(conn.doRequest(multiCommand.buffer), cfg.charset)
+            if (!tx) throw InvalidStateException("Failed to start transaction")
+            logger.debug("Started transaction")
+
+            var e: Throwable? = null
+            try {
+                scope
+                    .launch(currentCoroutineContext() + CoLocalConn(conn)) {
+                        runCatching { block() }.getOrElse { e = it }
+                    }.join()
+
+                val exec = conn.doRequest(MultiCommandCodec.encode(cfg.charset).buffer)
+                logger.debug("Transaction completed")
+
+                ExecCommandCodec.decode(exec, cfg.charset)
+            } catch (ex: Throwable) {
+                throw ReThisException("Caught exception in transaction", ex).also {
+                    if (e != null) it.addSuppressed(e)
+                }
+            } finally {
+                if (e != null) {
+                    conn.doRequest(DiscardCommandCodec.encode(cfg.charset).buffer)
+                    logger.error("Transaction canceled", e)
+                    throw e
+                }
+            }
+        }
+    }
 
     companion object {
         fun standalone(

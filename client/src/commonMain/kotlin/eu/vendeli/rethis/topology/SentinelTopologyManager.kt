@@ -5,13 +5,11 @@ import eu.vendeli.rethis.api.spec.common.types.CommandRequest
 import eu.vendeli.rethis.api.spec.common.types.RedisOperation
 import eu.vendeli.rethis.configuration.SentinelConfiguration
 import eu.vendeli.rethis.providers.ConnectionProvider
-import eu.vendeli.rethis.providers.withConnection
-import eu.vendeli.rethis.types.common.Address
-import eu.vendeli.rethis.types.common.RConnection
-import eu.vendeli.rethis.types.common.ReadFrom
-import eu.vendeli.rethis.types.common.SentinelSnapshot
+import eu.vendeli.rethis.types.common.*
+import eu.vendeli.rethis.types.interfaces.SubscriptionHandler
+import eu.vendeli.rethis.utils.ClusterEventNames
 import eu.vendeli.rethis.utils.panic
-import io.ktor.utils.io.charsets.*
+import eu.vendeli.rethis.utils.registerSubscription
 import kotlinx.coroutines.*
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -45,13 +43,18 @@ class SentinelTopologyManager(
         subscribeToSentinels()
     }
 
-    private suspend fun subscribeToSentinels() = sentinelNodes.forEach { sn ->
-        scope.launch {
-            // todo subscribe to switch-master
+    private suspend fun subscribeToSentinels() {
+        val handler = SubscriptionHandler { _, _ -> reactiveRefresh() }
+        snapshot.load()?.providers?.forEach {
+            client.registerSubscription(
+                ClusterEventNames.SWITCH_MASTER.name,
+                Subscription(SubscriptionType.PLAIN, handler),
+                it,
+            )
         }
     }
 
-    private fun reactiveRefresh() = scope.launch { safeRefresh() }
+    private fun reactiveRefresh() = scope.launch { if (!refreshMutex.isLocked) safeRefresh() }
 
     private suspend fun safeRefresh() = refreshMutex.withLock {
         // 1) discover master + replicas

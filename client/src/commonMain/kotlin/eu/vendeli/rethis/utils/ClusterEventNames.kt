@@ -23,7 +23,7 @@ enum class ClusterEventNames(val literal: String) {
     FAILOVER_STATE_SEND_SLAVEOF_NOONE("failover-state-send-slaveof-noone"),
     FAILOVER_END_FOR_TIMEOUT("failover-end-for-timeout"),
     FAILOVER_END("failover-end"),
-    SWITCH_MASTER("switch-master"),
+    SWITCH_MASTER("+switch-master"),
     PLUS_TILT("+tilt"),
     MINUS_TILT("-tilt")
 }
