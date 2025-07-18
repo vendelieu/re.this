@@ -1,0 +1,17 @@
+package eu.vendeli.rethis.command.server
+
+import eu.vendeli.rethis.ReThis
+import eu.vendeli.rethis.api.spec.common.types.RType
+import eu.vendeli.rethis.codecs.server.SlowLogGetCommandCodec
+import eu.vendeli.rethis.topology.handle
+import kotlin.Long
+import kotlin.collections.List
+
+public suspend fun ReThis.slowLogGet(count: Long? = null): List<RType> {
+    val request = if(cfg.withSlots) {
+        SlowLogGetCommandCodec.encodeWithSlot(charset = cfg.charset, count = count)
+    } else {
+        SlowLogGetCommandCodec.encode(charset = cfg.charset, count = count)
+    }
+    return SlowLogGetCommandCodec.decode(topology.handle(request), cfg.charset)
+}

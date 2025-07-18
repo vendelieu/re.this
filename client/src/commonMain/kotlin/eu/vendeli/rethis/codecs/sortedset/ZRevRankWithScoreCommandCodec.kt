@@ -1,0 +1,71 @@
+package eu.vendeli.rethis.codecs.sortedset
+
+import eu.vendeli.rethis.api.spec.common.decoders.aggregate.ArrayLongDecoder
+import eu.vendeli.rethis.api.spec.common.types.CommandRequest
+import eu.vendeli.rethis.api.spec.common.types.RedisOperation
+import eu.vendeli.rethis.api.spec.common.types.RespCode
+import eu.vendeli.rethis.api.spec.common.types.UnexpectedResponseType
+import eu.vendeli.rethis.api.spec.common.utils.CRC16
+import eu.vendeli.rethis.api.spec.common.utils.tryInferCause
+import eu.vendeli.rethis.api.spec.common.utils.validateSlot
+import eu.vendeli.rethis.utils.writeStringArg
+import io.ktor.utils.io.charsets.Charset
+import io.ktor.utils.io.core.toByteArray
+import kotlin.Boolean
+import kotlin.Long
+import kotlin.String
+import kotlin.collections.List
+import kotlinx.io.Buffer
+import kotlinx.io.writeString
+
+public object ZRevRankWithScoreCommandCodec {
+    private const val BLOCKING_STATUS: Boolean = false
+
+    private val COMMAND_HEADER: Buffer = Buffer().apply {
+        writeString("*4\r\n$8\r\nZREVRANK\r\n")
+    }
+
+    public suspend fun encode(
+        charset: Charset,
+        key: String,
+        member: String,
+        withScore: Boolean,
+    ): CommandRequest {
+        val buffer = Buffer()
+        COMMAND_HEADER.copyTo(buffer)
+        buffer.writeStringArg(key, charset, )
+        buffer.writeStringArg(member, charset, )
+        if(withScore) {
+            buffer.writeStringArg("WITHSCORE", charset)
+        }
+
+        return CommandRequest(buffer, RedisOperation.READ, BLOCKING_STATUS)
+    }
+
+    public suspend inline fun encodeWithSlot(
+        charset: Charset,
+        key: String,
+        member: String,
+        withScore: Boolean,
+    ): CommandRequest {
+        var slot: Int? = null
+        slot = validateSlot(slot, CRC16.lookup(key.toByteArray(charset)))
+        val request = encode(charset, key = key, member = member, withScore = withScore)
+        return request.withSlot(slot % 16384)
+    }
+
+    public suspend fun decode(input: Buffer, charset: Charset): List<Long>? {
+        val code = RespCode.fromCode(input.readByte())
+        return when(code) {
+            RespCode.ARRAY -> {
+                ArrayLongDecoder.decode(input, charset)
+            }
+            RespCode.NULL -> {
+                null
+            }
+            else -> {
+                throw UnexpectedResponseType("Expected [ARRAY, NULL] but got $code", input.tryInferCause(code))
+            }
+        }
+    }
+}

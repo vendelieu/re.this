@@ -18,6 +18,7 @@ import kotlin.time.Duration.Companion.seconds
  * @property gracefulClosePeriod the period of time for which the pool is closed gracefully, defaults to 30 seconds
  * @property connectionHealthCheck whether to check the health of the connection, defaults to true
  * @property setClientName whether to set the client name, defaults to true
+ * @property closeGracefully whether to close the pool gracefully, defaults to false
  */
 @ConfigurationDSL
 data class PoolConfiguration(
@@ -33,4 +34,5 @@ data class PoolConfiguration(
 
     var connectionHealthCheck: Boolean = true,
     var setClientName: Boolean = true,
+    var closeGracefully: Boolean = false,
 )

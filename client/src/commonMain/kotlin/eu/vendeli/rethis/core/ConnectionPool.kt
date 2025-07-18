@@ -1,11 +1,13 @@
 package eu.vendeli.rethis.core
 
+import eu.vendeli.rethis.codecs.connection.PingCommandCodec
 import eu.vendeli.rethis.configuration.ReThisConfiguration
 import eu.vendeli.rethis.types.common.RConnection
 import eu.vendeli.rethis.utils.CLIENT_NAME
 import eu.vendeli.rethis.utils.IO_OR_UNCONFINED
 import io.ktor.network.sockets.*
 import io.ktor.util.logging.*
+import io.ktor.utils.io.charsets.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.onFailure
@@ -173,12 +175,12 @@ internal class ConnectionPool(
     private suspend inline fun RConnection.healthyOrNull(): RConnection? {
         if (!cfg.pool.connectionHealthCheck) return this
 
-//        runCatching { // todo return
-//            doRequest(PingCommandCodec.encode(charset = Charsets.UTF_8, message = null).buffer)
-//        }.onFailure {
-//            client.connectionFactory.dispose(this)
-//            return null
-//        }
+        runCatching {
+            doRequest(PingCommandCodec.encode(charset = Charsets.UTF_8, message = null).buffer)
+        }.onFailure {
+            connectionFactory.dispose(this)
+            return null
+        }
 
         return this
     }

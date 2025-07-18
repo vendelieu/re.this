@@ -16,11 +16,10 @@ data class RConnection(
             writeBuffer.transferFrom(payload)
             flush()
         }.onFailure {
-            if (input.availableForRead > 0) input.readBuffer.buffer.clear()
-            if (output.availableForWrite > 0) output.writeBuffer.buffer.clear()
+            cleanup()
             throw it
         }
-        input.awaitContent()
+        input.awaitContent() // todo look for cases where this is not needed (subscribe for example)
         return Buffer().apply { transferFrom(input.readBuffer) }
     }
 
@@ -30,12 +29,17 @@ data class RConnection(
             payload.forEach { writeBuffer.transferFrom(it) }
             flush()
         }.onFailure {
-            if (input.availableForRead > 0) input.readBuffer.buffer.clear()
-            if (output.availableForWrite > 0) output.writeBuffer.buffer.clear()
+            cleanup()
             throw it
         }
         input.awaitContent()
         return Buffer().apply { transferFrom(input.readBuffer) }
+    }
+
+    @OptIn(InternalAPI::class, InternalIoApi::class)
+    private inline fun cleanup() {
+        if (input.availableForRead > 0) input.readBuffer.buffer.clear()
+        if (output.availableForWrite > 0) output.writeBuffer.buffer.clear()
     }
 }
 

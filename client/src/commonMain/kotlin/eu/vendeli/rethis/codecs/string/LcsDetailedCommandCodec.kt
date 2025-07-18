@@ -1,0 +1,82 @@
+package eu.vendeli.rethis.codecs.string
+
+import eu.vendeli.rethis.api.spec.common.decoders.string.LcsDecoder
+import eu.vendeli.rethis.api.spec.common.request.string.LcsMode
+import eu.vendeli.rethis.api.spec.common.request.string.MinMatchLen
+import eu.vendeli.rethis.api.spec.common.response.LcsResult
+import eu.vendeli.rethis.api.spec.common.types.CommandRequest
+import eu.vendeli.rethis.api.spec.common.types.RedisOperation
+import eu.vendeli.rethis.api.spec.common.utils.CRC16
+import eu.vendeli.rethis.api.spec.common.utils.validateSlot
+import eu.vendeli.rethis.utils.writeLongArg
+import eu.vendeli.rethis.utils.writeStringArg
+import io.ktor.utils.io.charsets.Charset
+import io.ktor.utils.io.core.toByteArray
+import kotlin.Boolean
+import kotlin.String
+import kotlinx.io.Buffer
+import kotlinx.io.writeString
+
+public object LcsDetailedCommandCodec {
+    private const val BLOCKING_STATUS: Boolean = false
+
+    private val COMMAND_HEADER: Buffer = Buffer().apply {
+        writeString("\r\n$3\r\nLCS\r\n")
+    }
+
+    public suspend fun encode(
+        charset: Charset,
+        key1: String,
+        key2: String,
+        mode: LcsMode.IDX,
+        len: MinMatchLen?,
+        withMatchLen: Boolean?,
+    ): CommandRequest {
+        var buffer = Buffer()
+        var size = 0
+        COMMAND_HEADER.copyTo(buffer)
+        size += 1
+        buffer.writeStringArg(key1, charset, )
+        size += 1
+        buffer.writeStringArg(key2, charset, )
+        size += 1
+        buffer.writeStringArg("IDX", charset)
+        size += 1
+        buffer.writeStringArg(mode.toString(), charset)
+        len?.let { it0 ->
+            size += 1
+            buffer.writeStringArg("MINMATCHLEN", charset)
+            size += 1
+            buffer.writeLongArg(it0.minMatchLen, charset, )
+        }
+        withMatchLen?.let { it1 ->
+            if(it1) {
+                size += 1
+                buffer.writeStringArg("WITHMATCHLEN", charset)
+            }
+        }
+
+        buffer = Buffer().apply {
+            writeString("*$size")
+            transferFrom(buffer)
+        }
+        return CommandRequest(buffer, RedisOperation.READ, BLOCKING_STATUS)
+    }
+
+    public suspend inline fun encodeWithSlot(
+        charset: Charset,
+        key1: String,
+        key2: String,
+        mode: LcsMode.IDX,
+        len: MinMatchLen?,
+        withMatchLen: Boolean?,
+    ): CommandRequest {
+        var slot: Int? = null
+        slot = validateSlot(slot, CRC16.lookup(key1.toByteArray(charset)))
+        slot = validateSlot(slot, CRC16.lookup(key2.toByteArray(charset)))
+        val request = encode(charset, key1 = key1, key2 = key2, mode = mode, len = len, withMatchLen = withMatchLen)
+        return request.withSlot(slot % 16384)
+    }
+
+    public suspend fun decode(input: Buffer, charset: Charset): LcsResult = LcsDecoder.decode(input, charset)
+}

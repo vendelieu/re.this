@@ -22,12 +22,11 @@ sealed class ReThisConfiguration(internal val protocol: RespVer) {
     internal open val withSlots = false
 
     var usePooling = true
-    var readFromStrategy: ReadFromStrategy = TODO() // use default MASTER
+    var readFromStrategy: ReadFromStrategy = ReadFrom.Master
 
     var db: Int? = null
     var charset: Charset = Charsets.UTF_8
     var dispatcher: CoroutineDispatcher = Dispatchers.Default
-    var gracefulShutdownPeriod: Duration = 40.seconds
     var maxConnections: Int = 5000
 
     fun auth(password: CharArray, username: String? = null) {

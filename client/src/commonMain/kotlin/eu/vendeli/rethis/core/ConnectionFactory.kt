@@ -1,5 +1,8 @@
 package eu.vendeli.rethis.core
 
+import eu.vendeli.rethis.api.spec.common.request.connection.HelloAuth
+import eu.vendeli.rethis.codecs.connection.HelloCommandCodec
+import eu.vendeli.rethis.codecs.connection.SelectCommandCodec
 import eu.vendeli.rethis.configuration.ReThisConfiguration
 import eu.vendeli.rethis.types.common.RConnection
 import eu.vendeli.rethis.types.common.rConnection
@@ -9,6 +12,7 @@ import io.ktor.network.selector.*
 import io.ktor.network.sockets.*
 import io.ktor.network.tls.*
 import io.ktor.util.logging.*
+import io.ktor.utils.io.charsets.*
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -59,23 +63,23 @@ internal class ConnectionFactory(
     }
 
     suspend fun prepareConnection(conn: RConnection) {
-//        val helloBuffer = HelloCommandCodec.encode( // todo return
-//            Charsets.UTF_8,
-//            cfg.protocol.literal.toLong(),
-//            cfg.auth?.let { HelloAuth(it.username ?: "default", it.password) },
-//            CLIENT_NAME.takeIf { cfg.pool.setClientName },
-//        ).buffer
-//
-//        if (cfg.db != null && cfg.db!! > 0) {
-//            conn.doRequest(
-//                listOf(
-//                    helloBuffer,
-//                    SelectCommandCodec.encode(Charsets.UTF_8, cfg.db!!.toLong()).buffer,
-//                ),
-//            )
-//        } else {
-//            conn.doRequest(helloBuffer)
-//        }
+        val helloBuffer = HelloCommandCodec.encode(
+            Charsets.UTF_8,
+            cfg.protocol.literal.toLong(),
+            cfg.auth?.let { HelloAuth(it.username ?: "default", it.password) },
+            CLIENT_NAME.takeIf { cfg.pool.setClientName },
+        ).buffer
+
+        if (cfg.db != null && cfg.db!! > 0) {
+            conn.doRequest(
+                listOf(
+                    helloBuffer,
+                    SelectCommandCodec.encode(Charsets.UTF_8, cfg.db!!.toLong()).buffer,
+                ),
+            )
+        } else {
+            conn.doRequest(helloBuffer)
+        }
     }
 
     fun dispose(conn: RConnection) {

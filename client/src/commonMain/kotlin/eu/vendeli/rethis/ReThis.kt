@@ -1,6 +1,7 @@
 package eu.vendeli.rethis
 
 import eu.vendeli.rethis.annotations.ReThisDSL
+import eu.vendeli.rethis.api.spec.common.types.CommandRequest
 import eu.vendeli.rethis.api.spec.common.types.InvalidStateException
 import eu.vendeli.rethis.api.spec.common.types.RType
 import eu.vendeli.rethis.api.spec.common.types.ReThisException
@@ -17,19 +18,17 @@ import eu.vendeli.rethis.topology.SentinelTopologyManager
 import eu.vendeli.rethis.topology.StandaloneTopologyManager
 import eu.vendeli.rethis.topology.TopologyManager
 import eu.vendeli.rethis.types.common.Address
+import eu.vendeli.rethis.types.common.RConnection
 import eu.vendeli.rethis.types.common.RespVer
 import eu.vendeli.rethis.types.common.UrlAddress
 import eu.vendeli.rethis.types.coroutine.CoLocalConn
+import eu.vendeli.rethis.types.coroutine.CoPipelineCtx
 import eu.vendeli.rethis.utils.CLIENT_NAME
 import eu.vendeli.rethis.utils.DEFAULT_HOST
 import eu.vendeli.rethis.utils.DEFAULT_PORT
+import eu.vendeli.rethis.utils.handlePipelinedRequests
 import io.ktor.util.logging.*
-import kotlinx.coroutines.CoroutineName
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.currentCoroutineContext
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 
 @ReThisDSL
 class ReThis internal constructor(
@@ -53,7 +52,33 @@ class ReThis internal constructor(
         scope.cancel()
     }
 
-    // pipeline
+    suspend fun pipeline(block: suspend ReThis.() -> Unit): List<RType> {
+        val pipelineCtx = currentCoroutineContext()[CoPipelineCtx]
+        var ctxConn: RConnection? = null
+        if (pipelineCtx != null) {
+            logger.warn("Nested pipeline detected")
+            block()
+            return emptyList()
+        }
+        val requests = mutableListOf<CommandRequest>()
+        logger.info("Pipeline started")
+        try {
+            scope.launch(currentCoroutineContext() + CoPipelineCtx(requests)) {
+                block()
+                ctxConn = currentCoroutineContext()[CoLocalConn]?.connection
+            }.join()
+        } catch (e: Throwable) {
+            logger.error("Pipeline removed")
+            requests.clear()
+            throw e
+        }
+        val pipelinedPayload = handlePipelinedRequests(requests, ctxConn)
+        logger.debug("Executing pipelined request\nRequest payload: $requests")
+        logger.trace { "Pipelined payload: $pipelinedPayload" }
+        requests.clear()
+
+        return pipelinedPayload
+    }
 
     suspend fun transaction(block: suspend ReThis.() -> Unit): List<RType>? {
         val coLocalCon = currentCoroutineContext()[CoLocalConn]

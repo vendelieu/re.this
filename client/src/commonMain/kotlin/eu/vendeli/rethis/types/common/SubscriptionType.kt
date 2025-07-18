@@ -4,7 +4,7 @@ import eu.vendeli.rethis.api.spec.common.types.CommandRequest
 import eu.vendeli.rethis.codecs.pubsub.PSubscribeCommandCodec
 import eu.vendeli.rethis.codecs.pubsub.SSubscribeCommandCodec
 import eu.vendeli.rethis.codecs.pubsub.SubscribeCommandCodec
-import io.ktor.utils.io.charsets.*
+import io.ktor.utils.io.charsets.Charsets
 
 sealed class SubscriptionType {
     internal abstract suspend fun request(id: String): CommandRequest

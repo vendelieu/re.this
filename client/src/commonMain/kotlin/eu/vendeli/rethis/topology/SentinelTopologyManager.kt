@@ -3,13 +3,18 @@ package eu.vendeli.rethis.topology
 import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.api.spec.common.types.CommandRequest
 import eu.vendeli.rethis.api.spec.common.types.RedisOperation
+import eu.vendeli.rethis.codecs.connection.PingCommandCodec
+import eu.vendeli.rethis.codecs.sentinel.SentinelGetMasterAddrCommandCodec
+import eu.vendeli.rethis.codecs.sentinel.SentinelReplicasCommandCodec
 import eu.vendeli.rethis.configuration.SentinelConfiguration
 import eu.vendeli.rethis.providers.ConnectionProvider
+import eu.vendeli.rethis.providers.withConnection
 import eu.vendeli.rethis.types.common.*
 import eu.vendeli.rethis.types.interfaces.SubscriptionHandler
 import eu.vendeli.rethis.utils.ClusterEventNames
 import eu.vendeli.rethis.utils.panic
 import eu.vendeli.rethis.utils.registerSubscription
+import io.ktor.utils.io.charsets.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -128,22 +133,21 @@ class SentinelTopologyManager(
     }
 
     private suspend fun measureLatency(provider: ConnectionProvider) = measureTime {
-//        provider.withConnection { it.doRequest(PingCommandCodec.encode(Charsets.UTF_8, null).buffer) }
+        provider.withConnection { it.doRequest(PingCommandCodec.encode(Charsets.UTF_8, null).buffer) }
     }
 
     private suspend fun RConnection.getMasterAddress(masterName: String): Address {
-        TODO()
-//        val response = doRequest(SentinelGetMasterAddrCommandCodec.encode(Charsets.UTF_8, masterName).buffer)
-//        val result = SentinelGetMasterAddrCommandCodec.decode(response, Charsets.UTF_8)
-//         response: List<String> [host, port]
-//        require(result.size == 2)
-//        return Address(result.first(), result.last().toInt())
+        val response = doRequest(SentinelGetMasterAddrCommandCodec.encode(Charsets.UTF_8, masterName).buffer)
+        val result = SentinelGetMasterAddrCommandCodec.decode(response, Charsets.UTF_8)
+
+        require(result.size == 2)
+        return Address(result.first(), result.last().toInt())
     }
 
     private suspend fun RConnection.getSlaveAddresses(masterName: String): List<Address> {
         // send: SENTINEL slaves <masterName>
-//        val response = doRequest(SentinelReplicasCommandCodec.encode(Charsets.UTF_8, masterName).buffer)
-//        val result = SentinelReplicasCommandCodec.decode(response, Charsets.UTF_8)
+        val response = doRequest(SentinelReplicasCommandCodec.encode(Charsets.UTF_8, masterName).buffer)
+        val result = SentinelReplicasCommandCodec.decode(response, Charsets.UTF_8)
         TODO()
     }
 }

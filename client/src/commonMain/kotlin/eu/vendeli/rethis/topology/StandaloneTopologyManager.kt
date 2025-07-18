@@ -11,7 +11,7 @@ internal class StandaloneTopologyManager(
     client: ReThis,
 ) : TopologyManager {
     override val retryCfg: RetryConfiguration = client.cfg.retry
-    private val provider = client.connectionProviderFactory.create(node)
+    internal val provider = client.connectionProviderFactory.create(node)
 
     override suspend fun route(request: CommandRequest): ConnectionProvider = provider
 
