@@ -2,7 +2,10 @@
 
 package eu.vendeli.rethis.utils
 
+import eu.vendeli.rethis.ReThis
+import eu.vendeli.rethis.annotations.ReThisInternal
 import eu.vendeli.rethis.api.spec.common.response.common.HostAndPort
+import eu.vendeli.rethis.api.spec.common.types.CommandRequest
 import eu.vendeli.rethis.api.spec.common.types.ReThisException
 import eu.vendeli.rethis.configuration.RetryConfiguration
 import eu.vendeli.rethis.types.common.Address
@@ -11,12 +14,16 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.io.Buffer
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
 expect val Dispatchers.IO_OR_UNCONFINED: CoroutineDispatcher
 
 expect fun <T> coRunBlocking(block: suspend CoroutineScope.() -> T): T
+
+@ReThisInternal
+suspend fun ReThis.execute(request: CommandRequest): Buffer = topology.route(request).execute(request)
 
 @Suppress("UNCHECKED_CAST", "NOTHING_TO_INLINE")
 internal inline fun <T> Any.safeCast(): T? = this as? T
