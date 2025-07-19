@@ -2,13 +2,12 @@ package eu.vendeli.rethis.topology
 
 import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.api.spec.common.response.cluster.ClusterNode
-import eu.vendeli.rethis.api.spec.common.types.ClusterException
-import eu.vendeli.rethis.api.spec.common.types.CommandRequest
-import eu.vendeli.rethis.api.spec.common.types.RedirectMovedException
-import eu.vendeli.rethis.api.spec.common.types.RedisOperation
+import eu.vendeli.rethis.api.spec.common.types.*
+import eu.vendeli.rethis.codecs.cluster.AskingCommandCodec
 import eu.vendeli.rethis.codecs.cluster.ClusterSlotsCommandCodec
 import eu.vendeli.rethis.configuration.ClusterConfiguration
 import eu.vendeli.rethis.providers.ConnectionProvider
+import eu.vendeli.rethis.providers.withConnection
 import eu.vendeli.rethis.types.common.Address
 import eu.vendeli.rethis.types.common.ClusterSnapshot
 import eu.vendeli.rethis.utils.toAddress
@@ -18,6 +17,7 @@ import io.ktor.utils.io.charsets.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import kotlinx.io.Buffer
 import kotlin.concurrent.atomics.AtomicReference
 import kotlin.concurrent.atomics.ExperimentalAtomicApi
 
@@ -97,22 +97,32 @@ class ClusterTopologyManager(
         )
     }
 
-    override suspend fun handleFailure(exception: Throwable) {
-        if (exception !is RedirectMovedException) return
-        snapshotRef.load()?.also { snap ->
-            val target = Address(exception.host, exception.port)
-            val idx = snap.providers.indexOfFirst { it.node == target }.takeIf { it >= 0 } ?: run {
-                // on-demand add
-                val newProvider = client.connectionProviderFactory.create(target)
-                val providers = snap.providers + newProvider
-                val slots = snap.slotOwner.apply { this[exception.slot] = providers.lastIndex }
-                val replicas = snap.replicaIndices + IntArray(0)
-                snapshotRef.store(ClusterSnapshot(slots, replicas, providers))
-                providers.lastIndex
-            }
-            snap.slotOwner[exception.slot] = idx
+    override suspend fun handleFailure(request: CommandRequest, exception: Throwable): Buffer = when (exception) {
+        is RedirectAskException -> route(request).withConnection { conn ->
+            conn.doRequest(listOf(AskingCommandCodec.encode(cfg.charset).buffer, request.buffer))
         }
-        delay(cfg.movedBackoffPeriod)
+
+        is RedirectMovedException -> {
+            snapshotRef.load()?.also { snap ->
+                val target = Address(exception.host, exception.port)
+                val idx = snap.providers.indexOfFirst { it.node == target }.takeIf { it >= 0 } ?: run {
+                    // on-demand add
+                    val newProvider = client.connectionProviderFactory.create(target)
+                    val providers = snap.providers + newProvider
+                    val slots = snap.slotOwner.apply { this[exception.slot] = providers.lastIndex }
+                    val replicas = snap.replicaIndices + IntArray(0)
+                    snapshotRef.store(ClusterSnapshot(slots, replicas, providers))
+                    providers.lastIndex
+                }
+                snap.slotOwner[exception.slot] = idx
+            }
+            throw exception
+        }
+
+        else -> {
+            delay(cfg.movedBackoffPeriod)
+            throw exception
+        }
     }
 
     override suspend fun route(request: CommandRequest): ConnectionProvider {

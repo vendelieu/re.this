@@ -14,7 +14,7 @@ internal interface TopologyManager {
     val retryCfg: RetryConfiguration
 
     suspend fun route(request: CommandRequest): ConnectionProvider
-    suspend fun handleFailure(exception: Throwable)
+    suspend fun handleFailure(request: CommandRequest, exception: Throwable): Buffer = throw exception
     fun close()
 }
 
@@ -33,5 +33,5 @@ internal suspend inline fun TopologyManager.handle(request: CommandRequest): Buf
 
             else -> route(request).execute(request)
         }
-    }.onFailure { handleFailure(it) }.getOrThrow()
+    }.getOrElse { handleFailure(request, it) }
 }

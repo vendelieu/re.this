@@ -125,8 +125,6 @@ class SentinelTopologyManager(
         cfg.readFromStrategy.pick(request, it)
     } ?: panic("Sentinel topology not initialized")
 
-    override suspend fun handleFailure(exception: Throwable) {}
-
     override fun close() {
         scope.cancel()
         snapshot.load()?.providers?.forEach { it.close() }

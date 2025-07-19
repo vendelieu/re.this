@@ -15,7 +15,5 @@ internal class StandaloneTopologyManager(
 
     override suspend fun route(request: CommandRequest): ConnectionProvider = provider
 
-    override suspend fun handleFailure(exception: Throwable) {}
-
     override fun close() = provider.close()
 }

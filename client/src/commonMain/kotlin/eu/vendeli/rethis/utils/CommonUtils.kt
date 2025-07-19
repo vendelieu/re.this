@@ -18,20 +18,30 @@ expect val Dispatchers.IO_OR_UNCONFINED: CoroutineDispatcher
 
 expect fun <T> coRunBlocking(block: suspend CoroutineScope.() -> T): T
 
+@Suppress("UNCHECKED_CAST", "NOTHING_TO_INLINE")
+internal inline fun <T> Any.safeCast(): T? = this as? T
+
 internal suspend inline fun <T> withRetry(
     cfg: RetryConfiguration,
     block: suspend () -> T,
 ): T {
     var currentDelay = cfg.initialDelay.inWholeMilliseconds
+    var ex: Exception? = null
     repeat(cfg.times - 1) {
         try {
             return block()
         } catch (e: Exception) {
+            if (ex == null) {
+                ex = e
+            } else {
+                ex.addSuppressed(e)
+            }
             // todo LOG
         }
         delay(currentDelay)
         currentDelay = (currentDelay * cfg.factor).toLong().coerceAtMost(cfg.maxDelay.inWholeMilliseconds)
     }
+    if (ex != null) throw ex
     return block()
 }
 

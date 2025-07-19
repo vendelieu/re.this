@@ -2,13 +2,6 @@ package eu.vendeli.rethis.api.processor.types
 
 import eu.vendeli.rethis.api.processor.utils.normalizeParam
 
-internal interface RSpecVisitor {
-    fun visitSimple(node: RSpecNode.Simple)
-    fun visitPureToken(node: RSpecNode.PureToken)
-    fun visitOneOf(node: RSpecNode.OneOf)
-    fun visitBlock(node: RSpecNode.Block)
-}
-
 internal sealed class RSpecNode {
     abstract val name: String
     abstract val arg: CommandArgument
@@ -17,9 +10,6 @@ internal sealed class RSpecNode {
     open val children: List<RSpecNode> = emptyList()
 
     val normalizedName get() = name.normalizeParam()
-    var processed: Boolean = false
-
-    abstract fun accept(visitor: RSpecVisitor)
 
     data class Simple(
         val type: String,
@@ -27,20 +17,14 @@ internal sealed class RSpecNode {
         override val arg: CommandArgument,
         override val path: List<Int>,
         override val parentNode: RSpecNode? = null,
-    ) : RSpecNode() {
-        override fun accept(visitor: RSpecVisitor) =
-            visitor.visitSimple(this)
-    }
+    ) : RSpecNode()
 
     data class PureToken(
         override val name: String,
         override val arg: CommandArgument,
         override val path: List<Int>,
         override val parentNode: RSpecNode? = null,
-    ) : RSpecNode() {
-        override fun accept(visitor: RSpecVisitor) =
-            visitor.visitPureToken(this)
-    }
+    ) : RSpecNode()
 
     data class OneOf(
         override val name: String,
@@ -48,10 +32,7 @@ internal sealed class RSpecNode {
         override val path: List<Int>,
         override val parentNode: RSpecNode? = null,
         override val children: List<RSpecNode>,
-    ) : RSpecNode() {
-        override fun accept(visitor: RSpecVisitor) =
-            visitor.visitOneOf(this)
-    }
+    ) : RSpecNode()
 
     data class Block(
         override val name: String,
@@ -59,10 +40,7 @@ internal sealed class RSpecNode {
         override val path: List<Int>,
         override val parentNode: RSpecNode? = null,
         override val children: List<RSpecNode>,
-    ) : RSpecNode() {
-        override fun accept(visitor: RSpecVisitor) =
-            visitor.visitBlock(this)
-    }
+    ) : RSpecNode()
 }
 
 internal class RSpecTreeBuilder(private val raw: List<CommandArgument>) {
