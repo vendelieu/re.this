@@ -36,7 +36,6 @@ internal suspend inline fun <T> withRetry(
             } else {
                 ex.addSuppressed(e)
             }
-            // todo LOG
         }
         delay(currentDelay)
         currentDelay = (currentDelay * cfg.factor).toLong().coerceAtMost(cfg.maxDelay.inWholeMilliseconds)

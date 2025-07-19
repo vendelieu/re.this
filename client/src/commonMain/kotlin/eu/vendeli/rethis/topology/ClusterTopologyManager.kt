@@ -116,6 +116,7 @@ class ClusterTopologyManager(
                 }
                 snap.slotOwner[exception.slot] = idx
             }
+            delay(cfg.movedBackoffPeriod)
             throw exception
         }
 

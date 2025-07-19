@@ -3,6 +3,7 @@ package eu.vendeli.rethis.topology
 import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.api.spec.common.types.CommandRequest
 import eu.vendeli.rethis.api.spec.common.types.RedisOperation
+import eu.vendeli.rethis.api.spec.common.utils.unwrap
 import eu.vendeli.rethis.codecs.connection.PingCommandCodec
 import eu.vendeli.rethis.codecs.sentinel.SentinelGetMasterAddrCommandCodec
 import eu.vendeli.rethis.codecs.sentinel.SentinelReplicasCommandCodec
@@ -14,6 +15,7 @@ import eu.vendeli.rethis.types.interfaces.SubscriptionHandler
 import eu.vendeli.rethis.utils.ClusterEventNames
 import eu.vendeli.rethis.utils.panic
 import eu.vendeli.rethis.utils.registerSubscription
+import io.ktor.util.logging.*
 import io.ktor.utils.io.charsets.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.sync.Mutex
@@ -30,6 +32,7 @@ class SentinelTopologyManager(
     private val client: ReThis,
     private val cfg: SentinelConfiguration,
 ) : TopologyManager {
+    private val logger = KtorSimpleLogger("eu.vendeli.rethis.SentinelTopologyManager")
     private val snapshot: AtomicReference<SentinelSnapshot?> = AtomicReference(null)
     private val refreshMutex = Mutex()
     private val scope = CoroutineScope(cfg.dispatcher + Job(client.rootJob))
@@ -110,9 +113,8 @@ class SentinelTopologyManager(
                 val master = conn.getMasterAddress(masterName)
                 val replicas = conn.getSlaveAddresses(masterName)
                 return master to replicas
-            } catch (_: Throwable) {
-                // todo log
-                // try next
+            } catch (e: Throwable) {
+                logger.debug("Failed to fetch Sentinel topology for '$masterName' from $sentinel", e)
             } finally {
                 client.connectionFactory.dispose(conn)
             }
@@ -145,7 +147,12 @@ class SentinelTopologyManager(
     private suspend fun RConnection.getSlaveAddresses(masterName: String): List<Address> {
         // send: SENTINEL slaves <masterName>
         val response = doRequest(SentinelReplicasCommandCodec.encode(Charsets.UTF_8, masterName).buffer)
-        val result = SentinelReplicasCommandCodec.decode(response, Charsets.UTF_8)
-        TODO()
+        return SentinelReplicasCommandCodec.decode(response, Charsets.UTF_8).mapNotNull {
+            // format explained here: https://redis.io/docs/latest/commands/cluster-nodes/
+            val parts = it.unwrap<String>()!!.split(' ')
+            if (!parts[4].contains("slave")) return@mapNotNull null
+            val address = parts[1].substringBefore('@').split(':')
+            Address(address[0], address[1].toInt())
+        }
     }
 }
