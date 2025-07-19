@@ -3,7 +3,7 @@ package eu.vendeli.rethis.codecs.string
 import eu.vendeli.rethis.api.spec.common.decoders.string.LcsDecoder
 import eu.vendeli.rethis.api.spec.common.request.string.LcsMode
 import eu.vendeli.rethis.api.spec.common.request.string.MinMatchLen
-import eu.vendeli.rethis.api.spec.common.response.LcsResult
+import eu.vendeli.rethis.api.spec.common.response.string.LcsResult
 import eu.vendeli.rethis.api.spec.common.types.CommandRequest
 import eu.vendeli.rethis.api.spec.common.types.RedisOperation
 import eu.vendeli.rethis.api.spec.common.utils.CRC16

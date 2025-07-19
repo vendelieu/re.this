@@ -8,8 +8,6 @@ class KeyAbsentException(override val message: String, override val cause: Throw
 class CrossSlotOperationException(override val message: String, override val cause: Throwable? = null) :
     ClusterException()
 
-class SlotNotFound(override val message: String, override val cause: Throwable? = null) : ClusterException()
-
 class RedirectUnstableException(
     override val message: String,
     val origin: String,
@@ -29,22 +27,16 @@ class RedirectMovedException(
     val host: String,
     val port: Int,
     override val cause: Throwable? = null,
-) :
-    ClusterException()
-
-class DownStateException(override val message: String, override val cause: Throwable? = null) :
-    ClusterException()
+) : ClusterException()
 
 class DownUnboundSlotException(
     override val message: String,
     val origin: String,
     override val cause: Throwable? = null,
-) :
-    ClusterException()
+) : ClusterException()
 
 class DownReadOnlyStateException(
     override val message: String,
     val origin: String,
     override val cause: Throwable? = null,
-) :
-    ClusterException()
+) : ClusterException()

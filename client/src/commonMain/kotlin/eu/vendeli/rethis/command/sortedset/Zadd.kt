@@ -2,7 +2,7 @@ package eu.vendeli.rethis.command.sortedset
 
 import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.api.spec.common.request.common.UpdateStrategyOption
-import eu.vendeli.rethis.api.spec.common.response.ZMember
+import eu.vendeli.rethis.api.spec.common.response.stream.ZMember
 import eu.vendeli.rethis.codecs.sortedset.ZAddCommandCodec
 import eu.vendeli.rethis.codecs.sortedset.ZAddExtendedCommandCodec
 import eu.vendeli.rethis.topology.handle

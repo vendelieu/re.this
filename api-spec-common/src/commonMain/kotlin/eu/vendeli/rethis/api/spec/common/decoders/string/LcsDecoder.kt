@@ -1,7 +1,7 @@
 package eu.vendeli.rethis.api.spec.common.decoders.string
 
 import eu.vendeli.rethis.api.spec.common.decoders.ResponseDecoder
-import eu.vendeli.rethis.api.spec.common.response.LcsResult
+import eu.vendeli.rethis.api.spec.common.response.string.LcsResult
 import eu.vendeli.rethis.api.spec.common.types.Int64
 import eu.vendeli.rethis.api.spec.common.types.RArray
 import eu.vendeli.rethis.api.spec.common.types.RMap

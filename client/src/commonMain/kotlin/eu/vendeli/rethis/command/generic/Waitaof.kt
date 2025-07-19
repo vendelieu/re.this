@@ -1,7 +1,7 @@
 package eu.vendeli.rethis.command.generic
 
 import eu.vendeli.rethis.ReThis
-import eu.vendeli.rethis.api.spec.common.response.WaitAofResult
+import eu.vendeli.rethis.api.spec.common.response.common.WaitAofResult
 import eu.vendeli.rethis.codecs.generic.WaitAofCommandCodec
 import eu.vendeli.rethis.topology.handle
 import kotlin.Long

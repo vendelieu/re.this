@@ -1,4 +1,4 @@
-package eu.vendeli.rethis.api.spec.common.response
+package eu.vendeli.rethis.api.spec.common.response.stream
 
 data class ZPopResult(
     val key: String,

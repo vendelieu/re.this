@@ -1,8 +1,8 @@
 package eu.vendeli.rethis.codecs.list
 
 import eu.vendeli.rethis.api.spec.common.decoders.common.LMPopDecoder
-import eu.vendeli.rethis.api.spec.common.response.MPopResult
-import eu.vendeli.rethis.api.spec.common.response.MoveDirection
+import eu.vendeli.rethis.api.spec.common.response.common.MPopResult
+import eu.vendeli.rethis.api.spec.common.response.common.MoveDirection
 import eu.vendeli.rethis.api.spec.common.types.CommandRequest
 import eu.vendeli.rethis.api.spec.common.types.KeyAbsentException
 import eu.vendeli.rethis.api.spec.common.types.RedisOperation

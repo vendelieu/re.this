@@ -1,7 +1,7 @@
 package eu.vendeli.rethis.api.spec.common.decoders.common
 
 import eu.vendeli.rethis.api.spec.common.decoders.ResponseDecoder
-import eu.vendeli.rethis.api.spec.common.response.MPopResult
+import eu.vendeli.rethis.api.spec.common.response.common.MPopResult
 import eu.vendeli.rethis.api.spec.common.types.RArray
 import eu.vendeli.rethis.api.spec.common.utils.readResponseWrapped
 import eu.vendeli.rethis.api.spec.common.utils.unwrap

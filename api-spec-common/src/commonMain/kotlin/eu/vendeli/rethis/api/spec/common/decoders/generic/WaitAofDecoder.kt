@@ -2,7 +2,7 @@ package eu.vendeli.rethis.api.spec.common.decoders.generic
 
 import eu.vendeli.rethis.api.spec.common.decoders.ResponseDecoder
 import eu.vendeli.rethis.api.spec.common.decoders.aggregate.ArrayLongDecoder
-import eu.vendeli.rethis.api.spec.common.response.WaitAofResult
+import eu.vendeli.rethis.api.spec.common.response.common.WaitAofResult
 import io.ktor.utils.io.charsets.*
 import kotlinx.io.Buffer
 

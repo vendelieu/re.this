@@ -12,7 +12,7 @@ import eu.vendeli.rethis.api.spec.common.types.*
 )
 fun interface FunctionRestoreCommand : RedisCommandSpec<Boolean> {
     suspend fun encode(
-        @RedisMeta.IgnoreCheck([ValidityCheck.TYPE]) serializedValue: ByteArray,
+        serializedValue: ByteArray,
         policy: FunctionRestoreOption?,
     ): CommandRequest
 }

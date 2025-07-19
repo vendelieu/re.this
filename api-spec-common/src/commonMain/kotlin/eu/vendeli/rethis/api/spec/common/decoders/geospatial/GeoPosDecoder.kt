@@ -2,7 +2,7 @@ package eu.vendeli.rethis.api.spec.common.decoders.geospatial
 
 import eu.vendeli.rethis.api.spec.common.decoders.ResponseDecoder
 import eu.vendeli.rethis.api.spec.common.decoders.aggregate.ArrayRTypeDecoder
-import eu.vendeli.rethis.api.spec.common.response.GeoPosition
+import eu.vendeli.rethis.api.spec.common.response.geospatial.GeoPosition
 import eu.vendeli.rethis.api.spec.common.types.RArray
 import eu.vendeli.rethis.api.spec.common.utils.safeCast
 import eu.vendeli.rethis.api.spec.common.utils.unwrap

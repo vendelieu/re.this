@@ -1,7 +1,7 @@
 package eu.vendeli.rethis.codecs.geospatial
 
 import eu.vendeli.rethis.api.spec.common.decoders.geospatial.GeoPosDecoder
-import eu.vendeli.rethis.api.spec.common.response.GeoPosition
+import eu.vendeli.rethis.api.spec.common.response.geospatial.GeoPosition
 import eu.vendeli.rethis.api.spec.common.types.CommandRequest
 import eu.vendeli.rethis.api.spec.common.types.RedisOperation
 import eu.vendeli.rethis.api.spec.common.utils.CRC16

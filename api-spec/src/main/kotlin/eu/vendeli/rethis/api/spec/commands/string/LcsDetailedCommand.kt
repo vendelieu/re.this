@@ -7,7 +7,7 @@ import eu.vendeli.rethis.api.spec.common.annotations.RedisOption
 import eu.vendeli.rethis.api.spec.common.decoders.string.LcsDecoder
 import eu.vendeli.rethis.api.spec.common.request.string.LcsMode
 import eu.vendeli.rethis.api.spec.common.request.string.MinMatchLen
-import eu.vendeli.rethis.api.spec.common.response.LcsResult
+import eu.vendeli.rethis.api.spec.common.response.string.LcsResult
 import eu.vendeli.rethis.api.spec.common.types.CommandRequest
 import eu.vendeli.rethis.api.spec.common.types.RedisCommandSpec
 import eu.vendeli.rethis.api.spec.common.types.RedisOperation

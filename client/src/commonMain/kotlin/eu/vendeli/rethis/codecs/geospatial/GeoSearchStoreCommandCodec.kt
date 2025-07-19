@@ -7,7 +7,7 @@ import eu.vendeli.rethis.api.spec.common.request.geospatial.CenterPoint
 import eu.vendeli.rethis.api.spec.common.request.geospatial.FromLongitudeLatitude
 import eu.vendeli.rethis.api.spec.common.request.geospatial.FromMember
 import eu.vendeli.rethis.api.spec.common.request.geospatial.Shape
-import eu.vendeli.rethis.api.spec.common.response.GeoSort
+import eu.vendeli.rethis.api.spec.common.response.geospatial.GeoSort
 import eu.vendeli.rethis.api.spec.common.types.CommandRequest
 import eu.vendeli.rethis.api.spec.common.types.RedisOperation
 import eu.vendeli.rethis.api.spec.common.types.RespCode

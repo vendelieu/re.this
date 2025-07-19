@@ -4,7 +4,7 @@ import eu.vendeli.rethis.api.spec.common.annotations.RedisCommand
 import eu.vendeli.rethis.api.spec.common.annotations.RedisOption
 import eu.vendeli.rethis.api.spec.common.request.geospatial.CenterPoint
 import eu.vendeli.rethis.api.spec.common.request.geospatial.Shape
-import eu.vendeli.rethis.api.spec.common.response.GeoSort
+import eu.vendeli.rethis.api.spec.common.response.geospatial.GeoSort
 import eu.vendeli.rethis.api.spec.common.types.*
 
 @RedisCommand(

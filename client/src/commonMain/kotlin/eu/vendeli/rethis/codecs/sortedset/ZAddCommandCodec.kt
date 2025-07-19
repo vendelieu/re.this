@@ -2,11 +2,7 @@ package eu.vendeli.rethis.codecs.sortedset
 
 import eu.vendeli.rethis.api.spec.common.decoders.general.IntegerDecoder
 import eu.vendeli.rethis.api.spec.common.request.common.UpdateStrategyOption
-import eu.vendeli.rethis.api.spec.common.request.common.UpdateStrategyOption.GT
-import eu.vendeli.rethis.api.spec.common.request.common.UpdateStrategyOption.LT
-import eu.vendeli.rethis.api.spec.common.request.common.UpdateStrategyOption.NX
-import eu.vendeli.rethis.api.spec.common.request.common.UpdateStrategyOption.XX
-import eu.vendeli.rethis.api.spec.common.response.ZMember
+import eu.vendeli.rethis.api.spec.common.response.stream.ZMember
 import eu.vendeli.rethis.api.spec.common.types.CommandRequest
 import eu.vendeli.rethis.api.spec.common.types.RedisOperation
 import eu.vendeli.rethis.api.spec.common.types.RespCode

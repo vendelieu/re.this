@@ -1,8 +1,8 @@
 package eu.vendeli.rethis.command.list
 
 import eu.vendeli.rethis.ReThis
-import eu.vendeli.rethis.api.spec.common.response.MPopResult
-import eu.vendeli.rethis.api.spec.common.response.MoveDirection
+import eu.vendeli.rethis.api.spec.common.response.common.MPopResult
+import eu.vendeli.rethis.api.spec.common.response.common.MoveDirection
 import eu.vendeli.rethis.codecs.list.BlmPopCommandCodec
 import eu.vendeli.rethis.topology.handle
 import kotlin.Double

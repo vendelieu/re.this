@@ -1,7 +1,7 @@
 package eu.vendeli.rethis.codecs.list
 
 import eu.vendeli.rethis.api.spec.common.decoders.general.BulkStringDecoder
-import eu.vendeli.rethis.api.spec.common.response.MoveDirection
+import eu.vendeli.rethis.api.spec.common.response.common.MoveDirection
 import eu.vendeli.rethis.api.spec.common.types.CommandRequest
 import eu.vendeli.rethis.api.spec.common.types.RedisOperation
 import eu.vendeli.rethis.api.spec.common.types.RespCode

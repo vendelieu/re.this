@@ -2,7 +2,7 @@ package eu.vendeli.rethis.command.geospatial
 
 import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.api.spec.common.request.geospatial.GeoAddOption
-import eu.vendeli.rethis.api.spec.common.response.GeoMember
+import eu.vendeli.rethis.api.spec.common.response.geospatial.GeoMember
 import eu.vendeli.rethis.codecs.geospatial.GeoAddCommandCodec
 import eu.vendeli.rethis.topology.handle
 import kotlin.Boolean

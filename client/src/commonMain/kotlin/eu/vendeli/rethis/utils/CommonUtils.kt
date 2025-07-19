@@ -2,7 +2,7 @@
 
 package eu.vendeli.rethis.utils
 
-import eu.vendeli.rethis.api.spec.common.response.HostAndPort
+import eu.vendeli.rethis.api.spec.common.response.common.HostAndPort
 import eu.vendeli.rethis.api.spec.common.types.ReThisException
 import eu.vendeli.rethis.configuration.RetryConfiguration
 import eu.vendeli.rethis.types.common.Address

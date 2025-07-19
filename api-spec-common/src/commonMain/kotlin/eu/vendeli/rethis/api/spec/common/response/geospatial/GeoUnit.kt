@@ -1,4 +1,4 @@
-package eu.vendeli.rethis.api.spec.common.response
+package eu.vendeli.rethis.api.spec.common.response.geospatial
 
 import eu.vendeli.rethis.api.spec.common.annotations.RedisOption
 

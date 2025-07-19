@@ -5,7 +5,7 @@ import eu.vendeli.rethis.api.spec.common.request.generic.ScanOption
 import eu.vendeli.rethis.api.spec.common.request.generic.ScanOption.Count
 import eu.vendeli.rethis.api.spec.common.request.generic.ScanOption.Match
 import eu.vendeli.rethis.api.spec.common.request.generic.ScanOption.Type
-import eu.vendeli.rethis.api.spec.common.response.ScanResult
+import eu.vendeli.rethis.api.spec.common.response.common.ScanResult
 import eu.vendeli.rethis.api.spec.common.types.CommandRequest
 import eu.vendeli.rethis.api.spec.common.types.RedisOperation
 import eu.vendeli.rethis.api.spec.common.utils.CRC16

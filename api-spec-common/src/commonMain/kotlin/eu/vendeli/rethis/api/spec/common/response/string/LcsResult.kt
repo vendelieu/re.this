@@ -1,4 +1,4 @@
-package eu.vendeli.rethis.api.spec.common.response
+package eu.vendeli.rethis.api.spec.common.response.string
 
 data class LcsResult(
     val matches: List<List<LcsMatch>>,

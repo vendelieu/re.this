@@ -1,7 +1,7 @@
 package eu.vendeli.rethis.command.sortedset
 
 import eu.vendeli.rethis.ReThis
-import eu.vendeli.rethis.api.spec.common.response.MPopResult
+import eu.vendeli.rethis.api.spec.common.response.common.MPopResult
 import eu.vendeli.rethis.codecs.sortedset.ZPopMaxCommandCodec
 import eu.vendeli.rethis.topology.handle
 import kotlin.Long

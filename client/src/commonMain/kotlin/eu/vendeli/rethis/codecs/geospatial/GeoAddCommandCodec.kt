@@ -2,9 +2,7 @@ package eu.vendeli.rethis.codecs.geospatial
 
 import eu.vendeli.rethis.api.spec.common.decoders.general.IntegerDecoder
 import eu.vendeli.rethis.api.spec.common.request.geospatial.GeoAddOption
-import eu.vendeli.rethis.api.spec.common.request.geospatial.GeoAddOption.NX
-import eu.vendeli.rethis.api.spec.common.request.geospatial.GeoAddOption.XX
-import eu.vendeli.rethis.api.spec.common.response.GeoMember
+import eu.vendeli.rethis.api.spec.common.response.geospatial.GeoMember
 import eu.vendeli.rethis.api.spec.common.types.CommandRequest
 import eu.vendeli.rethis.api.spec.common.types.RedisOperation
 import eu.vendeli.rethis.api.spec.common.types.RespCode

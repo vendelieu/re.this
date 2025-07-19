@@ -96,10 +96,9 @@ class ReThis internal constructor(
 
             var e: Throwable? = null
             try {
-                scope
-                    .launch(currentCoroutineContext() + CoLocalConn(conn)) {
-                        runCatching { block() }.getOrElse { e = it }
-                    }.join()
+                scope.launch(currentCoroutineContext() + CoLocalConn(conn)) {
+                    runCatching { block() }.getOrElse { e = it }
+                }.join()
 
                 val exec = conn.doRequest(MultiCommandCodec.encode(cfg.charset).buffer)
                 logger.debug("Transaction completed")

@@ -1,4 +1,4 @@
-package eu.vendeli.rethis.api.spec.common.response
+package eu.vendeli.rethis.api.spec.common.response.geospatial
 
 data class GeoSearchResult(
     val member: String,

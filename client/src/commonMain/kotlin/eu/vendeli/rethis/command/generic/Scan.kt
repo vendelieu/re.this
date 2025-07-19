@@ -2,7 +2,7 @@ package eu.vendeli.rethis.command.generic
 
 import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.api.spec.common.request.generic.ScanOption
-import eu.vendeli.rethis.api.spec.common.response.ScanResult
+import eu.vendeli.rethis.api.spec.common.response.common.ScanResult
 import eu.vendeli.rethis.codecs.generic.ScanCommandCodec
 import eu.vendeli.rethis.topology.handle
 import kotlin.Long

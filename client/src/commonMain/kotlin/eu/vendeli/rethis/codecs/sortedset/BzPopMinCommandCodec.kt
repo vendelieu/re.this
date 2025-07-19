@@ -1,7 +1,7 @@
 package eu.vendeli.rethis.codecs.sortedset
 
 import eu.vendeli.rethis.api.spec.common.decoders.sortedset.ZPopResultDecoder
-import eu.vendeli.rethis.api.spec.common.response.ZPopResult
+import eu.vendeli.rethis.api.spec.common.response.stream.ZPopResult
 import eu.vendeli.rethis.api.spec.common.types.CommandRequest
 import eu.vendeli.rethis.api.spec.common.types.KeyAbsentException
 import eu.vendeli.rethis.api.spec.common.types.RedisOperation

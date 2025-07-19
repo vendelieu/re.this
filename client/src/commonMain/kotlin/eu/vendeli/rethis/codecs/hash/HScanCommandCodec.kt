@@ -5,7 +5,7 @@ import eu.vendeli.rethis.api.spec.common.request.hash.HScanOption
 import eu.vendeli.rethis.api.spec.common.request.hash.HScanOption.Count
 import eu.vendeli.rethis.api.spec.common.request.hash.HScanOption.Match
 import eu.vendeli.rethis.api.spec.common.request.hash.HScanOption.NOVALUES
-import eu.vendeli.rethis.api.spec.common.response.ScanResult
+import eu.vendeli.rethis.api.spec.common.response.common.ScanResult
 import eu.vendeli.rethis.api.spec.common.types.CommandRequest
 import eu.vendeli.rethis.api.spec.common.types.RedisOperation
 import eu.vendeli.rethis.api.spec.common.utils.CRC16

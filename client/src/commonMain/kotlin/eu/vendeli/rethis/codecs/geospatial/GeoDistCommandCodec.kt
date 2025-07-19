@@ -1,7 +1,7 @@
 package eu.vendeli.rethis.codecs.geospatial
 
 import eu.vendeli.rethis.api.spec.common.decoders.general.BulkStringDecoder
-import eu.vendeli.rethis.api.spec.common.response.GeoUnit
+import eu.vendeli.rethis.api.spec.common.response.geospatial.GeoUnit
 import eu.vendeli.rethis.api.spec.common.types.CommandRequest
 import eu.vendeli.rethis.api.spec.common.types.RedisOperation
 import eu.vendeli.rethis.api.spec.common.types.RespCode

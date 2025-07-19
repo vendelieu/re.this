@@ -1,7 +1,7 @@
 package eu.vendeli.rethis.codecs.sortedset
 
 import eu.vendeli.rethis.api.spec.common.decoders.common.LMPopDecoder
-import eu.vendeli.rethis.api.spec.common.response.MPopResult
+import eu.vendeli.rethis.api.spec.common.response.common.MPopResult
 import eu.vendeli.rethis.api.spec.common.types.CommandRequest
 import eu.vendeli.rethis.api.spec.common.types.RedisOperation
 import eu.vendeli.rethis.api.spec.common.utils.CRC16

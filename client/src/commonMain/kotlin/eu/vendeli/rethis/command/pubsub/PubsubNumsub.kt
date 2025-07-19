@@ -1,7 +1,7 @@
 package eu.vendeli.rethis.command.pubsub
 
 import eu.vendeli.rethis.ReThis
-import eu.vendeli.rethis.api.spec.common.response.PubSubNumEntry
+import eu.vendeli.rethis.api.spec.common.response.common.PubSubNumEntry
 import eu.vendeli.rethis.codecs.pubsub.PubSubNumSubCommandCodec
 import eu.vendeli.rethis.topology.handle
 import kotlin.String

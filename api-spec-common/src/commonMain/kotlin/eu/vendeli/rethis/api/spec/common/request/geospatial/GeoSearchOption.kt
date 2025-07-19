@@ -1,7 +1,7 @@
 package eu.vendeli.rethis.api.spec.common.request.geospatial
 
 import eu.vendeli.rethis.api.spec.common.annotations.RedisOption
-import eu.vendeli.rethis.api.spec.common.response.GeoUnit
+import eu.vendeli.rethis.api.spec.common.response.geospatial.GeoUnit
 
 sealed class GeoSearchOption
 

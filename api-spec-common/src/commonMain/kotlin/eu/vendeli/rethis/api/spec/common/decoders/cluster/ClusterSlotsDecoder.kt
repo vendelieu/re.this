@@ -2,7 +2,7 @@ package eu.vendeli.rethis.api.spec.common.decoders.cluster
 
 import eu.vendeli.rethis.api.spec.common.decoders.ResponseDecoder
 import eu.vendeli.rethis.api.spec.common.request.cluster.SlotRange
-import eu.vendeli.rethis.api.spec.common.response.HostAndPort
+import eu.vendeli.rethis.api.spec.common.response.common.HostAndPort
 import eu.vendeli.rethis.api.spec.common.response.cluster.Cluster
 import eu.vendeli.rethis.api.spec.common.response.cluster.ClusterNode
 import eu.vendeli.rethis.api.spec.common.types.RespCode
