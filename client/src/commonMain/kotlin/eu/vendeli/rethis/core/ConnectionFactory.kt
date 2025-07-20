@@ -23,7 +23,7 @@ internal class ConnectionFactory(
     private val cfg: ReThisConfiguration,
     rootJob: Job,
 ) {
-    private val logger = KtorSimpleLogger("eu.vendeli.rethis.core.ConnectionFactory")
+    private val logger = cfg.loggerFactory.get("eu.vendeli.rethis.core.ConnectionFactory")
     private val connections = Semaphore(cfg.maxConnections)
     private val scope = CoroutineScope(
         Dispatchers.IO_OR_UNCONFINED + CoroutineName("$CLIENT_NAME|ConnectionFactory") + Job(rootJob),
@@ -71,7 +71,7 @@ internal class ConnectionFactory(
         ).buffer
 
         if (cfg.db != null && cfg.db!! > 0) {
-            conn.doRequest(
+            conn.doBatchRequest(
                 listOf(
                     helloBuffer,
                     SelectCommandCodec.encode(Charsets.UTF_8, cfg.db!!.toLong()).buffer,

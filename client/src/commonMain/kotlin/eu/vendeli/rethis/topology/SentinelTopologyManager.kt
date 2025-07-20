@@ -32,7 +32,7 @@ class SentinelTopologyManager(
     private val client: ReThis,
     private val cfg: SentinelConfiguration,
 ) : TopologyManager {
-    private val logger = KtorSimpleLogger("eu.vendeli.rethis.SentinelTopologyManager")
+    private val logger = cfg.loggerFactory.get("eu.vendeli.rethis.SentinelTopologyManager")
     private val snapshot: AtomicReference<SentinelSnapshot?> = AtomicReference(null)
     private val refreshMutex = Mutex()
     private val scope = CoroutineScope(cfg.dispatcher + Job(client.rootJob))

@@ -35,7 +35,7 @@ class ReThis internal constructor(
     internal val cfg: ReThisConfiguration,
     topologyBlock: ReThis.() -> TopologyManager,
 ) {
-    internal val logger = KtorSimpleLogger("eu.vendeli.rethis.ReThis")
+    internal val logger = cfg.loggerFactory.get("eu.vendeli.rethis.ReThis")
     internal val rootJob = SupervisorJob()
     internal val connectionFactory = ConnectionFactory(cfg, rootJob)
     internal val connectionProviderFactory = DefaultConnectionProviderFactory(this)

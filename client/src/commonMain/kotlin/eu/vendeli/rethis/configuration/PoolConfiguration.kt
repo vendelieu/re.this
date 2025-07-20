@@ -29,7 +29,6 @@ data class PoolConfiguration(
     var maxShrinkSize: Int = 5,
 
     var checkInterval: Duration = 1.seconds,
-    var connectionAcquirePeriod: Duration = 3.seconds,
     var gracefulClosePeriod: Duration = 30.seconds,
 
     var connectionHealthCheck: Boolean = true,

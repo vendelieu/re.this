@@ -5,6 +5,7 @@ import eu.vendeli.rethis.api.spec.common.types.CommandRequest
 import eu.vendeli.rethis.types.common.Address
 import eu.vendeli.rethis.types.common.RConnection
 import eu.vendeli.rethis.utils.panic
+import kotlinx.coroutines.withTimeout
 import kotlinx.io.Buffer
 
 internal class SingleConnectionProvider(
@@ -15,8 +16,9 @@ internal class SingleConnectionProvider(
 
     override fun close() {}
 
-    override suspend fun borrowConnection(): RConnection =
+    override suspend fun borrowConnection(): RConnection = withTimeout(client.cfg.connectionAcquireTimeout) {
         client.connectionFactory.createConnOrNull(node.socket) ?: panic("Can't create connection")
+    }
 
     override suspend fun releaseConnection(conn: RConnection) = client.connectionFactory.dispose(conn)
 

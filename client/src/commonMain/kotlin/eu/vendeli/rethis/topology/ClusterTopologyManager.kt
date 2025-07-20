@@ -99,7 +99,7 @@ class ClusterTopologyManager(
 
     override suspend fun handleFailure(request: CommandRequest, exception: Throwable): Buffer = when (exception) {
         is RedirectAskException -> route(request).withConnection { conn ->
-            conn.doRequest(listOf(AskingCommandCodec.encode(cfg.charset).buffer, request.buffer))
+            conn.doBatchRequest(listOf(AskingCommandCodec.encode(cfg.charset).buffer, request.buffer))
         }
 
         is RedirectMovedException -> {

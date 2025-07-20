@@ -14,10 +14,8 @@ abstract class ReThisTestCtx(
     protected val timestamp: Instant get() = Clock.System.now()
 
     protected val redis = RedisContainer(
-        DockerImageName.parse(if (!withJsonModule) "redis:7.4.0" else "redislabs/rejson"),
-    ).apply {
-        start()
-    }
+        DockerImageName.parse(if (!withJsonModule) "redis:${RedisContainer.DEFAULT_TAG}" else "redislabs/rejson"),
+    ).apply { start() }
 
     private var rethis: ReThis = ReThis(redis.host, redis.firstMappedPort)
     protected val client get() = rethis

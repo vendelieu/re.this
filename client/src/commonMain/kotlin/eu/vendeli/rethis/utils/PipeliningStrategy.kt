@@ -9,7 +9,7 @@ import eu.vendeli.rethis.topology.StandaloneTopologyManager
 import eu.vendeli.rethis.types.common.RConnection
 
 private suspend inline fun RConnection.doRTypeRequest(client: ReThis, payload: List<CommandRequest>): List<RType> {
-    return ArrayRTypeDecoder.decode(doRequest(payload.map { it.buffer }), client.cfg.charset)
+    return ArrayRTypeDecoder.decode(doBatchRequest(payload.map { it.buffer }), client.cfg.charset)
 }
 
 internal suspend fun ReThis.handlePipelinedRequests(
@@ -18,7 +18,7 @@ internal suspend fun ReThis.handlePipelinedRequests(
 ): List<RType> {
     if (topology is StandaloneTopologyManager) {
         return ctxConn?.doRTypeRequest(this, pipelined) ?: topology.provider.withConnection { conn ->
-            ArrayRTypeDecoder.decode(conn.doRequest(pipelined.map { it.buffer }), cfg.charset)
+            ArrayRTypeDecoder.decode(conn.doBatchRequest(pipelined.map { it.buffer }), cfg.charset)
         }
     }
 

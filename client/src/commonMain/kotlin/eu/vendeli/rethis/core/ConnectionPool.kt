@@ -29,7 +29,7 @@ internal class ConnectionPool(
     rootJob: Job,
 ) {
     private val name = "$CLIENT_NAME|${cfg::class.simpleName}Pool@${this::class.hashCode()}"
-    private val logger = KtorSimpleLogger(name) // TODO give option to change logger
+    private val logger = cfg.loggerFactory.get("eu.vendeli.rethis.ConnectionPool")
     private val scope = CoroutineScope(
         Dispatchers.IO_OR_UNCONFINED + CoroutineName(name) + Job(rootJob),
     )
@@ -59,11 +59,12 @@ internal class ConnectionPool(
                 connectionFactory.dispose(conn)
             }
         }
+        logger.info("Connection pool initialized")
     }
 
     fun haveIdleConnections() = idleConnectionsCount.load() < cfg.pool.maxIdleConnections
 
-    suspend fun acquire(): RConnection = withTimeout(cfg.pool.connectionAcquirePeriod) aq@{
+    suspend fun acquire(): RConnection = withTimeout(cfg.connectionAcquireTimeout) aq@{
         borrowCount.incrementAndFetch()
         // fastest path
         val idleConn = idleConnections.tryReceive().getOrNull()?.healthyOrNull()
@@ -116,6 +117,7 @@ internal class ConnectionPool(
     }
 
     private fun runObserver() = scope.launch(SupervisorJob()) {
+        logger.debug("Starting connection pool observer")
         while (isActive) {
             delay(cfg.pool.checkInterval)
             adjustPoolSize()

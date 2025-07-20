@@ -1,6 +1,8 @@
 package eu.vendeli.rethis.configuration
 
 import eu.vendeli.rethis.annotations.ConfigurationDSL
+import eu.vendeli.rethis.core.DefaultLoggerFactory
+import eu.vendeli.rethis.types.common.LoggerFactory
 import eu.vendeli.rethis.types.common.ReadFrom
 import eu.vendeli.rethis.types.common.ReadFromStrategy
 import eu.vendeli.rethis.types.common.RespVer
@@ -28,6 +30,8 @@ sealed class ReThisConfiguration(internal val protocol: RespVer) {
     var charset: Charset = Charsets.UTF_8
     var dispatcher: CoroutineDispatcher = Dispatchers.Default
     var maxConnections: Int = 5000
+    var connectionAcquireTimeout: Duration = 10.seconds
+    var loggerFactory: LoggerFactory = DefaultLoggerFactory
 
     fun auth(password: CharArray, username: String? = null) {
         auth = AuthConfiguration(password, username)

@@ -14,7 +14,7 @@ data class RConnection(
     suspend fun doRequest(payload: Buffer): Buffer {
         output.runCatching {
             writeBuffer.transferFrom(payload)
-            flush()
+            flushIfNeeded()
         }.onFailure {
             cleanup()
             throw it
@@ -24,10 +24,10 @@ data class RConnection(
     }
 
     @OptIn(InternalAPI::class, InternalIoApi::class)
-    suspend fun doRequest(payload: List<Buffer>): Buffer {
+    suspend fun doBatchRequest(payload: List<Buffer>): Buffer {
         output.runCatching {
             payload.forEach { writeBuffer.transferFrom(it) }
-            flush()
+            flushIfNeeded()
         }.onFailure {
             cleanup()
             throw it
