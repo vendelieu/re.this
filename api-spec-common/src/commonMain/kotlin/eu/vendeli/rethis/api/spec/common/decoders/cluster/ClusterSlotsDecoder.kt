@@ -7,17 +7,20 @@ import eu.vendeli.rethis.api.spec.common.response.cluster.Cluster
 import eu.vendeli.rethis.api.spec.common.response.cluster.ClusterNode
 import eu.vendeli.rethis.api.spec.common.types.RespCode
 import eu.vendeli.rethis.api.spec.common.types.ResponseParsingException
+import eu.vendeli.rethis.api.spec.common.utils.EMPTY_BUFFER
 import eu.vendeli.rethis.api.spec.common.utils.tryInferCause
 import io.ktor.utils.io.charsets.*
 import kotlinx.io.Buffer
 import kotlinx.io.readLineStrict
 
 object ClusterSlotsDecoder : ResponseDecoder<Cluster> {
+    private val EMPTY_CLUSTER = Cluster(emptyList())
     override suspend fun decode(
         input: Buffer,
         charset: Charset,
         withCode: Boolean,
     ): Cluster {
+        if (input == EMPTY_BUFFER) return EMPTY_CLUSTER
         // Read top-level array header
         val code = RespCode.fromCode(input.readByte())
         if (code != RespCode.ARRAY) throw ResponseParsingException(

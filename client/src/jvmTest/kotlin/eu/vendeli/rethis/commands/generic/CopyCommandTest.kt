@@ -1,10 +1,10 @@
 package eu.vendeli.rethis.commands.generic
 
-import eu.vendeli.rethis.commands.copy
-import eu.vendeli.rethis.commands.del
-import eu.vendeli.rethis.commands.set
-import eu.vendeli.rethis.types.options.CopyOption
 import eu.vendeli.rethis.ReThisTestCtx
+import eu.vendeli.rethis.api.spec.common.request.generic.CopyOption
+import eu.vendeli.rethis.command.generic.copy
+import eu.vendeli.rethis.command.generic.del
+import eu.vendeli.rethis.command.string.set
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 

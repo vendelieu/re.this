@@ -1,16 +1,13 @@
 package eu.vendeli.rethis.commands
 
-import eu.vendeli.rethis.api.spec.common.types.DataProcessingException
 import eu.vendeli.rethis.ReThisTestCtx
-import eu.vendeli.rethis.commands.*
-import eu.vendeli.rethis.api.spec.common.types.processingException
-import eu.vendeli.rethis.api.spec.common.types.BulkString
-import eu.vendeli.rethis.api.spec.common.types.Int64
-import eu.vendeli.rethis.api.spec.common.types.Push
+import eu.vendeli.rethis.api.spec.common.response.common.PubSubNumEntry
+import eu.vendeli.rethis.api.spec.common.types.*
+import eu.vendeli.rethis.command.pubsub.*
 import eu.vendeli.rethis.types.interfaces.SubscriptionEventHandler
-import eu.vendeli.rethis.types.response.PubSubNumEntry
 import io.kotest.matchers.collections.shouldNotBeEmpty
 import io.kotest.matchers.comparables.shouldBeGreaterThan
+import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.throwable.shouldHaveMessage
@@ -102,7 +99,7 @@ class PubSubCommandTest : ReThisTestCtx() {
         client.pSubscribe("testPattern") { _, m ->
             println(m)
         }
-        client.subscriptions.isActive("testPattern") shouldBe true
+        client.subscriptions.subscriptionsHandlers["testPattern"].shouldNotBeNull()
     }
 
     @Test
@@ -110,7 +107,7 @@ class PubSubCommandTest : ReThisTestCtx() {
         client.sSubscribe("testShardChannel") { _, m ->
             println(m)
         }
-        client.subscriptions.isActive("testShardChannel") shouldBe true
+        client.subscriptions.subscriptionsHandlers["testShardChannel"].shouldNotBeNull()
     }
 
     @Test
@@ -118,7 +115,7 @@ class PubSubCommandTest : ReThisTestCtx() {
         client.subscribe("testChannel") { _, m ->
             println(m)
         }
-        client.subscriptions.isActive("testChannel") shouldBe true
+        client.subscriptions.subscriptionsHandlers["testChannel"].shouldNotBeNull()
     }
 
     @Test
@@ -126,10 +123,10 @@ class PubSubCommandTest : ReThisTestCtx() {
         client.subscribe("testChannel") { _, m ->
             println(m)
         }
-        client.subscriptions.isActive("testChannel") shouldBe true
+        client.subscriptions.subscriptionsHandlers["testChannel"].shouldNotBeNull()
 
         client.subscriptions.unsubscribe("testChannel") shouldBe true
-        client.subscriptions.isActive("testChannel") shouldBe false
+        client.subscriptions.subscriptionsHandlers["testChannel"].shouldBeNull()
         client.subscriptions.size shouldBe 0
     }
 
@@ -159,21 +156,21 @@ class PubSubCommandTest : ReThisTestCtx() {
         client.subscribe("testChannel") { _, m ->
             println("-----------$m")
         }
-        client.subscriptions.isActive("testChannel") shouldBe true
+        client.subscriptions.subscriptionsHandlers["testChannel"].shouldNotBeNull()
 
         client.pSubscribe("testCh*") { _, m ->
             processingException { "test" }
         }
-        client.subscriptions.isActive("testCh*") shouldBe true
+        client.subscriptions.subscriptionsHandlers["testCh*"].shouldNotBeNull()
 
         client.unsubscribe("testChannel")
-        client.subscriptions.isActive("testChannel") shouldBe false
+        client.subscriptions.subscriptionsHandlers["testChannel"].shouldBeNull()
         client.publish("testChannel", "test")
 
         delay(100)
 
         onSub shouldBeGreaterThan 0
         onUnsub shouldBe 0
-        caughtEx.shouldNotBeNull().shouldBeTypeOf<DataProcessingException>() shouldHaveMessage("test")
+        caughtEx.shouldNotBeNull().shouldBeTypeOf<DataProcessingException>() shouldHaveMessage ("test")
     }
 }

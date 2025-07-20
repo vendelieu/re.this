@@ -1,8 +1,8 @@
 package eu.vendeli.rethis.commands.generic
 
-import eu.vendeli.rethis.commands.exists
-import eu.vendeli.rethis.commands.set
 import eu.vendeli.rethis.ReThisTestCtx
+import eu.vendeli.rethis.command.generic.exists
+import eu.vendeli.rethis.command.string.set
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 

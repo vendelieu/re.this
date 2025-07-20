@@ -1,9 +1,11 @@
 package eu.vendeli.rethis.commands
 
 import eu.vendeli.rethis.ReThisTestCtx
-import eu.vendeli.rethis.commands.*
+import eu.vendeli.rethis.api.spec.common.request.common.FlushType
+import eu.vendeli.rethis.api.spec.common.request.scripting.ScriptDebugMode
 import eu.vendeli.rethis.api.spec.common.types.BulkString
 import eu.vendeli.rethis.api.spec.common.types.RArray
+import eu.vendeli.rethis.command.scripting.*
 import io.kotest.assertions.throwables.shouldNotThrowAny
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
@@ -15,14 +17,14 @@ class ScriptCommandTest : ReThisTestCtx() {
     @Test
     suspend fun `test EVAL command`() {
         val script = "return {KEYS[1],ARGV[1]}"
-        client.eval(script, 1, "testKey1", "testValue1") shouldBe
+        client.eval(script, "testKey1", arg = listOf("testValue1")) shouldBe
             RArray(listOf(BulkString("testKey1"), BulkString("testValue1")))
     }
 
     @Test
     suspend fun `test EVAL_RO command`() {
         val script = "return {KEYS[1],ARGV[1]}"
-        client.evalRo(script, 1, "testKey2", "testValue2") shouldBe
+        client.evalRo(script, "testKey2", arg = listOf("testValue2")) shouldBe
             RArray(listOf(BulkString("testKey2"), BulkString("testValue2")))
     }
 
@@ -30,7 +32,7 @@ class ScriptCommandTest : ReThisTestCtx() {
     suspend fun `test EVALSHA command`() {
         val script = "return {KEYS[1],ARGV[1]}"
         val sha1 = client.scriptLoad(script).shouldNotBeNull()
-        client.evalSha(sha1, 1, "testKey3", "testValue3") shouldBe
+        client.evalSha(sha1, "testKey3", arg = listOf("testValue3")) shouldBe
             RArray(listOf(BulkString("testKey3"), BulkString("testValue3")))
     }
 
@@ -38,7 +40,7 @@ class ScriptCommandTest : ReThisTestCtx() {
     suspend fun `test EVALSHA_RO command`() {
         val script = "return {KEYS[1],ARGV[1]}"
         val sha1 = client.scriptLoad(script).shouldNotBeNull()
-        client.evalShaRo(sha1, 1, "testKey4", "testValue4") shouldBe
+        client.evalShaRo(sha1, "testKey4", arg = listOf("testValue4")) shouldBe
             RArray(listOf(BulkString("testKey4"), BulkString("testValue4")))
     }
 
@@ -47,7 +49,7 @@ class ScriptCommandTest : ReThisTestCtx() {
         val script = "#!lua name=mylib\n redis.register_function('myfunc', function(keys, args) return args[1] end)"
         val name = "myfunc"
         client.functionLoad(script).shouldNotBeNull()
-        client.fcall(name, 1, "testKey5", "testValue5") shouldBe BulkString("testValue5")
+        client.fcall(name, "testKey5", arg = listOf("testValue5")) shouldBe BulkString("testValue5")
     }
 
     @Test
@@ -55,7 +57,7 @@ class ScriptCommandTest : ReThisTestCtx() {
         val script =
             "#!lua name=mylib2\nlocal function myfunc2(keys, args) return args[1] end\nredis.register_function { function_name='myfunc2', callback=myfunc2, flags={ 'no-writes' }}"
         client.functionLoad(script).shouldNotBeNull()
-        client.fcallRo("myfunc2", 1, "testKey6", "testValue6") shouldBe BulkString("testValue6")
+        client.fcallRo("myfunc2", "testKey6", arg = listOf("testValue6")) shouldBe BulkString("testValue6")
     }
 
     @Test
@@ -72,13 +74,12 @@ class ScriptCommandTest : ReThisTestCtx() {
         client
             .functionDump()
             .shouldNotBeNull()
-            .toString(Charsets.UTF_8)
             .shouldContain("mylib4")
     }
 
     @Test
     suspend fun `test FUNCTION FLUSH command`() {
-        client.functionFlush() shouldBe true
+        client.functionFlush(FlushType.SYNC) shouldBe true
     }
 
     @Test
@@ -95,8 +96,8 @@ class ScriptCommandTest : ReThisTestCtx() {
                 "\n" +
                 "redis.register_function { function_name='fun10', callback=myfunc10, flags={ 'no-writes' } }"
         client.functionLoad(script).shouldNotBeNull()
-        client.coScope.launch {
-            client.fcall("fun10", 0)
+        client.scope.launch {
+            client.fcall("fun10", arg = emptyList())
         }
         delay(100)
         client.functionKill() shouldBe true
@@ -120,9 +121,9 @@ class ScriptCommandTest : ReThisTestCtx() {
         val script = "#!lua name=mylib11\n redis.register_function('myfunc11', function(keys, args) return args[1] end)"
         client.functionLoad(script).shouldNotBeNull()
         val dump = client.functionDump().shouldNotBeNull()
-        client.functionFlush()
+        client.functionFlush(FlushType.SYNC)
         delay(100)
-        client.functionRestore(dump) shouldBe true
+        client.functionRestore(dump.toByteArray()) shouldBe true
     }
 
     @Test
@@ -134,7 +135,7 @@ class ScriptCommandTest : ReThisTestCtx() {
 
     @Test
     suspend fun `test SCRIPT DEBUG command`() {
-        client.scriptDebug("SYNC") shouldBe true
+        client.scriptDebug(ScriptDebugMode.SYNC) shouldBe true
     }
 
     @Test
@@ -151,12 +152,12 @@ class ScriptCommandTest : ReThisTestCtx() {
 
     @Test
     suspend fun `test SCRIPT KILL command`() {
-        client.coScope.launch {
+        client.scope.launch {
             client
                 .eval(
                     "local count = 0; while true do count = count + 1; end",
-                    1,
                     "counter",
+                    arg = emptyList(),
                 ).shouldNotBeNull()
         }
         delay(100)

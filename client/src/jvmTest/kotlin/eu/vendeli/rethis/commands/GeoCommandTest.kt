@@ -1,11 +1,11 @@
 package eu.vendeli.rethis.commands
 
 import eu.vendeli.rethis.ReThisTestCtx
-import eu.vendeli.rethis.commands.*
-import eu.vendeli.rethis.types.response.*
-import eu.vendeli.rethis.types.options.BYBOX
-import eu.vendeli.rethis.types.options.BYRADIUS
-import eu.vendeli.rethis.types.options.FROMLONLAT
+import eu.vendeli.rethis.api.spec.common.request.geospatial.ByBox
+import eu.vendeli.rethis.api.spec.common.request.geospatial.ByRadius
+import eu.vendeli.rethis.api.spec.common.request.geospatial.FromLongitudeLatitude
+import eu.vendeli.rethis.api.spec.common.response.geospatial.*
+import eu.vendeli.rethis.command.geospatial.*
 import io.kotest.matchers.shouldBe
 
 class GeoCommandTest : ReThisTestCtx() {
@@ -47,12 +47,12 @@ class GeoCommandTest : ReThisTestCtx() {
         client.geoAdd("testSet5", GeoMember(12.758489, 38.788135, "testValue7"))
         client.geoSearch(
             "testSet5",
-            FROMLONLAT(15.0, 37.0),
-            BYRADIUS(400.0, GeoUnit.KILOMETERS),
+            FromLongitudeLatitude(15.0, 37.0),
+            ByRadius(400.0, GeoUnit.KILOMETERS),
             withCoord = true,
             withDist = true,
             withHash = true,
-            sort = GeoSort.ASC,
+            order = GeoSort.ASC,
         ) shouldBe listOf(
             GeoSearchResult(
                 member = "testValue6",
@@ -76,12 +76,12 @@ class GeoCommandTest : ReThisTestCtx() {
         client.geoSearchStore(
             "testKey7",
             "testSet6",
-            FROMLONLAT(15.0, 37.0),
-            BYBOX(400.0, 400.0, GeoUnit.KILOMETERS),
-            sort = GeoSort.ASC,
+            FromLongitudeLatitude(15.0, 37.0),
+            ByBox(400.0, 400.0, GeoUnit.KILOMETERS),
+            order = GeoSort.ASC,
             count = 3,
             any = true,
-            storeDist = true,
+            storedist = true,
         ) shouldBe 2L
     }
 }

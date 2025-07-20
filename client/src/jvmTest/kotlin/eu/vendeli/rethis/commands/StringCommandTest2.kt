@@ -1,8 +1,8 @@
 package eu.vendeli.rethis.commands
 
 import eu.vendeli.rethis.ReThisTestCtx
-import eu.vendeli.rethis.commands.*
-import eu.vendeli.rethis.types.options.GetExOption
+import eu.vendeli.rethis.api.spec.common.request.string.GetExOption
+import eu.vendeli.rethis.command.string.*
 import io.kotest.matchers.shouldBe
 import kotlin.time.Duration.Companion.seconds
 
@@ -42,13 +42,13 @@ class StringCommandTest2 : ReThisTestCtx() {
     @Test
     suspend fun `test GETEX command`() {
         client.set("testKey15", "testValue15")
-        client.getEx("testKey15", GetExOption.EX(10.seconds)) shouldBe "testValue15"
+        client.getEx("testKey15", GetExOption.Ex(10.seconds)) shouldBe "testValue15"
     }
 
     @Test
     suspend fun `test GETRANGE command`() {
         client.set("testKey16", "testValue16")
-        client.getRange("testKey16", 0L..4) shouldBe "testV"
+        client.getRange("testKey16", 0L, 4) shouldBe "testV"
     }
 
     @Test

@@ -4,6 +4,7 @@ import eu.vendeli.rethis.api.spec.common.decoders.ResponseDecoder
 import eu.vendeli.rethis.api.spec.common.types.RType
 import eu.vendeli.rethis.api.spec.common.types.RespCode
 import eu.vendeli.rethis.api.spec.common.types.ResponseParsingException
+import eu.vendeli.rethis.api.spec.common.utils.EMPTY_BUFFER
 import eu.vendeli.rethis.api.spec.common.utils.readResponseWrapped
 import eu.vendeli.rethis.api.spec.common.utils.tryInferCause
 import io.ktor.utils.io.charsets.*
@@ -16,6 +17,7 @@ object ArrayRTypeDecoder : ResponseDecoder<List<RType>> {
         charset: Charset,
         withCode: Boolean,
     ): List<RType> {
+        if (input == EMPTY_BUFFER) return emptyList()
         val code = RespCode.fromCode(input.readByte())
         if (code != RespCode.ARRAY) throw ResponseParsingException(
             "Invalid response structure, expected array token, given $code", input.tryInferCause(code),

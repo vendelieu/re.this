@@ -1,10 +1,11 @@
 package eu.vendeli.rethis.commands
 
 import eu.vendeli.rethis.ReThisTestCtx
-import eu.vendeli.rethis.commands.*
-import eu.vendeli.rethis.types.response.LcsResult
-import eu.vendeli.rethis.types.options.LcsMode
-import eu.vendeli.rethis.types.options.MinMatchLen
+import eu.vendeli.rethis.api.spec.common.request.string.KeyValue
+import eu.vendeli.rethis.api.spec.common.request.string.LcsMode
+import eu.vendeli.rethis.api.spec.common.request.string.MinMatchLen
+import eu.vendeli.rethis.api.spec.common.response.string.LcsResult
+import eu.vendeli.rethis.command.string.*
 import io.kotest.matchers.booleans.shouldBeTrue
 import io.kotest.matchers.shouldBe
 
@@ -18,12 +19,18 @@ class StringCommandTest : ReThisTestCtx() {
 
     @Test
     suspend fun `test MSET command`() {
-        client.mSet("testKey3" to "testValue3", "testKey4" to "testValue4") shouldBe true
+        client.mSet(
+            KeyValue("testKey3", "testValue3"),
+            KeyValue("testKey4", "testValue4"),
+        ) shouldBe true
     }
 
     @Test
     suspend fun `test MSETNX command`() {
-        client.mSetNx("testKey5" to "testValue5", "testKey6" to "testValue6").shouldBeTrue()
+        client.mSetNx(
+            KeyValue("testKey5", "testValue5"),
+            KeyValue("testKey6", "testValue6"),
+        ).shouldBeTrue()
     }
 
     @Test
@@ -55,7 +62,7 @@ class StringCommandTest : ReThisTestCtx() {
     suspend fun `test LCS command with LEN mode`() {
         client.set("testKey22", "abcdef")
         client.set("testKey23", "zbcdfg")
-        client.lcs("testKey22", "testKey23", LcsMode.LEN) shouldBe 4L
+        client.lcsLength("testKey22", "testKey23", LcsMode.LEN) shouldBe 4L
     }
 
     @Test
@@ -63,7 +70,7 @@ class StringCommandTest : ReThisTestCtx() {
         client.set("testKey24", "abcdef")
         client.set("testKey25", "zbcdfg")
 
-        client.lcs("testKey24", "testKey25", LcsMode.IDX, MinMatchLen(2)).run {
+        client.lcsDetailed("testKey24", "testKey25", LcsMode.IDX, MinMatchLen(2)).run {
             matches shouldBe listOf(listOf(LcsResult.LcsMatch(1, 3, length = null)))
             totalLength shouldBe 4L
         }
@@ -74,7 +81,7 @@ class StringCommandTest : ReThisTestCtx() {
         client.set("testKey26", "abcdef")
         client.set("testKey27", "zbcdfg")
 
-        client.lcs("testKey26", "testKey27", LcsMode.IDX, MinMatchLen(2), true).run {
+        client.lcsDetailed("testKey26", "testKey27", LcsMode.IDX, MinMatchLen(2), true).run {
             matches shouldBe listOf(listOf(LcsResult.LcsMatch(1, 3, 3), LcsResult.LcsMatch(1, 3, 3)))
             totalLength shouldBe 4L
         }

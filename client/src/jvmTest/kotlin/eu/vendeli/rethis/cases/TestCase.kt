@@ -2,8 +2,16 @@ package eu.vendeli.rethis.cases
 
 import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.ReThisTestCtx
-import eu.vendeli.rethis.commands.*
+import eu.vendeli.rethis.api.spec.common.request.common.FieldValue
 import eu.vendeli.rethis.api.spec.common.types.RType
+import eu.vendeli.rethis.command.generic.del
+import eu.vendeli.rethis.command.hash.hExpire
+import eu.vendeli.rethis.command.hash.hGet
+import eu.vendeli.rethis.command.hash.hSet
+import eu.vendeli.rethis.command.scripting.evalSha
+import eu.vendeli.rethis.command.scripting.scriptLoad
+import eu.vendeli.rethis.command.set.sAdd
+import eu.vendeli.rethis.command.set.sRem
 import io.kotest.matchers.shouldBe
 import io.ktor.util.collections.*
 import kotlinx.coroutines.*
@@ -26,12 +34,12 @@ class TestCase : ReThisTestCtx() {
             client.transaction {
                 hSet(
                     "some:key:$id",
-                    "some:field1" to "some-value1-$id",
-                    "some:field2" to "some-value2-$id",
-                    "some:field3" to "some-value3-$id",
+                    FieldValue("some:field1", "some-value1-$id"),
+                    FieldValue("some:field2", "some-value2-$id"),
+                    FieldValue("some:field3", "some-value3-$id"),
                 )
 
-                hPExpire("some:key:$id", 1.minutes, "some-value1-$id")
+                hExpire("some:key:$id", 1.minutes, "some-value1-$id")
 
                 sAdd("some:key", id.toString())
             }
@@ -39,7 +47,7 @@ class TestCase : ReThisTestCtx() {
             map2[id] = coroutineScope
                 .launch(start = CoroutineStart.LAZY) {
                     repeat(totalRepeats) {
-                        client.hPExpire("some:key:$id", 1.minutes, "some-value1-$id")
+                        client.hExpire("some:key:$id", 1.minutes, "some-value1-$id")
                         delay(2.seconds)
                     }
                 }.also { job ->
@@ -79,18 +87,17 @@ class TestCase : ReThisTestCtx() {
     internal suspend inline fun ReThis.fastEval(
         scriptId: String,
         script: String,
-        numKeys: Long,
         vararg keys: String,
     ): RType {
         var sha1 = scriptsSha1Map[scriptId]
 
         if (sha1 == null) {
-            sha1 = scriptLoad(script) ?: throw NullPointerException("script load don't return sha1 hash!")
+            sha1 = scriptLoad(script)
 
             scriptsSha1Map[scriptId] = sha1
         }
 
-        return evalSha(sha1, numKeys, *keys)
+        return evalSha(sha1, *keys, arg = emptyList())
     }
 
     @Test
@@ -112,7 +119,6 @@ class TestCase : ReThisTestCtx() {
                     redis.call('HPEXPIRE', KEYS[1], 60000, 'FIELDS', 1, ARGV[2])
                     redis.call('SADD', KEYS[2],  ARGV[1])
                 """.trimIndent(),
-                2,
                 "some:key:$id",
                 "some:key",
                 id.toString(),
@@ -126,7 +132,7 @@ class TestCase : ReThisTestCtx() {
             map2[id] = coroutineScope
                 .launch(start = CoroutineStart.LAZY) {
                     repeat(totalRepeats) {
-                        client.hPExpire("some:key:$id", 1.minutes, "some-value1-$id")
+                        client.hExpire("some:key:$id", 1.minutes, "some-value1-$id")
                         delay(2.seconds)
                     }
                 }.also { job ->
@@ -151,7 +157,6 @@ class TestCase : ReThisTestCtx() {
                         redis.call('DEL', KEYS[1])
                         redis.call('SREM', KEYS[2], ARGV[1])
                         """.trimIndent(),
-                        2,
                         "some:key:$id",
                         "some:key",
                         id.toString(),

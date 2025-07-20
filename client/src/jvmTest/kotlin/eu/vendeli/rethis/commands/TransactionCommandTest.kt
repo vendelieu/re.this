@@ -1,47 +1,62 @@
 package eu.vendeli.rethis.commands
 
-import eu.vendeli.rethis.api.spec.common.types.ReThisException
 import eu.vendeli.rethis.ReThisTestCtx
-import eu.vendeli.rethis.commands.*
 import eu.vendeli.rethis.api.spec.common.types.Int64
 import eu.vendeli.rethis.api.spec.common.types.PlainString
 import eu.vendeli.rethis.api.spec.common.types.RArray
-import eu.vendeli.rethis.types.common.toArgument
+import eu.vendeli.rethis.api.spec.common.types.ReThisException
+import eu.vendeli.rethis.api.spec.common.utils.isOk
+import eu.vendeli.rethis.api.spec.common.utils.readResponseWrapped
+import eu.vendeli.rethis.codecs.string.SetCommandCodec
+import eu.vendeli.rethis.codecs.transaction.ExecCommandCodec
+import eu.vendeli.rethis.codecs.transaction.MultiCommandCodec
+import eu.vendeli.rethis.command.generic.del
+import eu.vendeli.rethis.command.json.jsonClear
+import eu.vendeli.rethis.command.string.set
+import eu.vendeli.rethis.command.transaction.exec
+import eu.vendeli.rethis.command.transaction.multi
+import eu.vendeli.rethis.command.transaction.unwatch
+import eu.vendeli.rethis.command.transaction.watch
 import eu.vendeli.rethis.types.coroutine.CoLocalConn
-import eu.vendeli.rethis.utils.bufferValues
-import eu.vendeli.rethis.utils.response.readResponseWrapped
+import eu.vendeli.rethis.utils.writeStringArg
 import io.kotest.assertions.throwables.shouldNotThrowAny
 import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.matchers.booleans.shouldBeTrue
 import io.kotest.matchers.collections.shouldHaveSize
+import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeTypeOf
 import io.ktor.utils.io.*
 import kotlinx.coroutines.launch
+import kotlinx.io.Buffer
 
 class TransactionCommandTest : ReThisTestCtx() {
     @Test
     suspend fun `test EXEC command with multiple queued commands`() {
-        val conn = client.connectionPool.acquire()
+        val cProvider = connectionProvider()
+        val conn = cProvider.borrowConnection()
 
-        conn.sendRequest(listOf("MULTI".toArgument()), Charsets.UTF_8)
-        conn.parseResponse().readResponseWrapped(Charsets.UTF_8) shouldBe PlainString("OK")
+        conn.doRequest(MultiCommandCodec.encode(Charsets.UTF_8).buffer).readResponseWrapped(charset = Charsets.UTF_8)
+            .isOk().shouldBeTrue()
 
-        conn.sendRequest(
-            bufferValues(listOf("SET".toArgument(), "test3".toArgument(), "testv3".toArgument()), Charsets.UTF_8),
-        )
-        conn.parseResponse().readResponseWrapped(Charsets.UTF_8) shouldBe PlainString("QUEUED")
+        conn.doRequest(
+            SetCommandCodec.encode(Charsets.UTF_8, "test1", "testv1").buffer,
+        ).readResponseWrapped(Charsets.UTF_8).shouldBe(PlainString("QUEDUED"))
 
-        conn.sendRequest(
-            bufferValues(listOf("SET".toArgument(), "test4".toArgument(), "testv4".toArgument()), Charsets.UTF_8),
-        )
-        conn.parseResponse().readResponseWrapped(Charsets.UTF_8) shouldBe PlainString("QUEUED")
+        conn.doRequest(
+            SetCommandCodec.encode(Charsets.UTF_8, "test2", "testv2").buffer,
+        ).readResponseWrapped(Charsets.UTF_8).shouldBe(PlainString("QUEDUED"))
 
-        conn.sendRequest(bufferValues(listOf("EXEC".toArgument()), Charsets.UTF_8))
-        conn.parseResponse().readResponseWrapped(Charsets.UTF_8) shouldBe RArray(
+
+        conn.doRequest(
+            ExecCommandCodec.encode(Charsets.UTF_8).buffer,
+        ).readResponseWrapped(Charsets.UTF_8).shouldBeTypeOf<RArray>() shouldBe RArray(
             listOf(
                 PlainString("OK"),
                 PlainString("OK"),
             ),
         )
+        cProvider.releaseConnection(conn)
     }
 
     @Test
@@ -56,19 +71,20 @@ class TransactionCommandTest : ReThisTestCtx() {
 
     @Test
     suspend fun `test EXEC command with queued commands that fail`() {
-        val conn = client.connectionPool.acquire()
+        val provider = connectionProvider()
+        val conn = provider.borrowConnection()
         client
-            .coScope
+            .scope
             .launch(CoLocalConn(conn)) {
                 client.multi()
                 client.set("testKey1", "testVal1")
                 client.set("testKey2", "testVal2")
-                conn.output.writeBuffer(bufferValues(listOf("get".toArgument()), Charsets.UTF_8))
+                conn.output.writeBuffer(Buffer().apply { writeStringArg("get", Charsets.UTF_8) })
                 conn.output.flush()
                 shouldThrow<ReThisException> { client.exec() }.message shouldBe
                     "ERR wrong number of arguments for 'get' command"
             }.join()
-        client.connectionPool.release(conn)
+        provider.releaseConnection(conn)
     }
 
     @Test
@@ -78,14 +94,15 @@ class TransactionCommandTest : ReThisTestCtx() {
             set("testKey2", "testVal2")
             set("testKey2", "testVal2")
             jsonClear("test")
-        } shouldHaveSize 0
+        }.shouldNotBeNull() shouldHaveSize 0
     }.message shouldBe "ERR unknown command 'JSON.CLEAR', with args beginning with: 'test' "
 
     @Test
     suspend fun `test WATCH command with multiple keys`() {
-        val conn = client.connectionPool.acquire()
+        val provider = connectionProvider()
+        val conn = provider.borrowConnection()
         client
-            .coScope
+            .scope
             .launch(CoLocalConn(conn)) {
                 client.watch("testKey1", "testKey2")
                 client.set("testKey1", "testVal1")
@@ -94,7 +111,7 @@ class TransactionCommandTest : ReThisTestCtx() {
                 client.set("testKey1", "testVal1")
                 client.set("testKey2", "testVal2")
             }.join()
-        client.connectionPool.release(conn)
+        provider.releaseConnection(conn)
     }
 
     @Test

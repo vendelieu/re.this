@@ -1,10 +1,10 @@
 package eu.vendeli.rethis.commands
 
 import eu.vendeli.rethis.ReThisTestCtx
-import eu.vendeli.rethis.commands.*
+import eu.vendeli.rethis.api.spec.common.request.json.JsonEntry
 import eu.vendeli.rethis.api.spec.common.types.Int64
 import eu.vendeli.rethis.api.spec.common.types.PlainString
-import eu.vendeli.rethis.types.response.JsonEntry
+import eu.vendeli.rethis.command.json.*
 import io.kotest.matchers.shouldBe
 
 class JsonCommandTest2 : ReThisTestCtx(true) {
@@ -23,13 +23,13 @@ class JsonCommandTest2 : ReThisTestCtx(true) {
     @Test
     suspend fun `test JSON_NUMINCRBY command`() {
         client.jsonSet("testKey15", "{\"a\":\"b\",\"b\":[{\"a\":2}, {\"a\":5}, {\"a\":\"c\"}]}", ".")
-        client.jsonNumIncrBy("testKey15", "..a", 2) shouldBe listOf(null, 4, 7L, null)
+        client.jsonNumIncrBy("testKey15", "..a", 2.0) shouldBe listOf(null, 4, 7L, null)
     }
 
     @Test
     suspend fun `test JSON_NUMMULTBY command`() {
         client.jsonSet("testKey16", "{\"a\":\"b\",\"b\":[{\"a\":2}, {\"a\":5}, {\"a\":\"c\"}]}", ".")
-        client.jsonNumMultBy("testKey16", "..a", 2) shouldBe listOf(null, 4, 10L, null)
+        client.jsonNumMultBy("testKey16", "..a", 2.0) shouldBe listOf(null, 4, 10L, null)
     }
 
     @Test
@@ -60,7 +60,7 @@ class JsonCommandTest2 : ReThisTestCtx(true) {
         client.jsonSet(
             "testKey21",
             "{\"a\":\"foo\", \"nested\": {\"a\": \"hello\"}, \"nested2\": {\"a\": 31}}",
-            "."
+            ".",
         ) shouldBe "OK"
 
         client.jsonStrAppend("testKey21", "\"baz\"", "..a") shouldBe 8L

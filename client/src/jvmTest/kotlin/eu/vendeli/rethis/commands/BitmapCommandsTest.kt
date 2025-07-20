@@ -1,9 +1,9 @@
 package eu.vendeli.rethis.commands
 
 import eu.vendeli.rethis.ReThisTestCtx
-import eu.vendeli.rethis.commands.*
-import eu.vendeli.rethis.types.options.BitOpOption
-import eu.vendeli.rethis.types.options.BitfieldOption
+import eu.vendeli.rethis.api.spec.common.request.bitmap.BitOpOption
+import eu.vendeli.rethis.api.spec.common.request.bitmap.BitfieldOption
+import eu.vendeli.rethis.command.bitmap.*
 import io.kotest.matchers.shouldBe
 
 class BitmapCommandsTest : ReThisTestCtx() {
@@ -24,7 +24,7 @@ class BitmapCommandsTest : ReThisTestCtx() {
         client.setBit(key, 1, 1)
         client.setBit(key, 2, 0)
 
-        val result = client.bitfield(key, BitfieldOption.SET("i5", 0, 1), BitfieldOption.GET("i5", 0))
+        val result = client.bitfield(key, BitfieldOption.Set("i5", 0, 1), BitfieldOption.Get("i5", 0))
         result shouldBe listOf(-8L, 1L)
     }
 
@@ -34,7 +34,7 @@ class BitmapCommandsTest : ReThisTestCtx() {
         client.setBit(key, 0, 1)
         client.setBit(key, 1, 1)
 
-        val result = client.bitfieldRO(key, BitfieldOption.GET("i5", 0))
+        val result = client.bitfieldRo(key, BitfieldOption.Get("i5", 0))
         result shouldBe listOf(-8L)
     }
 

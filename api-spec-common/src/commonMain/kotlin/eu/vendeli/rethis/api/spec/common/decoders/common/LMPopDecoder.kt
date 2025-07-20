@@ -3,6 +3,7 @@ package eu.vendeli.rethis.api.spec.common.decoders.common
 import eu.vendeli.rethis.api.spec.common.decoders.ResponseDecoder
 import eu.vendeli.rethis.api.spec.common.response.common.MPopResult
 import eu.vendeli.rethis.api.spec.common.types.RArray
+import eu.vendeli.rethis.api.spec.common.utils.EMPTY_BUFFER
 import eu.vendeli.rethis.api.spec.common.utils.readResponseWrapped
 import eu.vendeli.rethis.api.spec.common.utils.unwrap
 import eu.vendeli.rethis.api.spec.common.utils.unwrapSet
@@ -15,6 +16,7 @@ object LMPopDecoder : ResponseDecoder<List<MPopResult>> {
         charset: Charset,
         withCode: Boolean,
     ): List<MPopResult> {
+        if (input == EMPTY_BUFFER) return emptyList()
         val response = input.readResponseWrapped(charset)
 
         val elements = (response as RArray).value

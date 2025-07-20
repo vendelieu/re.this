@@ -1,6 +1,5 @@
 package eu.vendeli.rethis.wrappers
 
-import eu.vendeli.rethis.wrappers.Set
 import eu.vendeli.rethis.ReThisTestCtx
 import io.kotest.matchers.shouldBe
 

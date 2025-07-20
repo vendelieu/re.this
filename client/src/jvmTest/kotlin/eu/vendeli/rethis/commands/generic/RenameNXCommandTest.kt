@@ -1,9 +1,9 @@
 package eu.vendeli.rethis.commands.generic
 
-import eu.vendeli.rethis.commands.del
-import eu.vendeli.rethis.commands.renameNx
-import eu.vendeli.rethis.commands.set
 import eu.vendeli.rethis.ReThisTestCtx
+import eu.vendeli.rethis.command.generic.del
+import eu.vendeli.rethis.command.generic.renameNx
+import eu.vendeli.rethis.command.string.set
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 

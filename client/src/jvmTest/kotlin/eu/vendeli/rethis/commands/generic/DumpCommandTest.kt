@@ -1,8 +1,8 @@
 package eu.vendeli.rethis.commands.generic
 
-import eu.vendeli.rethis.commands.dump
-import eu.vendeli.rethis.commands.set
 import eu.vendeli.rethis.ReThisTestCtx
+import eu.vendeli.rethis.command.generic.dump
+import eu.vendeli.rethis.command.string.set
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.string.shouldContain
 
@@ -13,7 +13,6 @@ class DumpCommandTest : ReThisTestCtx() {
         client
             .dump("testKey")
             .shouldNotBeNull()
-            .toString(Charsets.UTF_8)
             .shouldContain("testVal")
     }
 }

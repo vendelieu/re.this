@@ -4,6 +4,7 @@ import eu.vendeli.rethis.api.spec.common.decoders.ResponseDecoder
 import eu.vendeli.rethis.api.spec.common.decoders.general.IntegerDecoder
 import eu.vendeli.rethis.api.spec.common.types.RespCode
 import eu.vendeli.rethis.api.spec.common.types.ResponseParsingException
+import eu.vendeli.rethis.api.spec.common.utils.EMPTY_BUFFER
 import eu.vendeli.rethis.api.spec.common.utils.tryInferCause
 import io.ktor.utils.io.charsets.*
 import kotlinx.io.Buffer
@@ -15,6 +16,7 @@ object ArrayLongDecoder : ResponseDecoder<List<Long>> {
         charset: Charset,
         withCode: Boolean,
     ): List<Long> {
+        if (input == EMPTY_BUFFER) return emptyList()
         if (withCode) {
             val code = RespCode.fromCode(input.readByte())
             if (code != RespCode.ARRAY) throw ResponseParsingException(
@@ -34,6 +36,7 @@ object ArrayLongDecoder : ResponseDecoder<List<Long>> {
         charset: Charset,
         withCode: Boolean = true,
     ): List<Long?> {
+        if (input == EMPTY_BUFFER) return emptyList()
         if (withCode) {
             val code = RespCode.fromCode(input.readByte())
             if (code != RespCode.ARRAY) throw ResponseParsingException(

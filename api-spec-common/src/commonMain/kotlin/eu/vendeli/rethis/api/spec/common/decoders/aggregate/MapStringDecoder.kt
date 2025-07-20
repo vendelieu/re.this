@@ -4,6 +4,7 @@ import eu.vendeli.rethis.api.spec.common.decoders.ResponseDecoder
 import eu.vendeli.rethis.api.spec.common.decoders.general.BulkStringDecoder
 import eu.vendeli.rethis.api.spec.common.types.RespCode
 import eu.vendeli.rethis.api.spec.common.types.ResponseParsingException
+import eu.vendeli.rethis.api.spec.common.utils.EMPTY_BUFFER
 import eu.vendeli.rethis.api.spec.common.utils.tryInferCause
 import io.ktor.utils.io.charsets.*
 import kotlinx.io.Buffer
@@ -16,6 +17,7 @@ object MapStringDecoder : ResponseDecoder<Map<String, String>> {
         charset: Charset,
         withCode: Boolean,
     ): Map<String, String> {
+        if (input == EMPTY_BUFFER) return emptyMap()
         val code = RespCode.fromCode(input.readByte())
         if (code != RespCode.MAP || code != RespCode.ARRAY) throw ResponseParsingException(
             "Invalid response structure, expected map token, given $code", input.tryInferCause(code),
@@ -37,6 +39,7 @@ object MapStringDecoder : ResponseDecoder<Map<String, String>> {
         charset: Charset,
         withCode: Boolean = true,
     ): Map<String, String?> {
+        if (input == EMPTY_BUFFER) return emptyMap()
         val code = RespCode.fromCode(input.readByte())
         if (code != RespCode.MAP || code != RespCode.ARRAY) throw ResponseParsingException(
             "Invalid response structure, expected map token, given $code", input.tryInferCause(code),

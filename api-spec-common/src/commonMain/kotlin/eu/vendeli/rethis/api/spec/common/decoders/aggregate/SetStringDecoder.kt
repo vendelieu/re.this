@@ -3,6 +3,7 @@ package eu.vendeli.rethis.api.spec.common.decoders.aggregate
 import eu.vendeli.rethis.api.spec.common.decoders.ResponseDecoder
 import eu.vendeli.rethis.api.spec.common.types.RespCode
 import eu.vendeli.rethis.api.spec.common.types.ResponseParsingException
+import eu.vendeli.rethis.api.spec.common.utils.EMPTY_BUFFER
 import eu.vendeli.rethis.api.spec.common.utils.parseStrings
 import eu.vendeli.rethis.api.spec.common.utils.tryInferCause
 import io.ktor.utils.io.charsets.*
@@ -15,6 +16,7 @@ object SetStringDecoder : ResponseDecoder<Set<String>> {
         charset: Charset,
         withCode: Boolean,
     ): Set<String> {
+        if (input == EMPTY_BUFFER) return emptySet()
         val code = RespCode.fromCode(input.readByte())
         if (code != RespCode.ARRAY) throw ResponseParsingException(
             "Invalid response structure, expected set token, given $code", input.tryInferCause(code),

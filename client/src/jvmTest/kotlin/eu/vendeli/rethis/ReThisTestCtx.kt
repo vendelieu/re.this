@@ -1,11 +1,11 @@
 package eu.vendeli.rethis
 
 import com.redis.testcontainers.RedisContainer
-import eu.vendeli.rethis.spec.ReThis
+import eu.vendeli.rethis.codecs.connection.PingCommandCodec
 import io.kotest.core.spec.style.AnnotationSpec
-import kotlinx.datetime.Clock
-import kotlinx.datetime.Instant
 import org.testcontainers.utility.DockerImageName
+import kotlin.time.Clock
+import kotlin.time.Instant
 
 abstract class ReThisTestCtx(
     withJsonModule: Boolean = false,
@@ -21,6 +21,8 @@ abstract class ReThisTestCtx(
 
     private var rethis: ReThis = ReThis(redis.host, redis.firstMappedPort)
     protected val client get() = rethis
+
+    protected suspend fun connectionProvider() = client.topology.route(PingCommandCodec.encode(Charsets.UTF_8, null))
 
     protected fun resetClient(new: ReThis) {
         rethis = new

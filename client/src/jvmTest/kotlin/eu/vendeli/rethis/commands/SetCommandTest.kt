@@ -1,9 +1,9 @@
 package eu.vendeli.rethis.commands
 
 import eu.vendeli.rethis.ReThisTestCtx
-import eu.vendeli.rethis.commands.*
-import eu.vendeli.rethis.types.response.ScanResult
-import eu.vendeli.rethis.types.options.SScanOption
+import eu.vendeli.rethis.api.spec.common.request.set.SScanOption
+import eu.vendeli.rethis.api.spec.common.response.common.ScanResult
+import eu.vendeli.rethis.command.set.*
 import io.kotest.matchers.shouldBe
 
 class SetCommandTest : ReThisTestCtx() {
@@ -22,7 +22,7 @@ class SetCommandTest : ReThisTestCtx() {
     suspend fun `test SPOP command with count`() {
         client.sAdd("testKey21", "testMember21")
         client.sAdd("testKey21", "testMember22")
-        client.sPop("testKey21", 2) shouldBe listOf("testMember21", "testMember22")
+        client.sPopCount("testKey21", 2) shouldBe listOf("testMember21", "testMember22")
     }
 
     @Test
@@ -35,7 +35,7 @@ class SetCommandTest : ReThisTestCtx() {
     suspend fun `test SRANDMEMBER command with count`() {
         client.sAdd("testKey24", "testMember24")
         client.sAdd("testKey24", "testMember25")
-        client.sRandMember("testKey24", 2) shouldBe listOf("testMember24", "testMember25")
+        client.sRandMemberCount("testKey24", 2) shouldBe listOf("testMember24", "testMember25")
     }
 
     @Test
@@ -56,7 +56,7 @@ class SetCommandTest : ReThisTestCtx() {
     @Test
     suspend fun `test SSCAN command`() {
         client.sAdd("testKey30", "testMember30")
-        client.sScan("testKey30", 0, SScanOption.MATCH("*")) shouldBe ScanResult("0", listOf("testMember30"))
+        client.sScan("testKey30", 0, SScanOption.Match("*")) shouldBe ScanResult("0", listOf("testMember30"))
     }
 
     @Test

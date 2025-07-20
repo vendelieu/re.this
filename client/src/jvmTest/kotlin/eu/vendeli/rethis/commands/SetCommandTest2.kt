@@ -1,7 +1,7 @@
 package eu.vendeli.rethis.commands
 
 import eu.vendeli.rethis.ReThisTestCtx
-import eu.vendeli.rethis.commands.*
+import eu.vendeli.rethis.command.set.*
 import io.kotest.matchers.shouldBe
 
 class SetCommandTest2 : ReThisTestCtx() {

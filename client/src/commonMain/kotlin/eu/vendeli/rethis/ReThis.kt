@@ -38,11 +38,12 @@ class ReThis internal constructor(
     internal val logger = KtorSimpleLogger("eu.vendeli.rethis.ReThis")
     internal val rootJob = SupervisorJob()
     internal val connectionFactory = ConnectionFactory(cfg, rootJob)
-    internal val topology = topologyBlock()
     internal val connectionProviderFactory = DefaultConnectionProviderFactory(this)
+    internal val topology = topologyBlock()
     internal val scope = CoroutineScope(rootJob + cfg.dispatcher + CoroutineName(CLIENT_NAME))
 
     val subscriptions = SubscriptionManager()
+    val isActive get() = rootJob.isActive
 
     fun shutdown() {
         logger.info("Shutting down")

@@ -1,9 +1,9 @@
 package eu.vendeli.rethis.commands
 
 import eu.vendeli.rethis.ReThisTestCtx
-import eu.vendeli.rethis.commands.*
-import eu.vendeli.rethis.types.response.ZMember
-import eu.vendeli.rethis.types.response.ZPopResult
+import eu.vendeli.rethis.api.spec.common.response.stream.ZMember
+import eu.vendeli.rethis.api.spec.common.response.stream.ZPopResult
+import eu.vendeli.rethis.command.sortedset.*
 import io.kotest.matchers.shouldBe
 
 class SortedSetCommandTest2 : ReThisTestCtx() {
@@ -59,7 +59,7 @@ class SortedSetCommandTest2 : ReThisTestCtx() {
     @Test
     suspend fun `test ZINCRBY command`() {
         client.zAdd("testSet15", ZMember("testValue15", 1.0))
-        client.zIncrBy("testSet15", "testValue15", 1.0) shouldBe 2.0
+        client.zIncrBy("testSet15", "testValue15", 1) shouldBe 2.0
     }
 
     @Test
@@ -83,6 +83,6 @@ class SortedSetCommandTest2 : ReThisTestCtx() {
         client.zAdd("testSet20", ZMember("testValue20", 1.0))
         client.zAdd("testSet21", ZMember("testValue20", 2.0))
 
-        client.zInterStore("testSet22", "testSet20", "testSet21") shouldBe 1L
+        client.zInterStore("testSet22", key = arrayOf("testSet20", "testSet21"), weight = emptyList()) shouldBe 1L
     }
 }

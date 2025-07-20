@@ -2,8 +2,7 @@
 
 package eu.vendeli.rethis
 
-import eu.vendeli.rethis.ReThisTestCtx
-import eu.vendeli.rethis.commands.del
+import eu.vendeli.rethis.command.generic.del
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll

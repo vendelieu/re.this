@@ -8,6 +8,8 @@ import io.ktor.utils.io.charsets.*
 import kotlinx.io.Buffer
 import kotlin.jvm.JvmName
 
+val EMPTY_BUFFER = Buffer()
+
 @Suppress("UNCHECKED_CAST")
 internal inline fun <reified R> Any?.safeCast(): R? = this as? R
 

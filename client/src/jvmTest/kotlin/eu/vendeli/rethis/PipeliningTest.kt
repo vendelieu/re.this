@@ -1,20 +1,20 @@
 package eu.vendeli.rethis
 
-import eu.vendeli.rethis.ReThis
-import eu.vendeli.rethis.commands.get
-import eu.vendeli.rethis.commands.set
 import eu.vendeli.rethis.api.spec.common.types.BulkString
 import eu.vendeli.rethis.api.spec.common.types.PlainString
+import eu.vendeli.rethis.command.string.get
+import eu.vendeli.rethis.command.string.set
 import eu.vendeli.rethis.types.common.RespVer
 import io.kotest.matchers.collections.shouldHaveSize
+import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 
 class PipeliningTest : ReThisTestCtx() {
     @Test
     suspend fun `pipelining test`() {
         val v2Client = ReThis(redis.host, redis.firstMappedPort, protocol = RespVer.V2) {
-            connection {
-                poolSize = 1
+            pool {
+                minIdleConnections = 1
             }
         }
         v2Client
@@ -39,7 +39,7 @@ class PipeliningTest : ReThisTestCtx() {
                     }.also {
                         println("------$it")
                     }
-            }.run {
+            }.shouldNotBeNull().run {
                 this shouldHaveSize 2
                 first() shouldBe PlainString("OK")
                 last() shouldBe BulkString("testv1")
@@ -94,8 +94,8 @@ class PipeliningTest : ReThisTestCtx() {
                 client.transaction {
                     get("test1")
                 }
-            }.run {
-                this shouldHaveSize 2
+            }.shouldNotBeNull().run {
+                shouldHaveSize(2)
                 first() shouldBe PlainString("OK")
                 last() shouldBe BulkString("testv1")
             }

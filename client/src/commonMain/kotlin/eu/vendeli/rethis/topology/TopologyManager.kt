@@ -1,11 +1,11 @@
 package eu.vendeli.rethis.topology
 
 import eu.vendeli.rethis.api.spec.common.types.CommandRequest
+import eu.vendeli.rethis.api.spec.common.utils.EMPTY_BUFFER
 import eu.vendeli.rethis.configuration.RetryConfiguration
 import eu.vendeli.rethis.providers.ConnectionProvider
 import eu.vendeli.rethis.types.coroutine.CoLocalConn
 import eu.vendeli.rethis.types.coroutine.CoPipelineCtx
-import eu.vendeli.rethis.utils.EMPTY_BUFFER
 import eu.vendeli.rethis.utils.withRetry
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.io.Buffer
@@ -26,7 +26,7 @@ internal suspend inline fun TopologyManager.handle(request: CommandRequest): Buf
         when {
             coPipeline != null -> {
                 coPipeline.pipelined.add(request)
-                EMPTY_BUFFER // todo handle in decoders
+                EMPTY_BUFFER
             }
 
             coLocalConn != null -> coLocalConn.connection.doRequest(request.buffer)

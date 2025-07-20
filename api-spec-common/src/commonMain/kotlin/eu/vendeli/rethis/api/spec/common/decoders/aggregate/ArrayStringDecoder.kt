@@ -3,6 +3,7 @@ package eu.vendeli.rethis.api.spec.common.decoders.aggregate
 import eu.vendeli.rethis.api.spec.common.decoders.ResponseDecoder
 import eu.vendeli.rethis.api.spec.common.types.RespCode
 import eu.vendeli.rethis.api.spec.common.types.ResponseParsingException
+import eu.vendeli.rethis.api.spec.common.utils.EMPTY_BUFFER
 import eu.vendeli.rethis.api.spec.common.utils.parseStrings
 import eu.vendeli.rethis.api.spec.common.utils.tryInferCause
 import io.ktor.utils.io.charsets.*
@@ -15,6 +16,7 @@ object ArrayStringDecoder : ResponseDecoder<List<String>> {
         charset: Charset,
         withCode: Boolean,
     ): List<String> {
+        if (input == EMPTY_BUFFER) return emptyList()
         if (withCode) {
             val code = RespCode.fromCode(input.readByte())
             if (code != RespCode.ARRAY) throw ResponseParsingException(
@@ -32,6 +34,7 @@ object ArrayStringDecoder : ResponseDecoder<List<String>> {
         charset: Charset,
         withCode: Boolean = true,
     ): List<String?> {
+        if (input == EMPTY_BUFFER) return emptyList()
         if (withCode) {
             val code = RespCode.fromCode(input.readByte())
             if (code != RespCode.ARRAY) throw ResponseParsingException(

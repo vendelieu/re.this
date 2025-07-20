@@ -1,8 +1,7 @@
 package eu.vendeli.rethis.commands
 
 import eu.vendeli.rethis.ReThisTestCtx
-import eu.vendeli.rethis.commands.*
-import eu.vendeli.rethis.types.options.LPosOption
+import eu.vendeli.rethis.command.list.*
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
 
@@ -12,7 +11,7 @@ class ListCommandTest2 : ReThisTestCtx() {
         client.lPush("testKey16", "testValue16")
         client.lPush("testKey16", "testValue16")
 
-        client.lPos("testKey16", "testValue16", LPosOption.Count(2)) shouldBe listOf(0L, 1L)
+        client.lPosCount("testKey16", "testValue16", 2) shouldBe listOf(0L, 1L)
     }
 
     @Test
@@ -23,7 +22,7 @@ class ListCommandTest2 : ReThisTestCtx() {
     @Test
     suspend fun `test LPUSHX command`() {
         client.lPush("testKey18", "testValue81")
-        client.lPushX("testKey18", "testValue18") shouldBe 2L
+        client.lPushx("testKey18", "testValue18") shouldBe 2L
     }
 
     @Test
@@ -47,7 +46,7 @@ class ListCommandTest2 : ReThisTestCtx() {
     @Test
     suspend fun `test LTRIM command`() {
         client.lPush("testKey21", "testValue21")
-        client.lTrim("testKey21", 0..0) shouldBe "OK"
+        client.lTrim("testKey21", 0, 0) shouldBe "OK"
     }
 
     @Test
@@ -60,6 +59,6 @@ class ListCommandTest2 : ReThisTestCtx() {
     suspend fun `test RPOP command with count`() {
         client.rPush("testKey23", "testValue23")
         client.rPush("testKey23", "testValue24")
-        client.rPop("testKey23", 2) shouldBe listOf("testValue24", "testValue23")
+        client.rPopCount("testKey23", 2) shouldBe listOf("testValue24", "testValue23")
     }
 }

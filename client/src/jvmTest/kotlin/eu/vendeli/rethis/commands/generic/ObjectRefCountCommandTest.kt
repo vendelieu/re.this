@@ -1,11 +1,10 @@
 package eu.vendeli.rethis.commands.generic
 
-import eu.vendeli.rethis.commands.objectRefCount
-import eu.vendeli.rethis.commands.set
 import eu.vendeli.rethis.ReThisTestCtx
+import eu.vendeli.rethis.command.generic.objectRefCount
+import eu.vendeli.rethis.command.string.set
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
-import io.ktor.utils.io.*
 
 class ObjectRefCountCommandTest : ReThisTestCtx() {
     @Test

@@ -1,10 +1,8 @@
 package eu.vendeli.rethis
 
-import eu.vendeli.rethis.ReThisTestCtx
-import eu.vendeli.rethis.commands.ping
+import eu.vendeli.rethis.command.connection.ping
 import io.kotest.core.spec.IsolationMode
 import io.kotest.matchers.shouldBe
-import kotlinx.coroutines.delay
 
 class ClientTest : ReThisTestCtx() {
     override fun isolationMode(): IsolationMode = IsolationMode.InstancePerLeaf
@@ -12,29 +10,8 @@ class ClientTest : ReThisTestCtx() {
     @Test
     suspend fun `client disconnect test`() {
         client.ping()
-
-        client.isDisconnected shouldBe false
-        client.disconnect()
-        client.isDisconnected shouldBe true
-    }
-
-    @Test
-    suspend fun `client reconnect test`() {
-        client.reconnect()
-        client.ping()
-
-        client.isDisconnected shouldBe false
-        client.disconnect()
-        client.isDisconnected shouldBe true
-
-        client.reconnect()
-        delay(100)
-        client.isDisconnected shouldBe false
-    }
-
-    @Test
-    suspend fun `client shutdown test`() {
+        client.isActive shouldBe true
         client.shutdown()
-        client.rootJob.isCancelled shouldBe true
+        client.isActive shouldBe false
     }
 }

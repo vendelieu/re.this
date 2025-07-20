@@ -6,16 +6,15 @@ import eu.vendeli.rethis.api.spec.common.types.Int64
 import eu.vendeli.rethis.api.spec.common.types.RArray
 import eu.vendeli.rethis.api.spec.common.types.RMap
 import eu.vendeli.rethis.api.spec.common.types.processingException
-import eu.vendeli.rethis.api.spec.common.utils.cast
-import eu.vendeli.rethis.api.spec.common.utils.readResponseWrapped
-import eu.vendeli.rethis.api.spec.common.utils.safeCast
-import eu.vendeli.rethis.api.spec.common.utils.unwrap
+import eu.vendeli.rethis.api.spec.common.utils.*
 import io.ktor.utils.io.charsets.*
 import kotlinx.io.Buffer
 
 
 object LcsDecoder : ResponseDecoder<LcsResult> {
+    private val EMPTY_LCS_RESULT = LcsResult(matches = emptyList(), totalLength = 0L)
     override suspend fun decode(input: Buffer, charset: Charset, withCode: Boolean): LcsResult {
+        if (input == EMPTY_BUFFER) return EMPTY_LCS_RESULT
         val response = input.readResponseWrapped(charset)
 
         val (matches, totalLength) = when (response) {

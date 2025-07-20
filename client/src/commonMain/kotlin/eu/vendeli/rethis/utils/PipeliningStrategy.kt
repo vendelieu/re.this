@@ -12,7 +12,10 @@ private suspend inline fun RConnection.doRTypeRequest(client: ReThis, payload: L
     return ArrayRTypeDecoder.decode(doRequest(payload.map { it.buffer }), client.cfg.charset)
 }
 
-suspend fun ReThis.handlePipelinedRequests(pipelined: List<CommandRequest>, ctxConn: RConnection?): List<RType> {
+internal suspend fun ReThis.handlePipelinedRequests(
+    pipelined: List<CommandRequest>,
+    ctxConn: RConnection?,
+): List<RType> {
     if (topology is StandaloneTopologyManager) {
         return ctxConn?.doRTypeRequest(this, pipelined) ?: topology.provider.withConnection { conn ->
             ArrayRTypeDecoder.decode(conn.doRequest(pipelined.map { it.buffer }), cfg.charset)

@@ -1,14 +1,16 @@
 package eu.vendeli.rethis.commands
 
 import eu.vendeli.rethis.ReThisTestCtx
-import eu.vendeli.rethis.commands.*
-import eu.vendeli.rethis.types.response.MPopResult
-import eu.vendeli.rethis.types.response.ScanResult
-import eu.vendeli.rethis.types.response.ZMember
-import eu.vendeli.rethis.types.response.ZPopResult
-import eu.vendeli.rethis.types.options.ZPopCommonOption
-import io.kotest.matchers.maps.shouldContain
+import eu.vendeli.rethis.api.spec.common.request.sortedset.ZPopCommonOption
+import eu.vendeli.rethis.api.spec.common.response.common.MPopResult
+import eu.vendeli.rethis.api.spec.common.response.common.ScanResult
+import eu.vendeli.rethis.api.spec.common.response.stream.ZMember
+import eu.vendeli.rethis.api.spec.common.response.stream.ZPopResult
+import eu.vendeli.rethis.api.spec.common.types.PlainString
+import eu.vendeli.rethis.command.sortedset.*
+import io.kotest.matchers.collections.shouldNotBeEmpty
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeTypeOf
 
 class SortedSetCommandTest : ReThisTestCtx() {
     @Test
@@ -53,7 +55,7 @@ class SortedSetCommandTest : ReThisTestCtx() {
     suspend fun `test ZPOPMIN command`() {
         client.zAdd("testSet27", ZMember("testValue27", 1.0))
 
-        client.zPopMin("testSet27") shouldContain ("testValue27" to 1.0)
+        client.zPopMin("testSet27").shouldNotBeEmpty().first().shouldBeTypeOf<PlainString>() shouldBe "testValue27"
     }
 
     @Test
@@ -71,19 +73,19 @@ class SortedSetCommandTest : ReThisTestCtx() {
     @Test
     suspend fun `test ZRANDMEMBER command with count`() {
         client.zAdd("testSet28", ZMember("testValue28", 1.0))
-        client.zRandMember("testSet28", 1) shouldBe listOf("testValue28")
+        client.zRandMemberCount("testSet28", 1) shouldBe listOf("testValue28")
     }
 
     @Test
     suspend fun `test ZRANDMEMBER command with count + scores`() {
         client.zAdd("testSet28", ZMember("testValue28", 1.0))
-        client.zRandMember("testSet28", 1, true) shouldBe listOf(listOf(ZMember("testValue28", 1.0)))
+        client.zRandMemberCount("testSet28", 1, true) shouldBe listOf(listOf(ZMember("testValue28", 1.0)))
     }
 
     @Test
     suspend fun `test ZRANGE command`() {
         client.zAdd("testSet29", ZMember("testValue29", 1.0))
-        client.zRange("testSet29", 0, -1) shouldBe listOf("testValue29")
+        client.zRange("testSet29", "0", "-1") shouldBe listOf("testValue29")
     }
 
     @Test
@@ -96,7 +98,7 @@ class SortedSetCommandTest : ReThisTestCtx() {
             ZMember("four", 4.0),
         )
 
-        client.zRangeStore("dstzset", "srczset", 2, -1) shouldBe 2L
+        client.zRangeStore("dstzset", "srczset", "2", "-1") shouldBe 2L
     }
 
     @Test
@@ -153,6 +155,10 @@ class SortedSetCommandTest : ReThisTestCtx() {
     suspend fun `test ZUNIONSTORE command`() {
         client.zAdd("testSet42", ZMember("testValue42", 1.0))
         client.zAdd("testSet43", ZMember("testValue43", 2.0))
-        client.zUnionStore("testSet44", "testSet42", "testSet43") shouldBe 2L
+        client.zUnionStore(
+            destination = "testSet44",
+            key = arrayOf("testSet42", "testSet43"),
+            weight = emptyList(),
+        ) shouldBe 2L
     }
 }

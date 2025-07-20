@@ -1,8 +1,9 @@
 package eu.vendeli.rethis.commands
 
-import eu.vendeli.rethis.commands.*
-import eu.vendeli.rethis.api.spec.common.types.PlainString
 import eu.vendeli.rethis.ReThisTestCtx
+import eu.vendeli.rethis.command.hyperloglog.pfAdd
+import eu.vendeli.rethis.command.hyperloglog.pfCount
+import eu.vendeli.rethis.command.hyperloglog.pfMerge
 import io.kotest.matchers.shouldBe
 
 class HyperLogLogCommandTest : ReThisTestCtx() {
@@ -40,10 +41,5 @@ class HyperLogLogCommandTest : ReThisTestCtx() {
         client.pfAdd("testKey10", "testElement1")
         client.pfAdd("testKey11", "testElement2")
         client.pfMerge("testKey12", "testKey10", "testKey11") shouldBe "OK"
-    }
-
-    @Test
-    suspend fun `test PFSELFTEST command`() {
-        client.pfSelfTest() shouldBe PlainString("OK")
     }
 }

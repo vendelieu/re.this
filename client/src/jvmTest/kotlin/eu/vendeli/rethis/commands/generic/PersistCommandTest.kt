@@ -1,10 +1,10 @@
 package eu.vendeli.rethis.commands.generic
 
-import eu.vendeli.rethis.commands.expire
-import eu.vendeli.rethis.commands.persist
-import eu.vendeli.rethis.commands.set
-import eu.vendeli.rethis.commands.ttl
 import eu.vendeli.rethis.ReThisTestCtx
+import eu.vendeli.rethis.command.generic.expire
+import eu.vendeli.rethis.command.generic.persist
+import eu.vendeli.rethis.command.generic.ttl
+import eu.vendeli.rethis.command.string.set
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 

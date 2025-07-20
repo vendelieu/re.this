@@ -1,8 +1,8 @@
 package eu.vendeli.rethis.commands.generic
 
-import eu.vendeli.rethis.commands.randomKey
-import eu.vendeli.rethis.commands.set
 import eu.vendeli.rethis.ReThisTestCtx
+import eu.vendeli.rethis.command.generic.randomKey
+import eu.vendeli.rethis.command.string.set
 import io.kotest.matchers.nulls.shouldNotBeNull
 
 class RandomKeyCommandTest : ReThisTestCtx() {

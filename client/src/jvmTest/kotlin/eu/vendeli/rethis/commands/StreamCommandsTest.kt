@@ -1,11 +1,13 @@
 package eu.vendeli.rethis.commands
 
 import eu.vendeli.rethis.ReThisTestCtx
-import eu.vendeli.rethis.commands.*
+import eu.vendeli.rethis.api.spec.common.request.common.FieldValue
+import eu.vendeli.rethis.api.spec.common.request.stream.MAXLEN
+import eu.vendeli.rethis.api.spec.common.request.stream.XAddOption
+import eu.vendeli.rethis.api.spec.common.request.stream.XId
+import eu.vendeli.rethis.api.spec.common.request.stream.XReadGroupKeyIds
 import eu.vendeli.rethis.api.spec.common.types.RType
-import eu.vendeli.rethis.types.options.MAXLEN
-import eu.vendeli.rethis.types.options.XAddOption
-import eu.vendeli.rethis.types.options.XId
+import eu.vendeli.rethis.command.stream.*
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 
@@ -14,8 +16,8 @@ class StreamCommandsTest : ReThisTestCtx() {
     suspend fun `test XADD command`() {
         val result = client.xAdd(
             key = "mystream1",
-            id = XAddOption.Asterisk,
-            entry = arrayOf("field1" to "value1", "field2" to "value2"),
+            idSelector = XAddOption.Asterisk,
+            data = arrayOf(FieldValue("field1", "value1"), FieldValue("field2", "value2")),
         )
         result shouldNotBe null
     }
@@ -26,14 +28,16 @@ class StreamCommandsTest : ReThisTestCtx() {
         client.xReadGroup(
             group = "mygroup2",
             consumer = "myconsumer2",
-            keys = listOf("mystream2"),
-            ids = listOf("0"),
+            streams = XReadGroupKeyIds(
+                key = listOf("mystream2"),
+                id = listOf("0"),
+            ),
         )
 
         val id = client.xAdd(
             key = "mystream2",
-            id = XAddOption.Asterisk,
-            entry = arrayOf("field1" to "value1"),
+            idSelector = XAddOption.Asterisk,
+            data = arrayOf(FieldValue("field1", "value1")),
         )!!
         val ackCount = client.xAck("mystream2", "mygroup2", id)
         ackCount shouldNotBe null
@@ -41,7 +45,8 @@ class StreamCommandsTest : ReThisTestCtx() {
 
     @Test
     suspend fun `test XDEL command`() {
-        val id = client.xAdd("mystream3", id = XAddOption.Asterisk, entry = arrayOf("field1" to "value1"))!!
+        val id =
+            client.xAdd("mystream3", idSelector = XAddOption.Asterisk, data = arrayOf(FieldValue("field1", "value1")))!!
         val delCount = client.xDel("mystream3", id)
         delCount shouldBe 1L
     }
@@ -91,8 +96,8 @@ class StreamCommandsTest : ReThisTestCtx() {
 
     @Test
     suspend fun `test XLEN command`() {
-        client.xAdd("mystream10", id = XAddOption.Asterisk, entry = arrayOf("field1" to "value1"))
-        client.xAdd("mystream11", id = XAddOption.Asterisk, entry = arrayOf("field2" to "value2"))
+        client.xAdd("mystream10", idSelector = XAddOption.Asterisk, data = arrayOf(FieldValue("field1", "value1")))
+        client.xAdd("mystream11", idSelector = XAddOption.Asterisk, data = arrayOf(FieldValue("field2", "value2")))
         val length = client.xLen("mystream10")
         length shouldBe 1L
         client.xLen("mystream10") shouldBe 1L
@@ -100,28 +105,30 @@ class StreamCommandsTest : ReThisTestCtx() {
 
     @Test
     suspend fun `test XTRIM command`() {
-        client.xAdd("mystream12", id = XAddOption.Asterisk, entry = arrayOf("field1" to "value1"))
-        val trimmedCount = client.xTrim("mystream12", threshold = 1, trimmingStrategy = MAXLEN)
+        client.xAdd("mystream12", idSelector = XAddOption.Asterisk, data = arrayOf(FieldValue("field1", "value1")))
+        val trimmedCount = client.xTrim("mystream12", threshold = "1", strategy = MAXLEN)
         trimmedCount shouldNotBe null
     }
 
     @Test
     suspend fun `test XREAD command`() {
-        client.xAdd("mystream14", id = XAddOption.Asterisk, entry = arrayOf("field1" to "value1"))
-        client.xAdd("mystream15", id = XAddOption.Asterisk, entry = arrayOf("field2" to "value2"))
-        val result = client.xRead(keys = listOf("mystream15"), ids = listOf("0"))
+        client.xAdd("mystream14", idSelector = XAddOption.Asterisk, data = arrayOf(FieldValue("field1", "value1")))
+        client.xAdd("mystream15", idSelector = XAddOption.Asterisk, data = arrayOf(FieldValue("field2", "value2")))
+        val result = client.xRead(key = listOf("mystream15"), id = listOf("0"))
         result shouldNotBe null
     }
 
     @Test
     suspend fun `test XREADGROUP command`() {
         client.xGroupCreate("mystream16", "mygroup16", XId.Id("0"), mkstream = true)
-        client.xAdd("mystream16", id = XAddOption.Asterisk, entry = arrayOf("field1" to "value1"))
+        client.xAdd("mystream16", idSelector = XAddOption.Asterisk, data = arrayOf(FieldValue("field1", "value1")))
         val result = client.xReadGroup(
             group = "mygroup16",
             consumer = "myconsumer16",
-            keys = listOf("mystream16"),
-            ids = listOf("0"),
+            streams = XReadGroupKeyIds(
+                key = listOf("mystream16"),
+                id = listOf("0"),
+            ),
         )
         result shouldNotBe null
     }
@@ -129,15 +136,19 @@ class StreamCommandsTest : ReThisTestCtx() {
     @Test
     suspend fun `test XCLAIM command`() {
         client.xGroupCreate("mystream17", "mygroup17", XId.Id("0"), mkstream = true)
-        val id = client.xAdd("mystream17", id = XAddOption.Asterisk, entry = arrayOf("field1" to "value1"))!!
-        val claimed = client.xClaim("mystream17", "mygroup17", "myconsumer17", minIdleTime = 1000, id = arrayOf(id))
+        val id = client.xAdd(
+            "mystream17",
+            idSelector = XAddOption.Asterisk,
+            data = arrayOf(FieldValue("field1", "value1")),
+        )!!
+        val claimed = client.xClaim("mystream17", "mygroup17", "myconsumer17", minIdleTime = "1000", id = arrayOf(id))
         claimed shouldNotBe null
     }
 
     @Test
     suspend fun `test XPENDING command`() {
         client.xGroupCreate("mystream18", "mygroup18", XId.Id("0"), mkstream = true)
-        client.xAdd("mystream18", id = XAddOption.Asterisk, entry = arrayOf("field1" to "value1"))
+        client.xAdd("mystream18", idSelector = XAddOption.Asterisk, data = arrayOf(FieldValue("field1", "value1")))
         val pending = client.xPending("mystream18", "mygroup18")
         pending shouldNotBe emptyList<RType>()
     }

@@ -1,11 +1,11 @@
 package eu.vendeli.rethis.commands.generic
 
-import eu.vendeli.rethis.commands.expireAt
-import eu.vendeli.rethis.commands.set
-import eu.vendeli.rethis.types.options.UpdateStrategyOption
 import eu.vendeli.rethis.ReThisTestCtx
+import eu.vendeli.rethis.api.spec.common.request.common.UpdateStrategyOption
+import eu.vendeli.rethis.command.generic.expireAt
+import eu.vendeli.rethis.command.string.set
 import io.kotest.matchers.shouldBe
-import kotlinx.datetime.Clock
+import kotlin.time.Clock
 import kotlin.time.Duration.Companion.seconds
 
 class ExpireAtCommandTest : ReThisTestCtx() {

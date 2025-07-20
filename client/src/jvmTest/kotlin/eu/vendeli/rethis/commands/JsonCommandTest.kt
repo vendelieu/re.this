@@ -3,6 +3,18 @@ package eu.vendeli.rethis.commands
 import eu.vendeli.rethis.ReThisTestCtx
 import eu.vendeli.rethis.commands.*
 import eu.vendeli.rethis.api.spec.common.types.BulkString
+import eu.vendeli.rethis.command.json.jsonArrAppend
+import eu.vendeli.rethis.command.json.jsonArrIndex
+import eu.vendeli.rethis.command.json.jsonArrInsert
+import eu.vendeli.rethis.command.json.jsonArrLen
+import eu.vendeli.rethis.command.json.jsonArrPop
+import eu.vendeli.rethis.command.json.jsonArrTrim
+import eu.vendeli.rethis.command.json.jsonClear
+import eu.vendeli.rethis.command.json.jsonDel
+import eu.vendeli.rethis.command.json.jsonForget
+import eu.vendeli.rethis.command.json.jsonGet
+import eu.vendeli.rethis.command.json.jsonMerge
+import eu.vendeli.rethis.command.json.jsonSet
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeTypeOf
 
