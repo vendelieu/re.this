@@ -6,6 +6,7 @@ import eu.vendeli.rethis.types.common.RConnection
 import eu.vendeli.rethis.utils.CLIENT_NAME
 import eu.vendeli.rethis.utils.IO_OR_UNCONFINED
 import io.ktor.network.sockets.*
+import io.ktor.util.logging.debug
 import io.ktor.utils.io.charsets.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
@@ -44,7 +45,7 @@ internal class ConnectionPool(
 
     init {
         logger.info("Initializing connection pool for $address")
-        logger.debug("Pool configuration: ${cfg.pool}")
+        logger.debug { "Pool configuration: ${cfg.pool}" }
         populatePool()
         runObserver()
     }
@@ -119,7 +120,7 @@ internal class ConnectionPool(
     }
 
     private fun runObserver() = scope.launch(SupervisorJob()) {
-        logger.debug("Starting connection pool observer")
+        logger.debug { "Starting connection pool observer" }
         while (isActive) {
             delay(cfg.pool.checkInterval)
             adjustPoolSize()
@@ -150,7 +151,7 @@ internal class ConnectionPool(
             }
             conn.fillPool()
         } else {
-            logger.debug("Pool expanding attempt failed. Max connections reached.")
+            logger.debug { "Pool expanding attempt failed. Max connections reached." }
         }
     }
 

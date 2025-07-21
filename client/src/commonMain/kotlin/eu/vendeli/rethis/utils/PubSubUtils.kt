@@ -6,6 +6,7 @@ import eu.vendeli.rethis.providers.ConnectionProvider
 import eu.vendeli.rethis.types.common.Subscription
 import eu.vendeli.rethis.types.common.SubscriptionWorker
 import eu.vendeli.rethis.types.coroutine.CoLocalConn
+import io.ktor.util.logging.debug
 import io.ktor.utils.io.*
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.delay
@@ -32,7 +33,7 @@ internal suspend fun ReThis.registerSubscription(
             while (isActive) {
                 conn.input.awaitContent()
                 val event = SubEventDecoder.decode(conn.input.readBuffer(), cfg.charset)
-                logger.debug("Handling event in $target channel subscription")
+                logger.debug { "Handling event in $target channel subscription" }
 
                 val inputType = event.first()
                 when (inputType) {

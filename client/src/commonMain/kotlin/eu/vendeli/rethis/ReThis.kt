@@ -30,17 +30,6 @@ import eu.vendeli.rethis.utils.handlePipelinedRequests
 import io.ktor.util.logging.*
 import kotlinx.coroutines.*
 
-/** TODO
- *
- * static topology: https://redis.github.io/lettuce/ha-sharding/#topology-discovery
- *
- * benchmark action (https://github.com/kitlangton/jmh-benchmark-action)
- *
- * eu.vendeli.rethis.api.spec.common > eu.vendeli.rethis.shared
- *
- * todo readfrom >
- *
- */
 @ReThisDSL
 class ReThis internal constructor(
     internal val cfg: ReThisConfiguration,
@@ -85,7 +74,7 @@ class ReThis internal constructor(
             throw e
         }
         val pipelinedPayload = handlePipelinedRequests(requests, ctxConn)
-        logger.debug("Executing pipelined request\nRequest payload: $requests")
+        logger.debug { "Executing pipelined request\nRequest payload: $requests" }
         logger.trace { "Pipelined payload: $pipelinedPayload" }
         requests.clear()
 
@@ -104,7 +93,7 @@ class ReThis internal constructor(
         return topology.route(multiCommand).withConnection { conn ->
             val tx = MultiCommandCodec.decode(conn.doRequest(multiCommand.buffer), cfg.charset)
             if (!tx) throw InvalidStateException("Failed to start transaction")
-            logger.debug("Started transaction")
+            logger.debug { "Started transaction" }
 
             var e: Throwable? = null
             try {
@@ -113,7 +102,7 @@ class ReThis internal constructor(
                 }.join()
 
                 val exec = conn.doRequest(MultiCommandCodec.encode(cfg.charset).buffer)
-                logger.debug("Transaction completed")
+                logger.debug { "Transaction completed" }
 
                 ExecCommandCodec.decode(exec, cfg.charset)
             } catch (ex: Throwable) {

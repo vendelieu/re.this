@@ -10,6 +10,7 @@ import eu.vendeli.rethis.api.spec.common.types.ReThisException
 import eu.vendeli.rethis.configuration.ReThisConfiguration
 import eu.vendeli.rethis.types.common.Address
 import io.ktor.network.sockets.*
+import io.ktor.util.logging.*
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -33,11 +34,11 @@ internal suspend inline fun <T> withRetry(
     var currentDelay = cfg.retry.initialDelay.inWholeMilliseconds
     var ex: Exception? = null
     repeat(cfg.retry.times - 1) {
-        logger.debug("Attempt ${it + 1} of ${cfg.retry.times}")
+        logger.trace { "Attempt ${it + 1} of ${cfg.retry.times}" }
         try {
             return block(it)
         } catch (e: Exception) {
-            logger.debug("Caught exception", e)
+            logger.debug { "Caught exception\n${e.stackTraceToString()}" }
             if (ex == null) {
                 ex = e
             } else {
