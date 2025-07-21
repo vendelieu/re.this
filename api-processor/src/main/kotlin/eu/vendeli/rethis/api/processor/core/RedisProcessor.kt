@@ -11,16 +11,6 @@ import eu.vendeli.rethis.api.processor.utils.*
 import kotlinx.io.Buffer
 import java.io.File
 
-/*
- todo describe rules on how spec working
-  for example `vararg param` -> param.forEach { writeArg(it) } | `param: List<>` -> writeListArg(param)
-  consider all cases (when there's two param that needed to be written as forEach, vararg can be only one)
-  --
-  placing token on struct / parameter
-  bool tokens
-  --
-  rewrite validation logic
- */
 internal object RedisProcessor {
     fun process(cmd: RCommandData) {
         val currentCmd = context[CurrentCommand] ?: run {
