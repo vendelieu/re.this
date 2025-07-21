@@ -31,7 +31,7 @@ public object EvalCommandCodec {
         arg: List<String>,
     ): CommandRequest {
         var buffer = Buffer()
-        var size = 0
+        var size = 1
         COMMAND_HEADER.copyTo(buffer)
         size += 1
         buffer.writeStringArg(script, charset, )

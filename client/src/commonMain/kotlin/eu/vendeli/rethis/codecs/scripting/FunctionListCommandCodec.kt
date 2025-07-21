@@ -30,7 +30,7 @@ public object FunctionListCommandCodec {
         withCode: Boolean?,
     ): CommandRequest {
         var buffer = Buffer()
-        var size = 0
+        var size = 2
         COMMAND_HEADER.copyTo(buffer)
         libraryNamePattern?.let { it0 ->
             size += 1

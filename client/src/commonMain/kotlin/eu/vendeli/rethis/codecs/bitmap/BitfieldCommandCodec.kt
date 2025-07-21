@@ -37,7 +37,7 @@ public object BitfieldCommandCodec {
         vararg operation: BitfieldOption,
     ): CommandRequest {
         var buffer = Buffer()
-        var size = 0
+        var size = 1
         COMMAND_HEADER.copyTo(buffer)
         operation.forEach { it0 ->
             when (it0) {

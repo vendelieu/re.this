@@ -24,7 +24,7 @@ public object ClusterResetCommandCodec {
 
     public suspend fun encode(charset: Charset, resetType: ClusterResetMode?): CommandRequest {
         var buffer = Buffer()
-        var size = 0
+        var size = 2
         COMMAND_HEADER.copyTo(buffer)
         resetType?.let { it0 ->
             size += 1

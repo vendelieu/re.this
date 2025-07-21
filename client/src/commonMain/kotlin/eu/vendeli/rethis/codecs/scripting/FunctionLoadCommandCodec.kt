@@ -28,7 +28,7 @@ public object FunctionLoadCommandCodec {
         replace: Boolean?,
     ): CommandRequest {
         var buffer = Buffer()
-        var size = 0
+        var size = 2
         COMMAND_HEADER.copyTo(buffer)
         replace?.let { it0 ->
             if(it0) {

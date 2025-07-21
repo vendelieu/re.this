@@ -25,12 +25,11 @@ import kotlin.concurrent.atomics.ExperimentalAtomicApi
 class ClusterTopologyManager(
     private val initialNodes: List<Address>,
     private val client: ReThis,
-    private val cfg: ClusterConfiguration,
+    override val cfg: ClusterConfiguration,
 ) : TopologyManager {
     private val snapshotRef: AtomicReference<ClusterSnapshot?> = AtomicReference(null)
     private val refreshMutex = Mutex()
     private val scope = CoroutineScope(cfg.dispatcher + Job(client.rootJob))
-    override val retryCfg = cfg.retry
 
     init {
         initialize()
@@ -143,7 +142,7 @@ class ClusterTopologyManager(
 
     private suspend fun fetchClusterSlots(): List<ClusterNode> {
         val initialNodes = ArrayDeque(initialNodes)
-        return withRetry(cfg.retry) {
+        return withRetry(cfg) {
             val req = ClusterSlotsCommandCodec.encode(Charsets.UTF_8)
             val conn = client.connectionFactory.createConnOrNull(initialNodes.removeFirst().socket)
                 ?: throw ClusterException("Can't create connection while fetching cluster slots")

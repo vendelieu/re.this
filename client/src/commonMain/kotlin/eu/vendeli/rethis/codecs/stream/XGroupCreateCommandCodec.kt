@@ -37,7 +37,7 @@ public object XGroupCreateCommandCodec {
         entriesread: Long?,
     ): CommandRequest {
         var buffer = Buffer()
-        var size = 0
+        var size = 2
         COMMAND_HEADER.copyTo(buffer)
         size += 1
         buffer.writeStringArg(key, charset, )

@@ -24,7 +24,7 @@ public object ClusterFailoverCommandCodec {
 
     public suspend fun encode(charset: Charset, options: ClusterFailoverOption?): CommandRequest {
         var buffer = Buffer()
-        var size = 0
+        var size = 2
         COMMAND_HEADER.copyTo(buffer)
         options?.let { it0 ->
             size += 1

@@ -17,12 +17,12 @@ abstract class ReThisTestCtx(
         DockerImageName.parse(if (!withJsonModule) "redis:${RedisContainer.DEFAULT_TAG}" else "redislabs/rejson"),
     ).apply { start() }
 
-    private var rethis: ReThis = ReThis(redis.host, redis.firstMappedPort)
-    protected val client get() = rethis
+    private var reThis: ReThis = ReThis(redis.host, redis.firstMappedPort)
+    protected val client get() = reThis
 
     protected suspend fun connectionProvider() = client.topology.route(PingCommandCodec.encode(Charsets.UTF_8, null))
 
     protected fun resetClient(new: ReThis) {
-        rethis = new
+        reThis = new
     }
 }

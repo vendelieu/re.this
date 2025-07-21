@@ -3,6 +3,10 @@ package eu.vendeli.rethis.codecs.sortedset
 import eu.vendeli.rethis.api.spec.common.decoders.general.BulkStringDecoder
 import eu.vendeli.rethis.api.spec.common.decoders.general.DoubleDecoder
 import eu.vendeli.rethis.api.spec.common.request.common.UpdateStrategyOption
+import eu.vendeli.rethis.api.spec.common.request.common.UpdateStrategyOption.GT
+import eu.vendeli.rethis.api.spec.common.request.common.UpdateStrategyOption.LT
+import eu.vendeli.rethis.api.spec.common.request.common.UpdateStrategyOption.NX
+import eu.vendeli.rethis.api.spec.common.request.common.UpdateStrategyOption.XX
 import eu.vendeli.rethis.api.spec.common.response.stream.ZMember
 import eu.vendeli.rethis.api.spec.common.types.CommandRequest
 import eu.vendeli.rethis.api.spec.common.types.RedisOperation
@@ -38,7 +42,7 @@ public object ZAddExtendedCommandCodec {
         increment: Boolean?,
     ): CommandRequest {
         var buffer = Buffer()
-        var size = 0
+        var size = 1
         COMMAND_HEADER.copyTo(buffer)
         size += 1
         buffer.writeStringArg(key, charset, )

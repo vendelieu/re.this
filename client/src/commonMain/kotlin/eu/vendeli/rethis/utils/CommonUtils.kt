@@ -7,7 +7,7 @@ import eu.vendeli.rethis.annotations.ReThisInternal
 import eu.vendeli.rethis.api.spec.common.response.common.HostAndPort
 import eu.vendeli.rethis.api.spec.common.types.CommandRequest
 import eu.vendeli.rethis.api.spec.common.types.ReThisException
-import eu.vendeli.rethis.configuration.RetryConfiguration
+import eu.vendeli.rethis.configuration.ReThisConfiguration
 import eu.vendeli.rethis.types.common.Address
 import io.ktor.network.sockets.*
 import kotlinx.coroutines.CoroutineDispatcher
@@ -25,18 +25,16 @@ expect fun <T> coRunBlocking(block: suspend CoroutineScope.() -> T): T
 @ReThisInternal
 suspend fun ReThis.execute(request: CommandRequest): Buffer = topology.route(request).execute(request)
 
-@Suppress("UNCHECKED_CAST", "NOTHING_TO_INLINE")
-internal inline fun <T> Any.safeCast(): T? = this as? T
-
 internal suspend inline fun <T> withRetry(
-    cfg: RetryConfiguration,
-    block: suspend () -> T,
+    cfg: ReThisConfiguration,
+    block: suspend (attempt: Int) -> T,
 ): T {
-    var currentDelay = cfg.initialDelay.inWholeMilliseconds
+    var currentDelay = cfg.retry.initialDelay.inWholeMilliseconds
     var ex: Exception? = null
-    repeat(cfg.times - 1) {
+    repeat(cfg.retry.times - 1) {
+        cfg.loggerFactory.get("eu.vendeli.rethis.ReThis").debug("Attempt ${it + 1} of ${cfg.retry.times}")
         try {
-            return block()
+            return block(it)
         } catch (e: Exception) {
             if (ex == null) {
                 ex = e
@@ -45,10 +43,10 @@ internal suspend inline fun <T> withRetry(
             }
         }
         delay(currentDelay)
-        currentDelay = (currentDelay * cfg.factor).toLong().coerceAtMost(cfg.maxDelay.inWholeMilliseconds)
+        currentDelay = (currentDelay * cfg.retry.factor).toLong().coerceAtMost(cfg.retry.maxDelay.inWholeMilliseconds)
     }
     if (ex != null) throw ex
-    return block()
+    return block(cfg.retry.times)
 }
 
 internal inline fun HostAndPort.toAddress(): Address = Address(host, port)

@@ -24,7 +24,7 @@ public object JsonMSetCommandCodec {
 
     public suspend fun encode(charset: Charset, vararg triplet: JsonEntry): CommandRequest {
         var buffer = Buffer()
-        var size = 0
+        var size = 1
         COMMAND_HEADER.copyTo(buffer)
         triplet.forEach { it0 ->
             size += 1

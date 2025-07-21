@@ -40,7 +40,8 @@ internal fun addEncoderCode() {
         encodeCode.addStatement("va%L buffer = Buffer()", if (context.currentCommand.haveVaryingSize) "r" else "l")
 
         if (context.currentCommand.haveVaryingSize) {
-            encodeCode.addStatement("var size = 0")
+            val baseSize = context.currentCommand.command.name.split(' ').size
+            encodeCode.addStatement("var size = $baseSize")
         }
         encodeCode.addStatement("COMMAND_HEADER.copyTo(buffer)")
 

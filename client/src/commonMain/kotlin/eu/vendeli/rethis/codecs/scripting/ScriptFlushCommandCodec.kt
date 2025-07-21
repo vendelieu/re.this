@@ -24,7 +24,7 @@ public object ScriptFlushCommandCodec {
 
     public suspend fun encode(charset: Charset, flushType: FlushType?): CommandRequest {
         var buffer = Buffer()
-        var size = 0
+        var size = 2
         COMMAND_HEADER.copyTo(buffer)
         flushType?.let { it0 ->
             size += 1

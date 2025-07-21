@@ -23,7 +23,7 @@ public object BgSaveCommandCodec {
 
     public suspend fun encode(charset: Charset, schedule: Boolean?): CommandRequest {
         var buffer = Buffer()
-        var size = 0
+        var size = 1
         COMMAND_HEADER.copyTo(buffer)
         schedule?.let { it0 ->
             if(it0) {

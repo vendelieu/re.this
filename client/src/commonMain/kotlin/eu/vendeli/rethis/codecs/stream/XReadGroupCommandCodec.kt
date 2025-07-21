@@ -42,7 +42,7 @@ public object XReadGroupCommandCodec {
         vararg option: XReadGroupOption,
     ): CommandRequest {
         var buffer = Buffer()
-        var size = 0
+        var size = 1
         COMMAND_HEADER.copyTo(buffer)
         size += 1
         buffer.writeStringArg("GROUP", charset)

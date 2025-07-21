@@ -30,7 +30,7 @@ public object AuthCommandCodec {
         password: CharArray,
     ): CommandRequest {
         var buffer = Buffer()
-        var size = 0
+        var size = 1
         COMMAND_HEADER.copyTo(buffer)
         username?.let { it0 ->
             size += 1

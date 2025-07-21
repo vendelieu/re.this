@@ -5,6 +5,7 @@ import eu.vendeli.rethis.api.spec.common.types.TimeUnit
 import io.ktor.utils.io.charsets.*
 import io.ktor.utils.io.core.*
 import kotlinx.io.Buffer
+import kotlinx.io.writeString
 import kotlin.time.Duration
 import kotlin.time.Instant
 
@@ -18,7 +19,7 @@ private fun Buffer.append(type: RespCode) {
 
 private fun Buffer.writeBA(value: ByteArray, charset: Charset) {
     append(RespCode.BULK)
-    writeInt(value.size)
+    writeString(value.size.toString())
     appendEOL()
     writeFully(value)
     appendEOL()

@@ -22,7 +22,7 @@ public object ScriptExistsCommandCodec {
 
     public suspend fun encode(charset: Charset, vararg sha1: String): CommandRequest {
         var buffer = Buffer()
-        var size = 0
+        var size = 2
         COMMAND_HEADER.copyTo(buffer)
         sha1.forEach { it0 ->
             size += 1

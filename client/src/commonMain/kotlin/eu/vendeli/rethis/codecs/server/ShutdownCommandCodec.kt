@@ -34,7 +34,7 @@ public object ShutdownCommandCodec {
         vararg options: ShutdownOptions,
     ): CommandRequest {
         var buffer = Buffer()
-        var size = 0
+        var size = 1
         COMMAND_HEADER.copyTo(buffer)
         saveSelector?.let { it0 ->
             when (it0) {

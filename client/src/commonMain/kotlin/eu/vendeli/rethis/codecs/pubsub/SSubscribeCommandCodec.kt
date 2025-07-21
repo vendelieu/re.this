@@ -22,7 +22,7 @@ public object SSubscribeCommandCodec {
 
     public suspend fun encode(charset: Charset, vararg shardChannel: String): CommandRequest {
         var buffer = Buffer()
-        var size = 0
+        var size = 1
         COMMAND_HEADER.copyTo(buffer)
         shardChannel.forEach { it0 ->
             size += 1

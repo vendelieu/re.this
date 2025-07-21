@@ -26,7 +26,7 @@ public object CommandDocsCommandCodec {
 
     public suspend fun encode(charset: Charset, vararg commandName: String): CommandRequest {
         var buffer = Buffer()
-        var size = 0
+        var size = 2
         COMMAND_HEADER.copyTo(buffer)
         commandName.forEach { it0 ->
             size += 1

@@ -4,8 +4,10 @@ import eu.vendeli.rethis.api.spec.common.decoders.pubsub.PubSubNumSubDecoder
 import eu.vendeli.rethis.api.spec.common.response.common.PubSubNumEntry
 import eu.vendeli.rethis.api.spec.common.types.CommandRequest
 import eu.vendeli.rethis.api.spec.common.types.RedisOperation
+import eu.vendeli.rethis.api.spec.common.utils.CRC16
 import eu.vendeli.rethis.utils.writeStringArg
 import io.ktor.utils.io.charsets.Charset
+import io.ktor.utils.io.core.toByteArray
 import kotlin.Boolean
 import kotlin.String
 import kotlin.collections.List
@@ -21,7 +23,7 @@ public object PubSubShardNumSubCommandCodec {
 
     public suspend fun encode(charset: Charset, vararg shardchannel: String): CommandRequest {
         var buffer = Buffer()
-        var size = 0
+        var size = 2
         COMMAND_HEADER.copyTo(buffer)
         shardchannel.forEach { it0 ->
             size += 1

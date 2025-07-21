@@ -32,7 +32,7 @@ public object ZDiffCommandCodec {
         withscores: Boolean?,
     ): CommandRequest {
         var buffer = Buffer()
-        var size = 0
+        var size = 1
         COMMAND_HEADER.copyTo(buffer)
         buffer.writeIntArg(key.size, charset)
         key.forEach { it0 ->

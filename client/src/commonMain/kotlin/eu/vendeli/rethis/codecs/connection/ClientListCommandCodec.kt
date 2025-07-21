@@ -36,7 +36,7 @@ public object ClientListCommandCodec {
         vararg clientId: Long,
     ): CommandRequest {
         var buffer = Buffer()
-        var size = 0
+        var size = 2
         COMMAND_HEADER.copyTo(buffer)
         clientType?.let { it0 ->
             when (it0) {

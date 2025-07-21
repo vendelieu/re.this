@@ -42,7 +42,7 @@ public object ClientKillCommandCodec {
 
     public suspend fun encode(charset: Charset, vararg filter: ClientKillOptions): CommandRequest {
         var buffer = Buffer()
-        var size = 0
+        var size = 2
         COMMAND_HEADER.copyTo(buffer)
         filter.forEach { it0 ->
             when (it0) {

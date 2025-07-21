@@ -25,7 +25,7 @@ public object ClusterDelSlotsCommandCodec {
 
     public suspend fun encode(charset: Charset, vararg slot: Long): CommandRequest {
         var buffer = Buffer()
-        var size = 0
+        var size = 2
         COMMAND_HEADER.copyTo(buffer)
         slot.forEach { it0 ->
             size += 1

@@ -2,6 +2,8 @@ package eu.vendeli.rethis.codecs.geospatial
 
 import eu.vendeli.rethis.api.spec.common.decoders.general.IntegerDecoder
 import eu.vendeli.rethis.api.spec.common.request.geospatial.GeoAddOption
+import eu.vendeli.rethis.api.spec.common.request.geospatial.GeoAddOption.NX
+import eu.vendeli.rethis.api.spec.common.request.geospatial.GeoAddOption.XX
 import eu.vendeli.rethis.api.spec.common.response.geospatial.GeoMember
 import eu.vendeli.rethis.api.spec.common.types.CommandRequest
 import eu.vendeli.rethis.api.spec.common.types.RedisOperation
@@ -35,7 +37,7 @@ public object GeoAddCommandCodec {
         change: Boolean?,
     ): CommandRequest {
         var buffer = Buffer()
-        var size = 0
+        var size = 1
         COMMAND_HEADER.copyTo(buffer)
         size += 1
         buffer.writeStringArg(key, charset, )

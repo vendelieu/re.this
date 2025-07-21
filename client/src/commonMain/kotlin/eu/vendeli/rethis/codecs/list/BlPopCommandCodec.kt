@@ -30,7 +30,7 @@ public object BlPopCommandCodec {
         timeout: Double,
     ): CommandRequest {
         var buffer = Buffer()
-        var size = 0
+        var size = 1
         COMMAND_HEADER.copyTo(buffer)
         key.forEach { it0 ->
             size += 1

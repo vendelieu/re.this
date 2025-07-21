@@ -15,7 +15,6 @@ import eu.vendeli.rethis.types.interfaces.SubscriptionHandler
 import eu.vendeli.rethis.utils.ClusterEventNames
 import eu.vendeli.rethis.utils.panic
 import eu.vendeli.rethis.utils.registerSubscription
-import io.ktor.util.logging.*
 import io.ktor.utils.io.charsets.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.sync.Mutex
@@ -30,13 +29,12 @@ class SentinelTopologyManager(
     private val masterName: String,
     private val sentinelNodes: List<Address>,
     private val client: ReThis,
-    private val cfg: SentinelConfiguration,
+    override val cfg: SentinelConfiguration,
 ) : TopologyManager {
     private val logger = cfg.loggerFactory.get("eu.vendeli.rethis.SentinelTopologyManager")
     private val snapshot: AtomicReference<SentinelSnapshot?> = AtomicReference(null)
     private val refreshMutex = Mutex()
     private val scope = CoroutineScope(cfg.dispatcher + Job(client.rootJob))
-    override val retryCfg = cfg.retry
 
     init {
         initialize()

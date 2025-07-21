@@ -33,7 +33,7 @@ public object FunctionRestoreCommandCodec {
         policy: FunctionRestoreOption?,
     ): CommandRequest {
         var buffer = Buffer()
-        var size = 0
+        var size = 2
         COMMAND_HEADER.copyTo(buffer)
         size += 1
         buffer.writeByteArrayArg(serializedValue, charset, )

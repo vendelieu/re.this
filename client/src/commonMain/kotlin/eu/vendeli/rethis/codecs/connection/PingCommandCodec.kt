@@ -25,7 +25,7 @@ public object PingCommandCodec {
 
     public suspend fun encode(charset: Charset, message: String?): CommandRequest {
         var buffer = Buffer()
-        var size = 0
+        var size = 1
         COMMAND_HEADER.copyTo(buffer)
         message?.let { it0 ->
             size += 1

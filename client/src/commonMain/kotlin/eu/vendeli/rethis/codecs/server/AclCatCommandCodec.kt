@@ -26,7 +26,7 @@ public object AclCatCommandCodec {
 
     public suspend fun encode(charset: Charset, category: String?): CommandRequest {
         var buffer = Buffer()
-        var size = 0
+        var size = 2
         COMMAND_HEADER.copyTo(buffer)
         category?.let { it0 ->
             size += 1

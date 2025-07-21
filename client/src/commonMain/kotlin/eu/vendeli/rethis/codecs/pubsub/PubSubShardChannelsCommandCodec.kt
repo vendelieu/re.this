@@ -25,7 +25,7 @@ public object PubSubShardChannelsCommandCodec {
 
     public suspend fun encode(charset: Charset, pattern: String?): CommandRequest {
         var buffer = Buffer()
-        var size = 0
+        var size = 2
         COMMAND_HEADER.copyTo(buffer)
         pattern?.let { it0 ->
             size += 1

@@ -25,7 +25,7 @@ public object AclDelUserCommandCodec {
 
     public suspend fun encode(charset: Charset, vararg username: String): CommandRequest {
         var buffer = Buffer()
-        var size = 0
+        var size = 2
         COMMAND_HEADER.copyTo(buffer)
         username.forEach { it0 ->
             size += 1

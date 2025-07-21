@@ -2,6 +2,7 @@ package eu.vendeli.rethis.topology
 
 import eu.vendeli.rethis.api.spec.common.types.CommandRequest
 import eu.vendeli.rethis.api.spec.common.utils.EMPTY_BUFFER
+import eu.vendeli.rethis.configuration.ReThisConfiguration
 import eu.vendeli.rethis.configuration.RetryConfiguration
 import eu.vendeli.rethis.providers.ConnectionProvider
 import eu.vendeli.rethis.types.coroutine.CoLocalConn
@@ -11,14 +12,14 @@ import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.io.Buffer
 
 internal interface TopologyManager {
-    val retryCfg: RetryConfiguration
+    val cfg: ReThisConfiguration
 
     suspend fun route(request: CommandRequest): ConnectionProvider
     suspend fun handleFailure(request: CommandRequest, exception: Throwable): Buffer = throw exception
     fun close()
 }
 
-internal suspend inline fun TopologyManager.handle(request: CommandRequest): Buffer = withRetry(retryCfg) {
+internal suspend inline fun TopologyManager.handle(request: CommandRequest): Buffer = withRetry(cfg) {
     val currentCoCtx = currentCoroutineContext()
     val coLocalConn = currentCoCtx[CoLocalConn]
     val coPipeline = currentCoCtx[CoPipelineCtx]

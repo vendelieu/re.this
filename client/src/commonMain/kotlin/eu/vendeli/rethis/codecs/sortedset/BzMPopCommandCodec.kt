@@ -2,6 +2,8 @@ package eu.vendeli.rethis.codecs.sortedset
 
 import eu.vendeli.rethis.api.spec.common.decoders.common.LMPopDecoder
 import eu.vendeli.rethis.api.spec.common.request.sortedset.ZPopCommonOption
+import eu.vendeli.rethis.api.spec.common.request.sortedset.ZPopCommonOption.MAX
+import eu.vendeli.rethis.api.spec.common.request.sortedset.ZPopCommonOption.MIN
 import eu.vendeli.rethis.api.spec.common.response.common.MPopResult
 import eu.vendeli.rethis.api.spec.common.types.CommandRequest
 import eu.vendeli.rethis.api.spec.common.types.KeyAbsentException
@@ -37,7 +39,7 @@ public object BzMPopCommandCodec {
         count: Long?,
     ): CommandRequest {
         var buffer = Buffer()
-        var size = 0
+        var size = 1
         COMMAND_HEADER.copyTo(buffer)
         size += 1
         buffer.writeDoubleArg(timeout, charset, )
