@@ -37,7 +37,7 @@ object MapStringDecoder : ResponseDecoder<Map<String, String>> {
     suspend fun decodeNullable(
         input: Buffer,
         charset: Charset,
-        withCode: Boolean = true,
+        withCode: Boolean = false,
     ): Map<String, String?> {
         if (input == EMPTY_BUFFER) return emptyMap()
         val code = RespCode.fromCode(input.readByte())

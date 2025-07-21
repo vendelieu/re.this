@@ -5,13 +5,13 @@ import eu.vendeli.rethis.codecs.connection.HelloCommandCodec
 import eu.vendeli.rethis.codecs.connection.SelectCommandCodec
 import eu.vendeli.rethis.configuration.ReThisConfiguration
 import eu.vendeli.rethis.types.common.RConnection
+import eu.vendeli.rethis.types.common.RespVer
 import eu.vendeli.rethis.types.common.rConnection
 import eu.vendeli.rethis.utils.CLIENT_NAME
 import eu.vendeli.rethis.utils.IO_OR_UNCONFINED
 import io.ktor.network.selector.*
 import io.ktor.network.sockets.*
 import io.ktor.network.tls.*
-import io.ktor.util.logging.*
 import io.ktor.utils.io.charsets.*
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
@@ -63,6 +63,8 @@ internal class ConnectionFactory(
     }
 
     suspend fun prepareConnection(conn: RConnection) {
+        if (cfg.protocol != RespVer.V3 && cfg.auth == null && (cfg.db == null || cfg.db!! <= 0)) return
+
         val helloBuffer = HelloCommandCodec.encode(
             Charsets.UTF_8,
             cfg.protocol.literal.toLong(),
@@ -84,7 +86,7 @@ internal class ConnectionFactory(
 
     fun dispose(conn: RConnection) {
         connections.runCatching { release() }.onFailure {
-            logger.debug("Failed to release connection")
+            logger.debug("Failed to release connection", it)
         }
         conn.socket.dispose()
     }

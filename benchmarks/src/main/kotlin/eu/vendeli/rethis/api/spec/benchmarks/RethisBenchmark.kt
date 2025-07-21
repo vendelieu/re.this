@@ -2,9 +2,9 @@ package eu.vendeli.rethis.api.spec.benchmarks
 
 import com.redis.testcontainers.RedisContainer
 import eu.vendeli.rethis.ReThis
-import eu.vendeli.rethis.commands.get
-import eu.vendeli.rethis.commands.ping
-import eu.vendeli.rethis.commands.set
+import eu.vendeli.rethis.command.connection.ping
+import eu.vendeli.rethis.command.string.get
+import eu.vendeli.rethis.command.string.set
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -37,7 +37,7 @@ class RethisBenchmark {
     @TearDown
     fun tearDown() {
         redis.stop()
-        runBlocking { rethis.disconnect() }
+        runBlocking { rethis.close() }
     }
 
     @Benchmark

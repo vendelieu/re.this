@@ -30,6 +30,17 @@ import eu.vendeli.rethis.utils.handlePipelinedRequests
 import io.ktor.util.logging.*
 import kotlinx.coroutines.*
 
+/** TODO
+ *
+ * static topology: https://redis.github.io/lettuce/ha-sharding/#topology-discovery
+ *
+ * benchmark action (https://github.com/kitlangton/jmh-benchmark-action)
+ *
+ * eu.vendeli.rethis.api.spec.common > eu.vendeli.rethis.shared
+ *
+ * todo readfrom >
+ *
+ */
 @ReThisDSL
 class ReThis internal constructor(
     internal val cfg: ReThisConfiguration,
@@ -45,7 +56,7 @@ class ReThis internal constructor(
     val subscriptions = SubscriptionManager()
     val isActive get() = rootJob.isActive
 
-    fun shutdown() {
+    fun close() {
         logger.info("Shutting down")
 
         subscriptions.unsubscribeAll()

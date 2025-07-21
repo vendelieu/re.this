@@ -29,13 +29,15 @@ internal suspend inline fun <T> withRetry(
     cfg: ReThisConfiguration,
     block: suspend (attempt: Int) -> T,
 ): T {
+    val logger = cfg.loggerFactory.get("eu.vendeli.rethis.ReThis")
     var currentDelay = cfg.retry.initialDelay.inWholeMilliseconds
     var ex: Exception? = null
     repeat(cfg.retry.times - 1) {
-        cfg.loggerFactory.get("eu.vendeli.rethis.ReThis").debug("Attempt ${it + 1} of ${cfg.retry.times}")
+        logger.debug("Attempt ${it + 1} of ${cfg.retry.times}")
         try {
             return block(it)
         } catch (e: Exception) {
+            logger.debug("Caught exception", e)
             if (ex == null) {
                 ex = e
             } else {

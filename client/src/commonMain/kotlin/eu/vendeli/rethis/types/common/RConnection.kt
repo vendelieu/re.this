@@ -14,7 +14,7 @@ data class RConnection(
     suspend fun doRequest(payload: Buffer): Buffer {
         output.runCatching {
             writeBuffer.transferFrom(payload)
-            flushIfNeeded()
+            flush()
         }.onFailure {
             cleanup()
             throw it
@@ -27,7 +27,7 @@ data class RConnection(
     suspend fun doBatchRequest(payload: List<Buffer>): Buffer {
         output.runCatching {
             payload.forEach { writeBuffer.transferFrom(it) }
-            flushIfNeeded()
+            flush()
         }.onFailure {
             cleanup()
             throw it

@@ -34,7 +34,7 @@ object ArrayLongDecoder : ResponseDecoder<List<Long>> {
     suspend fun decodeNullable(
         input: Buffer,
         charset: Charset,
-        withCode: Boolean = true,
+        withCode: Boolean = false,
     ): List<Long?> {
         if (input == EMPTY_BUFFER) return emptyList()
         if (withCode) {

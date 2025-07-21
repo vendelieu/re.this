@@ -6,7 +6,6 @@ import eu.vendeli.rethis.types.common.RConnection
 import eu.vendeli.rethis.utils.CLIENT_NAME
 import eu.vendeli.rethis.utils.IO_OR_UNCONFINED
 import io.ktor.network.sockets.*
-import io.ktor.util.logging.*
 import io.ktor.utils.io.charsets.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
@@ -44,22 +43,25 @@ internal class ConnectionPool(
     }
 
     init {
-        logger.info("Initializing connection pool")
+        logger.info("Initializing connection pool for $address")
         logger.debug("Pool configuration: ${cfg.pool}")
         populatePool()
         runObserver()
     }
 
-    private fun populatePool() = scope.launch {
+    private fun populatePool() = scope.launch(Dispatchers.IO_OR_UNCONFINED + Job()) {
+        val populationJob = currentCoroutineContext()[Job]!!
         repeat(cfg.pool.minIdleConnections) {
-            val conn = connectionFactory.createConnOrNull(address) ?: return@repeat
-            idleConnections.trySend(conn).onSuccess {
-                idleConnectionsCount.incrementAndFetch()
-            }.onFailure {
-                connectionFactory.dispose(conn)
+            launch(populationJob) {
+                val conn = connectionFactory.createConnOrNull(address) ?: return@launch
+                idleConnections.trySend(conn).onSuccess {
+                    idleConnectionsCount.incrementAndFetch()
+                }.onFailure {
+                    connectionFactory.dispose(conn)
+                }
             }
         }
-        logger.info("Connection pool initialized")
+        populationJob.invokeOnCompletion { logger.info("Connection pool initialized") }
     }
 
     fun haveIdleConnections() = idleConnectionsCount.load() < cfg.pool.maxIdleConnections

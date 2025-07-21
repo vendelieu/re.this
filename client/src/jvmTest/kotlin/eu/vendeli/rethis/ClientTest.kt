@@ -11,7 +11,7 @@ class ClientTest : ReThisTestCtx() {
     suspend fun `client disconnect test`() {
         client.ping()
         client.isActive shouldBe true
-        client.shutdown()
+        client.close()
         client.isActive shouldBe false
     }
 }

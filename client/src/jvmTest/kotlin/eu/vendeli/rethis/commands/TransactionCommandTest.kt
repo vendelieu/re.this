@@ -41,11 +41,11 @@ class TransactionCommandTest : ReThisTestCtx() {
 
         conn.doRequest(
             SetCommandCodec.encode(Charsets.UTF_8, "test1", "testv1").buffer,
-        ).readResponseWrapped(Charsets.UTF_8).shouldBe(PlainString("QUEDUED"))
+        ).readResponseWrapped(Charsets.UTF_8).shouldBe(PlainString("QUEUED"))
 
         conn.doRequest(
             SetCommandCodec.encode(Charsets.UTF_8, "test2", "testv2").buffer,
-        ).readResponseWrapped(Charsets.UTF_8).shouldBe(PlainString("QUEDUED"))
+        ).readResponseWrapped(Charsets.UTF_8).shouldBe(PlainString("QUEUED"))
 
 
         conn.doRequest(

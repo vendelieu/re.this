@@ -16,8 +16,8 @@ import kotlin.time.Duration.Companion.seconds
  * @property checkInterval the interval at which the pool is checked for idle connections, defaults to 1 second
  * @property connectionAcquirePeriod the period for which connections are acquired, defaults to 3 seconds
  * @property gracefulClosePeriod the period of time for which the pool is closed gracefully, defaults to 30 seconds
- * @property connectionHealthCheck whether to check the health of the connection, defaults to true
- * @property setClientName whether to set the client name, defaults to true
+ * @property connectionHealthCheck whether to check the health of the connection, defaults to false
+ * @property setClientName whether to set the client name, defaults to false
  * @property closeGracefully whether to close the pool gracefully, defaults to false
  */
 @ConfigurationDSL
@@ -31,7 +31,7 @@ data class PoolConfiguration(
     var checkInterval: Duration = 1.seconds,
     var gracefulClosePeriod: Duration = 30.seconds,
 
-    var connectionHealthCheck: Boolean = true,
-    var setClientName: Boolean = true,
+    var connectionHealthCheck: Boolean = false,
+    var setClientName: Boolean = false,
     var closeGracefully: Boolean = false,
 )

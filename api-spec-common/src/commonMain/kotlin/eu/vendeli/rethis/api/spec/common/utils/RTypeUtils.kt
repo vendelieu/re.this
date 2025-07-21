@@ -5,10 +5,8 @@ import eu.vendeli.rethis.api.spec.common.types.*
 import io.ktor.util.logging.*
 import io.ktor.utils.io.charsets.*
 import io.ktor.utils.io.core.*
+import kotlinx.io.*
 import kotlinx.io.Buffer
-import kotlinx.io.readByteArray
-import kotlinx.io.readDecimalLong
-import kotlinx.io.readLineStrict
 
 fun Buffer.readResponseWrapped(
     charset: Charset,
@@ -18,10 +16,10 @@ fun Buffer.readResponseWrapped(
     if (remaining == 0L) return RType.Null
     val prefix = readByte()
     val code = RespCode.fromCode(prefix)
-    val size = readLineStrict().toInt()
 
     return when (code) {
         RespCode.ARRAY -> {
+            val size = readLineStrict().toInt()
             if (size < 0) RType.Null else {
                 val list = mutableListOf<RType>()
                 repeat(size) { list += readResponseWrapped(charset, rawOnly) }
@@ -30,6 +28,7 @@ fun Buffer.readResponseWrapped(
         }
 
         RespCode.SET -> {
+            val size = readLineStrict().toInt()
             if (size < 0) RType.Null else {
                 val set = mutableSetOf<RPrimitive>()
                 repeat(size) { set += readResponseWrapped(charset, rawOnly) as RPrimitive }
@@ -38,6 +37,7 @@ fun Buffer.readResponseWrapped(
         }
 
         RespCode.PUSH -> {
+            val size = readLineStrict().toInt()
             if (size < 0) RType.Null else {
                 val list = mutableListOf<RPrimitive>()
                 repeat(size) { list += readResponseWrapped(charset, rawOnly) as RPrimitive }
@@ -46,6 +46,7 @@ fun Buffer.readResponseWrapped(
         }
 
         RespCode.MAP -> {
+            val size = readLineStrict().toInt()
             if (size < 0) RType.Null else {
                 val map = mutableMapOf<RPrimitive, RType>()
                 repeat(size) {
@@ -64,18 +65,18 @@ fun Buffer.readResponseWrapped(
 private val TRUE_BYTE = 't'.code.toByte()
 private val FALSE_BYTE = 'f'.code.toByte()
 
+@OptIn(InternalIoApi::class)
 private fun Buffer.readSimpleResponseWrapped(
     charset: Charset,
     rawOnly: Boolean,
     prefix: Byte? = null,
 ): RType {
     val code = RespCode.fromCode(prefix ?: readByte())
-    if (size == 0L) return RType.Null
     if (rawOnly) return RType.Raw(readByteArray())
 
     return when (code) {
-        RespCode.SIMPLE_STRING -> PlainString(readLineCRLF().readText(charset))
-        RespCode.SIMPLE_ERROR -> RType.Error(readLineCRLF().readText(charset))
+        RespCode.SIMPLE_STRING -> PlainString(readPartLine(charset))
+        RespCode.SIMPLE_ERROR -> RType.Error(readPartLine(charset))
         RespCode.INTEGER -> Int64(readLineCRLF().readDecimalLong())
         RespCode.BOOLEAN -> when (readByte()) {
             TRUE_BYTE -> Bool(true)
@@ -85,7 +86,7 @@ private fun Buffer.readSimpleResponseWrapped(
 
         RespCode.DOUBLE -> F64(readLineStrict().toDouble())
         RespCode.BIG_NUMBER -> try {
-            BigNumber(BigInteger.parseString(readLineCRLF().readText(charset)))
+            BigNumber(BigInteger.parseString(readPartLine(charset)))
         } catch (e: NumberFormatException) {
             throw ResponseParsingException("Invalid BigInteger format", e)
         }
@@ -93,17 +94,17 @@ private fun Buffer.readSimpleResponseWrapped(
         RespCode.BULK -> {
             val size = readLineStrict().toInt()
             if (size < 0) return RType.Null
-            val content = readText(charset)
+            val content = readPartLine(charset)
             BulkString(content)
         }
 
-        RespCode.BULK_ERROR -> RType.Error(readLineCRLF().readText(charset))
+        RespCode.BULK_ERROR -> RType.Error(readPartLine(charset))
         RespCode.VERBATIM_STRING -> {
             val size = readLineStrict().toInt()
             if (size < 0) return RType.Null
             val encoding = readByteArray(3).decodeToString()
             readByte() // skip ':' byte
-            val content = readLineCRLF().readText(charset)
+            val content = readPartLine(charset)
             VerbatimString(encoding, content)
         }
 
@@ -111,6 +112,8 @@ private fun Buffer.readSimpleResponseWrapped(
         else -> throw ResponseParsingException("Unexpected simple code: $code")
     }
 }
+
+private fun Buffer.readPartLine(charset: Charset) = readLineCRLF().readText(charset)
 
 
 private val NEWLINE_BYTE = '\n'.code.toByte()

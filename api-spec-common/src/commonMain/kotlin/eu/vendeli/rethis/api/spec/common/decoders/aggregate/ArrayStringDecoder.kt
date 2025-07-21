@@ -32,7 +32,7 @@ object ArrayStringDecoder : ResponseDecoder<List<String>> {
     suspend fun decodeNullable(
         input: Buffer,
         charset: Charset,
-        withCode: Boolean = true,
+        withCode: Boolean = false,
     ): List<String?> {
         if (input == EMPTY_BUFFER) return emptyList()
         if (withCode) {
