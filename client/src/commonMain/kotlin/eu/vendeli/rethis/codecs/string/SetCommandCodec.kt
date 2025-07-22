@@ -21,6 +21,7 @@ import eu.vendeli.rethis.api.spec.common.types.UnexpectedResponseType
 import eu.vendeli.rethis.api.spec.common.utils.CRC16
 import eu.vendeli.rethis.api.spec.common.utils.tryInferCause
 import eu.vendeli.rethis.api.spec.common.utils.validateSlot
+import eu.vendeli.rethis.utils.parseCode
 import eu.vendeli.rethis.utils.writeDurationArg
 import eu.vendeli.rethis.utils.writeInstantArg
 import eu.vendeli.rethis.utils.writeStringArg
@@ -124,7 +125,7 @@ public object SetCommandCodec {
     }
 
     public suspend fun decode(input: Buffer, charset: Charset): String? {
-        val code = RespCode.fromCode(input.readByte())
+        val code = input.parseCode(RespCode.BULK)
         return when(code) {
             RespCode.BULK -> {
                 BulkStringDecoder.decode(input, charset, code)

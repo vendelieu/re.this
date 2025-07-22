@@ -9,6 +9,7 @@ import eu.vendeli.rethis.api.spec.common.types.UnexpectedResponseType
 import eu.vendeli.rethis.api.spec.common.utils.CRC16
 import eu.vendeli.rethis.api.spec.common.utils.tryInferCause
 import eu.vendeli.rethis.api.spec.common.utils.validateSlot
+import eu.vendeli.rethis.utils.parseCode
 import eu.vendeli.rethis.utils.writeStringArg
 import io.ktor.utils.io.charsets.Charset
 import io.ktor.utils.io.core.toByteArray
@@ -52,7 +53,7 @@ public object SUnionCommandCodec {
     }
 
     public suspend fun decode(input: Buffer, charset: Charset): Set<String> {
-        val code = RespCode.fromCode(input.readByte())
+        val code = input.parseCode(RespCode.ARRAY)
         return when(code) {
             RespCode.ARRAY -> {
                 SetStringDecoder.decode(input, charset, code)

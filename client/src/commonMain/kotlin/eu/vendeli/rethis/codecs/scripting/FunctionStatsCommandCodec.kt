@@ -8,6 +8,7 @@ import eu.vendeli.rethis.api.spec.common.types.RespCode
 import eu.vendeli.rethis.api.spec.common.types.UnexpectedResponseType
 import eu.vendeli.rethis.api.spec.common.utils.CRC16
 import eu.vendeli.rethis.api.spec.common.utils.tryInferCause
+import eu.vendeli.rethis.utils.parseCode
 import io.ktor.utils.io.charsets.Charset
 import io.ktor.utils.io.core.toByteArray
 import kotlin.Boolean
@@ -33,7 +34,7 @@ public object FunctionStatsCommandCodec {
     public suspend inline fun encodeWithSlot(charset: Charset): CommandRequest = encode(charset, )
 
     public suspend fun decode(input: Buffer, charset: Charset): Map<String, RType> {
-        val code = RespCode.fromCode(input.readByte())
+        val code = input.parseCode(RespCode.MAP)
         return when(code) {
             RespCode.MAP -> {
                 MapRTypeDecoder.decode(input, charset, code)

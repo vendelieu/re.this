@@ -8,6 +8,7 @@ import eu.vendeli.rethis.api.spec.common.types.RespCode
 import eu.vendeli.rethis.api.spec.common.types.UnexpectedResponseType
 import eu.vendeli.rethis.api.spec.common.utils.CRC16
 import eu.vendeli.rethis.api.spec.common.utils.tryInferCause
+import eu.vendeli.rethis.utils.parseCode
 import eu.vendeli.rethis.utils.writeLongArg
 import eu.vendeli.rethis.utils.writeStringArg
 import io.ktor.utils.io.charsets.Charset
@@ -61,7 +62,7 @@ public object JsonArrPopCommandCodec {
     ): CommandRequest = encode(charset, key = key, path = path, index = index)
 
     public suspend fun decode(input: Buffer, charset: Charset): List<RType> {
-        val code = RespCode.fromCode(input.readByte())
+        val code = input.parseCode(RespCode.ARRAY)
         return when(code) {
             RespCode.ARRAY -> {
                 ArrayRTypeDecoder.decode(input, charset, code)

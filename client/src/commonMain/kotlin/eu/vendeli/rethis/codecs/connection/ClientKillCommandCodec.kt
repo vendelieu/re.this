@@ -23,6 +23,7 @@ import eu.vendeli.rethis.api.spec.common.types.TimeUnit
 import eu.vendeli.rethis.api.spec.common.types.UnexpectedResponseType
 import eu.vendeli.rethis.api.spec.common.utils.CRC16
 import eu.vendeli.rethis.api.spec.common.utils.tryInferCause
+import eu.vendeli.rethis.utils.parseCode
 import eu.vendeli.rethis.utils.writeInstantArg
 import eu.vendeli.rethis.utils.writeLongArg
 import eu.vendeli.rethis.utils.writeStringArg
@@ -129,7 +130,7 @@ public object ClientKillCommandCodec {
     public suspend inline fun encodeWithSlot(charset: Charset, vararg filter: ClientKillOptions): CommandRequest = encode(charset, filter = filter)
 
     public suspend fun decode(input: Buffer, charset: Charset): Long {
-        val code = RespCode.fromCode(input.readByte())
+        val code = input.parseCode(RespCode.INTEGER)
         return when(code) {
             RespCode.INTEGER -> {
                 IntegerDecoder.decode(input, charset, code)

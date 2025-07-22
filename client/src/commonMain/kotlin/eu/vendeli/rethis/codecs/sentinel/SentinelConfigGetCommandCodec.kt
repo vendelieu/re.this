@@ -7,6 +7,7 @@ import eu.vendeli.rethis.api.spec.common.types.RespCode
 import eu.vendeli.rethis.api.spec.common.types.UnexpectedResponseType
 import eu.vendeli.rethis.api.spec.common.utils.CRC16
 import eu.vendeli.rethis.api.spec.common.utils.tryInferCause
+import eu.vendeli.rethis.utils.parseCode
 import eu.vendeli.rethis.utils.writeStringArg
 import io.ktor.utils.io.charsets.Charset
 import io.ktor.utils.io.core.toByteArray
@@ -34,7 +35,7 @@ public object SentinelConfigGetCommandCodec {
     public suspend inline fun encodeWithSlot(charset: Charset, pattern: String): CommandRequest = encode(charset, pattern = pattern)
 
     public suspend fun decode(input: Buffer, charset: Charset): Map<String, String> {
-        val code = RespCode.fromCode(input.readByte())
+        val code = input.parseCode(RespCode.ARRAY)
         return when(code) {
             RespCode.ARRAY -> {
                 MapStringDecoder.decode(input, charset, code)

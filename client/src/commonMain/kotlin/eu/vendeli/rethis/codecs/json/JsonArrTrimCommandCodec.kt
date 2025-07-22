@@ -7,6 +7,7 @@ import eu.vendeli.rethis.api.spec.common.types.RespCode
 import eu.vendeli.rethis.api.spec.common.types.UnexpectedResponseType
 import eu.vendeli.rethis.api.spec.common.utils.CRC16
 import eu.vendeli.rethis.api.spec.common.utils.tryInferCause
+import eu.vendeli.rethis.utils.parseCode
 import eu.vendeli.rethis.utils.writeLongArg
 import eu.vendeli.rethis.utils.writeStringArg
 import io.ktor.utils.io.charsets.Charset
@@ -50,7 +51,7 @@ public object JsonArrTrimCommandCodec {
     ): CommandRequest = encode(charset, key = key, path = path, start = start, stop = stop)
 
     public suspend fun decode(input: Buffer, charset: Charset): Long {
-        val code = RespCode.fromCode(input.readByte())
+        val code = input.parseCode(RespCode.INTEGER)
         return when(code) {
             RespCode.INTEGER -> {
                 IntegerDecoder.decode(input, charset, code)

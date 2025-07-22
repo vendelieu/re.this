@@ -10,6 +10,7 @@ import eu.vendeli.rethis.api.spec.common.types.RespCode
 import eu.vendeli.rethis.api.spec.common.types.UnexpectedResponseType
 import eu.vendeli.rethis.api.spec.common.utils.CRC16
 import eu.vendeli.rethis.api.spec.common.utils.tryInferCause
+import eu.vendeli.rethis.utils.parseCode
 import eu.vendeli.rethis.utils.writeCharArrayArg
 import eu.vendeli.rethis.utils.writeLongArg
 import eu.vendeli.rethis.utils.writeStringArg
@@ -72,16 +73,19 @@ public object HelloCommandCodec {
     ): CommandRequest = encode(charset, protover = protover, auth = auth, clientname = clientname)
 
     public suspend fun decode(input: Buffer, charset: Charset): Map<String, RType> {
-        val code = RespCode.fromCode(input.readByte())
+        val code = input.parseCode(RespCode.MAP)
         return when(code) {
-            RespCode.MAP, RespCode.ARRAY -> {
+            RespCode.MAP -> {
+                MapRTypeDecoder.decode(input, charset, code)
+            }
+            RespCode.ARRAY -> {
                 MapRTypeDecoder.decode(input, charset, code)
             }
             RespCode.SIMPLE_ERROR -> {
                 SimpleErrorDecoder.decode(input, charset, code)
             }
             else -> {
-                throw UnexpectedResponseType("Expected [MAP, SIMPLE_ERROR] but got $code", input.tryInferCause(code))
+                throw UnexpectedResponseType("Expected [MAP, ARRAY, SIMPLE_ERROR] but got $code", input.tryInferCause(code))
             }
         }
     }

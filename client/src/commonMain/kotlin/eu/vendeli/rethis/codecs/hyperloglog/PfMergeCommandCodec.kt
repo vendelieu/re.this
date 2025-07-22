@@ -9,6 +9,7 @@ import eu.vendeli.rethis.api.spec.common.types.UnexpectedResponseType
 import eu.vendeli.rethis.api.spec.common.utils.CRC16
 import eu.vendeli.rethis.api.spec.common.utils.tryInferCause
 import eu.vendeli.rethis.api.spec.common.utils.validateSlot
+import eu.vendeli.rethis.utils.parseCode
 import eu.vendeli.rethis.utils.writeStringArg
 import io.ktor.utils.io.charsets.Charset
 import io.ktor.utils.io.core.toByteArray
@@ -62,7 +63,7 @@ public object PfMergeCommandCodec {
     }
 
     public suspend fun decode(input: Buffer, charset: Charset): String {
-        val code = RespCode.fromCode(input.readByte())
+        val code = input.parseCode(RespCode.SIMPLE_STRING)
         return when(code) {
             RespCode.SIMPLE_STRING -> {
                 SimpleStringDecoder.decode(input, charset, code)

@@ -60,7 +60,8 @@ internal fun TypeSpec.Builder.addDecodeFunction(
             .addCode(
                 CodeBlock.builder().apply {
                     if (respCode.isEmpty()) return@apply
-                    addStatement("val code = RespCode.fromCode(input.readByte())")
+                    addImport("eu.vendeli.rethis.utils.parseCode")
+                    addStatement("val code = input.parseCode(RespCode.%L)", respCode.first())
 
                     beginControlFlow("return when(code)")
                     respCode.forEach { writeDecoder(it) }
