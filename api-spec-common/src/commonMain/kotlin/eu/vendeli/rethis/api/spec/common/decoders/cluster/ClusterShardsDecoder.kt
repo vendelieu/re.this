@@ -7,6 +7,7 @@ import eu.vendeli.rethis.api.spec.common.response.cluster.ShardNode
 import eu.vendeli.rethis.api.spec.common.types.RespCode
 import eu.vendeli.rethis.api.spec.common.types.ResponseParsingException
 import eu.vendeli.rethis.api.spec.common.utils.EMPTY_BUFFER
+import eu.vendeli.rethis.api.spec.common.utils.resolveToken
 import eu.vendeli.rethis.api.spec.common.utils.tryInferCause
 import io.ktor.utils.io.charsets.*
 import kotlinx.io.Buffer
@@ -17,13 +18,10 @@ object ClusterShardsDecoder : ResponseDecoder<List<Shard>> {
     override suspend fun decode(
         input: Buffer,
         charset: Charset,
-        withCode: Boolean,
+        code: RespCode?,
     ): List<Shard> {
         if (input == EMPTY_BUFFER) return emptyList()
-        val code = RespCode.fromCode(input.readByte())
-        if (code != RespCode.ARRAY) throw ResponseParsingException(
-            "Invalid response structure, expected array token, given $code", input.tryInferCause(code),
-        )
+        if (code == null) input.resolveToken(RespCode.ARRAY)
 
         val size = input.readLineStrict().toInt()
         val shards = mutableListOf<Shard>()

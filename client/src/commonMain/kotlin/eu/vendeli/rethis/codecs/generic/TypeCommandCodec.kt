@@ -42,7 +42,7 @@ public object TypeCommandCodec {
         val code = RespCode.fromCode(input.readByte())
         return when(code) {
             RespCode.SIMPLE_STRING -> {
-                SimpleStringDecoder.decode(input, charset)
+                SimpleStringDecoder.decode(input, charset, code)
             }
             else -> {
                 throw UnexpectedResponseType("Expected [SIMPLE_STRING] but got $code", input.tryInferCause(code))

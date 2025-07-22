@@ -123,7 +123,7 @@ public object SortRoCommandCodec {
         val code = RespCode.fromCode(input.readByte())
         return when(code) {
             RespCode.ARRAY -> {
-                ArrayStringDecoder.decode(input, charset)
+                ArrayStringDecoder.decode(input, charset, code)
             }
             else -> {
                 throw UnexpectedResponseType("Expected [ARRAY] but got $code", input.tryInferCause(code))

@@ -10,8 +10,8 @@ import eu.vendeli.rethis.api.spec.common.decoders.aggregate.SetStringDecoder
 import eu.vendeli.rethis.api.spec.common.types.RespCode
 import eu.vendeli.rethis.utils.panic
 
-private const val DECODE_STRING = "%L.decode(input, charset)"
-private const val DECODE_STRING_N = "%L.decodeNullable(input, charset)"
+private const val DECODE_STRING = "%L.decode(input, charset, code)"
+private const val DECODE_STRING_N = "%L.decodeNullable(input, charset, code)"
 private val String.name get() = substringAfterLast('.')
 private fun currName() = context.currentCommand.klass.qualifiedName?.asString()
 

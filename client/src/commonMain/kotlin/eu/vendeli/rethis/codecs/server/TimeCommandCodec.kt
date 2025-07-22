@@ -35,7 +35,7 @@ public object TimeCommandCodec {
         val code = RespCode.fromCode(input.readByte())
         return when(code) {
             RespCode.ARRAY -> {
-                ArrayLongDecoder.decode(input, charset)
+                ArrayLongDecoder.decode(input, charset, code)
             }
             else -> {
                 throw UnexpectedResponseType("Expected [ARRAY] but got $code", input.tryInferCause(code))

@@ -3,7 +3,6 @@ package eu.vendeli.rethis.topology
 import eu.vendeli.rethis.api.spec.common.types.CommandRequest
 import eu.vendeli.rethis.api.spec.common.utils.EMPTY_BUFFER
 import eu.vendeli.rethis.configuration.ReThisConfiguration
-import eu.vendeli.rethis.configuration.RetryConfiguration
 import eu.vendeli.rethis.providers.ConnectionProvider
 import eu.vendeli.rethis.types.coroutine.CoLocalConn
 import eu.vendeli.rethis.types.coroutine.CoPipelineCtx
@@ -31,6 +30,8 @@ internal suspend inline fun TopologyManager.handle(request: CommandRequest): Buf
             }
 
             coLocalConn != null -> coLocalConn.connection.doRequest(request.buffer)
+                .takeIf { !coLocalConn.isTx } ?: EMPTY_BUFFER
+            // return empty buffer if transaction (to not break response contract since transaction return QUEUED)
 
             else -> route(request).execute(request)
         }

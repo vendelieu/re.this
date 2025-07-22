@@ -115,10 +115,10 @@ public object ZAddExtendedCommandCodec {
         val code = RespCode.fromCode(input.readByte())
         return when(code) {
             RespCode.DOUBLE -> {
-                DoubleDecoder.decode(input, charset)
+                DoubleDecoder.decode(input, charset, code)
             }
             RespCode.BULK -> {
-                BulkStringDecoder.decode(input, charset).toDouble()
+                BulkStringDecoder.decode(input, charset, code).toDouble()
             }
             RespCode.NULL -> {
                 null

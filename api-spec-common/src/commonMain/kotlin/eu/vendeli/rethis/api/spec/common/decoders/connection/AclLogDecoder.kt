@@ -13,13 +13,13 @@ object AclLogDecoder : ResponseDecoder<List<String>> {
     override suspend fun decode(
         input: Buffer,
         charset: Charset,
-        withCode: Boolean,
+        code: RespCode?,
     ): List<String> {
         if (input == EMPTY_BUFFER) return emptyList()
-        val code = RespCode.fromCode(input.readByte())
+        val code = code ?: RespCode.fromCode(input.readByte())
         if (code == RespCode.SIMPLE_STRING && SimpleStringDecoder.decode(input, charset) == "OK") return emptyList()
 
-        val response = ArrayStringDecoder.decode(input, charset, false)
+        val response = ArrayStringDecoder.decode(input, charset, null)
 
         return response
     }

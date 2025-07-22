@@ -74,11 +74,11 @@ public object HelloCommandCodec {
     public suspend fun decode(input: Buffer, charset: Charset): Map<String, RType> {
         val code = RespCode.fromCode(input.readByte())
         return when(code) {
-            RespCode.MAP -> {
-                MapRTypeDecoder.decode(input, charset)
+            RespCode.MAP, RespCode.ARRAY -> {
+                MapRTypeDecoder.decode(input, charset, code)
             }
             RespCode.SIMPLE_ERROR -> {
-                SimpleErrorDecoder.decode(input, charset)
+                SimpleErrorDecoder.decode(input, charset, code)
             }
             else -> {
                 throw UnexpectedResponseType("Expected [MAP, SIMPLE_ERROR] but got $code", input.tryInferCause(code))

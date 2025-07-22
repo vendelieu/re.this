@@ -36,10 +36,10 @@ public object FunctionStatsCommandCodec {
         val code = RespCode.fromCode(input.readByte())
         return when(code) {
             RespCode.MAP -> {
-                MapRTypeDecoder.decode(input, charset)
+                MapRTypeDecoder.decode(input, charset, code)
             }
             RespCode.ARRAY -> {
-                MapRTypeDecoder.decode(input, charset)
+                MapRTypeDecoder.decode(input, charset, code)
             }
             else -> {
                 throw UnexpectedResponseType("Expected [MAP, ARRAY] but got $code", input.tryInferCause(code))

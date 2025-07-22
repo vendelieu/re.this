@@ -35,10 +35,10 @@ public object MemoryDoctorCommandCodec {
         val code = RespCode.fromCode(input.readByte())
         return when(code) {
             RespCode.BULK -> {
-                BulkStringDecoder.decode(input, charset)
+                BulkStringDecoder.decode(input, charset, code)
             }
             RespCode.VERBATIM_STRING -> {
-                VerbatimStringDecoder.decode(input, charset)
+                VerbatimStringDecoder.decode(input, charset, code)
             }
             else -> {
                 throw UnexpectedResponseType("Expected [BULK, VERBATIM_STRING] but got $code", input.tryInferCause(code))

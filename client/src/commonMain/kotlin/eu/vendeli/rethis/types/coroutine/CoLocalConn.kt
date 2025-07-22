@@ -6,6 +6,7 @@ import kotlin.coroutines.CoroutineContext
 
 internal class CoLocalConn(
     val connection: RConnection,
+    val isTx: Boolean = true
 ) : AbstractCoroutineContextElement(CoLocalConn),
     CoroutineContext.Element {
     override val key = Key

@@ -70,7 +70,7 @@ public object GeoDistCommandCodec {
         val code = RespCode.fromCode(input.readByte())
         return when(code) {
             RespCode.BULK -> {
-                BulkStringDecoder.decode(input, charset).toDouble()
+                BulkStringDecoder.decode(input, charset, code).toDouble()
             }
             RespCode.NULL -> {
                 null

@@ -14,15 +14,14 @@ object SubEventDecoder : ResponseDecoder<List<String>> {
     override suspend fun decode(
         input: Buffer,
         charset: Charset,
-        withCode: Boolean,
+        code: RespCode?,
     ): List<String> {
         if (input == EMPTY_BUFFER) return emptyList()
-        if (withCode) {
-            val code = RespCode.fromCode(input.readByte())
-            if (code != RespCode.ARRAY || code != RespCode.PUSH) throw ResponseParsingException(
-                "Invalid response structure, expected array/push token, given $code", input.tryInferCause(code),
-            )
-        }
+        val code = code ?: RespCode.fromCode(input.readByte())
+        if (code != RespCode.ARRAY || code != RespCode.PUSH) throw ResponseParsingException(
+            "Invalid response structure, expected array/push token, given $code", input.tryInferCause(code),
+        )
+
         val size = input.readLineStrict().toInt()
         if (size == 0) return emptyList()
 

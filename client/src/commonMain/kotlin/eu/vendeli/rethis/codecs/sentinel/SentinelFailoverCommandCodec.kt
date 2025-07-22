@@ -36,7 +36,7 @@ public object SentinelFailoverCommandCodec {
         val code = RespCode.fromCode(input.readByte())
         return when(code) {
             RespCode.SIMPLE_STRING -> {
-                SimpleStringDecoder.decode(input, charset) == "OK"
+                SimpleStringDecoder.decode(input, charset, code) == "OK"
             }
             else -> {
                 throw UnexpectedResponseType("Expected [SIMPLE_STRING] but got $code", input.tryInferCause(code))

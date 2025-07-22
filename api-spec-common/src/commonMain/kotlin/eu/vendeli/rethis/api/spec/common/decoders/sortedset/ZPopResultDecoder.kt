@@ -3,6 +3,7 @@ package eu.vendeli.rethis.api.spec.common.decoders.sortedset
 import eu.vendeli.rethis.api.spec.common.decoders.ResponseDecoder
 import eu.vendeli.rethis.api.spec.common.decoders.aggregate.ArrayRTypeDecoder
 import eu.vendeli.rethis.api.spec.common.response.stream.ZPopResult
+import eu.vendeli.rethis.api.spec.common.types.RespCode
 import eu.vendeli.rethis.api.spec.common.utils.EMPTY_BUFFER
 import eu.vendeli.rethis.api.spec.common.utils.unwrap
 import io.ktor.utils.io.charsets.*
@@ -14,7 +15,7 @@ object ZPopResultDecoder : ResponseDecoder<ZPopResult> {
     override suspend fun decode(
         input: Buffer,
         charset: Charset,
-        withCode: Boolean,
+        code: RespCode?,
     ): ZPopResult {
         if (input == EMPTY_BUFFER) return EMPTY_POP_RESULT
         return ArrayRTypeDecoder.decode(input, charset).let {

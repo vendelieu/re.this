@@ -52,7 +52,7 @@ public object HStrlenCommandCodec {
         val code = RespCode.fromCode(input.readByte())
         return when(code) {
             RespCode.INTEGER -> {
-                IntegerDecoder.decode(input, charset)
+                IntegerDecoder.decode(input, charset, code)
             }
             else -> {
                 throw UnexpectedResponseType("Expected [INTEGER] but got $code", input.tryInferCause(code))

@@ -1,9 +1,12 @@
 package eu.vendeli.rethis.types.common
 
 import io.ktor.network.sockets.*
+import io.ktor.util.logging.*
 import io.ktor.utils.io.*
 import kotlinx.io.Buffer
 import kotlinx.io.InternalIoApi
+import kotlinx.io.bytestring.decodeToString
+import kotlinx.io.readByteString
 
 data class RConnection(
     val socket: Socket,
@@ -19,7 +22,7 @@ data class RConnection(
             cleanup()
             throw it
         }
-        input.awaitContent() // todo look for cases where this is not needed (subscribe for example)
+        input.awaitContent()
         return Buffer().apply { transferFrom(input.readBuffer) }
     }
 

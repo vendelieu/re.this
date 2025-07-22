@@ -43,10 +43,10 @@ public object HGetAllCommandCodec {
         val code = RespCode.fromCode(input.readByte())
         return when(code) {
             RespCode.ARRAY -> {
-                MapStringDecoder.decodeNullable(input, charset)
+                MapStringDecoder.decodeNullable(input, charset, code)
             }
             RespCode.MAP -> {
-                MapStringDecoder.decodeNullable(input, charset)
+                MapStringDecoder.decodeNullable(input, charset, code)
             }
             else -> {
                 throw UnexpectedResponseType("Expected [ARRAY, MAP] but got $code", input.tryInferCause(code))

@@ -46,10 +46,10 @@ public object LatencyHistogramCommandCodec {
         val code = RespCode.fromCode(input.readByte())
         return when(code) {
             RespCode.ARRAY -> {
-                MapRTypeDecoder.decode(input, charset)
+                MapRTypeDecoder.decode(input, charset, code)
             }
             RespCode.MAP -> {
-                MapRTypeDecoder.decode(input, charset)
+                MapRTypeDecoder.decode(input, charset, code)
             }
             else -> {
                 throw UnexpectedResponseType("Expected [ARRAY, MAP] but got $code", input.tryInferCause(code))

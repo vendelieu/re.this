@@ -4,6 +4,7 @@ import eu.vendeli.rethis.api.spec.common.decoders.ResponseDecoder
 import eu.vendeli.rethis.api.spec.common.types.RespCode
 import eu.vendeli.rethis.api.spec.common.types.ResponseParsingException
 import eu.vendeli.rethis.api.spec.common.utils.EMPTY_BUFFER
+import eu.vendeli.rethis.api.spec.common.utils.resolveToken
 import eu.vendeli.rethis.api.spec.common.utils.tryInferCause
 import io.ktor.utils.io.charsets.*
 import kotlinx.io.Buffer
@@ -12,15 +13,10 @@ import kotlinx.io.readLineStrict
 
 
 object VerbatimStringDecoder : ResponseDecoder<String> {
-    override suspend fun decode(input: Buffer, charset: Charset, withCode: Boolean): String {
+    override suspend fun decode(input: Buffer, charset: Charset, code: RespCode?,): String {
         if (input == EMPTY_BUFFER) return ""
-        if (withCode) {
-            val code = RespCode.fromCode(input.readByte())
-            if (code != RespCode.VERBATIM_STRING) throw ResponseParsingException(
-                "Invalid response structure, expected verbatim string token, given $code",
-                input.tryInferCause(code),
-            )
-        }
+        if (code == null) input.resolveToken(RespCode.VERBATIM_STRING)
+
         if (input.readLineStrict().toInt() < 0) throw ResponseParsingException(
             "Invalid response structure, expected string token got null",
         )
@@ -28,14 +24,9 @@ object VerbatimStringDecoder : ResponseDecoder<String> {
         return input.readLineStrict()
     }
 
-    suspend fun decodeNullable(input: Buffer, charset: Charset, withCode: Boolean = true): String? {
-        if (withCode) {
-            val code = RespCode.fromCode(input.readByte())
-            if (code != RespCode.VERBATIM_STRING) throw ResponseParsingException(
-                "Invalid response structure, expected verbatim string token, given $code",
-                input.tryInferCause(code),
-            )
-        }
+    suspend fun decodeNullable(input: Buffer, charset: Charset, code: RespCode?,): String? {
+        if (code == null) input.resolveToken(RespCode.VERBATIM_STRING)
+
         if (input.readLineStrict().toInt() < 0) return null
 
         return input.readLine()

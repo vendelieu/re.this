@@ -15,13 +15,14 @@ object MapStringDecoder : ResponseDecoder<Map<String, String>> {
     override suspend fun decode(
         input: Buffer,
         charset: Charset,
-        withCode: Boolean,
+        code: RespCode?,
     ): Map<String, String> {
         if (input == EMPTY_BUFFER) return emptyMap()
-        val code = RespCode.fromCode(input.readByte())
+        val code = code ?: RespCode.fromCode(input.readByte())
         if (code != RespCode.MAP || code != RespCode.ARRAY) throw ResponseParsingException(
             "Invalid response structure, expected map token, given $code", input.tryInferCause(code),
         )
+
         val size = input.readLineStrict().toInt().let { if (code == RespCode.MAP) it else it / 2 }
         if (size == 0) return emptyMap()
 
@@ -37,13 +38,14 @@ object MapStringDecoder : ResponseDecoder<Map<String, String>> {
     suspend fun decodeNullable(
         input: Buffer,
         charset: Charset,
-        withCode: Boolean = false,
+        code: RespCode? = null,
     ): Map<String, String?> {
         if (input == EMPTY_BUFFER) return emptyMap()
-        val code = RespCode.fromCode(input.readByte())
+        val code = code ?: RespCode.fromCode(input.readByte())
         if (code != RespCode.MAP || code != RespCode.ARRAY) throw ResponseParsingException(
             "Invalid response structure, expected map token, given $code", input.tryInferCause(code),
         )
+
         val size = input.readLineStrict().toInt().let { if (code == RespCode.MAP) it else it / 2 }
         if (size == 0) return emptyMap()
 

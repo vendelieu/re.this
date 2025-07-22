@@ -37,10 +37,10 @@ public object SentinelConfigGetCommandCodec {
         val code = RespCode.fromCode(input.readByte())
         return when(code) {
             RespCode.ARRAY -> {
-                MapStringDecoder.decode(input, charset)
+                MapStringDecoder.decode(input, charset, code)
             }
             RespCode.MAP -> {
-                MapStringDecoder.decode(input, charset)
+                MapStringDecoder.decode(input, charset, code)
             }
             else -> {
                 throw UnexpectedResponseType("Expected [ARRAY, MAP] but got $code", input.tryInferCause(code))

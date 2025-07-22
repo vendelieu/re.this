@@ -33,7 +33,7 @@ public object ClusterBumpEpochCommandCodec {
         val code = RespCode.fromCode(input.readByte())
         return when(code) {
             RespCode.BULK -> {
-                BulkStringDecoder.decode(input, charset) == "OK"
+                BulkStringDecoder.decode(input, charset, code) == "OK"
             }
             else -> {
                 throw UnexpectedResponseType("Expected [BULK] but got $code", input.tryInferCause(code))

@@ -53,7 +53,7 @@ public object IncrByFloatCommandCodec {
         val code = RespCode.fromCode(input.readByte())
         return when(code) {
             RespCode.BULK -> {
-                BulkStringDecoder.decode(input, charset).toDouble()
+                BulkStringDecoder.decode(input, charset, code).toDouble()
             }
             else -> {
                 throw UnexpectedResponseType("Expected [BULK] but got $code", input.tryInferCause(code))

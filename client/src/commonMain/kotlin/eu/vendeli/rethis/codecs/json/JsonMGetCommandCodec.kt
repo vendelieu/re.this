@@ -55,7 +55,7 @@ public object JsonMGetCommandCodec {
         val code = RespCode.fromCode(input.readByte())
         return when(code) {
             RespCode.ARRAY -> {
-                ArrayStringDecoder.decodeNullable(input, charset)
+                ArrayStringDecoder.decodeNullable(input, charset, code)
             }
             else -> {
                 throw UnexpectedResponseType("Expected [ARRAY] but got $code", input.tryInferCause(code))

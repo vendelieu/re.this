@@ -35,7 +35,7 @@ public object SentinelInfoCacheCommandCodec {
         val code = RespCode.fromCode(input.readByte())
         return when(code) {
             RespCode.MAP -> {
-                MapStringDecoder.decode(input, charset)
+                MapStringDecoder.decode(input, charset, code)
             }
             else -> {
                 throw UnexpectedResponseType("Expected [MAP] but got $code", input.tryInferCause(code))

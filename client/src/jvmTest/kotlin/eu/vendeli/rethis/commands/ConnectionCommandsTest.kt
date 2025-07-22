@@ -29,6 +29,7 @@ class ConnectionCommandsTest : ReThisTestCtx() {
     fun `test HELLO command with username and password parameters`() = runTest {
         shouldThrow<ReThisException> {
             client.hello(
+                protover = 2,
                 auth = HelloAuth(
                     username = "test",
                     password = "test".toCharArray(),
@@ -39,7 +40,7 @@ class ConnectionCommandsTest : ReThisTestCtx() {
 
     @Test
     fun `test HELLO command with name parameter`() = runTest {
-        client.hello(clientname = "test").shouldNotBeNull().size shouldBeGreaterThan 1
+        client.hello(protover = 2, clientname = "test").shouldNotBeNull().size shouldBeGreaterThan 1
     }
 
     @Test

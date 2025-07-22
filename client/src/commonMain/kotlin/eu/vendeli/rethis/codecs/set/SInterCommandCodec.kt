@@ -55,10 +55,10 @@ public object SInterCommandCodec {
         val code = RespCode.fromCode(input.readByte())
         return when(code) {
             RespCode.ARRAY -> {
-                SetStringDecoder.decode(input, charset)
+                SetStringDecoder.decode(input, charset, code)
             }
             RespCode.SET -> {
-                SetStringDecoder.decode(input, charset)
+                SetStringDecoder.decode(input, charset, code)
             }
             else -> {
                 throw UnexpectedResponseType("Expected [ARRAY, SET] but got $code", input.tryInferCause(code))

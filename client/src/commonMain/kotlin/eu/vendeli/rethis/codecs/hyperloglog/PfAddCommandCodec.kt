@@ -60,7 +60,7 @@ public object PfAddCommandCodec {
         val code = RespCode.fromCode(input.readByte())
         return when(code) {
             RespCode.INTEGER -> {
-                IntegerDecoder.decode(input, charset) == 1L
+                IntegerDecoder.decode(input, charset, code) == 1L
             }
             else -> {
                 throw UnexpectedResponseType("Expected [INTEGER] but got $code", input.tryInferCause(code))

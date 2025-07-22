@@ -101,7 +101,7 @@ class ReThis internal constructor(
                     runCatching { block() }.getOrElse { e = it }
                 }.join()
 
-                val exec = conn.doRequest(MultiCommandCodec.encode(cfg.charset).buffer)
+                val exec = conn.doRequest(ExecCommandCodec.encode(cfg.charset).buffer)
                 logger.debug { "Transaction completed" }
 
                 ExecCommandCodec.decode(exec, cfg.charset)

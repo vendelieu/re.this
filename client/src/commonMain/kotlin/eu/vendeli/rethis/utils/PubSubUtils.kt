@@ -25,7 +25,7 @@ internal suspend fun ReThis.registerSubscription(
     if (subscriptions.isHandlerRegistered(target, provider)) return
 
     val connection = provider.borrowConnection()
-    val handlerJob = scope.launch(CoLocalConn(connection)) {
+    val handlerJob = scope.launch(CoLocalConn(connection, false)) {
         val conn = currentCoroutineContext()[CoLocalConn]!!.connection
         try {
             conn.doRequest(request.buffer)

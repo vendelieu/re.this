@@ -45,10 +45,10 @@ public object PingCommandCodec {
         val code = RespCode.fromCode(input.readByte())
         return when(code) {
             RespCode.SIMPLE_STRING -> {
-                SimpleStringDecoder.decode(input, charset)
+                SimpleStringDecoder.decode(input, charset, code)
             }
             RespCode.BULK -> {
-                BulkStringDecoder.decode(input, charset)
+                BulkStringDecoder.decode(input, charset, code)
             }
             else -> {
                 throw UnexpectedResponseType("Expected [SIMPLE_STRING, BULK] but got $code", input.tryInferCause(code))

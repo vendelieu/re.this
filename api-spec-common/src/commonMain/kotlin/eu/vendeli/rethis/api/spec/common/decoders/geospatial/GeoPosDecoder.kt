@@ -4,6 +4,7 @@ import eu.vendeli.rethis.api.spec.common.decoders.ResponseDecoder
 import eu.vendeli.rethis.api.spec.common.decoders.aggregate.ArrayRTypeDecoder
 import eu.vendeli.rethis.api.spec.common.response.geospatial.GeoPosition
 import eu.vendeli.rethis.api.spec.common.types.RArray
+import eu.vendeli.rethis.api.spec.common.types.RespCode
 import eu.vendeli.rethis.api.spec.common.utils.EMPTY_BUFFER
 import eu.vendeli.rethis.api.spec.common.utils.safeCast
 import eu.vendeli.rethis.api.spec.common.utils.unwrap
@@ -15,7 +16,7 @@ object GeoPosDecoder : ResponseDecoder<List<List<GeoPosition>?>> {
     override suspend fun decode(
         input: Buffer,
         charset: Charset,
-        withCode: Boolean,
+        code: RespCode?,
     ): List<List<GeoPosition>?> {
         if (input == EMPTY_BUFFER) return emptyList()
         return ArrayRTypeDecoder.decode(input, charset).map { entry ->

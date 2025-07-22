@@ -43,7 +43,7 @@ public object ObjectRefCountCommandCodec {
         val code = RespCode.fromCode(input.readByte())
         return when(code) {
             RespCode.INTEGER -> {
-                IntegerDecoder.decode(input, charset)
+                IntegerDecoder.decode(input, charset, code)
             }
             RespCode.NULL -> {
                 null

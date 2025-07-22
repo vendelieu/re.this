@@ -15,6 +15,7 @@ import eu.vendeli.rethis.api.spec.common.types.RespCode
 import eu.vendeli.rethis.api.spec.common.types.TimeUnit
 import eu.vendeli.rethis.api.spec.common.types.UnexpectedResponseType
 import eu.vendeli.rethis.api.spec.common.utils.CRC16
+import eu.vendeli.rethis.api.spec.common.utils.EMPTY_BUFFER
 import eu.vendeli.rethis.api.spec.common.utils.tryInferCause
 import eu.vendeli.rethis.api.spec.common.utils.validateSlot
 import eu.vendeli.rethis.utils.writeDurationArg
@@ -106,13 +107,13 @@ public object HExpireCommandCodec {
     }
 
     public suspend fun decode(input: Buffer, charset: Charset): List<Long> {
-        val code = RespCode.fromCode(input.readByte())
+        val code = if (input == EMPTY_BUFFER) RespCode.ARRAY else RespCode.fromCode(input.readByte())
         return when(code) {
             RespCode.ARRAY -> {
-                ArrayLongDecoder.decode(input, charset)
+                ArrayLongDecoder.decode(input, charset, code)
             }
             RespCode.SIMPLE_ERROR -> {
-                SimpleErrorDecoder.decode(input, charset)
+                SimpleErrorDecoder.decode(input, charset, code)
             }
             else -> {
                 throw UnexpectedResponseType("Expected [ARRAY, SIMPLE_ERROR] but got $code", input.tryInferCause(code))

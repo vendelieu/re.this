@@ -46,10 +46,10 @@ public object AclCatCommandCodec {
         val code = RespCode.fromCode(input.readByte())
         return when(code) {
             RespCode.ARRAY -> {
-                ArrayStringDecoder.decode(input, charset)
+                ArrayStringDecoder.decode(input, charset, code)
             }
             RespCode.SIMPLE_ERROR -> {
-                SimpleErrorDecoder.decode(input, charset)
+                SimpleErrorDecoder.decode(input, charset, code)
             }
             else -> {
                 throw UnexpectedResponseType("Expected [ARRAY, SIMPLE_ERROR] but got $code", input.tryInferCause(code))

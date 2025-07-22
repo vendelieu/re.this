@@ -7,6 +7,8 @@ import eu.vendeli.rethis.annotations.ReThisInternal
 import eu.vendeli.rethis.api.spec.common.response.common.HostAndPort
 import eu.vendeli.rethis.api.spec.common.types.CommandRequest
 import eu.vendeli.rethis.api.spec.common.types.ReThisException
+import eu.vendeli.rethis.api.spec.common.types.RespCode
+import eu.vendeli.rethis.api.spec.common.utils.EMPTY_BUFFER
 import eu.vendeli.rethis.configuration.ReThisConfiguration
 import eu.vendeli.rethis.types.common.Address
 import io.ktor.network.sockets.*
@@ -25,6 +27,9 @@ expect fun <T> coRunBlocking(block: suspend CoroutineScope.() -> T): T
 
 @ReThisInternal
 suspend fun ReThis.execute(request: CommandRequest): Buffer = topology.route(request).execute(request)
+
+internal fun Buffer.parseCode(default: RespCode) =
+    if (this == EMPTY_BUFFER) default else RespCode.fromCode(readByte())
 
 internal suspend inline fun <T> withRetry(
     cfg: ReThisConfiguration,
@@ -67,4 +72,4 @@ inline fun requireOrPanic(condition: Boolean, message: () -> String) {
     }
 }
 
-inline fun panic(message: String): Nothing = throw ReThisException(message)
+inline fun panic(message: String): Nothing = throw ReThisException(message) // todo remove

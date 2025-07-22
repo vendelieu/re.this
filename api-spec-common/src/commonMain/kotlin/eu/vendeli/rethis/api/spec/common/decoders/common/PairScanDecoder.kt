@@ -4,6 +4,7 @@ import eu.vendeli.rethis.api.spec.common.decoders.ResponseDecoder
 import eu.vendeli.rethis.api.spec.common.decoders.aggregate.ArrayRTypeDecoder
 import eu.vendeli.rethis.api.spec.common.response.common.ScanResult
 import eu.vendeli.rethis.api.spec.common.types.RArray
+import eu.vendeli.rethis.api.spec.common.types.RespCode
 import eu.vendeli.rethis.api.spec.common.types.processingException
 import eu.vendeli.rethis.api.spec.common.utils.EMPTY_BUFFER
 import eu.vendeli.rethis.api.spec.common.utils.safeCast
@@ -17,7 +18,7 @@ object PairScanDecoder : ResponseDecoder<ScanResult<Pair<String, String>>> {
     override suspend fun decode(
         input: Buffer,
         charset: Charset,
-        withCode: Boolean,
+        code: RespCode?,
     ): ScanResult<Pair<String, String>> {
         if (input == EMPTY_BUFFER) return EMPTY_SCAN_RESULT
         val arrResponse = ArrayRTypeDecoder.decode(input, charset)

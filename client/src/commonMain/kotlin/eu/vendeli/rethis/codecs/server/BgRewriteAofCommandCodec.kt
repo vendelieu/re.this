@@ -34,10 +34,10 @@ public object BgRewriteAofCommandCodec {
         val code = RespCode.fromCode(input.readByte())
         return when(code) {
             RespCode.SIMPLE_STRING -> {
-                SimpleStringDecoder.decode(input, charset) == "OK"
+                SimpleStringDecoder.decode(input, charset, code) == "OK"
             }
             RespCode.BULK -> {
-                BulkStringDecoder.decode(input, charset) == "OK"
+                BulkStringDecoder.decode(input, charset, code) == "OK"
             }
             else -> {
                 throw UnexpectedResponseType("Expected [SIMPLE_STRING, BULK] but got $code", input.tryInferCause(code))

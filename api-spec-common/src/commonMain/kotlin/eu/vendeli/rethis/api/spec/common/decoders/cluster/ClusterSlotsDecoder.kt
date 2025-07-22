@@ -8,6 +8,7 @@ import eu.vendeli.rethis.api.spec.common.response.cluster.ClusterNode
 import eu.vendeli.rethis.api.spec.common.types.RespCode
 import eu.vendeli.rethis.api.spec.common.types.ResponseParsingException
 import eu.vendeli.rethis.api.spec.common.utils.EMPTY_BUFFER
+import eu.vendeli.rethis.api.spec.common.utils.resolveToken
 import eu.vendeli.rethis.api.spec.common.utils.tryInferCause
 import io.ktor.utils.io.charsets.*
 import kotlinx.io.Buffer
@@ -18,14 +19,12 @@ object ClusterSlotsDecoder : ResponseDecoder<Cluster> {
     override suspend fun decode(
         input: Buffer,
         charset: Charset,
-        withCode: Boolean,
+        code: RespCode?,
     ): Cluster {
         if (input == EMPTY_BUFFER) return EMPTY_CLUSTER
         // Read top-level array header
-        val code = RespCode.fromCode(input.readByte())
-        if (code != RespCode.ARRAY) throw ResponseParsingException(
-            "Expected ARRAY token for CLUSTER SLOTS response", input.tryInferCause(code),
-        )
+        if (code == null) input.resolveToken(RespCode.ARRAY)
+
         val total = input.readLineStrict().toInt()
         val nodeEntries = mutableListOf<ClusterNode>()
 

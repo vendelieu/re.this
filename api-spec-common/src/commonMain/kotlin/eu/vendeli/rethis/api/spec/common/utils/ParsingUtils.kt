@@ -21,11 +21,11 @@ internal suspend inline fun MutableCollection<String>.parseStrings(size: Int, in
         val code = RespCode.fromCode(input.readByte())
         when (code) {
             RespCode.BULK -> add(
-                BulkStringDecoder.decode(input, charset, false),
+                BulkStringDecoder.decode(input, charset, code),
             )
 
             RespCode.VERBATIM_STRING -> add(
-                VerbatimStringDecoder.decode(input, charset, false),
+                VerbatimStringDecoder.decode(input, charset, code),
             )
 
             else -> throw ResponseParsingException(
@@ -43,9 +43,9 @@ internal suspend inline fun MutableCollection<String?>.parseStrings(size: Int, i
         when (code) {
             RespCode.NULL -> add(null)
 
-            RespCode.BULK -> add(BulkStringDecoder.decodeNullable(input, charset, false))
+            RespCode.BULK -> add(BulkStringDecoder.decodeNullable(input, charset, code))
 
-            RespCode.VERBATIM_STRING -> add(VerbatimStringDecoder.decodeNullable(input, charset, false))
+            RespCode.VERBATIM_STRING -> add(VerbatimStringDecoder.decodeNullable(input, charset, code))
 
             else -> throw ResponseParsingException(
                 "Invalid response structure, expected string token, given $code",
@@ -53,4 +53,13 @@ internal suspend inline fun MutableCollection<String?>.parseStrings(size: Int, i
             )
         }
     }
+}
+
+internal inline fun Buffer.resolveToken(requiredToken: RespCode): RespCode {
+    val code = RespCode.fromCode(readByte())
+    if (code != requiredToken) throw ResponseParsingException(
+        "Invalid response structure, expected ${requiredToken.name} token, given $code", tryInferCause(code),
+    )
+
+    return code
 }

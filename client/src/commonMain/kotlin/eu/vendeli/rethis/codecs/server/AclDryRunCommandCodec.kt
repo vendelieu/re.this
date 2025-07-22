@@ -59,10 +59,10 @@ public object AclDryRunCommandCodec {
         val code = RespCode.fromCode(input.readByte())
         return when(code) {
             RespCode.BULK -> {
-                BulkStringDecoder.decode(input, charset)
+                BulkStringDecoder.decode(input, charset, code)
             }
             RespCode.SIMPLE_STRING -> {
-                SimpleStringDecoder.decode(input, charset)
+                SimpleStringDecoder.decode(input, charset, code)
             }
             else -> {
                 throw UnexpectedResponseType("Expected [BULK, SIMPLE_STRING] but got $code", input.tryInferCause(code))

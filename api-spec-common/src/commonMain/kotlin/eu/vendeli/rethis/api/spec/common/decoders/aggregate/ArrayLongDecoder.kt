@@ -5,6 +5,7 @@ import eu.vendeli.rethis.api.spec.common.decoders.general.IntegerDecoder
 import eu.vendeli.rethis.api.spec.common.types.RespCode
 import eu.vendeli.rethis.api.spec.common.types.ResponseParsingException
 import eu.vendeli.rethis.api.spec.common.utils.EMPTY_BUFFER
+import eu.vendeli.rethis.api.spec.common.utils.resolveToken
 import eu.vendeli.rethis.api.spec.common.utils.tryInferCause
 import io.ktor.utils.io.charsets.*
 import kotlinx.io.Buffer
@@ -14,15 +15,11 @@ object ArrayLongDecoder : ResponseDecoder<List<Long>> {
     override suspend fun decode(
         input: Buffer,
         charset: Charset,
-        withCode: Boolean,
+        code: RespCode?,
     ): List<Long> {
         if (input == EMPTY_BUFFER) return emptyList()
-        if (withCode) {
-            val code = RespCode.fromCode(input.readByte())
-            if (code != RespCode.ARRAY) throw ResponseParsingException(
-                "Invalid response structure, expected array token, given $code", input.tryInferCause(code),
-            )
-        }
+        if (code == null) input.resolveToken(RespCode.ARRAY)
+
         val size = input.readLineStrict().toInt()
         if (size == 0) return emptyList()
 
@@ -34,15 +31,11 @@ object ArrayLongDecoder : ResponseDecoder<List<Long>> {
     suspend fun decodeNullable(
         input: Buffer,
         charset: Charset,
-        withCode: Boolean = false,
+        code: RespCode? = null,
     ): List<Long?> {
         if (input == EMPTY_BUFFER) return emptyList()
-        if (withCode) {
-            val code = RespCode.fromCode(input.readByte())
-            if (code != RespCode.ARRAY) throw ResponseParsingException(
-                "Invalid response structure, expected array token, given $code", input.tryInferCause(code),
-            )
-        }
+        if (code == null) input.resolveToken(RespCode.ARRAY)
+
         val size = input.readLineStrict().toInt()
         if (size == 0) return emptyList()
 

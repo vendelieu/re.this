@@ -35,7 +35,7 @@ public object ExecCommandCodec {
         val code = RespCode.fromCode(input.readByte())
         return when(code) {
             RespCode.ARRAY -> {
-                ArrayRTypeDecoder.decode(input, charset)
+                ArrayRTypeDecoder.decode(input, charset, code)
             }
             RespCode.NULL -> {
                 null

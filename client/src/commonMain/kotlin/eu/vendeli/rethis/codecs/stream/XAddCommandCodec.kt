@@ -125,7 +125,7 @@ public object XAddCommandCodec {
         val code = RespCode.fromCode(input.readByte())
         return when(code) {
             RespCode.BULK -> {
-                BulkStringDecoder.decode(input, charset)
+                BulkStringDecoder.decode(input, charset, code)
             }
             RespCode.NULL -> {
                 null
