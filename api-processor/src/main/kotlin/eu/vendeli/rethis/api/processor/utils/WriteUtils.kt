@@ -1,6 +1,6 @@
 package eu.vendeli.rethis.api.processor.utils
 
-import com.google.devtools.ksp.symbol.KSType
+import com.google.devtools.ksp.KspExperimental
 import eu.vendeli.rethis.api.processor.context.CodeGenContext
 import eu.vendeli.rethis.api.processor.core.RedisCommandProcessor.Companion.context
 import eu.vendeli.rethis.api.processor.types.*
@@ -16,7 +16,7 @@ private fun recurse(node: EnrichedNode): List<WriteOp> {
         ?.takeIf { it.declaration.isSealed() }
 
     if (sealedType != null) {
-        return handleSealedNode(node, sealedType)
+        return handleSealedNode(node)
     }
 
     // --- 2. Splice abstract grouping nodes ---
@@ -25,7 +25,7 @@ private fun recurse(node: EnrichedNode): List<WriteOp> {
             .sortedBy { it.rangeBounds().first }
             .flatMap { recurse(it) }
         if (node.ks.type == SymbolType.Function || node.attr.none { it is EnrichedTreeAttr.Name }) return childOps
-        return listOf(handleWrappedCall(node, node.type, childOps))
+        return listOf(handleWrappedCall(node, childOps))
     }
 
     // --- 3. Leaf nodes: enum, data object, or primitive ---
@@ -35,7 +35,7 @@ private fun recurse(node: EnrichedNode): List<WriteOp> {
     if (kt.declaration.isEnum() || kt.declaration.isDataObject() || kt.declaration.isStdType()) {
         val name = nearestName(node)!!
         val directCall = WriteOp.DirectCall(
-            isKey = node.attr.contains(EnrichedTreeAttr.Key),
+            node = node,
             slotBlock = {
                 val toString = if (
                     kt.name != "String" &&
@@ -50,7 +50,7 @@ private fun recurse(node: EnrichedNode): List<WriteOp> {
                     }$toString.toByteArray(charset)))",
                 )
             },
-            encodeBlock = { inferWriting(kt, name, node, it) },
+            encodeBlock = { inferWriting(name, node, it) },
         )
 
         return wrapIfNeeded(node, directCall)
@@ -61,7 +61,7 @@ private fun recurse(node: EnrichedNode): List<WriteOp> {
         val childOps = node.children
             .sortedBy { it.rangeBounds().first }
             .flatMap { recurse(it) }
-        return listOf(handleWrappedCall(node, kt, childOps))
+        return listOf(handleWrappedCall(node, childOps))
     }
 
     // --- 5. Nothing to write ---
@@ -73,30 +73,19 @@ private fun nearestName(node: EnrichedNode?): String? = node?.attr
     ?.singleOrNull()
     ?.name ?: nearestName(node?.parent)
 
+@OptIn(KspExperimental::class)
 private fun CodeGenContext.inferWriting(
-    fieldType: KSType,
     fieldAccess: String,
     node: EnrichedNode,
     complex: Boolean,
 ) {
-    val resolvedType = fieldType.collectionAwareType()
+    val resolvedType = node.type.collectionAwareType()
+
+    writeTokens(node, node.tokens)
+    if (resolvedType.declaration.isBool()) return
+
     val writeFn = "write${resolvedType.declaration.simpleName.asString()}Arg"
     val pName = if (complex) "$pointer.$fieldAccess" else pointedParameter(fieldAccess)
-    val isBoolToken = resolvedType.declaration.isBool() && node.tokens.isNotEmpty()
-
-    if (isBoolToken) builder.beginControlFlow("if($pName)")
-    if (!resolvedType.declaration.isEnum() && !resolvedType.declaration.isDataObject()) {
-        addImport("eu.vendeli.rethis.utils.writeStringArg")
-        node.tokens.forEach {
-            if (context.currentCommand.haveVaryingSize) appendLine("size += 1")
-            appendLine("buffer.writeStringArg(\"${it.name}\", charset)")
-        }
-    }
-
-    if (isBoolToken) {
-        builder.endControlFlow()
-        return
-    }
 
     if (context.currentCommand.haveVaryingSize) builder.addStatement("size += 1")
 
@@ -133,7 +122,7 @@ private fun CodeGenContext.inferWriting(
     }
 }
 
-private fun handleSealedNode(node: EnrichedNode, sealedType: KSType): List<WriteOp> {
+private fun handleSealedNode(node: EnrichedNode): List<WriteOp> {
     // Flatten any intermediate wrappers
     val directSubs = node.children
         .sortedBy { it.rangeBounds().first }
@@ -146,8 +135,7 @@ private fun handleSealedNode(node: EnrichedNode, sealedType: KSType): List<Write
     // Generate dispatch branches
     val branches = directSubs.associate { child -> child.type to recurse(child) }
     val dispatchOp = WriteOp.Dispatch(
-        paramName = node.attr.filterIsInstance<EnrichedTreeAttr.Name>().singleOrNull()?.name,
-        sealedType = sealedType,
+        node = node,
         branches = branches,
     )
 
@@ -155,18 +143,22 @@ private fun handleSealedNode(node: EnrichedNode, sealedType: KSType): List<Write
     return wrapIfNeeded(node, dispatchOp)
 }
 
-private fun EnrichedNode.collectWriteOps(): Set<WriteOpProps> = listOfNotNull(
+private fun EnrichedNode.collectWriteOps(
+    extraTokens: List<EnrichedTreeAttr.Token>? = null,
+): Set<WriteOpProps> = listOfNotNull(
     WriteOpProps.NULLABLE.takeIf {
         attr
             .filterIsInstance<EnrichedTreeAttr.Optional>()
             .any { it.local == OptionalityType.Nullable }
     },
     WriteOpProps.WITH_SIZE.takeIf { attr.contains(EnrichedTreeAttr.SizeParam) },
+    WriteOpProps.SINGLE_TOKEN.takeIf { (extraTokens ?: tokens).any { !it.multiple } },
     WriteOpProps.COLLECTION.takeIf {
         attr
             .filterIsInstance<EnrichedTreeAttr.Multiple>()
             .any { it.collection || it.vararg }
     },
+    WriteOpProps.MULTIPLE_TOKEN.takeIf { (extraTokens ?: tokens).any { it.multiple } },
 ).sortedBy { it.ordinal }.toSet()
 
 private fun wrapIfNeeded(node: EnrichedNode, innerOp: WriteOp): List<WriteOp> =
@@ -175,24 +167,22 @@ private fun wrapIfNeeded(node: EnrichedNode, innerOp: WriteOp): List<WriteOp> =
         ?.let {
             listOf(
                 WriteOp.WrappedCall(
-                    paramName = node.name,
-                    elementType = node.attr.filterIsInstance<EnrichedTreeAttr.Type>().single().type,
-                    props = it,
+                    node = node,
+                    props = it.toMutableSet(),
                     inner = listOf(innerOp),
-                    tokens = emptyList(),
-                    // wrapIfNeeded goes only for parameters and its tokens handled separately
+                    tokens = node.tokens.toMutableList(),
                 ),
             )
         } ?: listOf(innerOp)
 
 private fun handleWrappedCall(
     node: EnrichedNode,
-    kt: KSType,
     innerOps: List<WriteOp>,
-): WriteOp.WrappedCall = WriteOp.WrappedCall(
-    paramName = node.name,
-    elementType = kt,
-    props = node.collectWriteOps(),
-    inner = innerOps,
-    tokens = node.children.singleOrNull()?.tokens.orEmpty(),
-)
+): WriteOp.WrappedCall = node.children.singleOrNull()?.tokens.orEmpty().let {
+    WriteOp.WrappedCall(
+        node = node,
+        props = node.collectWriteOps(it).toMutableSet(),
+        inner = innerOps,
+        tokens = it.toMutableList(),
+    )
+}

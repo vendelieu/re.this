@@ -89,7 +89,7 @@ internal fun addEncoderCode() {
             it is WriteOp.WrappedCall && it.props.contains(WriteOpProps.COLLECTION)
         }
         slotOps.singleOrNull { op ->
-            collectionCheck(op) || op is WriteOp.WrappedCall && op.props.isEmpty()
+            collectionCheck(op) || op is WriteOp.WrappedCall
                 && op.inner.singleOrNull { collectionCheck(it) } != null
         }?.also {
             addImport("eu.vendeli.rethis.api.spec.common.types.KeyAbsentException")

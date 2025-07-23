@@ -38,6 +38,7 @@ public object ZMPopCommandCodec {
         var buffer = Buffer()
         var size = 1
         COMMAND_HEADER.copyTo(buffer)
+        size += 1
         buffer.writeIntArg(key.size, charset)
         key.forEach { it0 ->
             size += 1

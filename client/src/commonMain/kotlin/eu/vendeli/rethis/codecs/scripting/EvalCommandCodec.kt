@@ -35,6 +35,7 @@ public object EvalCommandCodec {
         COMMAND_HEADER.copyTo(buffer)
         size += 1
         buffer.writeStringArg(script, charset, )
+        size += 1
         buffer.writeIntArg(key.size, charset)
         key.forEach { it0 ->
             size += 1

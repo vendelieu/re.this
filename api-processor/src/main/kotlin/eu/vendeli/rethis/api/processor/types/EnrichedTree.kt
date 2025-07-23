@@ -11,7 +11,8 @@ internal class EnrichedNode(
     val children: MutableSet<EnrichedNode> = mutableSetOf(),
 ) {
     val name by lazy { attr.filterIsInstance<EnrichedTreeAttr.Name>().single().name }
-    val tokens by lazy { attr.filterIsInstance<EnrichedTreeAttr.Token>() }
+    val nameOrNull get() = attr.filterIsInstance<EnrichedTreeAttr.Name>().singleOrNull()?.name
+    val tokens get() = attr.filterIsInstance<EnrichedTreeAttr.Token>()
     val ks by lazy { attr.filterIsInstance<EnrichedTreeAttr.Symbol>().single() }
     val rSpec by lazy { attr.filterIsInstance<EnrichedTreeAttr.RelatedRSpec>().singleOrNull()?.node }
     val type by lazy {

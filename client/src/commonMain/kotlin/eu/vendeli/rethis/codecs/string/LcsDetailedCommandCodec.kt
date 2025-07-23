@@ -40,8 +40,6 @@ public object LcsDetailedCommandCodec {
         size += 1
         buffer.writeStringArg(key2, charset, )
         size += 1
-        buffer.writeStringArg("IDX", charset)
-        size += 1
         buffer.writeStringArg(mode.toString(), charset)
         len?.let { it0 ->
             size += 1

@@ -64,7 +64,7 @@ class SetCommandTest : ReThisTestCtx() {
         client.sAdd("testKey31", "testMember31")
         client.sAdd("testKey32", "testMember32")
 
-        client.sUnion("testKey31", "testKey32") shouldBe listOf("testMember31", "testMember32")
+        client.sUnion("testKey31", "testKey32") shouldBe setOf("testMember31", "testMember32")
     }
 
     @Test

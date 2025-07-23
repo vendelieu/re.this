@@ -95,7 +95,7 @@ class TransactionCommandTest : ReThisTestCtx() {
             set("testKey2", "testVal2")
             jsonClear("test")
         }.shouldNotBeNull() shouldHaveSize 0
-    }.message shouldBe "ERR unknown command 'JSON.CLEAR', with args beginning with: 'test' "
+    }.cause.shouldNotBeNull().message shouldBe "ERR unknown command 'JSON.CLEAR', with args beginning with: 'test' "
 
     @Test
     suspend fun `test WATCH command with multiple keys`() {

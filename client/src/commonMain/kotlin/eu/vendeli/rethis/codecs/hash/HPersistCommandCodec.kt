@@ -37,6 +37,7 @@ public object HPersistCommandCodec {
         COMMAND_HEADER.copyTo(buffer)
         size += 1
         buffer.writeStringArg(key, charset, )
+        size += 1
         buffer.writeIntArg(field.size, charset)
         field.forEach { it0 ->
             size += 1

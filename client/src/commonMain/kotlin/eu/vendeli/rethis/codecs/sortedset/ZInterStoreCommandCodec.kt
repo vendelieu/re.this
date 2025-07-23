@@ -46,14 +46,15 @@ public object ZInterStoreCommandCodec {
         }
         size += 1
         buffer.writeStringArg(destination, charset, )
+        size += 1
         buffer.writeIntArg(key.size, charset)
         key.forEach { it1 ->
             size += 1
             buffer.writeStringArg(it1, charset, )
         }
+        size += 1
+        buffer.writeStringArg("WEIGHTS", charset)
         weight.forEach { it2 ->
-            size += 1
-            buffer.writeStringArg("WEIGHTS", charset)
             size += 1
             buffer.writeLongArg(it2, charset, )
         }

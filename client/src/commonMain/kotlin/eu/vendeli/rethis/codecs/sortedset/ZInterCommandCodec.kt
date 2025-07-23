@@ -44,15 +44,16 @@ public object ZInterCommandCodec {
             size += 1
             buffer.writeStringArg(it0.toString(), charset)
         }
+        size += 1
         buffer.writeIntArg(key.size, charset)
         key.forEach { it1 ->
             size += 1
             buffer.writeStringArg(it1, charset, )
         }
         weight?.let { it2 ->
+            size += 1
+            buffer.writeStringArg("WEIGHTS", charset)
             it2.forEach { it3 ->
-                size += 1
-                buffer.writeStringArg("WEIGHTS", charset)
                 size += 1
                 buffer.writeLongArg(it3, charset, )
             }

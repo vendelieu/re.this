@@ -6,7 +6,6 @@ import eu.vendeli.rethis.api.spec.common.types.CommandRequest
 import eu.vendeli.rethis.api.spec.common.types.RedisOperation
 import eu.vendeli.rethis.api.spec.common.utils.CRC16
 import eu.vendeli.rethis.utils.writeLongArg
-import eu.vendeli.rethis.utils.writeStringArg
 import io.ktor.utils.io.charsets.Charset
 import io.ktor.utils.io.core.toByteArray
 import kotlin.Boolean

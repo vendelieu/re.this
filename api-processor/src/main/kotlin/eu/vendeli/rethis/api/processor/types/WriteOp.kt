@@ -11,33 +11,33 @@ import eu.vendeli.rethis.api.processor.utils.*
 import eu.vendeli.rethis.api.spec.common.annotations.RedisOption
 
 internal sealed class WriteOp {
+    abstract val node: EnrichedNode
+
     data class DirectCall(
-        val isKey: Boolean,
+        override val node: EnrichedNode,
         val slotBlock: CodeGenContext.(Boolean) -> Unit,
         val encodeBlock: CodeGenContext.(Boolean) -> Unit,
     ) : WriteOp()
 
     data class WrappedCall(
-        val paramName: String,
-        val elementType: KSType,
-        val props: Set<WriteOpProps>,
+        override val node: EnrichedNode,
+        val props: MutableSet<WriteOpProps>,
         val inner: List<WriteOp>,
-        val tokens: List<EnrichedTreeAttr.Token>,
+        val tokens: MutableList<EnrichedTreeAttr.Token>,
     ) : WriteOp()
 
     data class Dispatch(
-        val paramName: String?,
-        val sealedType: KSType,
+        override val node: EnrichedNode,
         val branches: Map<KSType, List<WriteOp>>,
     ) : WriteOp()
 }
 
 internal enum class WriteOpProps {
-    NULLABLE, WITH_SIZE, COLLECTION
+    NULLABLE, SINGLE_TOKEN, WITH_SIZE, COLLECTION, MULTIPLE_TOKEN;
 }
 
 internal fun WriteOp.filterWithoutKey(): WriteOp? = when (this) {
-    is WriteOp.DirectCall -> if (isKey) this else null
+    is WriteOp.DirectCall -> if (node.attr.contains(EnrichedTreeAttr.Key)) this else null
     is WriteOp.WrappedCall -> {
         val filteredInner = inner.mapNotNull { it.filterWithoutKey() }
         if (filteredInner.isEmpty()) null else copy(inner = filteredInner)
@@ -59,27 +59,35 @@ internal fun WriteOp.emitOp(encode: Boolean, complex: Boolean = false) {
     }
 
     when (this) {
-        is WriteOp.DirectCall -> if (!encode && isKey) slotBlock(ctx, complex) else encodeBlock(ctx, complex)
+        is WriteOp.DirectCall -> if (!encode && node.attr.contains(EnrichedTreeAttr.Key)) slotBlock(
+            ctx,
+            complex,
+        ) else encodeBlock(ctx, complex)
 
-        is WriteOp.Dispatch -> ctx.buildBlock(paramName ?: ctx.pointer!!, BlockType.WHEN) {
+        is WriteOp.Dispatch -> ctx.buildBlock(node.nameOrNull ?: ctx.pointer!!, BlockType.WHEN) {
             branches.forEach { (subType, branchOps) ->
                 addImport(subType.declaration.qualifiedName!!.asString())
                 ctx.builder.beginControlFlow("is ${subType.name} -> ")
+                val processedTokens = mutableSetOf<String>()
                 if (encode && !subType.declaration.isDataObject()) {
                     subType.declaration.getAnnotationsByType(RedisOption.Token::class).forEach {
                         if (context.currentCommand.haveVaryingSize) ctx.appendLine("size += 1")
                         ctx.appendLine("buffer.writeStringArg(\"${it.name}\", charset)")
+                        processedTokens.add(it.name)
                     }
                 }
-                branchOps.forEach { it.emitOp(encode) }
+                branchOps.forEach {
+                    it.handleTokens(processedTokens)
+                    it.emitOp(encode)
+                }
                 ctx.builder.endControlFlow()
             }
             if (!encode) ctx.builder.addStatement("else -> {}")
         }
 
         is WriteOp.WrappedCall -> {
-            val isComplex = !elementType.declaration.isStdType() &&
-                elementType.declaration.safeCast<KSClassDeclaration>()?.primaryConstructor?.parameters?.size?.let {
+            val isComplex = !node.type.declaration.isStdType() &&
+                node.type.declaration.safeCast<KSClassDeclaration>()?.primaryConstructor?.parameters?.size?.let {
                     it > 0
                 } == true
 
@@ -88,42 +96,73 @@ internal fun WriteOp.emitOp(encode: Boolean, complex: Boolean = false) {
                     when {
                         type.isNotEmpty() -> handleWrapping(type)
                         else -> {
-                            if (encode) {
-                                if (tokens.isNotEmpty()) addImport("eu.vendeli.rethis.utils.writeStringArg")
-                                tokens.forEach {
-                                    if (context.currentCommand.haveVaryingSize) ctx.appendLine("size += 1")
-                                    ctx.appendLine("buffer.writeStringArg(\"${it.name}\", charset)")
-                                }
+                            if (isComplex && ctx.blockStack.lastOrNull() == null) {
+                                ctx.pointer = node.name
                             }
-
                             inner.forEach { it.emitOp(encode, isComplex) }
                         }
                     }
                 }
+
                 when (type.removeFirstOrNull()) {
-                    WriteOpProps.NULLABLE -> {
-                        ctx.buildBlock(paramName, BlockType.LET) { action() }
-                    }
+                    WriteOpProps.NULLABLE -> ctx.buildBlock(node.name, BlockType.LET) { action() }
 
-                    WriteOpProps.WITH_SIZE -> if (encode) {
-                        addImport("eu.vendeli.rethis.utils.writeIntArg")
-                        ctx.appendLine("buffer.writeIntArg(%L.size, charset)", ctx.pointedParameter(paramName))
-                        action()
-                    } else {
+                    WriteOpProps.SINGLE_TOKEN -> {
+                        if (encode) ctx.writeTokens(node, tokens) { t -> !t.multiple }
                         action()
                     }
 
-                    WriteOpProps.COLLECTION -> {
-                        ctx.buildBlock(paramName, BlockType.FOR) { action() }
-                    }
-
-                    else -> {
-                        if (isComplex) ctx.pointer = paramName
+                    WriteOpProps.WITH_SIZE -> {
+                        if (encode) {
+                            addImport("eu.vendeli.rethis.utils.writeIntArg")
+                            if (context.currentCommand.haveVaryingSize) ctx.appendLine("size += 1")
+                            ctx.appendLine("buffer.writeIntArg(%L.size, charset)", ctx.pointedParameter(node.name))
+                        }
                         action()
                     }
+
+                    WriteOpProps.COLLECTION -> ctx.buildBlock(node.name, BlockType.FOR) {
+                        action()
+                    }
+
+                    WriteOpProps.MULTIPLE_TOKEN -> {
+                        if (encode) ctx.writeTokens(node, tokens) { t -> t.multiple }
+                        action()
+                    }
+
+                    else -> action()
                 }
             }
             handleWrapping(ArrayDeque(props))
         }
     }
+}
+
+private fun WriteOp.handleTokens(processedTokens: Set<String>) {
+    node.attr.removeIf { attr -> attr is EnrichedTreeAttr.Token && processedTokens.contains(attr.name) }
+    if (this is WriteOp.WrappedCall) {
+        tokens.removeIf { attr -> processedTokens.contains(attr.name) }
+    }
+}
+
+internal fun CodeGenContext.writeTokens(
+    node: EnrichedNode,
+    tokens: List<EnrichedTreeAttr.Token>,
+    filterPredicate: (EnrichedTreeAttr.Token) -> Boolean = { true },
+) {
+    val filteredTokens = tokens.filter(filterPredicate)
+    val typeDecl = node.type.declaration
+    if (typeDecl.isEnum() || typeDecl.isDataObject()) return
+
+    val isBoolToken = typeDecl.isBool() && filteredTokens.isNotEmpty()
+    if (isBoolToken) builder.beginControlFlow("if(${pointedParameter(node.name)})")
+
+    if (filteredTokens.isNotEmpty()) addImport("eu.vendeli.rethis.utils.writeStringArg")
+    filteredTokens.forEach {
+        if (context.currentCommand.haveVaryingSize) appendLine("size += 1")
+        appendLine("buffer.writeStringArg(\"${it.name}\", charset)")
+        node.attr.remove(it)
+    }
+
+    if (isBoolToken) builder.endControlFlow()
 }

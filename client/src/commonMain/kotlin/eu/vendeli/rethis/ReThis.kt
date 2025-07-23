@@ -75,7 +75,7 @@ class ReThis internal constructor(
         }
         val pipelinedPayload = handlePipelinedRequests(requests, ctxConn)
         logger.debug { "Executing pipelined request\nRequest payload: $requests" }
-        logger.trace { "Pipelined payload: $pipelinedPayload" }
+        logger.trace { "Pipelined response: $pipelinedPayload" }
         requests.clear()
 
         return pipelinedPayload

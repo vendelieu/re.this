@@ -43,6 +43,7 @@ public object BlmPopCommandCodec {
         buffer.writeStringArg(where.toString(), charset)
         size += 1
         buffer.writeDoubleArg(timeout, charset, )
+        size += 1
         buffer.writeIntArg(key.size, charset)
         key.forEach { it0 ->
             size += 1

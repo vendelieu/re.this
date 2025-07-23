@@ -38,6 +38,7 @@ public object LmPopCommandCodec {
         COMMAND_HEADER.copyTo(buffer)
         size += 1
         buffer.writeStringArg(where.toString(), charset)
+        size += 1
         buffer.writeIntArg(key.size, charset)
         key.forEach { it0 ->
             size += 1

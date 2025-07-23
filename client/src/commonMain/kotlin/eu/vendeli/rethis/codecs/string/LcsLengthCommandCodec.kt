@@ -36,7 +36,6 @@ public object LcsLengthCommandCodec {
         COMMAND_HEADER.copyTo(buffer)
         buffer.writeStringArg(key1, charset, )
         buffer.writeStringArg(key2, charset, )
-        buffer.writeStringArg("LEN", charset)
         buffer.writeStringArg(mode.toString(), charset)
 
         return CommandRequest(buffer, RedisOperation.READ, BLOCKING_STATUS)

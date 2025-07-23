@@ -35,6 +35,7 @@ public object EvalShaCommandCodec {
         COMMAND_HEADER.copyTo(buffer)
         size += 1
         buffer.writeStringArg(sha1, charset, )
+        size += 1
         buffer.writeIntArg(key.size, charset)
         key.forEach { it0 ->
             size += 1

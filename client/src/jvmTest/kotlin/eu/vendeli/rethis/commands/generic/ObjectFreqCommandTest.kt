@@ -5,6 +5,7 @@ import eu.vendeli.rethis.api.spec.common.types.ReThisException
 import eu.vendeli.rethis.command.generic.objectFreq
 import eu.vendeli.rethis.command.string.set
 import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.throwable.shouldHaveMessage
 
@@ -15,7 +16,7 @@ class ObjectFreqCommandTest : ReThisTestCtx() {
 
         shouldThrow<ReThisException> {
             client.objectFreq("testKey")
-        }.shouldHaveMessage(
+        }.cause.shouldNotBeNull().shouldHaveMessage(
             "ERR An LFU maxmemory policy is not selected, access frequency not tracked. Please note that when " +
                 "switching between policies at runtime LRU and LFU data will take some time to adjust.",
         )

@@ -61,9 +61,9 @@ public object ClientListCommandCodec {
                 }
             }
         }
+        size += 1
+        buffer.writeStringArg("ID", charset)
         clientId.forEach { it1 ->
-            size += 1
-            buffer.writeStringArg("ID", charset)
             size += 1
             buffer.writeLongArg(it1, charset, )
         }
