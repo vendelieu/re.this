@@ -4,8 +4,6 @@ import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.api.spec.common.types.RType
 import eu.vendeli.rethis.codecs.stream.XInfoGroupsCommandCodec
 import eu.vendeli.rethis.topology.handle
-import kotlin.String
-import kotlin.collections.List
 
 public suspend fun ReThis.xInfoGroups(key: String): List<RType> {
     val request = if(cfg.withSlots) {

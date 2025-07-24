@@ -4,7 +4,6 @@ import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.api.spec.common.request.string.KeyValue
 import eu.vendeli.rethis.codecs.string.MSetCommandCodec
 import eu.vendeli.rethis.topology.handle
-import kotlin.Boolean
 
 public suspend fun ReThis.mSet(vararg `data`: KeyValue): Boolean {
     val request = if(cfg.withSlots) {

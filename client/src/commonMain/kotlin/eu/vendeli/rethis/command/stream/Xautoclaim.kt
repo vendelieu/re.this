@@ -4,10 +4,6 @@ import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.api.spec.common.types.RType
 import eu.vendeli.rethis.codecs.stream.XAutoClaimCommandCodec
 import eu.vendeli.rethis.topology.handle
-import kotlin.Boolean
-import kotlin.Long
-import kotlin.String
-import kotlin.collections.List
 
 public suspend fun ReThis.xAutoClaim(
     key: String,

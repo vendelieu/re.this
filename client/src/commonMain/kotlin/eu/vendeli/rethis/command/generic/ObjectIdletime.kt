@@ -3,8 +3,6 @@ package eu.vendeli.rethis.command.generic
 import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.codecs.generic.ObjectIdleTimeCommandCodec
 import eu.vendeli.rethis.topology.handle
-import kotlin.Long
-import kotlin.String
 
 public suspend fun ReThis.objectIdleTime(key: String): Long? {
     val request = if(cfg.withSlots) {

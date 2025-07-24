@@ -1,10 +1,8 @@
 package eu.vendeli.rethis.command.`set`
 
 import eu.vendeli.rethis.ReThis
-import eu.vendeli.rethis.codecs.`set`.SIsMemberCommandCodec
+import eu.vendeli.rethis.codecs.set.SIsMemberCommandCodec
 import eu.vendeli.rethis.topology.handle
-import kotlin.Boolean
-import kotlin.String
 
 public suspend fun ReThis.sIsMember(key: String, member: String): Boolean {
     val request = if(cfg.withSlots) {

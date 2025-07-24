@@ -4,10 +4,6 @@ import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.api.spec.common.request.generic.RestoreOption
 import eu.vendeli.rethis.codecs.generic.RestoreCommandCodec
 import eu.vendeli.rethis.topology.handle
-import kotlin.Boolean
-import kotlin.ByteArray
-import kotlin.Long
-import kotlin.String
 
 public suspend fun ReThis.restore(
     key: String,

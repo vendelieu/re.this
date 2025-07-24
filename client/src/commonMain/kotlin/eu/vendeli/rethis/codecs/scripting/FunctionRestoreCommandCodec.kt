@@ -2,22 +2,15 @@ package eu.vendeli.rethis.codecs.scripting
 
 import eu.vendeli.rethis.api.spec.common.decoders.general.SimpleStringDecoder
 import eu.vendeli.rethis.api.spec.common.request.scripting.FunctionRestoreOption
-import eu.vendeli.rethis.api.spec.common.request.scripting.FunctionRestoreOption.APPEND
-import eu.vendeli.rethis.api.spec.common.request.scripting.FunctionRestoreOption.FLUSH
-import eu.vendeli.rethis.api.spec.common.request.scripting.FunctionRestoreOption.REPLACE
 import eu.vendeli.rethis.api.spec.common.types.CommandRequest
 import eu.vendeli.rethis.api.spec.common.types.RedisOperation
 import eu.vendeli.rethis.api.spec.common.types.RespCode
 import eu.vendeli.rethis.api.spec.common.types.UnexpectedResponseType
-import eu.vendeli.rethis.api.spec.common.utils.CRC16
 import eu.vendeli.rethis.api.spec.common.utils.tryInferCause
 import eu.vendeli.rethis.utils.parseCode
 import eu.vendeli.rethis.utils.writeByteArrayArg
 import eu.vendeli.rethis.utils.writeStringArg
-import io.ktor.utils.io.charsets.Charset
-import io.ktor.utils.io.core.toByteArray
-import kotlin.Boolean
-import kotlin.ByteArray
+import io.ktor.utils.io.charsets.*
 import kotlinx.io.Buffer
 import kotlinx.io.writeString
 

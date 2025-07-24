@@ -3,7 +3,6 @@ package eu.vendeli.rethis.command.scripting
 import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.codecs.scripting.FunctionKillCommandCodec
 import eu.vendeli.rethis.topology.handle
-import kotlin.Boolean
 
 public suspend fun ReThis.functionKill(): Boolean {
     val request = if(cfg.withSlots) {

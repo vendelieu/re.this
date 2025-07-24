@@ -1,12 +1,9 @@
 package eu.vendeli.rethis.command.`set`
 
 import eu.vendeli.rethis.ReThis
-import eu.vendeli.rethis.codecs.`set`.SRandMemberCommandCodec
-import eu.vendeli.rethis.codecs.`set`.SRandMemberCountCommandCodec
+import eu.vendeli.rethis.codecs.set.SRandMemberCommandCodec
+import eu.vendeli.rethis.codecs.set.SRandMemberCountCommandCodec
 import eu.vendeli.rethis.topology.handle
-import kotlin.Long
-import kotlin.String
-import kotlin.collections.List
 
 public suspend fun ReThis.sRandMemberCount(key: String, count: Long? = null): List<String> {
     val request = if(cfg.withSlots) {

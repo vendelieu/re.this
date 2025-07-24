@@ -6,9 +6,6 @@ import eu.vendeli.rethis.api.spec.common.request.geospatial.Shape
 import eu.vendeli.rethis.api.spec.common.response.geospatial.GeoSort
 import eu.vendeli.rethis.codecs.geospatial.GeoSearchStoreCommandCodec
 import eu.vendeli.rethis.topology.handle
-import kotlin.Boolean
-import kotlin.Long
-import kotlin.String
 
 public suspend fun ReThis.geoSearchStore(
     destination: String,

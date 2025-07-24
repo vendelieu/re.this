@@ -5,7 +5,6 @@ import eu.vendeli.rethis.api.spec.common.request.server.SaveSelector
 import eu.vendeli.rethis.api.spec.common.request.server.ShutdownOptions
 import eu.vendeli.rethis.codecs.server.ShutdownCommandCodec
 import eu.vendeli.rethis.topology.handle
-import kotlin.Boolean
 
 public suspend fun ReThis.shutdown(saveSelector: SaveSelector? = null, vararg options: ShutdownOptions): Boolean {
     val request = if(cfg.withSlots) {

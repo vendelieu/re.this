@@ -3,9 +3,6 @@ package eu.vendeli.rethis.command.stream
 import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.codecs.stream.XSetIdCommandCodec
 import eu.vendeli.rethis.topology.handle
-import kotlin.Boolean
-import kotlin.Long
-import kotlin.String
 
 public suspend fun ReThis.xSetId(
     key: String,

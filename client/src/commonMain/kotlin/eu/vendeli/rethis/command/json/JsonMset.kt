@@ -4,7 +4,6 @@ import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.api.spec.common.request.json.JsonEntry
 import eu.vendeli.rethis.codecs.json.JsonMSetCommandCodec
 import eu.vendeli.rethis.topology.handle
-import kotlin.Boolean
 
 public suspend fun ReThis.jsonMSet(vararg triplet: JsonEntry): Boolean {
     val request = if(cfg.withSlots) {

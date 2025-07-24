@@ -3,7 +3,6 @@ package eu.vendeli.rethis.command.server
 import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.codecs.server.SaveCommandCodec
 import eu.vendeli.rethis.topology.handle
-import kotlin.Boolean
 
 public suspend fun ReThis.save(): Boolean {
     val request = if(cfg.withSlots) {

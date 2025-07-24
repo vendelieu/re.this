@@ -4,7 +4,6 @@ import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.api.spec.common.request.scripting.ScriptDebugMode
 import eu.vendeli.rethis.codecs.scripting.ScriptDebugCommandCodec
 import eu.vendeli.rethis.topology.handle
-import kotlin.Boolean
 
 public suspend fun ReThis.scriptDebug(mode: ScriptDebugMode): Boolean {
     val request = if(cfg.withSlots) {

@@ -3,8 +3,6 @@ package eu.vendeli.rethis.command.json
 import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.codecs.json.JsonTypeCommandCodec
 import eu.vendeli.rethis.topology.handle
-import kotlin.String
-import kotlin.collections.List
 
 public suspend fun ReThis.jsonType(key: String, path: String? = null): List<String> {
     val request = if(cfg.withSlots) {

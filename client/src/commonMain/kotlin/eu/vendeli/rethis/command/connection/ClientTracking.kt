@@ -5,7 +5,6 @@ import eu.vendeli.rethis.api.spec.common.request.connection.ClientStandby
 import eu.vendeli.rethis.api.spec.common.request.connection.ClientTrackingMode
 import eu.vendeli.rethis.codecs.connection.ClientTrackingCommandCodec
 import eu.vendeli.rethis.topology.handle
-import kotlin.Boolean
 
 public suspend fun ReThis.clientTracking(status: ClientStandby, vararg options: ClientTrackingMode): Boolean {
     val request = if(cfg.withSlots) {

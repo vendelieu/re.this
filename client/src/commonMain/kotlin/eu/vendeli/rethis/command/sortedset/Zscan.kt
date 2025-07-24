@@ -4,9 +4,6 @@ import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.api.spec.common.response.common.ScanResult
 import eu.vendeli.rethis.codecs.sortedset.ZScanCommandCodec
 import eu.vendeli.rethis.topology.handle
-import kotlin.Long
-import kotlin.Pair
-import kotlin.String
 
 public suspend fun ReThis.zScan(
     key: String,

@@ -4,10 +4,6 @@ import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.api.spec.common.types.RType
 import eu.vendeli.rethis.codecs.stream.XReadCommandCodec
 import eu.vendeli.rethis.topology.handle
-import kotlin.Long
-import kotlin.String
-import kotlin.collections.List
-import kotlin.collections.Map
 
 public suspend fun ReThis.xRead(
     key: List<String>,

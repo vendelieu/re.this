@@ -3,8 +3,6 @@ package eu.vendeli.rethis.command.server
 import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.codecs.server.MemoryUsageCommandCodec
 import eu.vendeli.rethis.topology.handle
-import kotlin.Long
-import kotlin.String
 
 public suspend fun ReThis.memoryUsage(key: String, count: Long? = null): Long? {
     val request = if(cfg.withSlots) {

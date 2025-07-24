@@ -3,10 +3,6 @@ package eu.vendeli.rethis.codecs.sortedset
 import eu.vendeli.rethis.api.spec.common.decoders.general.BulkStringDecoder
 import eu.vendeli.rethis.api.spec.common.decoders.general.DoubleDecoder
 import eu.vendeli.rethis.api.spec.common.request.common.UpdateStrategyOption
-import eu.vendeli.rethis.api.spec.common.request.common.UpdateStrategyOption.GT
-import eu.vendeli.rethis.api.spec.common.request.common.UpdateStrategyOption.LT
-import eu.vendeli.rethis.api.spec.common.request.common.UpdateStrategyOption.NX
-import eu.vendeli.rethis.api.spec.common.request.common.UpdateStrategyOption.XX
 import eu.vendeli.rethis.api.spec.common.response.stream.ZMember
 import eu.vendeli.rethis.api.spec.common.types.CommandRequest
 import eu.vendeli.rethis.api.spec.common.types.RedisOperation
@@ -18,11 +14,8 @@ import eu.vendeli.rethis.api.spec.common.utils.validateSlot
 import eu.vendeli.rethis.utils.parseCode
 import eu.vendeli.rethis.utils.writeDoubleArg
 import eu.vendeli.rethis.utils.writeStringArg
-import io.ktor.utils.io.charsets.Charset
-import io.ktor.utils.io.core.toByteArray
-import kotlin.Boolean
-import kotlin.Double
-import kotlin.String
+import io.ktor.utils.io.charsets.*
+import io.ktor.utils.io.core.*
 import kotlinx.io.Buffer
 import kotlinx.io.writeString
 

@@ -2,22 +2,8 @@ package eu.vendeli.rethis.codecs.generic
 
 import eu.vendeli.rethis.api.spec.common.decoders.general.SimpleStringDecoder
 import eu.vendeli.rethis.api.spec.common.request.generic.MigrateKey
-import eu.vendeli.rethis.api.spec.common.request.generic.MigrateKey.Actual
-import eu.vendeli.rethis.api.spec.common.request.generic.MigrateKey.Empty
 import eu.vendeli.rethis.api.spec.common.request.generic.MigrateOption
-import eu.vendeli.rethis.api.spec.common.request.generic.MigrateOption.Auth
-import eu.vendeli.rethis.api.spec.common.request.generic.MigrateOption.Auth2
-import eu.vendeli.rethis.api.spec.common.request.generic.MigrateOption.Authorization
-import eu.vendeli.rethis.api.spec.common.request.generic.MigrateOption.COPY
-import eu.vendeli.rethis.api.spec.common.request.generic.MigrateOption.Keys
-import eu.vendeli.rethis.api.spec.common.request.generic.MigrateOption.REPLACE
-import eu.vendeli.rethis.api.spec.common.request.generic.MigrateOption.Strategy
-import eu.vendeli.rethis.api.spec.common.types.CommandRequest
-import eu.vendeli.rethis.api.spec.common.types.KeyAbsentException
-import eu.vendeli.rethis.api.spec.common.types.RedisOperation
-import eu.vendeli.rethis.api.spec.common.types.RespCode
-import eu.vendeli.rethis.api.spec.common.types.TimeUnit
-import eu.vendeli.rethis.api.spec.common.types.UnexpectedResponseType
+import eu.vendeli.rethis.api.spec.common.types.*
 import eu.vendeli.rethis.api.spec.common.utils.CRC16
 import eu.vendeli.rethis.api.spec.common.utils.tryInferCause
 import eu.vendeli.rethis.api.spec.common.utils.validateSlot
@@ -25,14 +11,11 @@ import eu.vendeli.rethis.utils.parseCode
 import eu.vendeli.rethis.utils.writeDurationArg
 import eu.vendeli.rethis.utils.writeLongArg
 import eu.vendeli.rethis.utils.writeStringArg
-import io.ktor.utils.io.charsets.Charset
-import io.ktor.utils.io.core.toByteArray
-import kotlin.Boolean
-import kotlin.Long
-import kotlin.String
-import kotlin.time.Duration
+import io.ktor.utils.io.charsets.*
+import io.ktor.utils.io.core.*
 import kotlinx.io.Buffer
 import kotlinx.io.writeString
+import kotlin.time.Duration
 
 public object MigrateCommandCodec {
     private const val BLOCKING_STATUS: Boolean = false

@@ -5,7 +5,6 @@ import eu.vendeli.rethis.api.spec.common.types.RespCode
 import eu.vendeli.rethis.api.spec.common.types.ResponseParsingException
 import eu.vendeli.rethis.api.spec.common.utils.EMPTY_BUFFER
 import eu.vendeli.rethis.api.spec.common.utils.resolveToken
-import eu.vendeli.rethis.api.spec.common.utils.tryInferCause
 import io.ktor.utils.io.charsets.*
 import kotlinx.io.Buffer
 import kotlinx.io.readLine

@@ -3,16 +3,7 @@ package eu.vendeli.rethis.codecs.stream
 import eu.vendeli.rethis.api.spec.common.decoders.aggregate.MapRTypeDecoder
 import eu.vendeli.rethis.api.spec.common.request.stream.XReadGroupKeyIds
 import eu.vendeli.rethis.api.spec.common.request.stream.XReadGroupOption
-import eu.vendeli.rethis.api.spec.common.request.stream.XReadGroupOption.Block
-import eu.vendeli.rethis.api.spec.common.request.stream.XReadGroupOption.Count
-import eu.vendeli.rethis.api.spec.common.request.stream.XReadGroupOption.NoAck
-import eu.vendeli.rethis.api.spec.common.types.CommandRequest
-import eu.vendeli.rethis.api.spec.common.types.KeyAbsentException
-import eu.vendeli.rethis.api.spec.common.types.RType
-import eu.vendeli.rethis.api.spec.common.types.RedisOperation
-import eu.vendeli.rethis.api.spec.common.types.RespCode
-import eu.vendeli.rethis.api.spec.common.types.TimeUnit
-import eu.vendeli.rethis.api.spec.common.types.UnexpectedResponseType
+import eu.vendeli.rethis.api.spec.common.types.*
 import eu.vendeli.rethis.api.spec.common.utils.CRC16
 import eu.vendeli.rethis.api.spec.common.utils.tryInferCause
 import eu.vendeli.rethis.api.spec.common.utils.validateSlot
@@ -20,11 +11,8 @@ import eu.vendeli.rethis.utils.parseCode
 import eu.vendeli.rethis.utils.writeDurationArg
 import eu.vendeli.rethis.utils.writeLongArg
 import eu.vendeli.rethis.utils.writeStringArg
-import io.ktor.utils.io.charsets.Charset
-import io.ktor.utils.io.core.toByteArray
-import kotlin.Boolean
-import kotlin.String
-import kotlin.collections.Map
+import io.ktor.utils.io.charsets.*
+import io.ktor.utils.io.core.*
 import kotlinx.io.Buffer
 import kotlinx.io.writeString
 

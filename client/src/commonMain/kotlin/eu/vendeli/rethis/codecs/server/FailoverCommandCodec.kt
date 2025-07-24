@@ -2,23 +2,13 @@ package eu.vendeli.rethis.codecs.server
 
 import eu.vendeli.rethis.api.spec.common.decoders.general.SimpleStringDecoder
 import eu.vendeli.rethis.api.spec.common.request.server.FailoverOptions
-import eu.vendeli.rethis.api.spec.common.request.server.FailoverOptions.ABORT
-import eu.vendeli.rethis.api.spec.common.request.server.FailoverOptions.Timeout
-import eu.vendeli.rethis.api.spec.common.request.server.FailoverOptions.To
-import eu.vendeli.rethis.api.spec.common.types.CommandRequest
-import eu.vendeli.rethis.api.spec.common.types.RedisOperation
-import eu.vendeli.rethis.api.spec.common.types.RespCode
-import eu.vendeli.rethis.api.spec.common.types.TimeUnit
-import eu.vendeli.rethis.api.spec.common.types.UnexpectedResponseType
-import eu.vendeli.rethis.api.spec.common.utils.CRC16
+import eu.vendeli.rethis.api.spec.common.types.*
 import eu.vendeli.rethis.api.spec.common.utils.tryInferCause
 import eu.vendeli.rethis.utils.parseCode
 import eu.vendeli.rethis.utils.writeDurationArg
 import eu.vendeli.rethis.utils.writeLongArg
 import eu.vendeli.rethis.utils.writeStringArg
-import io.ktor.utils.io.charsets.Charset
-import io.ktor.utils.io.core.toByteArray
-import kotlin.Boolean
+import io.ktor.utils.io.charsets.*
 import kotlinx.io.Buffer
 import kotlinx.io.writeString
 

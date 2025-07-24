@@ -3,8 +3,6 @@ package eu.vendeli.rethis.command.string
 import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.codecs.string.StrlenCommandCodec
 import eu.vendeli.rethis.topology.handle
-import kotlin.Long
-import kotlin.String
 
 public suspend fun ReThis.strlen(key: String): Long {
     val request = if(cfg.withSlots) {

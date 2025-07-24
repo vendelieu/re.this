@@ -3,7 +3,6 @@ package eu.vendeli.rethis.command.server
 import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.codecs.server.BgSaveCommandCodec
 import eu.vendeli.rethis.topology.handle
-import kotlin.Boolean
 
 public suspend fun ReThis.bgSave(schedule: Boolean? = null): Boolean {
     val request = if(cfg.withSlots) {

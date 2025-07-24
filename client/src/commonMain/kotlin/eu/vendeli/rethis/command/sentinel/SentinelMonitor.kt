@@ -3,9 +3,6 @@ package eu.vendeli.rethis.command.sentinel
 import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.codecs.sentinel.SentinelMonitorCommandCodec
 import eu.vendeli.rethis.topology.handle
-import kotlin.Boolean
-import kotlin.Int
-import kotlin.String
 
 public suspend fun ReThis.sentinelMonitor(
     masterName: String,

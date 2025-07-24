@@ -4,8 +4,6 @@ import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.api.spec.common.types.RType
 import eu.vendeli.rethis.codecs.sortedset.ZMScoreCommandCodec
 import eu.vendeli.rethis.topology.handle
-import kotlin.String
-import kotlin.collections.List
 
 public suspend fun ReThis.zMScore(key: String, vararg member: String): List<RType>? {
     val request = if(cfg.withSlots) {

@@ -4,9 +4,6 @@ import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.codecs.list.RPopCommandCodec
 import eu.vendeli.rethis.codecs.list.RPopCountCommandCodec
 import eu.vendeli.rethis.topology.handle
-import kotlin.Long
-import kotlin.String
-import kotlin.collections.List
 
 public suspend fun ReThis.rPopCount(key: String, count: Long? = null): List<String> {
     val request = if(cfg.withSlots) {

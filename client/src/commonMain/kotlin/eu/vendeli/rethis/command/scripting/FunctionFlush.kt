@@ -4,7 +4,6 @@ import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.api.spec.common.request.common.FlushType
 import eu.vendeli.rethis.codecs.scripting.FunctionFlushCommandCodec
 import eu.vendeli.rethis.topology.handle
-import kotlin.Boolean
 
 public suspend fun ReThis.functionFlush(flushType: FlushType): Boolean {
     val request = if(cfg.withSlots) {

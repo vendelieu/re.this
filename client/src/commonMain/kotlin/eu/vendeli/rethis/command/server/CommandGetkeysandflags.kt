@@ -4,8 +4,6 @@ import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.api.spec.common.types.RType
 import eu.vendeli.rethis.codecs.server.CommandGetKeysAndFlagsCommandCodec
 import eu.vendeli.rethis.topology.handle
-import kotlin.String
-import kotlin.collections.List
 
 public suspend fun ReThis.commandGetKeysAndFlags(command: String, vararg arg: String): List<RType> {
     val request = if(cfg.withSlots) {

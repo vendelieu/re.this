@@ -3,8 +3,6 @@ package eu.vendeli.rethis.command.list
 import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.codecs.list.LSetCommandCodec
 import eu.vendeli.rethis.topology.handle
-import kotlin.Long
-import kotlin.String
 
 public suspend fun ReThis.lSet(
     key: String,

@@ -5,9 +5,6 @@ import eu.vendeli.rethis.api.spec.common.request.connection.ClientKillOptions
 import eu.vendeli.rethis.codecs.connection.ClientKillCommandCodec
 import eu.vendeli.rethis.codecs.connection.ClientKillStringCommandCodec
 import eu.vendeli.rethis.topology.handle
-import kotlin.Boolean
-import kotlin.Long
-import kotlin.String
 
 public suspend fun ReThis.clientKill(vararg filter: ClientKillOptions): Long {
     val request = if(cfg.withSlots) {

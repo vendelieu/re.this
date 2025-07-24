@@ -3,8 +3,6 @@ package eu.vendeli.rethis.command.transaction
 import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.codecs.transaction.WatchCommandCodec
 import eu.vendeli.rethis.topology.handle
-import kotlin.Boolean
-import kotlin.String
 
 public suspend fun ReThis.watch(vararg key: String): Boolean {
     val request = if(cfg.withSlots) {

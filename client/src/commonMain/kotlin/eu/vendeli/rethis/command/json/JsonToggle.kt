@@ -3,9 +3,6 @@ package eu.vendeli.rethis.command.json
 import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.codecs.json.JsonToggleCommandCodec
 import eu.vendeli.rethis.topology.handle
-import kotlin.Long
-import kotlin.String
-import kotlin.collections.List
 
 public suspend fun ReThis.jsonToggle(key: String, path: String): List<Long> {
     val request = if(cfg.withSlots) {

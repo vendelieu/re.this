@@ -3,9 +3,6 @@ package eu.vendeli.rethis.command.sortedset
 import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.codecs.sortedset.ZCountCommandCodec
 import eu.vendeli.rethis.topology.handle
-import kotlin.Double
-import kotlin.Long
-import kotlin.String
 
 public suspend fun ReThis.zCount(
     key: String,

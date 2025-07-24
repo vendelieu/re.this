@@ -3,8 +3,6 @@ package eu.vendeli.rethis.command.bitmap
 import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.codecs.bitmap.SetBitCommandCodec
 import eu.vendeli.rethis.topology.handle
-import kotlin.Long
-import kotlin.String
 
 public suspend fun ReThis.setBit(
     key: String,

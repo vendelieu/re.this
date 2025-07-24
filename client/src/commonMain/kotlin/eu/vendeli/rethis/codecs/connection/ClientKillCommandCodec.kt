@@ -2,35 +2,14 @@ package eu.vendeli.rethis.codecs.connection
 
 import eu.vendeli.rethis.api.spec.common.decoders.general.IntegerDecoder
 import eu.vendeli.rethis.api.spec.common.request.connection.ClientKillOptions
-import eu.vendeli.rethis.api.spec.common.request.connection.ClientKillOptions.Address
-import eu.vendeli.rethis.api.spec.common.request.connection.ClientKillOptions.Id
-import eu.vendeli.rethis.api.spec.common.request.connection.ClientKillOptions.LAddr
-import eu.vendeli.rethis.api.spec.common.request.connection.ClientKillOptions.MaxAge
-import eu.vendeli.rethis.api.spec.common.request.connection.ClientKillOptions.SkipMe
-import eu.vendeli.rethis.api.spec.common.request.connection.ClientKillOptions.SkipMe.No
-import eu.vendeli.rethis.api.spec.common.request.connection.ClientKillOptions.SkipMe.Yes
-import eu.vendeli.rethis.api.spec.common.request.connection.ClientKillOptions.User
 import eu.vendeli.rethis.api.spec.common.request.connection.ClientType
-import eu.vendeli.rethis.api.spec.common.request.connection.ClientType.Master
-import eu.vendeli.rethis.api.spec.common.request.connection.ClientType.Normal
-import eu.vendeli.rethis.api.spec.common.request.connection.ClientType.PubSub
-import eu.vendeli.rethis.api.spec.common.request.connection.ClientType.Replica
-import eu.vendeli.rethis.api.spec.common.request.connection.ClientType.Slave
-import eu.vendeli.rethis.api.spec.common.types.CommandRequest
-import eu.vendeli.rethis.api.spec.common.types.RedisOperation
-import eu.vendeli.rethis.api.spec.common.types.RespCode
-import eu.vendeli.rethis.api.spec.common.types.TimeUnit
-import eu.vendeli.rethis.api.spec.common.types.UnexpectedResponseType
-import eu.vendeli.rethis.api.spec.common.utils.CRC16
+import eu.vendeli.rethis.api.spec.common.types.*
 import eu.vendeli.rethis.api.spec.common.utils.tryInferCause
 import eu.vendeli.rethis.utils.parseCode
 import eu.vendeli.rethis.utils.writeInstantArg
 import eu.vendeli.rethis.utils.writeLongArg
 import eu.vendeli.rethis.utils.writeStringArg
-import io.ktor.utils.io.charsets.Charset
-import io.ktor.utils.io.core.toByteArray
-import kotlin.Boolean
-import kotlin.Long
+import io.ktor.utils.io.charsets.*
 import kotlinx.io.Buffer
 import kotlinx.io.writeString
 

@@ -5,10 +5,6 @@ import eu.vendeli.rethis.api.spec.common.types.RType
 import eu.vendeli.rethis.codecs.hash.HRandFieldCommandCodec
 import eu.vendeli.rethis.codecs.hash.HRandFieldCountCommandCodec
 import eu.vendeli.rethis.topology.handle
-import kotlin.Boolean
-import kotlin.Long
-import kotlin.String
-import kotlin.collections.List
 
 public suspend fun ReThis.hRandField(key: String): String? {
     val request = if(cfg.withSlots) {

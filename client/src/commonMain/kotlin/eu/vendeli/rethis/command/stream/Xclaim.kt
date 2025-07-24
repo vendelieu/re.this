@@ -5,9 +5,6 @@ import eu.vendeli.rethis.api.spec.common.request.stream.XClaimOption
 import eu.vendeli.rethis.api.spec.common.types.RType
 import eu.vendeli.rethis.codecs.stream.XClaimCommandCodec
 import eu.vendeli.rethis.topology.handle
-import kotlin.Boolean
-import kotlin.String
-import kotlin.collections.List
 
 public suspend fun ReThis.xClaim(
     key: String,

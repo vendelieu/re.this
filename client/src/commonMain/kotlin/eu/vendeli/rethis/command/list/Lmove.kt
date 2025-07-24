@@ -4,7 +4,6 @@ import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.api.spec.common.response.common.MoveDirection
 import eu.vendeli.rethis.codecs.list.LMoveCommandCodec
 import eu.vendeli.rethis.topology.handle
-import kotlin.String
 
 public suspend fun ReThis.lMove(
     source: String,

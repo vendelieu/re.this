@@ -5,9 +5,6 @@ import eu.vendeli.rethis.api.spec.common.request.geospatial.GeoAddOption
 import eu.vendeli.rethis.api.spec.common.response.geospatial.GeoMember
 import eu.vendeli.rethis.codecs.geospatial.GeoAddCommandCodec
 import eu.vendeli.rethis.topology.handle
-import kotlin.Boolean
-import kotlin.Long
-import kotlin.String
 
 public suspend fun ReThis.geoAdd(
     key: String,

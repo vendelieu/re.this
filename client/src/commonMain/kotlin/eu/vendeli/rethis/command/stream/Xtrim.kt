@@ -5,8 +5,6 @@ import eu.vendeli.rethis.api.spec.common.request.stream.Exactement
 import eu.vendeli.rethis.api.spec.common.request.stream.TrimmingStrategy
 import eu.vendeli.rethis.codecs.stream.XTrimCommandCodec
 import eu.vendeli.rethis.topology.handle
-import kotlin.Long
-import kotlin.String
 
 public suspend fun ReThis.xTrim(
     key: String,

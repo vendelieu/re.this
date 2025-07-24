@@ -2,13 +2,7 @@ package eu.vendeli.rethis.codecs.stream
 
 import eu.vendeli.rethis.api.spec.common.decoders.general.BulkStringDecoder
 import eu.vendeli.rethis.api.spec.common.request.common.FieldValue
-import eu.vendeli.rethis.api.spec.common.request.stream.Approximate
-import eu.vendeli.rethis.api.spec.common.request.stream.Equal
-import eu.vendeli.rethis.api.spec.common.request.stream.MAXLEN
-import eu.vendeli.rethis.api.spec.common.request.stream.MINID
-import eu.vendeli.rethis.api.spec.common.request.stream.XAddOption
-import eu.vendeli.rethis.api.spec.common.request.stream.XAddOption.Asterisk
-import eu.vendeli.rethis.api.spec.common.request.stream.XAddOption.Id
+import eu.vendeli.rethis.api.spec.common.request.stream.*
 import eu.vendeli.rethis.api.spec.common.types.CommandRequest
 import eu.vendeli.rethis.api.spec.common.types.RedisOperation
 import eu.vendeli.rethis.api.spec.common.types.RespCode
@@ -19,10 +13,8 @@ import eu.vendeli.rethis.api.spec.common.utils.validateSlot
 import eu.vendeli.rethis.utils.parseCode
 import eu.vendeli.rethis.utils.writeLongArg
 import eu.vendeli.rethis.utils.writeStringArg
-import io.ktor.utils.io.charsets.Charset
-import io.ktor.utils.io.core.toByteArray
-import kotlin.Boolean
-import kotlin.String
+import io.ktor.utils.io.charsets.*
+import io.ktor.utils.io.core.*
 import kotlinx.io.Buffer
 import kotlinx.io.writeString
 

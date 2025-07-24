@@ -4,7 +4,6 @@ import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.api.spec.common.request.string.SetOption
 import eu.vendeli.rethis.codecs.string.SetCommandCodec
 import eu.vendeli.rethis.topology.handle
-import kotlin.String
 
 public suspend fun ReThis.`set`(
     key: String,

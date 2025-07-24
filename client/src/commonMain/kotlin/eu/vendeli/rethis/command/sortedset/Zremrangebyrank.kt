@@ -3,8 +3,6 @@ package eu.vendeli.rethis.command.sortedset
 import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.codecs.sortedset.ZRemRangeByRankCommandCodec
 import eu.vendeli.rethis.topology.handle
-import kotlin.Long
-import kotlin.String
 
 public suspend fun ReThis.zRemRangeByRank(
     key: String,

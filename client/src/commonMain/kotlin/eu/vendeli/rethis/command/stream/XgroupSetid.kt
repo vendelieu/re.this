@@ -4,9 +4,6 @@ import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.api.spec.common.request.stream.XId
 import eu.vendeli.rethis.codecs.stream.XGroupSetIdCommandCodec
 import eu.vendeli.rethis.topology.handle
-import kotlin.Boolean
-import kotlin.Long
-import kotlin.String
 
 public suspend fun ReThis.xGroupSetId(
     key: String,

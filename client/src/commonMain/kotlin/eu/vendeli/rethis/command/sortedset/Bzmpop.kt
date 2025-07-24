@@ -5,10 +5,6 @@ import eu.vendeli.rethis.api.spec.common.request.sortedset.ZPopCommonOption
 import eu.vendeli.rethis.api.spec.common.response.common.MPopResult
 import eu.vendeli.rethis.codecs.sortedset.BzMPopCommandCodec
 import eu.vendeli.rethis.topology.handle
-import kotlin.Double
-import kotlin.Long
-import kotlin.String
-import kotlin.collections.List
 
 public suspend fun ReThis.bzMPop(
     timeout: Double,

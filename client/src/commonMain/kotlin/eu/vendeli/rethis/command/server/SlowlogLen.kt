@@ -3,7 +3,6 @@ package eu.vendeli.rethis.command.server
 import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.codecs.server.SlowLogLenCommandCodec
 import eu.vendeli.rethis.topology.handle
-import kotlin.Long
 
 public suspend fun ReThis.slowLogLen(): Long {
     val request = if(cfg.withSlots) {

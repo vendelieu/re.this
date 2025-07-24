@@ -4,8 +4,6 @@ import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.api.spec.common.request.common.UpdateStrategyOption
 import eu.vendeli.rethis.codecs.generic.PExpireAtCommandCodec
 import eu.vendeli.rethis.topology.handle
-import kotlin.Boolean
-import kotlin.String
 import kotlin.time.Instant
 
 public suspend fun ReThis.pExpireAt(

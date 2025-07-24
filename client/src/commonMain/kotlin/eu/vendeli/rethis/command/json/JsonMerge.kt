@@ -3,8 +3,6 @@ package eu.vendeli.rethis.command.json
 import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.codecs.json.JsonMergeCommandCodec
 import eu.vendeli.rethis.topology.handle
-import kotlin.Boolean
-import kotlin.String
 
 public suspend fun ReThis.jsonMerge(
     key: String,

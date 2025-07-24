@@ -3,8 +3,6 @@ package eu.vendeli.rethis.command.stream
 import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.codecs.stream.XDelCommandCodec
 import eu.vendeli.rethis.topology.handle
-import kotlin.Long
-import kotlin.String
 
 public suspend fun ReThis.xDel(key: String, vararg id: String): Long {
     val request = if(cfg.withSlots) {

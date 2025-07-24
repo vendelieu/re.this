@@ -3,7 +3,6 @@ package eu.vendeli.rethis.command.string
 import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.codecs.string.GetCommandCodec
 import eu.vendeli.rethis.topology.handle
-import kotlin.String
 
 public suspend fun ReThis.`get`(key: String): String? {
     val request = if(cfg.withSlots) {

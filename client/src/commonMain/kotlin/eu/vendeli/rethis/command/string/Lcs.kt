@@ -8,9 +8,6 @@ import eu.vendeli.rethis.codecs.string.LcsCommandCodec
 import eu.vendeli.rethis.codecs.string.LcsDetailedCommandCodec
 import eu.vendeli.rethis.codecs.string.LcsLengthCommandCodec
 import eu.vendeli.rethis.topology.handle
-import kotlin.Boolean
-import kotlin.Long
-import kotlin.String
 
 public suspend fun ReThis.lcs(key1: String, key2: String): String {
     val request = if(cfg.withSlots) {

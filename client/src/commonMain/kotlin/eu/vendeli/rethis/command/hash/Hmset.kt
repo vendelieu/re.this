@@ -4,8 +4,6 @@ import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.api.spec.common.request.common.FieldValue
 import eu.vendeli.rethis.codecs.hash.HMSetCommandCodec
 import eu.vendeli.rethis.topology.handle
-import kotlin.Boolean
-import kotlin.String
 
 public suspend fun ReThis.hMSet(key: String, vararg `data`: FieldValue): Boolean {
     val request = if(cfg.withSlots) {

@@ -3,8 +3,6 @@ package eu.vendeli.rethis.command.hash
 import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.codecs.hash.HIncrByFloatCommandCodec
 import eu.vendeli.rethis.topology.handle
-import kotlin.Double
-import kotlin.String
 
 public suspend fun ReThis.hIncrByFloat(
     key: String,

@@ -2,20 +2,14 @@ package eu.vendeli.rethis.codecs.json
 
 import eu.vendeli.rethis.api.spec.common.decoders.general.SimpleStringDecoder
 import eu.vendeli.rethis.api.spec.common.request.string.UpsertMode
-import eu.vendeli.rethis.api.spec.common.request.string.UpsertMode.NX
-import eu.vendeli.rethis.api.spec.common.request.string.UpsertMode.XX
 import eu.vendeli.rethis.api.spec.common.types.CommandRequest
 import eu.vendeli.rethis.api.spec.common.types.RedisOperation
 import eu.vendeli.rethis.api.spec.common.types.RespCode
 import eu.vendeli.rethis.api.spec.common.types.UnexpectedResponseType
-import eu.vendeli.rethis.api.spec.common.utils.CRC16
 import eu.vendeli.rethis.api.spec.common.utils.tryInferCause
 import eu.vendeli.rethis.utils.parseCode
 import eu.vendeli.rethis.utils.writeStringArg
-import io.ktor.utils.io.charsets.Charset
-import io.ktor.utils.io.core.toByteArray
-import kotlin.Boolean
-import kotlin.String
+import io.ktor.utils.io.charsets.*
 import kotlinx.io.Buffer
 import kotlinx.io.writeString
 

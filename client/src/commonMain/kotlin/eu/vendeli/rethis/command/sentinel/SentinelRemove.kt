@@ -3,8 +3,6 @@ package eu.vendeli.rethis.command.sentinel
 import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.codecs.sentinel.SentinelRemoveCommandCodec
 import eu.vendeli.rethis.topology.handle
-import kotlin.Boolean
-import kotlin.String
 
 public suspend fun ReThis.sentinelRemove(masterName: String): Boolean {
     val request = if(cfg.withSlots) {

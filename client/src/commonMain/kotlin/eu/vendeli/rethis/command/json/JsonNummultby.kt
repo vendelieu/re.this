@@ -3,9 +3,6 @@ package eu.vendeli.rethis.command.json
 import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.codecs.json.JsonNumMultByCommandCodec
 import eu.vendeli.rethis.topology.handle
-import kotlin.Double
-import kotlin.String
-import kotlin.collections.List
 
 public suspend fun ReThis.jsonNumMultBy(
     key: String,

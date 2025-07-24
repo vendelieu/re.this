@@ -4,8 +4,6 @@ import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.api.spec.common.request.common.FieldValue
 import eu.vendeli.rethis.codecs.sentinel.SentinelSetCommandCodec
 import eu.vendeli.rethis.topology.handle
-import kotlin.Boolean
-import kotlin.String
 
 public suspend fun ReThis.sentinelSet(name: String, vararg optionValue: FieldValue): Boolean {
     val request = if(cfg.withSlots) {

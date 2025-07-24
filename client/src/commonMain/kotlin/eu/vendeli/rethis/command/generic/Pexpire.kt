@@ -4,13 +4,11 @@ import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.api.spec.common.request.common.UpdateStrategyOption
 import eu.vendeli.rethis.codecs.generic.PExpireCommandCodec
 import eu.vendeli.rethis.topology.handle
-import kotlin.Boolean
-import kotlin.Long
-import kotlin.String
+import kotlin.time.Duration
 
 public suspend fun ReThis.pExpire(
     key: String,
-    milliseconds: Long,
+    milliseconds: Duration,
     condition: UpdateStrategyOption? = null,
 ): Boolean {
     val request = if(cfg.withSlots) {

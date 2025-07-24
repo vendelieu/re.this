@@ -1,10 +1,8 @@
 package eu.vendeli.rethis.command.`set`
 
 import eu.vendeli.rethis.ReThis
-import eu.vendeli.rethis.codecs.`set`.SInterStoreCommandCodec
+import eu.vendeli.rethis.codecs.set.SInterStoreCommandCodec
 import eu.vendeli.rethis.topology.handle
-import kotlin.Long
-import kotlin.String
 
 public suspend fun ReThis.sInterStore(destination: String, vararg key: String): Long {
     val request = if(cfg.withSlots) {

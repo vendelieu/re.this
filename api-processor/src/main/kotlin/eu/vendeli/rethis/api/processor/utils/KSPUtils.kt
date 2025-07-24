@@ -53,7 +53,7 @@ internal fun KSAnnotated.getCustom(): RedisMeta.CustomCodec? =
 internal fun KSType.getTimeUnit(): String = annotations.firstOrNull {
     it.shortName.asString() == RedisMeta.OutgoingTimeUnit::class.simpleName
 }?.arguments?.firstOrNull()?.value?.toString().let {
-    if (it == "SECONDS") "SECONDS" else "MILLISECONDS"
+    if (it == "TimeUnit.SECONDS") "SECONDS" else "MILLISECONDS"
 }
 
 internal fun KSType.collectionAwareType(): KSType =

@@ -5,8 +5,6 @@ import eu.vendeli.rethis.api.spec.common.request.generic.MigrateKey
 import eu.vendeli.rethis.api.spec.common.request.generic.MigrateOption
 import eu.vendeli.rethis.codecs.generic.MigrateCommandCodec
 import eu.vendeli.rethis.topology.handle
-import kotlin.Long
-import kotlin.String
 import kotlin.time.Duration
 
 public suspend fun ReThis.migrate(

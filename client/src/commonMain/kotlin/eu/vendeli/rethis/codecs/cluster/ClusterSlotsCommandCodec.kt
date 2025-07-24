@@ -4,10 +4,7 @@ import eu.vendeli.rethis.api.spec.common.decoders.cluster.ClusterSlotsDecoder
 import eu.vendeli.rethis.api.spec.common.response.cluster.Cluster
 import eu.vendeli.rethis.api.spec.common.types.CommandRequest
 import eu.vendeli.rethis.api.spec.common.types.RedisOperation
-import eu.vendeli.rethis.api.spec.common.utils.CRC16
-import io.ktor.utils.io.charsets.Charset
-import io.ktor.utils.io.core.toByteArray
-import kotlin.Boolean
+import io.ktor.utils.io.charsets.*
 import kotlinx.io.Buffer
 import kotlinx.io.writeString
 

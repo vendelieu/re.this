@@ -4,9 +4,6 @@ import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.api.spec.common.request.sortedset.ZRangeOption
 import eu.vendeli.rethis.codecs.sortedset.ZRangeCommandCodec
 import eu.vendeli.rethis.topology.handle
-import kotlin.Boolean
-import kotlin.String
-import kotlin.collections.List
 
 public suspend fun ReThis.zRange(
     key: String,

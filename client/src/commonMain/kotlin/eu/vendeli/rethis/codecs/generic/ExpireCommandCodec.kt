@@ -2,29 +2,18 @@ package eu.vendeli.rethis.codecs.generic
 
 import eu.vendeli.rethis.api.spec.common.decoders.general.IntegerDecoder
 import eu.vendeli.rethis.api.spec.common.request.common.UpdateStrategyOption
-import eu.vendeli.rethis.api.spec.common.request.common.UpdateStrategyOption.ComparisonRule
-import eu.vendeli.rethis.api.spec.common.request.common.UpdateStrategyOption.ExistenceRule
-import eu.vendeli.rethis.api.spec.common.request.common.UpdateStrategyOption.GT
-import eu.vendeli.rethis.api.spec.common.request.common.UpdateStrategyOption.LT
-import eu.vendeli.rethis.api.spec.common.request.common.UpdateStrategyOption.NX
-import eu.vendeli.rethis.api.spec.common.request.common.UpdateStrategyOption.XX
-import eu.vendeli.rethis.api.spec.common.types.CommandRequest
-import eu.vendeli.rethis.api.spec.common.types.RedisOperation
-import eu.vendeli.rethis.api.spec.common.types.RespCode
-import eu.vendeli.rethis.api.spec.common.types.UnexpectedResponseType
+import eu.vendeli.rethis.api.spec.common.types.*
 import eu.vendeli.rethis.api.spec.common.utils.CRC16
 import eu.vendeli.rethis.api.spec.common.utils.tryInferCause
 import eu.vendeli.rethis.api.spec.common.utils.validateSlot
 import eu.vendeli.rethis.utils.parseCode
-import eu.vendeli.rethis.utils.writeLongArg
+import eu.vendeli.rethis.utils.writeDurationArg
 import eu.vendeli.rethis.utils.writeStringArg
-import io.ktor.utils.io.charsets.Charset
-import io.ktor.utils.io.core.toByteArray
-import kotlin.Boolean
-import kotlin.Long
-import kotlin.String
+import io.ktor.utils.io.charsets.*
+import io.ktor.utils.io.core.*
 import kotlinx.io.Buffer
 import kotlinx.io.writeString
+import kotlin.time.Duration
 
 public object ExpireCommandCodec {
     private const val BLOCKING_STATUS: Boolean = false
@@ -36,7 +25,7 @@ public object ExpireCommandCodec {
     public suspend fun encode(
         charset: Charset,
         key: String,
-        seconds: Long,
+        seconds: Duration,
         condition: UpdateStrategyOption?,
     ): CommandRequest {
         var buffer = Buffer()
@@ -45,7 +34,7 @@ public object ExpireCommandCodec {
         size += 1
         buffer.writeStringArg(key, charset, )
         size += 1
-        buffer.writeLongArg(seconds, charset, )
+        buffer.writeDurationArg(seconds, charset, TimeUnit.SECONDS)
         condition?.let { it0 ->
             when (it0) {
                 is UpdateStrategyOption.ComparisonRule ->  {
@@ -85,7 +74,7 @@ public object ExpireCommandCodec {
     public suspend inline fun encodeWithSlot(
         charset: Charset,
         key: String,
-        seconds: Long,
+        seconds: Duration,
         condition: UpdateStrategyOption?,
     ): CommandRequest {
         var slot: Int? = null

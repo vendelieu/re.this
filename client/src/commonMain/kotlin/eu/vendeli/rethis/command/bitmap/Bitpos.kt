@@ -4,8 +4,6 @@ import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.api.spec.common.request.bitmap.BitmapUnit
 import eu.vendeli.rethis.codecs.bitmap.BitPosCommandCodec
 import eu.vendeli.rethis.topology.handle
-import kotlin.Long
-import kotlin.String
 
 public suspend fun ReThis.bitPos(
     key: String,

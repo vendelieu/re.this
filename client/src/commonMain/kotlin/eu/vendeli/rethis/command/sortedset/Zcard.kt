@@ -3,8 +3,6 @@ package eu.vendeli.rethis.command.sortedset
 import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.codecs.sortedset.ZCardCommandCodec
 import eu.vendeli.rethis.topology.handle
-import kotlin.Long
-import kotlin.String
 
 public suspend fun ReThis.zCard(key: String): Long {
     val request = if(cfg.withSlots) {

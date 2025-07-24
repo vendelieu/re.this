@@ -1,10 +1,8 @@
 package eu.vendeli.rethis.command.`set`
 
 import eu.vendeli.rethis.ReThis
-import eu.vendeli.rethis.codecs.`set`.SMoveCommandCodec
+import eu.vendeli.rethis.codecs.set.SMoveCommandCodec
 import eu.vendeli.rethis.topology.handle
-import kotlin.Boolean
-import kotlin.String
 
 public suspend fun ReThis.sMove(
     source: String,

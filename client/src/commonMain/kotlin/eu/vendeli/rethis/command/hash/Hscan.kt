@@ -5,9 +5,6 @@ import eu.vendeli.rethis.api.spec.common.request.hash.HScanOption
 import eu.vendeli.rethis.api.spec.common.response.common.ScanResult
 import eu.vendeli.rethis.codecs.hash.HScanCommandCodec
 import eu.vendeli.rethis.topology.handle
-import kotlin.Long
-import kotlin.Pair
-import kotlin.String
 
 public suspend fun ReThis.hScan(
     key: String,

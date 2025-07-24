@@ -4,7 +4,6 @@ import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.api.spec.common.types.RType
 import eu.vendeli.rethis.codecs.sentinel.SentinelMastersCommandCodec
 import eu.vendeli.rethis.topology.handle
-import kotlin.collections.List
 
 public suspend fun ReThis.sentinelMasters(): List<RType> {
     val request = if(cfg.withSlots) {

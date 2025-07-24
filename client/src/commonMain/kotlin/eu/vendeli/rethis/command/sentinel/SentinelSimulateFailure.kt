@@ -4,7 +4,6 @@ import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.api.spec.common.request.sentinel.SentinelSimulateFailureMode
 import eu.vendeli.rethis.codecs.sentinel.SentinelSimulateFailureCommandCodec
 import eu.vendeli.rethis.topology.handle
-import kotlin.Boolean
 
 public suspend fun ReThis.sentinelSimulateFailure(type: SentinelSimulateFailureMode): Boolean {
     val request = if(cfg.withSlots) {

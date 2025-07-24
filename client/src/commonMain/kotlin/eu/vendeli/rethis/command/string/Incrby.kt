@@ -3,8 +3,6 @@ package eu.vendeli.rethis.command.string
 import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.codecs.string.IncrByCommandCodec
 import eu.vendeli.rethis.topology.handle
-import kotlin.Long
-import kotlin.String
 
 public suspend fun ReThis.incrBy(key: String, increment: Long): Long {
     val request = if(cfg.withSlots) {

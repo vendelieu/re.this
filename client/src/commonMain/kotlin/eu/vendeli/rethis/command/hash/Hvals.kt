@@ -3,8 +3,6 @@ package eu.vendeli.rethis.command.hash
 import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.codecs.hash.HValsCommandCodec
 import eu.vendeli.rethis.topology.handle
-import kotlin.String
-import kotlin.collections.List
 
 public suspend fun ReThis.hVals(key: String): List<String> {
     val request = if(cfg.withSlots) {

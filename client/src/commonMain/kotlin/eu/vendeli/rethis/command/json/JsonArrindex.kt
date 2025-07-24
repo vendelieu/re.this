@@ -3,8 +3,6 @@ package eu.vendeli.rethis.command.json
 import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.codecs.json.JsonArrIndexCommandCodec
 import eu.vendeli.rethis.topology.handle
-import kotlin.Long
-import kotlin.String
 
 public suspend fun ReThis.jsonArrIndex(
     key: String,

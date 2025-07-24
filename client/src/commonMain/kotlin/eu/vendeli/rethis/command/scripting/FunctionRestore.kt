@@ -4,8 +4,6 @@ import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.api.spec.common.request.scripting.FunctionRestoreOption
 import eu.vendeli.rethis.codecs.scripting.FunctionRestoreCommandCodec
 import eu.vendeli.rethis.topology.handle
-import kotlin.Boolean
-import kotlin.ByteArray
 
 public suspend fun ReThis.functionRestore(serializedValue: ByteArray, policy: FunctionRestoreOption? = null): Boolean {
     val request = if(cfg.withSlots) {

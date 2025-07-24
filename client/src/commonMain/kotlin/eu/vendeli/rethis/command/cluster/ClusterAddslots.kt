@@ -3,8 +3,6 @@ package eu.vendeli.rethis.command.cluster
 import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.codecs.cluster.ClusterAddSlotsCommandCodec
 import eu.vendeli.rethis.topology.handle
-import kotlin.Boolean
-import kotlin.Long
 
 public suspend fun ReThis.clusterAddSlots(vararg slot: Long): Boolean {
     val request = if(cfg.withSlots) {

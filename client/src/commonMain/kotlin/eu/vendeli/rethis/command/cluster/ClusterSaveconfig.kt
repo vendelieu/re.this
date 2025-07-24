@@ -3,7 +3,6 @@ package eu.vendeli.rethis.command.cluster
 import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.codecs.cluster.ClusterSaveConfigCommandCodec
 import eu.vendeli.rethis.topology.handle
-import kotlin.Boolean
 
 public suspend fun ReThis.clusterSaveConfig(): Boolean {
     val request = if(cfg.withSlots) {

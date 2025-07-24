@@ -5,9 +5,6 @@ import eu.vendeli.rethis.api.spec.common.request.connection.HelloAuth
 import eu.vendeli.rethis.api.spec.common.types.RType
 import eu.vendeli.rethis.codecs.connection.HelloCommandCodec
 import eu.vendeli.rethis.topology.handle
-import kotlin.Long
-import kotlin.String
-import kotlin.collections.Map
 
 public suspend fun ReThis.hello(
     protover: Long? = null,

@@ -12,13 +12,8 @@ import eu.vendeli.rethis.utils.writeDoubleArg
 import eu.vendeli.rethis.utils.writeIntArg
 import eu.vendeli.rethis.utils.writeLongArg
 import eu.vendeli.rethis.utils.writeStringArg
-import io.ktor.utils.io.charsets.Charset
-import io.ktor.utils.io.core.toByteArray
-import kotlin.Boolean
-import kotlin.Double
-import kotlin.Long
-import kotlin.String
-import kotlin.collections.List
+import io.ktor.utils.io.charsets.*
+import io.ktor.utils.io.core.*
 import kotlinx.io.Buffer
 import kotlinx.io.writeString
 

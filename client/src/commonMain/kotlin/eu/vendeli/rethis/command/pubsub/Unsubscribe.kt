@@ -3,7 +3,6 @@ package eu.vendeli.rethis.command.pubsub
 import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.codecs.pubsub.UnsubscribeCommandCodec
 import eu.vendeli.rethis.topology.handle
-import kotlin.String
 
 public suspend fun ReThis.unsubscribe(vararg channel: String) {
     val request = if(cfg.withSlots) {

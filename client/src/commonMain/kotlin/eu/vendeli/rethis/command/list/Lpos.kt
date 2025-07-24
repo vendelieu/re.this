@@ -5,9 +5,6 @@ import eu.vendeli.rethis.api.spec.common.request.list.LPosOption
 import eu.vendeli.rethis.codecs.list.LPosCommandCodec
 import eu.vendeli.rethis.codecs.list.LPosCountCommandCodec
 import eu.vendeli.rethis.topology.handle
-import kotlin.Long
-import kotlin.String
-import kotlin.collections.List
 
 public suspend fun ReThis.lPosCount(
     key: String,

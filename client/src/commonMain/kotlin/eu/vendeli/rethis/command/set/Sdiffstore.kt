@@ -1,10 +1,8 @@
 package eu.vendeli.rethis.command.`set`
 
 import eu.vendeli.rethis.ReThis
-import eu.vendeli.rethis.codecs.`set`.SDiffStoreCommandCodec
+import eu.vendeli.rethis.codecs.set.SDiffStoreCommandCodec
 import eu.vendeli.rethis.topology.handle
-import kotlin.Long
-import kotlin.String
 
 public suspend fun ReThis.sDiffStore(destination: String, vararg key: String): Long {
     val request = if(cfg.withSlots) {

@@ -2,20 +2,12 @@ package eu.vendeli.rethis.codecs.generic
 
 import eu.vendeli.rethis.api.spec.common.decoders.common.StringScanDecoder
 import eu.vendeli.rethis.api.spec.common.request.generic.ScanOption
-import eu.vendeli.rethis.api.spec.common.request.generic.ScanOption.Count
-import eu.vendeli.rethis.api.spec.common.request.generic.ScanOption.Match
-import eu.vendeli.rethis.api.spec.common.request.generic.ScanOption.Type
 import eu.vendeli.rethis.api.spec.common.response.common.ScanResult
 import eu.vendeli.rethis.api.spec.common.types.CommandRequest
 import eu.vendeli.rethis.api.spec.common.types.RedisOperation
-import eu.vendeli.rethis.api.spec.common.utils.CRC16
 import eu.vendeli.rethis.utils.writeLongArg
 import eu.vendeli.rethis.utils.writeStringArg
-import io.ktor.utils.io.charsets.Charset
-import io.ktor.utils.io.core.toByteArray
-import kotlin.Boolean
-import kotlin.Long
-import kotlin.String
+import io.ktor.utils.io.charsets.*
 import kotlinx.io.Buffer
 import kotlinx.io.writeString
 

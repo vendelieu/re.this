@@ -4,8 +4,6 @@ import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.api.spec.common.request.server.ModuleOption
 import eu.vendeli.rethis.codecs.server.ModuleLoadExCommandCodec
 import eu.vendeli.rethis.topology.handle
-import kotlin.Boolean
-import kotlin.String
 
 public suspend fun ReThis.moduleLoadEx(path: String, vararg options: ModuleOption): Boolean {
     val request = if(cfg.withSlots) {

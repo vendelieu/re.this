@@ -1,10 +1,8 @@
 package eu.vendeli.rethis.command.`set`
 
 import eu.vendeli.rethis.ReThis
-import eu.vendeli.rethis.codecs.`set`.SCardCommandCodec
+import eu.vendeli.rethis.codecs.set.SCardCommandCodec
 import eu.vendeli.rethis.topology.handle
-import kotlin.Long
-import kotlin.String
 
 public suspend fun ReThis.sCard(key: String): Long {
     val request = if(cfg.withSlots) {

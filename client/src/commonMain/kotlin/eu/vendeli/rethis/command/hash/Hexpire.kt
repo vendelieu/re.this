@@ -4,9 +4,6 @@ import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.api.spec.common.request.common.UpdateStrategyOption
 import eu.vendeli.rethis.codecs.hash.HExpireCommandCodec
 import eu.vendeli.rethis.topology.handle
-import kotlin.Long
-import kotlin.String
-import kotlin.collections.List
 import kotlin.time.Duration
 
 public suspend fun ReThis.hExpire(

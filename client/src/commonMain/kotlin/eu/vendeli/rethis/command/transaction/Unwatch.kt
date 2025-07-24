@@ -3,7 +3,6 @@ package eu.vendeli.rethis.command.transaction
 import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.codecs.transaction.UnwatchCommandCodec
 import eu.vendeli.rethis.topology.handle
-import kotlin.Boolean
 
 public suspend fun ReThis.unwatch(): Boolean {
     val request = if(cfg.withSlots) {

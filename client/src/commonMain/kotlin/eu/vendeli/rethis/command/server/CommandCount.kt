@@ -3,7 +3,6 @@ package eu.vendeli.rethis.command.server
 import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.codecs.server.CommandCountCommandCodec
 import eu.vendeli.rethis.topology.handle
-import kotlin.Long
 
 public suspend fun ReThis.commandCount(): Long {
     val request = if(cfg.withSlots) {

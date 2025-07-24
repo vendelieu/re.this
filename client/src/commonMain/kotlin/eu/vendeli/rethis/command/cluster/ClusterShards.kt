@@ -4,7 +4,6 @@ import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.api.spec.common.response.cluster.Shard
 import eu.vendeli.rethis.codecs.cluster.ClusterShardsCommandCodec
 import eu.vendeli.rethis.topology.handle
-import kotlin.collections.List
 
 public suspend fun ReThis.clusterShards(): List<Shard> {
     val request = if(cfg.withSlots) {

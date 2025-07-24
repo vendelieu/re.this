@@ -4,7 +4,6 @@ import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.api.spec.common.request.string.UpsertMode
 import eu.vendeli.rethis.codecs.json.JsonSetCommandCodec
 import eu.vendeli.rethis.topology.handle
-import kotlin.String
 
 public suspend fun ReThis.jsonSet(
     key: String,

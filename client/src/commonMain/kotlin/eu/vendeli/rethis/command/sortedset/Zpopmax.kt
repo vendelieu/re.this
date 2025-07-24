@@ -4,9 +4,6 @@ import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.api.spec.common.response.common.MPopResult
 import eu.vendeli.rethis.codecs.sortedset.ZPopMaxCommandCodec
 import eu.vendeli.rethis.topology.handle
-import kotlin.Long
-import kotlin.String
-import kotlin.collections.List
 
 public suspend fun ReThis.zPopMax(key: String, count: Long? = null): List<MPopResult> {
     val request = if(cfg.withSlots) {

@@ -1,3 +1,5 @@
+import jdk.tools.jlink.resources.plugins
+
 plugins {
     kotlin("jvm")
     alias(libs.plugins.ksp)

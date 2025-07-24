@@ -3,9 +3,6 @@ package eu.vendeli.rethis.command.sortedset
 import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.codecs.sortedset.ZDiffCommandCodec
 import eu.vendeli.rethis.topology.handle
-import kotlin.Boolean
-import kotlin.String
-import kotlin.collections.List
 
 public suspend fun ReThis.zDiff(vararg key: String, withscores: Boolean? = null): List<String> {
     val request = if(cfg.withSlots) {

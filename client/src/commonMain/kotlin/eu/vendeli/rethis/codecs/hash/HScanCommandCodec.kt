@@ -2,9 +2,6 @@ package eu.vendeli.rethis.codecs.hash
 
 import eu.vendeli.rethis.api.spec.common.decoders.common.PairScanDecoder
 import eu.vendeli.rethis.api.spec.common.request.hash.HScanOption
-import eu.vendeli.rethis.api.spec.common.request.hash.HScanOption.Count
-import eu.vendeli.rethis.api.spec.common.request.hash.HScanOption.Match
-import eu.vendeli.rethis.api.spec.common.request.hash.HScanOption.NOVALUES
 import eu.vendeli.rethis.api.spec.common.response.common.ScanResult
 import eu.vendeli.rethis.api.spec.common.types.CommandRequest
 import eu.vendeli.rethis.api.spec.common.types.RedisOperation
@@ -12,12 +9,8 @@ import eu.vendeli.rethis.api.spec.common.utils.CRC16
 import eu.vendeli.rethis.api.spec.common.utils.validateSlot
 import eu.vendeli.rethis.utils.writeLongArg
 import eu.vendeli.rethis.utils.writeStringArg
-import io.ktor.utils.io.charsets.Charset
-import io.ktor.utils.io.core.toByteArray
-import kotlin.Boolean
-import kotlin.Long
-import kotlin.Pair
-import kotlin.String
+import io.ktor.utils.io.charsets.*
+import io.ktor.utils.io.core.*
 import kotlinx.io.Buffer
 import kotlinx.io.writeString
 

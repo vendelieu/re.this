@@ -4,10 +4,6 @@ import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.api.spec.common.request.sortedset.ZAggregate
 import eu.vendeli.rethis.codecs.sortedset.ZInterCommandCodec
 import eu.vendeli.rethis.topology.handle
-import kotlin.Boolean
-import kotlin.Long
-import kotlin.String
-import kotlin.collections.List
 
 public suspend fun ReThis.zInter(
     vararg key: String,

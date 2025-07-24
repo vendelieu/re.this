@@ -3,9 +3,6 @@ package eu.vendeli.rethis.command.connection
 import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.codecs.connection.AuthCommandCodec
 import eu.vendeli.rethis.topology.handle
-import kotlin.Boolean
-import kotlin.CharArray
-import kotlin.String
 
 public suspend fun ReThis.auth(username: String? = null, password: CharArray): Boolean {
     val request = if(cfg.withSlots) {

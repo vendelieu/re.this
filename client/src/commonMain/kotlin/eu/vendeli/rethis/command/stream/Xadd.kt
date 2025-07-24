@@ -5,8 +5,6 @@ import eu.vendeli.rethis.api.spec.common.request.common.FieldValue
 import eu.vendeli.rethis.api.spec.common.request.stream.XAddOption
 import eu.vendeli.rethis.codecs.stream.XAddCommandCodec
 import eu.vendeli.rethis.topology.handle
-import kotlin.Boolean
-import kotlin.String
 
 public suspend fun ReThis.xAdd(
     key: String,

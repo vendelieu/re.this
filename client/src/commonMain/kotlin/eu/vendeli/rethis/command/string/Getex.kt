@@ -4,7 +4,6 @@ import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.api.spec.common.request.string.GetExOption
 import eu.vendeli.rethis.codecs.string.GetExCommandCodec
 import eu.vendeli.rethis.topology.handle
-import kotlin.String
 
 public suspend fun ReThis.getEx(key: String, vararg expiration: GetExOption): String? {
     val request = if(cfg.withSlots) {

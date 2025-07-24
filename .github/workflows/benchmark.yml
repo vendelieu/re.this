@@ -39,13 +39,7 @@ jobs:
       - name: Build and run JMH benchmarks
         run: |
           # Clean to ensure a fresh build
-          ./gradlew clean benchmarks:benchmark \
-            -Pfork=1 \
-            -PwarmupIterations=0 \
-            -Piterations=1 \
-            -Pincludes='.*' \
-            -PresultFormat=JSON \
-            -PresultsFile=output.json
+          ./gradlew clean benchmarks:benchmark
 
       - name: JMH Benchmark Action
         uses: kitlangton/jmh-benchmark-action@main

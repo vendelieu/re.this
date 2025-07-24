@@ -4,7 +4,6 @@ import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.api.spec.common.request.cluster.ClusterResetMode
 import eu.vendeli.rethis.codecs.cluster.ClusterResetCommandCodec
 import eu.vendeli.rethis.topology.handle
-import kotlin.Boolean
 
 public suspend fun ReThis.clusterReset(resetType: ClusterResetMode? = null): Boolean {
     val request = if(cfg.withSlots) {

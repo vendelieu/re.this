@@ -7,6 +7,7 @@ import eu.vendeli.rethis.command.string.set
 import io.kotest.matchers.longs.shouldBeInRange
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
+import kotlin.time.Duration.Companion.seconds
 
 class ExpireTimeCommandTest : ReThisTestCtx() {
     @Test
@@ -14,7 +15,7 @@ class ExpireTimeCommandTest : ReThisTestCtx() {
         client.set("testKey", "testVal")
 
         val expireTime = timestamp.epochSeconds + 10L
-        client.expire("testKey", 10)
+        client.expire("testKey", 10.seconds)
 
         client.expireTime("testKey").shouldNotBeNull().minus(timestamp.epochSeconds) shouldBeInRange expireTime
             .minus(
