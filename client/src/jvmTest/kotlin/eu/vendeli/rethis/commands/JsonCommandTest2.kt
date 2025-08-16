@@ -2,10 +2,10 @@ package eu.vendeli.rethis.commands
 
 import eu.vendeli.rethis.ReThisTestCtx
 import eu.vendeli.rethis.api.spec.common.request.json.JsonEntry
-import eu.vendeli.rethis.api.spec.common.types.Int64
-import eu.vendeli.rethis.api.spec.common.types.PlainString
+import eu.vendeli.rethis.api.spec.common.types.*
 import eu.vendeli.rethis.command.json.*
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeTypeOf
 
 class JsonCommandTest2 : ReThisTestCtx(true) {
     @Test
@@ -23,13 +23,13 @@ class JsonCommandTest2 : ReThisTestCtx(true) {
     @Test
     suspend fun `test JSON_NUMINCRBY command`() {
         client.jsonSet("testKey15", "{\"a\":\"b\",\"b\":[{\"a\":2}, {\"a\":5}, {\"a\":\"c\"}]}", ".")
-        client.jsonNumIncrBy("testKey15", "..a", 2.0) shouldBe listOf(null, 4, 7L, null)
+        client.jsonNumIncrBy("testKey15", "..a", 2.0) shouldBe BulkString("7.0")
     }
 
     @Test
     suspend fun `test JSON_NUMMULTBY command`() {
         client.jsonSet("testKey16", "{\"a\":\"b\",\"b\":[{\"a\":2}, {\"a\":5}, {\"a\":\"c\"}]}", ".")
-        client.jsonNumMultBy("testKey16", "..a", 2.0) shouldBe listOf(null, 4, 10L, null)
+        client.jsonNumMultBy("testKey16", "..a", 2.0) shouldBe BulkString(value="10.0")
     }
 
     @Test
@@ -41,7 +41,9 @@ class JsonCommandTest2 : ReThisTestCtx(true) {
     @Test
     suspend fun `test JSON_OBJLEN command`() {
         client.jsonSet("testKey18", "{\"a\":[3], \"nested\": {\"a\": {\"b\":2, \"c\": 1}}}", ".")
-        client.jsonObjLen("testKey18", "$..a") shouldBe listOf(null, 2L)
+        client.jsonObjLen("testKey18", "$..a").shouldBeTypeOf<RArray>().value shouldBe listOf(
+            RType.Null, Int64(2)
+        )
     }
 
     @Test
@@ -76,12 +78,12 @@ class JsonCommandTest2 : ReThisTestCtx(true) {
     @Test
     suspend fun `test JSON_TOGGLE command`() {
         client.jsonSet("testKey23", "{\"bool\": true}") shouldBe "OK"
-        client.jsonToggle("testKey23", "$.bool") shouldBe listOf(0L)
+        client.jsonToggle("testKey23", "$.bool").shouldBeTypeOf<RArray>().value shouldBe listOf(Int64(0))
     }
 
     @Test
     suspend fun `test JSON_TYPE command`() {
         client.jsonSet("testKey24", "[1, 2, 3]", ".")
-        client.jsonType("testKey24", ".") shouldBe listOf("array")
+        client.jsonType("testKey24", ".") shouldBe BulkString(value="array")
     }
 }

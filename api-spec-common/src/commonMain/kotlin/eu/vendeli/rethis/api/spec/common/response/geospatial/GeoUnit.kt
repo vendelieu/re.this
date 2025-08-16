@@ -6,13 +6,16 @@ enum class GeoUnit(
     private val literal: String,
 ) {
     @RedisOption.Name("M")
-    METERS("m"),
+    METERS("M"),
+
     @RedisOption.Name("KM")
-    KILOMETERS("km"),
+    KILOMETERS("KM"),
+
     @RedisOption.Name("MI")
-    MILES("mi"),
+    MILES("MI"),
+
     @RedisOption.Name("FT")
-    FEET("ft"),
+    FEET("FT"),
     ;
 
     override fun toString(): String = literal

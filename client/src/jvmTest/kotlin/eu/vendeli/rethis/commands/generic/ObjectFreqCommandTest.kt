@@ -1,13 +1,14 @@
 package eu.vendeli.rethis.commands.generic
 
 import eu.vendeli.rethis.ReThisTestCtx
+import eu.vendeli.rethis.api.spec.common.types.RType
 import eu.vendeli.rethis.api.spec.common.types.ReThisException
 import eu.vendeli.rethis.command.generic.objectFreq
 import eu.vendeli.rethis.command.string.set
 import io.kotest.assertions.throwables.shouldThrow
-import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.throwable.shouldHaveMessage
+import io.kotest.matchers.types.shouldBeTypeOf
 
 class ObjectFreqCommandTest : ReThisTestCtx() {
     @Test
@@ -15,8 +16,8 @@ class ObjectFreqCommandTest : ReThisTestCtx() {
         client.set("testKey", "testVal")
 
         shouldThrow<ReThisException> {
-            client.objectFreq("testKey")
-        }.cause.shouldNotBeNull().shouldHaveMessage(
+            throw client.objectFreq("testKey").shouldBeTypeOf<RType.Error>().exception
+        }.shouldHaveMessage(
             "ERR An LFU maxmemory policy is not selected, access frequency not tracked. Please note that when " +
                 "switching between policies at runtime LRU and LFU data will take some time to adjust.",
         )
@@ -24,6 +25,6 @@ class ObjectFreqCommandTest : ReThisTestCtx() {
 
     @Test
     suspend fun `test OBJECT FREQ command with non-existent key`() {
-        client.objectFreq("nonExistentKey") shouldBe null
+        client.objectFreq("nonExistentKey") shouldBe RType.Null
     }
 }

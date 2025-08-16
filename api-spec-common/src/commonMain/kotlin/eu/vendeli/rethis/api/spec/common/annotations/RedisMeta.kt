@@ -25,4 +25,8 @@ annotation class RedisMeta {
     @Target(AnnotationTarget.CLASS)
     @Retention(AnnotationRetention.SOURCE)
     annotation class SkipCommand
+
+    @Target(AnnotationTarget.VALUE_PARAMETER)
+    @Retention(AnnotationRetention.SOURCE)
+    annotation class Default(val value: String)
 }

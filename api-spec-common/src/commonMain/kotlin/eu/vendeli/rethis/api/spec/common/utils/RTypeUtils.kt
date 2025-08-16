@@ -11,11 +11,11 @@ import kotlinx.io.Buffer
 fun Buffer.readResponseWrapped(
     charset: Charset,
     rawOnly: Boolean = false,
+    code: RespCode? = null,
 ): RType {
     // Peek first byte for type
     if (remaining == 0L) return RType.Null
-    val prefix = readByte()
-    val code = RespCode.fromCode(prefix)
+    val code = code ?: RespCode.fromCode(readByte())
 
     return when (code) {
         RespCode.ARRAY -> {
@@ -58,7 +58,7 @@ fun Buffer.readResponseWrapped(
             }
         }
 
-        else -> readSimpleResponseWrapped(charset, rawOnly, prefix)
+        else -> readSimpleResponseWrapped(charset, rawOnly, code)
     }
 }
 
@@ -69,10 +69,13 @@ private val FALSE_BYTE = 'f'.code.toByte()
 private fun Buffer.readSimpleResponseWrapped(
     charset: Charset,
     rawOnly: Boolean,
-    prefix: Byte? = null,
+    code: RespCode? = null,
 ): RType {
-    val code = RespCode.fromCode(prefix ?: readByte())
-    if (rawOnly) return RType.Raw(readByteArray())
+    val code = code ?: RespCode.fromCode(readByte())
+    if (rawOnly) {
+        readLineCRLF() // skip size
+        return RType.Raw(readByteArray())
+    }
 
     return when (code) {
         RespCode.SIMPLE_STRING -> PlainString(readPartLine(charset))

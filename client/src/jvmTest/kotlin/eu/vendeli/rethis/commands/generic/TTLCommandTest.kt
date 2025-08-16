@@ -23,9 +23,10 @@ class TTLCommandTest : ReThisTestCtx() {
         client.set("testKey", "testVal", SetExpire.ExAt(time)).shouldNotBeNull()
         client
             .ttl("testKey")
-            .shouldNotBeNull() shouldBeInRange (time.epochSeconds - Clock.System.now().epochSeconds).let {
-            it.minus(1).rangeTo(it + 1)
-        }
+            .shouldNotBeNull() shouldBeInRange
+            time.epochSeconds.let {
+                it.minus(1).rangeTo(it + 1)
+            }
     }
 
     @Test

@@ -12,6 +12,7 @@ import eu.vendeli.rethis.api.processor.types.WriteOp
 import eu.vendeli.rethis.api.processor.types.WriteOpProps
 import eu.vendeli.rethis.api.processor.types.emitOp
 import eu.vendeli.rethis.api.processor.types.filterWithoutKey
+import eu.vendeli.rethis.api.processor.types.rangeBounds
 
 @OptIn(KspExperimental::class)
 internal fun addEncoderCode() {
@@ -34,7 +35,7 @@ internal fun addEncoderCode() {
 
     LibTreePlanter.prepare()
     val root = context.enrichedTree
-    val ops = buildWritePlan(root)
+    val ops = buildWritePlan(root).sortedBy { it.node.rangeBounds().second }
 
     if (!context.currentCommand.hasCustomEncoder) {
         encodeCode.addStatement("va%L buffer = Buffer()", if (context.currentCommand.haveVaryingSize) "r" else "l")

@@ -2,6 +2,7 @@ package eu.vendeli.rethis
 
 import com.redis.testcontainers.RedisContainer
 import eu.vendeli.rethis.codecs.connection.PingCommandCodec
+import eu.vendeli.rethis.configuration.ReThisConfiguration
 import io.kotest.core.spec.style.AnnotationSpec
 import org.testcontainers.utility.DockerImageName
 import kotlin.time.Clock
@@ -14,13 +15,17 @@ abstract class ReThisTestCtx(
     protected val timestamp: Instant get() = Clock.System.now()
 
     protected val redis = RedisContainer(
-        DockerImageName.parse(if (!withJsonModule) "redis:${RedisContainer.DEFAULT_TAG}" else "redislabs/rejson"),
+        DockerImageName.parse(if (!withJsonModule) "redis:7.4.0" else "redislabs/rejson"),
     ).apply { start() }
 
     private var reThis: ReThis = ReThis(redis.host, redis.firstMappedPort)
     protected val client get() = reThis
 
     protected suspend fun connectionProvider() = client.topology.route(PingCommandCodec.encode(Charsets.UTF_8, null))
+
+    protected fun rewriteCfg(block: ReThisConfiguration.() -> Unit) {
+        client.cfg.block()
+    }
 
     protected fun resetClient(new: ReThis) {
         reThis = new

@@ -6,7 +6,7 @@ import eu.vendeli.rethis.api.spec.common.response.common.MPopResult
 import eu.vendeli.rethis.api.spec.common.response.common.ScanResult
 import eu.vendeli.rethis.api.spec.common.response.stream.ZMember
 import eu.vendeli.rethis.api.spec.common.response.stream.ZPopResult
-import eu.vendeli.rethis.api.spec.common.types.PlainString
+import eu.vendeli.rethis.api.spec.common.types.BulkString
 import eu.vendeli.rethis.command.sortedset.*
 import io.kotest.matchers.collections.shouldNotBeEmpty
 import io.kotest.matchers.shouldBe
@@ -42,7 +42,7 @@ class SortedSetCommandTest : ReThisTestCtx() {
     @Test
     suspend fun `test ZMSCORE command`() {
         client.zAdd("testSet25", ZMember("testValue25", 1.0))
-        client.zMScore("testSet25", "testValue25") shouldBe listOf(1.0)
+        client.zMScore("testSet25", "testValue25") shouldBe listOf(BulkString("1"))
     }
 
     @Test
@@ -55,13 +55,13 @@ class SortedSetCommandTest : ReThisTestCtx() {
     suspend fun `test ZPOPMIN command`() {
         client.zAdd("testSet27", ZMember("testValue27", 1.0))
 
-        client.zPopMin("testSet27").shouldNotBeEmpty().first().shouldBeTypeOf<PlainString>() shouldBe "testValue27"
+        client.zPopMin("testSet27").shouldNotBeEmpty().first().shouldBeTypeOf<BulkString>().value shouldBe "testValue27"
     }
 
     @Test
     suspend fun `test ZPOPMIN command with count`() {
         client.zAdd("testSet27", ZMember("testValue27", 1.0))
-        client.zPopMin("testSet27", 2) shouldBe listOf(listOf(ZMember("testValue27", 1.0)))
+        client.zPopMin("testSet27", 2) shouldBe listOf(BulkString("testValue27"), BulkString("1"))
     }
 
     @Test
@@ -79,7 +79,7 @@ class SortedSetCommandTest : ReThisTestCtx() {
     @Test
     suspend fun `test ZRANDMEMBER command with count + scores`() {
         client.zAdd("testSet28", ZMember("testValue28", 1.0))
-        client.zRandMemberCount("testSet28", 1, true) shouldBe listOf(listOf(ZMember("testValue28", 1.0)))
+        client.zRandMemberCount("testSet28", 1, true) shouldBe listOf("testValue28", "1")
     }
 
     @Test
@@ -158,7 +158,6 @@ class SortedSetCommandTest : ReThisTestCtx() {
         client.zUnionStore(
             destination = "testSet44",
             key = arrayOf("testSet42", "testSet43"),
-            weight = emptyList(),
         ) shouldBe 2L
     }
 }

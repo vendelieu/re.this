@@ -1,10 +1,11 @@
 package eu.vendeli.rethis.command.json
 
 import eu.vendeli.rethis.ReThis
+import eu.vendeli.rethis.api.spec.common.types.RType
 import eu.vendeli.rethis.codecs.json.JsonToggleCommandCodec
 import eu.vendeli.rethis.topology.handle
 
-public suspend fun ReThis.jsonToggle(key: String, path: String): List<Long> {
+public suspend fun ReThis.jsonToggle(key: String, path: String): RType {
     val request = if(cfg.withSlots) {
         JsonToggleCommandCodec.encodeWithSlot(charset = cfg.charset, key = key, path = path)
     } else {

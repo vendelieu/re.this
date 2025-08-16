@@ -29,12 +29,12 @@ public object ClientUnblockCommandCodec {
         var buffer = Buffer()
         var size = 2
         COMMAND_HEADER.copyTo(buffer)
+        size += 1
+        buffer.writeLongArg(clientId, charset, )
         unblockType?.let { it0 ->
             size += 1
             buffer.writeStringArg(it0.toString(), charset)
         }
-        size += 1
-        buffer.writeLongArg(clientId, charset, )
 
         buffer = Buffer().apply {
             writeString("*$size")

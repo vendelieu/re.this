@@ -33,16 +33,16 @@ public object GeoDistCommandCodec {
         var buffer = Buffer()
         var size = 1
         COMMAND_HEADER.copyTo(buffer)
-        unit?.let { it0 ->
-            size += 1
-            buffer.writeStringArg(it0.toString(), charset)
-        }
         size += 1
         buffer.writeStringArg(key, charset, )
         size += 1
         buffer.writeStringArg(member1, charset, )
         size += 1
         buffer.writeStringArg(member2, charset, )
+        unit?.let { it0 ->
+            size += 1
+            buffer.writeStringArg(it0.toString(), charset)
+        }
 
         buffer = Buffer().apply {
             writeString("*$size")

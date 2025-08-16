@@ -9,13 +9,17 @@ import eu.vendeli.rethis.codecs.string.LcsDetailedCommandCodec
 import eu.vendeli.rethis.codecs.string.LcsLengthCommandCodec
 import eu.vendeli.rethis.topology.handle
 
-public suspend fun ReThis.lcs(key1: String, key2: String): String {
+public suspend fun ReThis.lcsLength(
+    key1: String,
+    key2: String,
+    mode: LcsMode.LEN,
+): Long {
     val request = if(cfg.withSlots) {
-        LcsCommandCodec.encodeWithSlot(charset = cfg.charset, key1 = key1, key2 = key2)
+        LcsLengthCommandCodec.encodeWithSlot(charset = cfg.charset, key1 = key1, key2 = key2, mode = mode)
     } else {
-        LcsCommandCodec.encode(charset = cfg.charset, key1 = key1, key2 = key2)
+        LcsLengthCommandCodec.encode(charset = cfg.charset, key1 = key1, key2 = key2, mode = mode)
     }
-    return LcsCommandCodec.decode(topology.handle(request), cfg.charset)
+    return LcsLengthCommandCodec.decode(topology.handle(request), cfg.charset)
 }
 
 public suspend fun ReThis.lcsDetailed(
@@ -33,15 +37,11 @@ public suspend fun ReThis.lcsDetailed(
     return LcsDetailedCommandCodec.decode(topology.handle(request), cfg.charset)
 }
 
-public suspend fun ReThis.lcsLength(
-    key1: String,
-    key2: String,
-    mode: LcsMode.LEN,
-): Long {
+public suspend fun ReThis.lcs(key1: String, key2: String): String {
     val request = if(cfg.withSlots) {
-        LcsLengthCommandCodec.encodeWithSlot(charset = cfg.charset, key1 = key1, key2 = key2, mode = mode)
+        LcsCommandCodec.encodeWithSlot(charset = cfg.charset, key1 = key1, key2 = key2)
     } else {
-        LcsLengthCommandCodec.encode(charset = cfg.charset, key1 = key1, key2 = key2, mode = mode)
+        LcsCommandCodec.encode(charset = cfg.charset, key1 = key1, key2 = key2)
     }
-    return LcsLengthCommandCodec.decode(topology.handle(request), cfg.charset)
+    return LcsCommandCodec.decode(topology.handle(request), cfg.charset)
 }

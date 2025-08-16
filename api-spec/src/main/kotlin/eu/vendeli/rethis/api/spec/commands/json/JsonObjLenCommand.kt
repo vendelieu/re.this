@@ -1,13 +1,13 @@
 package eu.vendeli.rethis.api.spec.commands.json
 
 import eu.vendeli.rethis.api.spec.common.annotations.RedisCommand
-import eu.vendeli.rethis.api.spec.common.types.CommandRequest
-import eu.vendeli.rethis.api.spec.common.types.RedisCommandSpec
-import eu.vendeli.rethis.api.spec.common.types.RedisOperation
-import eu.vendeli.rethis.api.spec.common.types.RespCode
+import eu.vendeli.rethis.api.spec.common.annotations.RedisMeta
+import eu.vendeli.rethis.api.spec.common.decoders.general.RTypeDecoder
+import eu.vendeli.rethis.api.spec.common.types.*
 
 @RedisCommand("JSON.OBJLEN", RedisOperation.READ, [RespCode.ARRAY])
-fun interface JsonObjLenCommand : RedisCommandSpec<List<Long?>> {
+@RedisMeta.CustomCodec(decoder = RTypeDecoder::class)
+fun interface JsonObjLenCommand : RedisCommandSpec<RType> {
     suspend fun encode(
         key: String,
         path: String?

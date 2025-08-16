@@ -20,8 +20,9 @@ class DataProcessingException(
     override val cause: Throwable? = null,
 ) : ReThisException()
 
-class InvalidStateException(
+class TransactionInvalidStateException(
     override val message: String? = null,
+    override val cause: Throwable? = null,
 ) : ReThisException()
 
 class UnexpectedResponseType(

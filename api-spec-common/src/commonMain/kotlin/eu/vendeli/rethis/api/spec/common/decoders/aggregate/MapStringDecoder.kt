@@ -19,7 +19,7 @@ object MapStringDecoder : ResponseDecoder<Map<String, String>> {
     ): Map<String, String> {
         if (input == EMPTY_BUFFER) return emptyMap()
         val code = code ?: RespCode.fromCode(input.readByte())
-        if (code != RespCode.MAP || code != RespCode.ARRAY) throw ResponseParsingException(
+        if (code != RespCode.MAP && code != RespCode.ARRAY) throw ResponseParsingException(
             "Invalid response structure, expected map token, given $code", input.tryInferCause(code),
         )
 
@@ -29,6 +29,7 @@ object MapStringDecoder : ResponseDecoder<Map<String, String>> {
         return buildMap {
             repeat(size) {
                 val key = BulkStringDecoder.decode(input, charset)
+                input.readLine() // skip value code and size line
                 val value = input.readLineStrict()
                 put(key, value)
             }
@@ -42,7 +43,7 @@ object MapStringDecoder : ResponseDecoder<Map<String, String>> {
     ): Map<String, String?> {
         if (input == EMPTY_BUFFER) return emptyMap()
         val code = code ?: RespCode.fromCode(input.readByte())
-        if (code != RespCode.MAP || code != RespCode.ARRAY) throw ResponseParsingException(
+        if (code != RespCode.MAP && code != RespCode.ARRAY) throw ResponseParsingException(
             "Invalid response structure, expected map token, given $code", input.tryInferCause(code),
         )
 
@@ -55,6 +56,7 @@ object MapStringDecoder : ResponseDecoder<Map<String, String>> {
                     "Invalid response structure, expected string token got null",
                     input.tryInferCause(code),
                 )
+                input.readLine() // skip value code and size line
                 val value = input.readLine()
                 put(key, value)
             }

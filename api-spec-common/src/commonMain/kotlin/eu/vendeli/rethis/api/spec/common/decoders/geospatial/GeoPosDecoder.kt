@@ -21,7 +21,10 @@ object GeoPosDecoder : ResponseDecoder<List<List<GeoPosition>?>> {
         if (input == EMPTY_BUFFER) return emptyList()
         return ArrayRTypeDecoder.decode(input, charset).map { entry ->
             entry.safeCast<RArray>()?.value?.chunked(2) {
-                GeoPosition(it.first().unwrap()!!, it.last().unwrap()!!)
+                GeoPosition(
+                    it.first().unwrap<String>()!!.toDouble(),
+                    it.last().unwrap<String>()!!.toDouble()
+                )
             }
         }
     }

@@ -1,6 +1,9 @@
 package eu.vendeli.rethis.topology
 
+import eu.vendeli.rethis.api.spec.common.decoders.general.BulkErrorDecoder
+import eu.vendeli.rethis.api.spec.common.decoders.general.SimpleErrorDecoder
 import eu.vendeli.rethis.api.spec.common.types.CommandRequest
+import eu.vendeli.rethis.api.spec.common.types.RespCode
 import eu.vendeli.rethis.api.spec.common.utils.EMPTY_BUFFER
 import eu.vendeli.rethis.configuration.ReThisConfiguration
 import eu.vendeli.rethis.providers.ConnectionProvider
@@ -30,7 +33,14 @@ internal suspend inline fun TopologyManager.handle(request: CommandRequest): Buf
             }
 
             coLocalConn != null -> coLocalConn.connection.doRequest(request.buffer)
-                .takeIf { !coLocalConn.isTx } ?: EMPTY_BUFFER
+                .also {
+                    val peekedByte = it.readByte()
+                    when(val code = RespCode.fromCode(peekedByte)) {
+                        RespCode.SIMPLE_ERROR -> SimpleErrorDecoder.decode(it, cfg.charset, code)
+                        RespCode.BULK_ERROR -> BulkErrorDecoder.decode(it, cfg.charset, code)
+                        else -> it.writeByte(peekedByte)
+                    }
+                }.takeIf { !coLocalConn.isTx } ?: EMPTY_BUFFER
             // return empty buffer if transaction (to not break response contract since transaction return QUEUED)
 
             else -> route(request).execute(request)

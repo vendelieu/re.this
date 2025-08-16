@@ -32,23 +32,23 @@ public object ZInterCommandCodec {
         var buffer = Buffer()
         var size = 1
         COMMAND_HEADER.copyTo(buffer)
-        aggregate?.let { it0 ->
-            size += 1
-            buffer.writeStringArg(it0.toString(), charset)
-        }
         size += 1
         buffer.writeIntArg(key.size, charset)
-        key.forEach { it1 ->
+        key.forEach { it0 ->
             size += 1
-            buffer.writeStringArg(it1, charset, )
+            buffer.writeStringArg(it0, charset, )
         }
-        weight?.let { it2 ->
+        weight?.let { it1 ->
             size += 1
             buffer.writeStringArg("WEIGHTS", charset)
-            it2.forEach { it3 ->
+            it1.forEach { it2 ->
                 size += 1
-                buffer.writeLongArg(it3, charset, )
+                buffer.writeLongArg(it2, charset, )
             }
+        }
+        aggregate?.let { it3 ->
+            size += 1
+            buffer.writeStringArg(it3.toString(), charset)
         }
         withScores?.let { it4 ->
             if(it4) {

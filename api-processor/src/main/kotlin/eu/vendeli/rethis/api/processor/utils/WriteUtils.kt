@@ -2,6 +2,7 @@ package eu.vendeli.rethis.api.processor.utils
 
 import com.google.devtools.ksp.KspExperimental
 import eu.vendeli.rethis.api.processor.context.CodeGenContext
+import eu.vendeli.rethis.api.processor.context.CodeGenContext.BlockType
 import eu.vendeli.rethis.api.processor.core.RedisCommandProcessor.Companion.context
 import eu.vendeli.rethis.api.processor.types.*
 
@@ -117,7 +118,7 @@ private fun CodeGenContext.inferWriting(
 
         resolvedType.declaration.isEnum() -> {
             addImport("eu.vendeli.rethis.utils.writeStringArg")
-            appendLine("buffer.writeStringArg(%L.toString(), charset)", pointer ?: fieldAccess)
+            appendLine("buffer.writeStringArg(%L.toString(), charset)", pointedParameter(fieldAccess))
         }
     }
 }

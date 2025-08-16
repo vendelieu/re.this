@@ -14,7 +14,7 @@ fun interface ZInterStoreCommand : RedisCommandSpec<Long> {
     suspend fun encode(
         destination: String,
         @RedisMeta.WithSizeParam("numkeys") vararg key: String,
-        @RedisOption.Token("WEIGHTS") weight: List<Long>,
+        @RedisOption.Token("WEIGHTS") weight: List<Long>?,
         aggregate: ZAggregate?,
     ): CommandRequest
 }

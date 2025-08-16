@@ -21,8 +21,16 @@ fun FileSpec.Builder.addCommandFunctions(
             .addModifiers(KModifier.SUSPEND)
             .receiver(ReThis::class).apply {
                 parameters.map { p ->
-                    ParameterSpec.builder(p.key, p.value.first, p.value.second).also {
-                        if (p.value.first.isNullable) it.defaultValue("null")
+                    ParameterSpec.builder(p.key, p.value.first, p.value.second).also { f ->
+                        val parameter = context.currentCommand.encodeFunction.parameters.first {
+                            it.name!!.asString() == p.key
+                        }
+                        val defaultValue = parameter.getAnnotation<RedisMeta.Default>()?.get("value")
+
+                        when {
+                            defaultValue != null -> f.defaultValue(defaultValue)
+                            p.value.first.isNullable -> f.defaultValue("null")
+                        }
                     }.build()
                 }.let {
                     addParameters(it)

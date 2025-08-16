@@ -34,17 +34,17 @@ public object BitCountCommandCodec {
         var buffer = Buffer()
         var size = 1
         COMMAND_HEADER.copyTo(buffer)
-        unit?.let { it0 ->
-            size += 1
-            buffer.writeStringArg(it0.toString(), charset)
-        }
         size += 1
         buffer.writeStringArg(key, charset, )
-        range?.let { it1 ->
+        range?.let { it0 ->
             size += 1
-            buffer.writeLongArg(it1.start, charset, )
+            buffer.writeLongArg(it0.start, charset, )
             size += 1
-            buffer.writeLongArg(it1.end, charset, )
+            buffer.writeLongArg(it0.end, charset, )
+        }
+        unit?.let { it1 ->
+            size += 1
+            buffer.writeStringArg(it1.toString(), charset)
         }
 
         buffer = Buffer().apply {

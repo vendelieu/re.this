@@ -29,12 +29,12 @@ public object ClientPauseCommandCodec {
         var buffer = Buffer()
         var size = 2
         COMMAND_HEADER.copyTo(buffer)
+        size += 1
+        buffer.writeLongArg(timeout, charset, )
         mode?.let { it0 ->
             size += 1
             buffer.writeStringArg(it0.toString(), charset)
         }
-        size += 1
-        buffer.writeLongArg(timeout, charset, )
 
         buffer = Buffer().apply {
             writeString("*$size")

@@ -83,6 +83,6 @@ class SortedSetCommandTest2 : ReThisTestCtx() {
         client.zAdd("testSet20", ZMember("testValue20", 1.0))
         client.zAdd("testSet21", ZMember("testValue20", 2.0))
 
-        client.zInterStore("testSet22", key = arrayOf("testSet20", "testSet21"), weight = emptyList()) shouldBe 1L
+        client.zInterStore("testSet22", key = arrayOf("testSet20", "testSet21")) shouldBe 1L
     }
 }

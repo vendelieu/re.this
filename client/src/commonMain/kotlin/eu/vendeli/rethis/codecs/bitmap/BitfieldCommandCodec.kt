@@ -32,6 +32,8 @@ public object BitfieldCommandCodec {
         var buffer = Buffer()
         var size = 1
         COMMAND_HEADER.copyTo(buffer)
+        size += 1
+        buffer.writeStringArg(key, charset, )
         operation.forEach { it0 ->
             when (it0) {
                 is BitfieldOption.Get ->  {
@@ -56,7 +58,7 @@ public object BitfieldCommandCodec {
                     size += 1
                     buffer.writeStringArg("OVERFLOW", charset)
                     size += 1
-                    buffer.writeStringArg(it0.toString(), charset)
+                    buffer.writeStringArg(it0.type.toString(), charset)
                 }
                 is BitfieldOption.Set ->  {
                     size += 1
@@ -70,8 +72,6 @@ public object BitfieldCommandCodec {
                 }
             }
         }
-        size += 1
-        buffer.writeStringArg(key, charset, )
 
         buffer = Buffer().apply {
             writeString("*$size")

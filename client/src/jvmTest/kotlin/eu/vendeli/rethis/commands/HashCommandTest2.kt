@@ -2,7 +2,7 @@ package eu.vendeli.rethis.commands
 
 import eu.vendeli.rethis.ReThisTestCtx
 import eu.vendeli.rethis.api.spec.common.request.common.FieldValue
-import eu.vendeli.rethis.api.spec.common.utils.unwrapList
+import eu.vendeli.rethis.api.spec.common.utils.unwrap
 import eu.vendeli.rethis.command.hash.*
 import io.kotest.matchers.collections.shouldBeIn
 import io.kotest.matchers.nulls.shouldNotBeNull
@@ -38,17 +38,19 @@ class HashCommandTest2 : ReThisTestCtx() {
             FieldValue("field3", "value3"),
         )
 
-        val fields = client.hRandFieldCount("testKey20", 2, true)
-        fields.shouldNotBeNull()
-        fields.size shouldBe 2
+        val fields = client.hRandFieldCount("testKey20", 2, true).map {
+            it.unwrap<String>()!!
+        }
+        fields.size shouldBe 4
 
         val allFields = listOf("field1", "field2", "field3")
         val allValues = listOf("value1", "value2", "value3")
 
-        fields[0].unwrapList<String>().first() shouldBeIn allFields
-        fields[0].unwrapList<String>().last() shouldBeIn allValues
-        fields[1].unwrapList<String>().first() shouldBeIn allFields
-        fields[1].unwrapList<String>().last() shouldBeIn allValues
+
+        fields.first() shouldBeIn allFields
+        fields.get(1) shouldBeIn allValues
+        fields.get(2) shouldBeIn allFields
+        fields.last() shouldBeIn allValues
     }
 
     @Test
@@ -66,7 +68,7 @@ class HashCommandTest2 : ReThisTestCtx() {
     @Test
     suspend fun `test HGETALL command`() {
         client.hSet("testKey7", FieldValue("testField7", "testValue7"))
-        client.hGetAll("testKey7").shouldNotBeNull().toList() shouldBe listOf(FieldValue("testField7", "testValue7"))
+        client.hGetAll("testKey7").shouldNotBeNull().toList() shouldBe listOf("testField7" to "testValue7")
     }
 
     @Test

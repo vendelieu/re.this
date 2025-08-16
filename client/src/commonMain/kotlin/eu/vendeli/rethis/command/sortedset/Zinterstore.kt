@@ -8,7 +8,7 @@ import eu.vendeli.rethis.topology.handle
 public suspend fun ReThis.zInterStore(
     destination: String,
     vararg key: String,
-    weight: List<Long>,
+    weight: List<Long>? = null,
     aggregate: ZAggregate? = null,
 ): Long {
     val request = if(cfg.withSlots) {

@@ -10,5 +10,6 @@ public suspend fun ReThis.unsubscribe(vararg channel: String) {
     } else {
         UnsubscribeCommandCodec.encode(charset = cfg.charset, channel = channel)
     }
+    channel.forEach { channel -> subscriptions.unsubscribe(channel)}
     return UnsubscribeCommandCodec.decode(topology.handle(request), cfg.charset)
 }

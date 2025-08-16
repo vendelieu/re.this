@@ -22,7 +22,6 @@ import eu.vendeli.rethis.utils.writeStringArg
 import io.kotest.assertions.throwables.shouldNotThrowAny
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.booleans.shouldBeTrue
-import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeTypeOf
@@ -31,6 +30,13 @@ import kotlinx.coroutines.launch
 import kotlinx.io.Buffer
 
 class TransactionCommandTest : ReThisTestCtx() {
+    @BeforeAll
+    fun prepare() = rewriteCfg {
+        retry {
+            times = 1
+        }
+    }
+
     @Test
     suspend fun `test EXEC command with multiple queued commands`() {
         val cProvider = connectionProvider()
@@ -94,7 +100,7 @@ class TransactionCommandTest : ReThisTestCtx() {
             set("testKey2", "testVal2")
             set("testKey2", "testVal2")
             jsonClear("test")
-        }.shouldNotBeNull() shouldHaveSize 0
+        }
     }.cause.shouldNotBeNull().message shouldBe "ERR unknown command 'JSON.CLEAR', with args beginning with: 'test' "
 
     @Test

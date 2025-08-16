@@ -32,8 +32,8 @@ public object LInsertCommandCodec {
     ): CommandRequest {
         val buffer = Buffer()
         COMMAND_HEADER.copyTo(buffer)
-        buffer.writeStringArg(where.toString(), charset)
         buffer.writeStringArg(key, charset, )
+        buffer.writeStringArg(where.toString(), charset)
         buffer.writeStringArg(pivot, charset, )
         buffer.writeStringArg(element, charset, )
 

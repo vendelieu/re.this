@@ -6,7 +6,7 @@ import eu.vendeli.rethis.providers.ConnectionProvider
 import eu.vendeli.rethis.types.common.Subscription
 import eu.vendeli.rethis.types.common.SubscriptionWorker
 import eu.vendeli.rethis.types.coroutine.CoLocalConn
-import io.ktor.util.logging.debug
+import io.ktor.util.logging.*
 import io.ktor.utils.io.*
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.delay

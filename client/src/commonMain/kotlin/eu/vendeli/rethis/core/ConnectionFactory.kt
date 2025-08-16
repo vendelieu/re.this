@@ -12,7 +12,7 @@ import eu.vendeli.rethis.utils.IO_OR_UNCONFINED
 import io.ktor.network.selector.*
 import io.ktor.network.sockets.*
 import io.ktor.network.tls.*
-import io.ktor.util.logging.debug
+import io.ktor.util.logging.*
 import io.ktor.utils.io.charsets.*
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope

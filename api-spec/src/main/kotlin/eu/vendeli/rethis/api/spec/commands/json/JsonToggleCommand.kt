@@ -1,13 +1,13 @@
 package eu.vendeli.rethis.api.spec.commands.json
 
 import eu.vendeli.rethis.api.spec.common.annotations.RedisCommand
-import eu.vendeli.rethis.api.spec.common.types.CommandRequest
-import eu.vendeli.rethis.api.spec.common.types.RedisCommandSpec
-import eu.vendeli.rethis.api.spec.common.types.RedisOperation
-import eu.vendeli.rethis.api.spec.common.types.RespCode
+import eu.vendeli.rethis.api.spec.common.annotations.RedisMeta
+import eu.vendeli.rethis.api.spec.common.decoders.general.RTypeDecoder
+import eu.vendeli.rethis.api.spec.common.types.*
 
 @RedisCommand("JSON.TOGGLE", RedisOperation.WRITE, [RespCode.ARRAY])
-fun interface JsonToggleCommand : RedisCommandSpec<List<Long>> {
+@RedisMeta.CustomCodec(decoder = RTypeDecoder::class)
+fun interface JsonToggleCommand : RedisCommandSpec<RType> {
     suspend fun encode(
         key: String,
         path: String

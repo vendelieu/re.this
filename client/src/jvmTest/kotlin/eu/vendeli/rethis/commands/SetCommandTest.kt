@@ -4,6 +4,7 @@ import eu.vendeli.rethis.ReThisTestCtx
 import eu.vendeli.rethis.api.spec.common.request.set.SScanOption
 import eu.vendeli.rethis.api.spec.common.response.common.ScanResult
 import eu.vendeli.rethis.command.set.*
+import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.shouldBe
 
 class SetCommandTest : ReThisTestCtx() {
@@ -22,7 +23,7 @@ class SetCommandTest : ReThisTestCtx() {
     suspend fun `test SPOP command with count`() {
         client.sAdd("testKey21", "testMember21")
         client.sAdd("testKey21", "testMember22")
-        client.sPopCount("testKey21", 2) shouldBe listOf("testMember21", "testMember22")
+        client.sPopCount("testKey21", 2).shouldContainExactlyInAnyOrder("testMember21", "testMember22")
     }
 
     @Test
@@ -35,7 +36,7 @@ class SetCommandTest : ReThisTestCtx() {
     suspend fun `test SRANDMEMBER command with count`() {
         client.sAdd("testKey24", "testMember24")
         client.sAdd("testKey24", "testMember25")
-        client.sRandMemberCount("testKey24", 2) shouldBe listOf("testMember24", "testMember25")
+        client.sRandMemberCount("testKey24", 2).shouldContainExactlyInAnyOrder("testMember24", "testMember25")
     }
 
     @Test

@@ -38,30 +38,6 @@ public object GeoSearchCommandCodec {
         var buffer = Buffer()
         var size = 1
         COMMAND_HEADER.copyTo(buffer)
-        when (by) {
-            is ByBox ->  {
-                size += 1
-                buffer.writeStringArg("BYBOX", charset)
-                size += 1
-                buffer.writeStringArg(by.toString(), charset)
-                size += 1
-                buffer.writeDoubleArg(by.width, charset, )
-                size += 1
-                buffer.writeDoubleArg(by.height, charset, )
-            }
-            is ByRadius ->  {
-                size += 1
-                buffer.writeStringArg("BYRADIUS", charset)
-                size += 1
-                buffer.writeStringArg(by.toString(), charset)
-                size += 1
-                buffer.writeDoubleArg(by.radius, charset, )
-            }
-        }
-        order?.let { it0 ->
-            size += 1
-            buffer.writeStringArg(it0.toString(), charset)
-        }
         size += 1
         buffer.writeStringArg(key, charset, )
         when (from) {
@@ -79,6 +55,30 @@ public object GeoSearchCommandCodec {
                 size += 1
                 buffer.writeStringArg(from.member, charset, )
             }
+        }
+        when (by) {
+            is ByBox ->  {
+                size += 1
+                buffer.writeStringArg("BYBOX", charset)
+                size += 1
+                buffer.writeDoubleArg(by.width, charset, )
+                size += 1
+                buffer.writeDoubleArg(by.height, charset, )
+                size += 1
+                buffer.writeStringArg(by.unit.toString(), charset)
+            }
+            is ByRadius ->  {
+                size += 1
+                buffer.writeStringArg("BYRADIUS", charset)
+                size += 1
+                buffer.writeDoubleArg(by.radius, charset, )
+                size += 1
+                buffer.writeStringArg(by.unit.toString(), charset)
+            }
+        }
+        order?.let { it0 ->
+            size += 1
+            buffer.writeStringArg(it0.toString(), charset)
         }
         count?.let { it1 ->
             size += 1

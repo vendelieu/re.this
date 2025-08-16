@@ -2,9 +2,11 @@ package eu.vendeli.rethis.commands
 
 import eu.vendeli.rethis.ReThisTestCtx
 import eu.vendeli.rethis.api.spec.common.response.common.PubSubNumEntry
-import eu.vendeli.rethis.api.spec.common.types.*
+import eu.vendeli.rethis.api.spec.common.types.DataProcessingException
+import eu.vendeli.rethis.api.spec.common.types.processingException
 import eu.vendeli.rethis.command.pubsub.*
 import eu.vendeli.rethis.types.interfaces.SubscriptionEventHandler
+import io.kotest.assertions.throwables.shouldNotThrowAny
 import io.kotest.matchers.collections.shouldNotBeEmpty
 import io.kotest.matchers.comparables.shouldBeGreaterThan
 import io.kotest.matchers.nulls.shouldBeNull
@@ -57,14 +59,8 @@ class PubSubCommandTest : ReThisTestCtx() {
     }
 
     @Test
-    suspend fun `test PUNSUBSCRIBE command`() {
-        client.pUnsubscribe("testPattern") shouldBe Push(
-            listOf(
-                BulkString("punsubscribe"),
-                BulkString("testPattern"),
-                Int64(0),
-            ),
-        )
+    suspend fun `test PUNSUBSCRIBE command`()  = shouldNotThrowAny {
+        client.pUnsubscribe("testPattern")
     }
 
     @Test
@@ -73,25 +69,13 @@ class PubSubCommandTest : ReThisTestCtx() {
     }
 
     @Test
-    suspend fun `test SUNSUBSCRIBE command`() {
-        client.sUnsubscribe("testPattern") shouldBe Push(
-            listOf(
-                BulkString("sunsubscribe"),
-                BulkString("testPattern"),
-                Int64(0),
-            ),
-        )
+    suspend fun `test SUNSUBSCRIBE command`() = shouldNotThrowAny {
+        client.sUnsubscribe("testPattern")
     }
 
     @Test
-    suspend fun `test UNSUBSCRIBE command`() {
-        client.unsubscribe("testPattern") shouldBe Push(
-            listOf(
-                BulkString("unsubscribe"),
-                BulkString("testPattern"),
-                Int64(0),
-            ),
-        )
+    suspend fun `test UNSUBSCRIBE command`()  = shouldNotThrowAny {
+        client.unsubscribe("testPattern")
     }
 
     @Test

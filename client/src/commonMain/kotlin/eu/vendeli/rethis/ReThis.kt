@@ -2,9 +2,8 @@ package eu.vendeli.rethis
 
 import eu.vendeli.rethis.annotations.ReThisDSL
 import eu.vendeli.rethis.api.spec.common.types.CommandRequest
-import eu.vendeli.rethis.api.spec.common.types.InvalidStateException
 import eu.vendeli.rethis.api.spec.common.types.RType
-import eu.vendeli.rethis.api.spec.common.types.ReThisException
+import eu.vendeli.rethis.api.spec.common.types.TransactionInvalidStateException
 import eu.vendeli.rethis.codecs.transaction.DiscardCommandCodec
 import eu.vendeli.rethis.codecs.transaction.ExecCommandCodec
 import eu.vendeli.rethis.codecs.transaction.MultiCommandCodec
@@ -92,30 +91,24 @@ class ReThis internal constructor(
         val multiCommand = MultiCommandCodec.encode(cfg.charset)
         return topology.route(multiCommand).withConnection { conn ->
             val tx = MultiCommandCodec.decode(conn.doRequest(multiCommand.buffer), cfg.charset)
-            if (!tx) throw InvalidStateException("Failed to start transaction")
+            if (!tx) throw TransactionInvalidStateException("Failed to start transaction")
             logger.debug { "Started transaction" }
 
             var e: Throwable? = null
-            try {
-                scope.launch(currentCoroutineContext() + CoLocalConn(conn)) {
-                    runCatching { block() }.getOrElse { e = it }
-                }.join()
+            scope.launch(currentCoroutineContext() + CoLocalConn(conn)) {
+                runCatching { block() }.getOrElse { e = it }
+            }.join()
 
-                val exec = conn.doRequest(ExecCommandCodec.encode(cfg.charset).buffer)
-                logger.debug { "Transaction completed" }
-
-                ExecCommandCodec.decode(exec, cfg.charset)
-            } catch (ex: Throwable) {
-                throw ReThisException("Caught exception in transaction", ex).also {
-                    if (e != null) it.addSuppressed(e)
-                }
-            } finally {
-                if (e != null) {
-                    conn.doRequest(DiscardCommandCodec.encode(cfg.charset).buffer)
-                    logger.error("Transaction canceled", e)
-                    throw e
-                }
+            if (e != null) {
+                conn.doRequest(DiscardCommandCodec.encode(cfg.charset).buffer)
+                logger.error("Transaction canceled", e)
+                throw TransactionInvalidStateException("Transaction canceled due to exception", e)
             }
+
+            val exec = conn.doRequest(ExecCommandCodec.encode(cfg.charset).buffer)
+            logger.debug { "Transaction completed" }
+
+            ExecCommandCodec.decode(exec, cfg.charset)
         }
     }
 

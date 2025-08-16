@@ -21,6 +21,8 @@ import kotlinx.io.Buffer
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
+internal val COMMON_LOGGER = KtorSimpleLogger("eu.vendeli.rethis.ReThisCommonLogger")
+
 expect val Dispatchers.IO_OR_UNCONFINED: CoroutineDispatcher
 
 expect fun <T> coRunBlocking(block: suspend CoroutineScope.() -> T): T

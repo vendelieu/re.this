@@ -5,6 +5,9 @@ import eu.vendeli.rethis.api.spec.common.request.geospatial.ByBox
 import eu.vendeli.rethis.api.spec.common.request.geospatial.ByRadius
 import eu.vendeli.rethis.api.spec.common.request.geospatial.FromLongitudeLatitude
 import eu.vendeli.rethis.api.spec.common.response.geospatial.*
+import eu.vendeli.rethis.api.spec.common.types.BulkString
+import eu.vendeli.rethis.api.spec.common.types.Int64
+import eu.vendeli.rethis.api.spec.common.types.RArray
 import eu.vendeli.rethis.command.geospatial.*
 import io.kotest.matchers.shouldBe
 
@@ -35,7 +38,7 @@ class GeoCommandTest : ReThisTestCtx() {
             listOf(
                 GeoPosition(
                     0.9999999403953552,
-                    0.9999994591429768,
+                    0.9999994591429827,
                 ),
             ),
         )
@@ -54,19 +57,34 @@ class GeoCommandTest : ReThisTestCtx() {
             withHash = true,
             order = GeoSort.ASC,
         ) shouldBe listOf(
-            GeoSearchResult(
-                member = "testValue6",
-                distance = 190.4424,
-                coordinates = GeoPosition(13.361389338970184, 38.1155563954963),
-                hash = 3479099956230698,
+            RArray(
+                listOf(
+                    BulkString("testValue6"),
+                    BulkString("190.4424"),
+                    Int64(3479099956230698),
+                    RArray(
+                        listOf(
+                            BulkString("13.36138933897018433"),
+                            BulkString("38.11555639549629859"),
+                        )
+                    )
+                )
             ),
-            GeoSearchResult(
-                member = "testValue7",
-                distance = 279.7405,
-                coordinates = GeoPosition(12.75848776102066, 38.78813451624225),
-                hash = 3479273021651468,
-            ),
+            RArray(
+                listOf(
+                    BulkString("testValue7"),
+                    BulkString("279.7405"),
+                    Int64(3479273021651468),
+                    RArray(
+                        listOf(
+                            BulkString("12.7584877610206604"),
+                            BulkString("38.78813451624225195"),
+                        )
+                    )
+                )
+            )
         )
+
     }
 
     @Test

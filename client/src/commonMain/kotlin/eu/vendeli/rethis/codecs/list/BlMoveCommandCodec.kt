@@ -34,10 +34,10 @@ public object BlMoveCommandCodec {
     ): CommandRequest {
         val buffer = Buffer()
         COMMAND_HEADER.copyTo(buffer)
-        buffer.writeStringArg(whereFrom.toString(), charset)
-        buffer.writeStringArg(whereTo.toString(), charset)
         buffer.writeStringArg(source, charset, )
         buffer.writeStringArg(destination, charset, )
+        buffer.writeStringArg(whereFrom.toString(), charset)
+        buffer.writeStringArg(whereTo.toString(), charset)
         buffer.writeDoubleArg(timeout, charset, )
 
         return CommandRequest(buffer, RedisOperation.WRITE, BLOCKING_STATUS)

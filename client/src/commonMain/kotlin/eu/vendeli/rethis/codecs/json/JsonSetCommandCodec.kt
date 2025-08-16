@@ -24,7 +24,7 @@ public object JsonSetCommandCodec {
         charset: Charset,
         key: String,
         `value`: String,
-        path: String?,
+        path: String,
         condition: UpsertMode?,
     ): CommandRequest {
         var buffer = Buffer()
@@ -32,21 +32,19 @@ public object JsonSetCommandCodec {
         COMMAND_HEADER.copyTo(buffer)
         size += 1
         buffer.writeStringArg(key, charset, )
-        path?.let { it0 ->
-            size += 1
-            buffer.writeStringArg(it0, charset, )
-        }
+        size += 1
+        buffer.writeStringArg(path, charset, )
         size += 1
         buffer.writeStringArg(value, charset, )
-        condition?.let { it1 ->
-            when (it1) {
+        condition?.let { it0 ->
+            when (it0) {
                 is UpsertMode.NX ->  {
                     size += 1
-                    buffer.writeStringArg(it1.toString(), charset)
+                    buffer.writeStringArg(it0.toString(), charset)
                 }
                 is UpsertMode.XX ->  {
                     size += 1
-                    buffer.writeStringArg(it1.toString(), charset)
+                    buffer.writeStringArg(it0.toString(), charset)
                 }
             }
         }
@@ -62,7 +60,7 @@ public object JsonSetCommandCodec {
         charset: Charset,
         key: String,
         `value`: String,
-        path: String?,
+        path: String,
         condition: UpsertMode?,
     ): CommandRequest = encode(charset, key = key, value = value, path = path, condition = condition)
 

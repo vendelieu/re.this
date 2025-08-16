@@ -26,29 +26,31 @@ public object ZUnionStoreCommandCodec {
         charset: Charset,
         destination: String,
         vararg key: String,
-        weight: List<Long>,
+        weight: List<Long>?,
         aggregate: ZAggregate?,
     ): CommandRequest {
         var buffer = Buffer()
         var size = 1
         COMMAND_HEADER.copyTo(buffer)
-        aggregate?.let { it0 ->
-            size += 1
-            buffer.writeStringArg(it0.toString(), charset)
-        }
         size += 1
         buffer.writeStringArg(destination, charset, )
         size += 1
         buffer.writeIntArg(key.size, charset)
-        key.forEach { it1 ->
+        key.forEach { it0 ->
             size += 1
-            buffer.writeStringArg(it1, charset, )
+            buffer.writeStringArg(it0, charset, )
         }
-        size += 1
-        buffer.writeStringArg("WEIGHTS", charset)
-        weight.forEach { it2 ->
+        weight?.let { it1 ->
             size += 1
-            buffer.writeLongArg(it2, charset, )
+            buffer.writeStringArg("WEIGHTS", charset)
+            it1.forEach { it2 ->
+                size += 1
+                buffer.writeLongArg(it2, charset, )
+            }
+        }
+        aggregate?.let { it3 ->
+            size += 1
+            buffer.writeStringArg(it3.toString(), charset)
         }
 
         buffer = Buffer().apply {
@@ -62,7 +64,7 @@ public object ZUnionStoreCommandCodec {
         charset: Charset,
         destination: String,
         vararg key: String,
-        weight: List<Long>,
+        weight: List<Long>?,
         aggregate: ZAggregate?,
     ): CommandRequest {
         var slot: Int? = null

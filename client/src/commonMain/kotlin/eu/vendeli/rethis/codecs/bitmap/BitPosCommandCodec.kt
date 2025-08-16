@@ -35,21 +35,21 @@ public object BitPosCommandCodec {
         var buffer = Buffer()
         var size = 1
         COMMAND_HEADER.copyTo(buffer)
-        unit?.let { it0 ->
-            size += 1
-            buffer.writeStringArg(it0.toString(), charset)
-        }
         size += 1
         buffer.writeStringArg(key, charset, )
         size += 1
         buffer.writeLongArg(bit, charset, )
-        start?.let { it1 ->
+        start?.let { it0 ->
+            size += 1
+            buffer.writeLongArg(it0, charset, )
+        }
+        end?.let { it1 ->
             size += 1
             buffer.writeLongArg(it1, charset, )
         }
-        end?.let { it2 ->
+        unit?.let { it2 ->
             size += 1
-            buffer.writeLongArg(it2, charset, )
+            buffer.writeStringArg(it2.toString(), charset)
         }
 
         buffer = Buffer().apply {

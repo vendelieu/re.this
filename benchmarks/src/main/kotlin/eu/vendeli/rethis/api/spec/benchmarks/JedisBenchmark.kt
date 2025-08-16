@@ -18,11 +18,11 @@ import java.util.concurrent.TimeUnit
 
 @BenchmarkMode(Mode.Throughput)
 @State(Scope.Benchmark)
-@Threads(8)
+@Threads(16)
 @Warmup(iterations = 5, time = 1000, timeUnit = TimeUnit.MILLISECONDS)
 @Measurement(iterations = 5, time = 1000, timeUnit = TimeUnit.MILLISECONDS)
 @Timeout(time = 10, timeUnit = TimeUnit.SECONDS)
-@Fork(1, jvmArgsAppend = ["-Xms8g", "-Xmx8g", "-Xss2m", "-XX:MaxMetaspaceSize=1g"])
+@Fork(1, jvmArgsAppend = ["-Xms12g", "-Xmx12g", "-XX:MaxMetaspaceSize=1g"])
 class JedisBenchmark {
     private lateinit var jedis: JedisPooled
 

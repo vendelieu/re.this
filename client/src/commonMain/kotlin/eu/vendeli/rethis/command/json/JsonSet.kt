@@ -8,7 +8,7 @@ import eu.vendeli.rethis.topology.handle
 public suspend fun ReThis.jsonSet(
     key: String,
     `value`: String,
-    path: String? = null,
+    path: String = "$",
     condition: UpsertMode? = null,
 ): String {
     val request = if(cfg.withSlots) {

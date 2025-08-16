@@ -35,8 +35,6 @@ public object BlmPopCommandCodec {
         var size = 1
         COMMAND_HEADER.copyTo(buffer)
         size += 1
-        buffer.writeStringArg(where.toString(), charset)
-        size += 1
         buffer.writeDoubleArg(timeout, charset, )
         size += 1
         buffer.writeIntArg(key.size, charset)
@@ -44,6 +42,8 @@ public object BlmPopCommandCodec {
             size += 1
             buffer.writeStringArg(it0, charset, )
         }
+        size += 1
+        buffer.writeStringArg(where.toString(), charset)
         count?.let { it1 ->
             size += 1
             buffer.writeStringArg("COUNT", charset)

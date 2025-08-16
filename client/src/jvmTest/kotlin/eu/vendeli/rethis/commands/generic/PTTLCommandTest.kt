@@ -19,19 +19,19 @@ class PTTLCommandTest : ReThisTestCtx() {
     }
 
     @Test
-    suspend fun `test TTL command with ttl positive`() {
+    suspend fun `test PTTL command with ttl positive`() {
         val time = Clock.System.now().plus(1.days)
         client.set("testKey", "testVal", SetExpire.ExAt(time)).shouldNotBeNull()
         client
             .pTtl("testKey")
             .shouldNotBeNull() shouldBeInRange
-            (time.toEpochMilliseconds() - Clock.System.now().toEpochMilliseconds()).let {
+            time.toEpochMilliseconds().let {
                 it.minus(1.seconds.inWholeMilliseconds).rangeTo(it + 1.seconds.inWholeMilliseconds)
             }
     }
 
     @Test
-    suspend fun `test TTL command with non-existent key`() {
+    suspend fun `test PTTL command with non-existent key`() {
         client.pTtl("nonExistentKey") shouldBe -2L
     }
 }

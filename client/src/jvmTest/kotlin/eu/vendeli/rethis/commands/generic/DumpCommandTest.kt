@@ -13,6 +13,7 @@ class DumpCommandTest : ReThisTestCtx() {
         client
             .dump("testKey")
             .shouldNotBeNull()
+            .decodeToString()
             .shouldContain("testVal")
     }
 }
