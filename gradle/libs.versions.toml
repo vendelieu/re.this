@@ -39,6 +39,7 @@ publisher = { module = "com.vanniktech:gradle-maven-publish-plugin", version.ref
 
 # testing
 kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin" }
+kotlin-cotest = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
 test-kotest-junit5 = { module = "io.kotest:kotest-runner-junit5", version.ref = "kotest" }
 test-kotest-assertions = { module = "io.kotest:kotest-assertions-core", version.ref = "kotest" }
 logback = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }

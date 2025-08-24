@@ -27,6 +27,7 @@ configureKotlin {
 
         jvmTest.dependencies {
             implementation(libs.kotlin.reflect)
+            implementation(libs.kotlin.cotest)
             implementation(libs.test.kotest.junit5)
             implementation(libs.test.kotest.assertions)
             implementation(libs.logback)
