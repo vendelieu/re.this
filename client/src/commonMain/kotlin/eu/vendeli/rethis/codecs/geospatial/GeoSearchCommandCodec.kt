@@ -61,11 +61,11 @@ public object GeoSearchCommandCodec {
                 size += 1
                 buffer.writeStringArg("BYBOX", charset)
                 size += 1
+                buffer.writeStringArg(by.unit.toString(), charset)
+                size += 1
                 buffer.writeDoubleArg(by.width, charset, )
                 size += 1
                 buffer.writeDoubleArg(by.height, charset, )
-                size += 1
-                buffer.writeStringArg(by.unit.toString(), charset)
             }
             is ByRadius ->  {
                 size += 1

@@ -22,6 +22,6 @@ object DumpDecoder : ResponseDecoder<ByteArray?> {
         val code = code ?: input.resolveToken(RespCode.BULK)
         val response = input.readResponseWrapped(Charsets.UTF_8, true, code).safeCast<RType.Raw>()
 
-        return response?.value
+        return response?.value?.dropLast(2)?.toByteArray() // drop last 2 bytes (CRLF)
     }
 }

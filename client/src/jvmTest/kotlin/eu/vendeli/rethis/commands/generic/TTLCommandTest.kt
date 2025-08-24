@@ -2,6 +2,7 @@ package eu.vendeli.rethis.commands.generic
 
 import eu.vendeli.rethis.ReThisTestCtx
 import eu.vendeli.rethis.api.spec.common.request.string.SetExpire
+import eu.vendeli.rethis.command.generic.expireAt
 import eu.vendeli.rethis.command.generic.ttl
 import eu.vendeli.rethis.command.string.set
 import io.kotest.matchers.longs.shouldBeInRange
@@ -20,13 +21,12 @@ class TTLCommandTest : ReThisTestCtx() {
     @Test
     suspend fun `test TTL command with ttl positive`() {
         val time = Clock.System.now().plus(1.days)
-        client.set("testKey", "testVal", SetExpire.ExAt(time)).shouldNotBeNull()
-        client
-            .ttl("testKey")
-            .shouldNotBeNull() shouldBeInRange
-            time.epochSeconds.let {
-                it.minus(1).rangeTo(it + 1)
-            }
+        client.set("testKey", "testVal")
+        client.expireAt("testKey", time)
+        val ttl = client.ttl("testKey").shouldNotBeNull()
+        val leftTime = time.epochSeconds - Clock.System.now().epochSeconds
+
+        ttl shouldBeInRange leftTime.let { it - 1000L..it + 1000L }
     }
 
     @Test

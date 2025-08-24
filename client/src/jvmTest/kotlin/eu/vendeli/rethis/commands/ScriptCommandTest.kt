@@ -74,6 +74,7 @@ class ScriptCommandTest : ReThisTestCtx() {
         client
             .functionDump()
             .shouldNotBeNull()
+            .decodeToString()
             .shouldContain("mylib4")
     }
 
@@ -123,7 +124,7 @@ class ScriptCommandTest : ReThisTestCtx() {
         val dump = client.functionDump().shouldNotBeNull()
         client.functionFlush(FlushType.SYNC)
         delay(100)
-        client.functionRestore(dump.toByteArray()) shouldBe true
+        client.functionRestore(dump) shouldBe true
     }
 
     @Test
@@ -136,6 +137,7 @@ class ScriptCommandTest : ReThisTestCtx() {
     @Test
     suspend fun `test SCRIPT DEBUG command`() {
         client.scriptDebug(ScriptDebugMode.SYNC) shouldBe true
+        client.scriptDebug(ScriptDebugMode.NO) shouldBe true
     }
 
     @Test

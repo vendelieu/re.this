@@ -4,7 +4,7 @@ import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.codecs.scripting.FunctionDumpCommandCodec
 import eu.vendeli.rethis.topology.handle
 
-public suspend fun ReThis.functionDump(): String {
+public suspend fun ReThis.functionDump(): ByteArray? {
     val request = if(cfg.withSlots) {
         FunctionDumpCommandCodec.encodeWithSlot(charset = cfg.charset, )
     } else {

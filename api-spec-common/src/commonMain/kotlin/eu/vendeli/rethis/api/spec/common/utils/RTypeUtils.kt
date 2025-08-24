@@ -62,8 +62,8 @@ fun Buffer.readResponseWrapped(
     }
 }
 
-private val TRUE_BYTE = 't'.code.toByte()
-private val FALSE_BYTE = 'f'.code.toByte()
+private const val TRUE_BYTE = 't'.code.toByte()
+private const val FALSE_BYTE = 'f'.code.toByte()
 
 @OptIn(InternalIoApi::class)
 private fun Buffer.readSimpleResponseWrapped(
@@ -119,8 +119,8 @@ private fun Buffer.readSimpleResponseWrapped(
 private fun Buffer.readPartLine(charset: Charset) = readLineCRLF().readText(charset)
 
 
-private val NEWLINE_BYTE = '\n'.code.toByte()
-private val CARRIAGE_RETURN_BYTE = '\r'.code.toByte()
+private const val NEWLINE_BYTE = '\n'.code.toByte()
+private const val CARRIAGE_RETURN_BYTE = '\r'.code.toByte()
 
 private inline fun Buffer.readLineCRLF(): Buffer {
     val buffer = Buffer()
