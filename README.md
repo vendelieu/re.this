@@ -18,16 +18,6 @@ applications.
 
 Designed for modern Kotlin developers seeking a **fast**, **lightweight**, and **idiomatic** Redis integration.
 
-## Installation
-
-Add to your `build.gradle.kts`:
-
-```kotlin
-dependencies {
-    implementation("eu.vendeli:rethis:0.2.9")
-}
-```
-
 ## Key Features
 
 * **Complete Command Coverage**
@@ -40,6 +30,16 @@ dependencies {
   JVM, Android, iOS, Linux, Windows, macOS, tvOS, watchOS, Node.js, WASM
 * **High Performance**
   Optimized for throughput and minimal latency via raw socket I/O
+
+## Installation
+
+Add to your `build.gradle.kts`:
+
+```kotlin
+dependencies {
+    implementation("eu.vendeli:rethis:0.2.9")
+}
+```
 
 ## Quick Start
 
