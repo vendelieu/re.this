@@ -18,6 +18,16 @@ applications.
 
 Designed for modern Kotlin developers seeking a **fast**, **lightweight**, and **idiomatic** Redis integration.
 
+## Installation
+
+Add to your `build.gradle.kts`:
+
+```kotlin
+dependencies {
+    implementation("eu.vendeli:rethis:0.2.9")
+}
+```
+
 ## Key Features
 
 * **Complete Command Coverage**
@@ -60,16 +70,6 @@ suspend fun main() {
 
     // 5. Pub/Sub example
     client.subscribe("news") { _, msg -> println("Received: $msg") }
-}
-```
-
-## Installation
-
-Add to your `build.gradle.kts`:
-
-```kotlin
-dependencies {
-    implementation("eu.vendeli:rethis:0.2.9")
 }
 ```
 
