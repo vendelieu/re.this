@@ -13,7 +13,7 @@ applications.
 
 * ✅ **Raw sockets** & connection pooling for rock‑solid throughput
 * ✅ Full support for RESPv2/RESPv3, RedisJSON, Streams, Pub/Sub, and more
-* ✅ Tiny footprint: JVM, Android, iOS, WASM, Node.js, and other native targets
+* ✅ Tiny footprint over all targets: JVM, Android, iOS, WASM, Node.js, and other native targets
 * ✅ Сompatible with Valkey/KeyDB — since it shares the same API as Redis.
 
 Designed for modern Kotlin developers seeking a **fast**, **lightweight**, and **idiomatic** Redis integration.
