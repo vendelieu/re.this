@@ -63,8 +63,8 @@ suspend fun main() {
   
     // 4. Transaction
     val txResults = client.transaction {
-            set("bar", "baz")
-            get("bar")
+        set("bar", "baz")
+        get("bar")
     }
     println(txResults) // → [OK, "baz"]
 
