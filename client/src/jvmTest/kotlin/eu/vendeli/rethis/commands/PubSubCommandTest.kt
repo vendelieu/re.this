@@ -116,7 +116,7 @@ class PubSubCommandTest : ReThisTestCtx() {
 
     @Test
     suspend fun `test subscription evenHandler`() {
-        var onSub = 0
+        var onMessage = 0
         var onUnsub = 0
         var caughtEx: Exception? = null
 
@@ -124,7 +124,6 @@ class PubSubCommandTest : ReThisTestCtx() {
             object : SubscriptionEventHandler {
                 override suspend fun onSubscribe(id: String, subscribedChannels: Long) {
                     println("-- id $id count: $subscribedChannels")
-                    onSub++
                 }
 
                 override suspend fun onUnsubscribe(id: String, subscribedChannels: Long) {
@@ -142,7 +141,8 @@ class PubSubCommandTest : ReThisTestCtx() {
         }
         client.subscriptions.subscriptionsHandlers["testChannel"].shouldNotBeNull()
 
-        client.pSubscribe("testCh*") { _, m ->
+        client.pSubscribe("testCh*") { _, _ ->
+            onMessage++
             processingException { "test" }
         }
         client.subscriptions.subscriptionsHandlers["testCh*"].shouldNotBeNull()
@@ -153,8 +153,8 @@ class PubSubCommandTest : ReThisTestCtx() {
 
         delay(100)
 
-        onSub shouldBeGreaterThan 0
+        onMessage shouldBeGreaterThan 0
         onUnsub shouldBe 0
-        caughtEx.shouldNotBeNull().shouldBeTypeOf<DataProcessingException>() shouldHaveMessage ("test")
+        caughtEx.shouldNotBeNull().shouldBeTypeOf<DataProcessingException>() shouldHaveMessage "test"
     }
 }

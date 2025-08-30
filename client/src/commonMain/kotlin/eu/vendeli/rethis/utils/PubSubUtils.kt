@@ -8,11 +8,16 @@ import eu.vendeli.rethis.types.common.SubscriptionWorker
 import eu.vendeli.rethis.types.coroutine.CoLocalConn
 import io.ktor.util.logging.*
 import io.ktor.utils.io.*
+import kotlinx.coroutines.CoroutineName
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import kotlinx.io.Buffer
+import kotlinx.io.InternalIoApi
 
+@OptIn(InternalIoApi::class, InternalAPI::class)
 internal suspend fun ReThis.registerSubscription(
     target: String,
     subscription: Subscription,
@@ -25,14 +30,17 @@ internal suspend fun ReThis.registerSubscription(
     if (subscriptions.isHandlerRegistered(target, provider)) return
 
     val connection = provider.borrowConnection()
-    val handlerJob = scope.launch(CoLocalConn(connection, false)) {
+    val ctx = currentCoroutineContext() + CoroutineName("pubsub-handler-$target") + Job(rootJob)
+    val handlerJob = scope.launch(CoLocalConn(connection, false) + ctx) {
         val conn = currentCoroutineContext()[CoLocalConn]!!.connection
         try {
             conn.doRequest(request.buffer)
 
             while (isActive) {
                 conn.input.awaitContent()
-                val event = SubEventDecoder.decode(conn.input.readBuffer(), cfg.charset)
+                val payload = Buffer()
+                conn.input.readBuffer.buffer.copyTo(payload)
+                val event = SubEventDecoder.decode(payload, cfg.charset)
                 logger.debug { "Handling event in $target channel subscription" }
 
                 val inputType = event.first()
@@ -60,7 +68,7 @@ internal suspend fun ReThis.registerSubscription(
             subscriptions.eventHandler?.onException(target, e)
         } finally {
             subscriptions.unregisterHandler(target, subscription)
-            if (subscriptions.subscriptionsHandlers[target]?.isEmpty() == true) provider.releaseConnection(connection)
+            if (subscriptions.subscriptionsHandlers[target]?.isEmpty() == true) provider.releaseConnection(conn)
             subscriptions.unsubscribe(target)
         }
     }
