@@ -15,7 +15,7 @@ internal fun printEnrichedTree(root: EnrichedNode, indent: Int = 0) {
 
     // Extract name safely
     val nodeName = root.attr.filterIsInstance<EnrichedTreeAttr.Name>().firstOrNull()?.name
-        ?: root.attr.filterIsInstance<EnrichedTreeAttr.Symbol>().firstOrNull()?.symbol ?: "Unnamed"
+        ?: root.attr.filterIsInstance<EnrichedTreeAttr.Symbol>().firstOrNull()?.symbol?.effectiveName() ?: "Unnamed"
 
     // Build attribute flags
     val flags = buildList {

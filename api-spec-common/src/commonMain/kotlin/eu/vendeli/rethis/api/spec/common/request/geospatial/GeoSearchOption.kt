@@ -5,7 +5,6 @@ import eu.vendeli.rethis.api.spec.common.response.geospatial.GeoUnit
 
 sealed class GeoSearchOption
 
-
 sealed class CenterPoint : GeoSearchOption()
 
 @RedisOption.Token("FROMMEMBER")

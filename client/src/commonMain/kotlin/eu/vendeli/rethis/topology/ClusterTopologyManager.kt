@@ -53,7 +53,7 @@ class ClusterTopologyManager(
 
         // 2) Build new providers array
         val oldSnap = snapshotRef.load()
-        val oldProviders = oldSnap?.providers ?: emptyArray()
+        val oldProviders = oldSnap?.providers.orEmpty()
         val oldNodeToIdx = oldProviders.mapIndexed { i, p -> p.node to i }.toMap()
         val allNodes = entries.flatMap { listOf(it.master) + it.replicas }.distinct()
         val newProviders = allNodes.mapIndexed { _, node ->

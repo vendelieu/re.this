@@ -68,7 +68,7 @@ class SentinelTopologyManager(
 
         // 2) reconcile providers
         val oldSnap = snapshot.load()
-        val oldProviders = oldSnap?.providers ?: emptyArray()
+        val oldProviders = oldSnap?.providers.orEmpty()
         val idxMap = oldProviders.mapIndexed { i, p -> p.node to i }.toMap()
 
         val allAddrs = listOf(masterNode) + replicaNodes

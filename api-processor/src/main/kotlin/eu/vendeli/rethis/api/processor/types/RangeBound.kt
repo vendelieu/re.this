@@ -11,16 +11,23 @@ internal data class RangeBound(val path: List<Int>) : Comparable<RangeBound> {
 }
 
 internal fun EnrichedNode.rangeBounds(): Pair<RangeBound, RangeBound> {
-    val myPath = rSpec?.path ?: emptyList()
+    val myPath = rSpec?.path.orEmpty()
+
+    // If this node has its own spec path, prefer it as authoritative.
+    // This prevents children (e.g., enum token variants bound elsewhere) from skewing the parent's bounds.
+    if (myPath.isNotEmpty()) {
+        val b = RangeBound(myPath)
+        return b to b
+    }
+
     if (children.isEmpty()) {
         val b = RangeBound(myPath)
         return b to b
     }
+
+    // No own spec path — derive bounds from children.
     val childBounds = children.map { it.rangeBounds() }
     val mins = childBounds.minByOrNull { it.first }!!.first
     val maxs = childBounds.maxByOrNull { it.second }!!.second
-    if (mins.path.isEmpty() && maxs.path.isEmpty() && myPath.isNotEmpty()) {
-        return RangeBound(myPath).let { it to it }
-    }
     return mins to maxs
 }

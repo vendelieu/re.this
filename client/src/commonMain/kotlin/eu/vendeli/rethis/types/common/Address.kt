@@ -38,5 +38,5 @@ internal class UrlAddress(
         ?.toIntOrNull() ?: 0
     internal val parameters = urlMatch?.groups?.get(8)?.value?.split('&')?.associate { entry ->
         entry.split('&').let { it.first() to it.last() }
-    } ?: emptyMap()
+    }.orEmpty()
 }

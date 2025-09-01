@@ -96,7 +96,7 @@ internal fun WriteOp.emitOp(encode: Boolean, complex: Boolean = false) {
                     when {
                         type.isNotEmpty() -> handleWrapping(type)
                         else -> {
-                            if (isComplex && ctx.blockStack.lastOrNull() == null) {
+                            if (isComplex && ctx.blockStack.lastOrNull() == null && node.nameOrNull != null) {
                                 ctx.pointer = node.name
                             }
                             inner.forEach { it.emitOp(encode, isComplex) }

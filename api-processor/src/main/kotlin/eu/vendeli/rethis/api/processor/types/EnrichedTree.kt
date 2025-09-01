@@ -14,7 +14,7 @@ internal class EnrichedNode(
     val nameOrNull get() = attr.filterIsInstance<EnrichedTreeAttr.Name>().singleOrNull()?.name
     val tokens get() = attr.filterIsInstance<EnrichedTreeAttr.Token>()
     val ks by lazy { attr.filterIsInstance<EnrichedTreeAttr.Symbol>().single() }
-    val rSpec by lazy { attr.filterIsInstance<EnrichedTreeAttr.RelatedRSpec>().singleOrNull()?.node }
+    val rSpec get() = attr.filterIsInstance<EnrichedTreeAttr.RelatedRSpec>().firstOrNull()?.node
     val type by lazy {
         attr.filterIsInstance<EnrichedTreeAttr.Type>().singleOrNull()?.type
             ?: attr.filterIsInstance<EnrichedTreeAttr.Symbol>().single().symbol.safeCast<KSClassDeclaration>()

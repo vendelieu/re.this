@@ -15,7 +15,7 @@ internal data class RedisCommandApiSpec(
     val complexity: String? = null,
     val arity: Int? = null,
 ) {
-    val specTree: List<RSpecNode> by lazy { RSpecTreeBuilder(arguments.orEmpty()).build() }
+    val specTree: List<RSpecNode> by lazy { RSpecTreeBuilder.build(arguments.orEmpty()) }
 
     val allNodes by lazy { collectAllNodes() }
     val allArguments: List<CommandArgument> by lazy { collectAllArguments() }
@@ -30,7 +30,7 @@ internal data class RedisCommandApiSpec(
                 stack = current.arguments + stack
             }
         }.toList()
-    } ?: emptyList()
+    }.orEmpty()
 
     private fun collectAllNodes(): List<RSpecNode> = specTree.flatMap {
         sequence {

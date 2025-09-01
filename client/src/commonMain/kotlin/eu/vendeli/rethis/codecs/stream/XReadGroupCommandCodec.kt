@@ -88,7 +88,7 @@ public object XReadGroupCommandCodec {
         streams.key.forEach { it0 ->
             slot = validateSlot(slot, CRC16.lookup(it0.toByteArray(charset)))
         }
-        if(slot == null) throw KeyAbsentException("Expected key is not provided")
+        if (slot == null) throw KeyAbsentException("Expected key is not provided")
         val request = encode(charset, group = group, consumer = consumer, streams = streams, option = option)
         return request.withSlot(slot % 16384)
     }

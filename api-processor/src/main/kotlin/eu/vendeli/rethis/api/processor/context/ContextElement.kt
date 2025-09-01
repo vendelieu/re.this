@@ -47,7 +47,6 @@ internal class Logger(val logger: KSPLogger) : ContextElement {
 
 internal class ResolvedSpecs(val spec: Map<RCommandData, KSClassDeclaration>) : ContextElement {
     override val key = ResolvedSpecs
-    val groupedSpecs by lazy { spec.entries.groupBy { it.key.name } }
 
     companion object : ContextKey<ResolvedSpecs>
 }

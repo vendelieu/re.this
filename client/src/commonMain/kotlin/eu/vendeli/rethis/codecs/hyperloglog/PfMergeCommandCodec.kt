@@ -51,7 +51,7 @@ public object PfMergeCommandCodec {
         sourcekey.forEach { it0 ->
             slot = validateSlot(slot, CRC16.lookup(it0.toByteArray(charset)))
         }
-        if(slot == null) throw KeyAbsentException("Expected key is not provided")
+        if (slot == null) throw KeyAbsentException("Expected key is not provided")
         val request = encode(charset, destkey = destkey, sourcekey = sourcekey)
         return request.withSlot(slot % 16384)
     }

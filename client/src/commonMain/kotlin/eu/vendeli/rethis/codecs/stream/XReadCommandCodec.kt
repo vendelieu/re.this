@@ -71,7 +71,7 @@ public object XReadCommandCodec {
         key.forEach { it0 ->
             slot = validateSlot(slot, CRC16.lookup(it0.toByteArray(charset)))
         }
-        if(slot == null) throw KeyAbsentException("Expected key is not provided")
+        if (slot == null) throw KeyAbsentException("Expected key is not provided")
         val request = encode(charset, key = key, id = id, count = count, milliseconds = milliseconds)
         return request.withSlot(slot % 16384)
     }

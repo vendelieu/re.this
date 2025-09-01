@@ -27,7 +27,7 @@ public object LcsDetailedCommandCodec {
         key1: String,
         key2: String,
         mode: LcsMode.IDX,
-        len: MinMatchLen?,
+        minMatchLen: MinMatchLen?,
         withMatchLen: Boolean?,
     ): CommandRequest {
         var buffer = Buffer()
@@ -39,7 +39,7 @@ public object LcsDetailedCommandCodec {
         buffer.writeStringArg(key2, charset, )
         size += 1
         buffer.writeStringArg(mode.toString(), charset)
-        len?.let { it0 ->
+        minMatchLen?.let { it0 ->
             size += 1
             buffer.writeStringArg("MINMATCHLEN", charset)
             size += 1
@@ -64,13 +64,13 @@ public object LcsDetailedCommandCodec {
         key1: String,
         key2: String,
         mode: LcsMode.IDX,
-        len: MinMatchLen?,
+        minMatchLen: MinMatchLen?,
         withMatchLen: Boolean?,
     ): CommandRequest {
         var slot: Int? = null
         slot = validateSlot(slot, CRC16.lookup(key1.toByteArray(charset)))
         slot = validateSlot(slot, CRC16.lookup(key2.toByteArray(charset)))
-        val request = encode(charset, key1 = key1, key2 = key2, mode = mode, len = len, withMatchLen = withMatchLen)
+        val request = encode(charset, key1 = key1, key2 = key2, mode = mode, minMatchLen = minMatchLen, withMatchLen = withMatchLen)
         return request.withSlot(slot % 16384)
     }
 

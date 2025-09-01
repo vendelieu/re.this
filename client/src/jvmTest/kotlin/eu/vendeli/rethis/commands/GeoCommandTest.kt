@@ -4,7 +4,10 @@ import eu.vendeli.rethis.ReThisTestCtx
 import eu.vendeli.rethis.api.spec.common.request.geospatial.ByBox
 import eu.vendeli.rethis.api.spec.common.request.geospatial.ByRadius
 import eu.vendeli.rethis.api.spec.common.request.geospatial.FromLongitudeLatitude
-import eu.vendeli.rethis.api.spec.common.response.geospatial.*
+import eu.vendeli.rethis.api.spec.common.response.geospatial.GeoMember
+import eu.vendeli.rethis.api.spec.common.response.geospatial.GeoPosition
+import eu.vendeli.rethis.api.spec.common.response.geospatial.GeoSort
+import eu.vendeli.rethis.api.spec.common.response.geospatial.GeoUnit
 import eu.vendeli.rethis.api.spec.common.types.BulkString
 import eu.vendeli.rethis.api.spec.common.types.Int64
 import eu.vendeli.rethis.api.spec.common.types.RArray

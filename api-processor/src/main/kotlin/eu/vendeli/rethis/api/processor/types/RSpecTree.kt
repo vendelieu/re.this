@@ -7,7 +7,7 @@ internal sealed class RSpecNode {
     abstract val arg: CommandArgument
     open val path: List<Int> = emptyList()
     open val parentNode: RSpecNode? = null
-    open val children: List<RSpecNode> = emptyList()
+    open val children: MutableList<RSpecNode> = mutableListOf()
 
     val normalizedName get() = name.normalizeParam()
 
@@ -31,7 +31,6 @@ internal sealed class RSpecNode {
         override val arg: CommandArgument,
         override val path: List<Int>,
         override val parentNode: RSpecNode? = null,
-        override val children: List<RSpecNode>,
     ) : RSpecNode()
 
     data class Block(
@@ -39,12 +38,16 @@ internal sealed class RSpecNode {
         override val arg: CommandArgument,
         override val path: List<Int>,
         override val parentNode: RSpecNode? = null,
-        override val children: List<RSpecNode>,
     ) : RSpecNode()
+
+    fun addChildren(children: List<RSpecNode>): RSpecNode {
+        this.children.addAll(children)
+        return this
+    }
 }
 
-internal class RSpecTreeBuilder(private val raw: List<CommandArgument>) {
-    fun build() = raw.mapIndexed { idx, arg -> toNode(arg, listOf(idx)) }
+internal object RSpecTreeBuilder {
+    fun build(raw: List<CommandArgument>) = raw.mapIndexed { idx, arg -> toNode(arg, listOf(idx)) }
 
     private fun toNode(
         arg: CommandArgument,
@@ -56,16 +59,26 @@ internal class RSpecTreeBuilder(private val raw: List<CommandArgument>) {
             arg = arg,
             path = path,
             parentNode = parent,
-            children = arg.arguments.mapIndexed { childIdx, childArg -> toNode(childArg, path + childIdx) },
-        )
+        ).apply {
+            addChildren(
+                arg.arguments.mapIndexed { childIdx, childArg ->
+                    toNode(childArg, path + childIdx, this)
+                },
+            )
+        }
 
         "block" -> RSpecNode.Block(
             name = arg.name,
             arg = arg,
             path = path,
             parentNode = parent,
-            children = arg.arguments.mapIndexed { childIdx, childArg -> toNode(childArg, path + childIdx) },
-        )
+        ).apply {
+            addChildren(
+                arg.arguments.mapIndexed { childIdx, childArg ->
+                    toNode(childArg, path + childIdx, this)
+                },
+            )
+        }
 
         "pure-token" -> RSpecNode.PureToken(
             name = arg.name,

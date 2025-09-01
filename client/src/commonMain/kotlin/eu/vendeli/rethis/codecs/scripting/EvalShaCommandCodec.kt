@@ -60,7 +60,7 @@ public object EvalShaCommandCodec {
         key.forEach { it0 ->
             slot = validateSlot(slot, CRC16.lookup(it0.toByteArray(charset)))
         }
-        if(slot == null) throw KeyAbsentException("Expected key is not provided")
+        if (slot == null) throw KeyAbsentException("Expected key is not provided")
         val request = encode(charset, sha1 = sha1, key = key, arg = arg)
         return request.withSlot(slot % 16384)
     }

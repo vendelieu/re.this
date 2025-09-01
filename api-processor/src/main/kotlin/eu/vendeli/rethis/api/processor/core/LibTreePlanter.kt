@@ -7,10 +7,7 @@ import com.google.devtools.ksp.symbol.KSType
 import com.google.devtools.ksp.symbol.KSValueParameter
 import eu.vendeli.rethis.api.processor.context.ETree
 import eu.vendeli.rethis.api.processor.core.RedisCommandProcessor.Companion.context
-import eu.vendeli.rethis.api.processor.types.EnrichedNode
-import eu.vendeli.rethis.api.processor.types.EnrichedTreeAttr
-import eu.vendeli.rethis.api.processor.types.OptionalityType
-import eu.vendeli.rethis.api.processor.types.SymbolType
+import eu.vendeli.rethis.api.processor.types.*
 import eu.vendeli.rethis.api.processor.utils.*
 import eu.vendeli.rethis.api.spec.common.annotations.RIgnoreSpecAbsence
 import eu.vendeli.rethis.api.spec.common.annotations.RedisMeta
@@ -67,7 +64,16 @@ internal object LibTreePlanter {
 
         if (!pType.declaration.isStdType()) handleDeclaration(pType, paramNode)
 
-        val rNode = context.currentRSpec.allNodes.find { it.normalizedName == p.effectiveName() } ?: run {
+        val parentBounds = parent.rangeBounds().second.path
+        val nodesByName = context.currentRSpec.allNodes.filter { it.normalizedName == p.effectiveName() }
+
+        val rNode = when {
+            nodesByName.size == 1 -> nodesByName.first()
+            nodesByName.size > 1 -> nodesByName.singleOrNull { it.path.isWithinBounds(parentBounds) }
+            else -> null
+        }
+
+        if (rNode == null) {
             if (!p.hasAnnotation<RIgnoreSpecAbsence>()) {
                 context.logger.warn("Param `${p.effectiveName()}` not found in RSpec [${context.currentCommand.command.name}, ${context.currentCommand.klass.simpleName.asString()}]")
             }

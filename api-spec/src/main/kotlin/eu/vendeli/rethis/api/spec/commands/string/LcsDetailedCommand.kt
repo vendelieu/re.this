@@ -24,7 +24,7 @@ fun interface LcsDetailedCommand : RedisCommandSpec<LcsResult> {
         key1: String,
         key2: String,
         @RIgnoreSpecAbsence mode: LcsMode.IDX,
-        len: MinMatchLen?,
+        minMatchLen: MinMatchLen?,
         @RedisOption.Token("WITHMATCHLEN") @RedisOption.Name("withmatchlen") withMatchLen: Boolean?
     ): CommandRequest
 }

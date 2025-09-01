@@ -62,7 +62,3 @@ internal fun RedisCommandProcessor.loadGlobalCtx() {
     context += CommandFileSpec()
     context += ValidationResult()
 }
-
-internal fun getByCommandsByName(name: String): List<Map.Entry<RCommandData, KSClassDeclaration>>? {
-    return context.resolvedSpecs.groupedSpecs[name] ?: emptyList()
-}

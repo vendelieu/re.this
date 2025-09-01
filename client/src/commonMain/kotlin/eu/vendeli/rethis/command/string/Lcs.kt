@@ -26,13 +26,13 @@ public suspend fun ReThis.lcsDetailed(
     key1: String,
     key2: String,
     mode: LcsMode.IDX,
-    len: MinMatchLen? = null,
+    minMatchLen: MinMatchLen? = null,
     withMatchLen: Boolean? = null,
 ): LcsResult {
     val request = if(cfg.withSlots) {
-        LcsDetailedCommandCodec.encodeWithSlot(charset = cfg.charset, key1 = key1, key2 = key2, mode = mode, len = len, withMatchLen = withMatchLen)
+        LcsDetailedCommandCodec.encodeWithSlot(charset = cfg.charset, key1 = key1, key2 = key2, mode = mode, minMatchLen = minMatchLen, withMatchLen = withMatchLen)
     } else {
-        LcsDetailedCommandCodec.encode(charset = cfg.charset, key1 = key1, key2 = key2, mode = mode, len = len, withMatchLen = withMatchLen)
+        LcsDetailedCommandCodec.encode(charset = cfg.charset, key1 = key1, key2 = key2, mode = mode, minMatchLen = minMatchLen, withMatchLen = withMatchLen)
     }
     return LcsDetailedCommandCodec.decode(topology.handle(request), cfg.charset)
 }

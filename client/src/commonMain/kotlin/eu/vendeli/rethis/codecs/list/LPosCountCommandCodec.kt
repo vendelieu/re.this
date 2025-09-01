@@ -38,10 +38,6 @@ public object LPosCountCommandCodec {
         buffer.writeStringArg(key, charset, )
         size += 1
         buffer.writeStringArg(element, charset, )
-        size += 1
-        buffer.writeStringArg("COUNT", charset)
-        size += 1
-        buffer.writeLongArg(numMatches, charset, )
         option.forEach { it0 ->
             when (it0) {
                 is LPosOption.MaxLen ->  {
@@ -58,6 +54,10 @@ public object LPosCountCommandCodec {
                 }
             }
         }
+        size += 1
+        buffer.writeStringArg("COUNT", charset)
+        size += 1
+        buffer.writeLongArg(numMatches, charset, )
 
         buffer = Buffer().apply {
             writeString("*$size")

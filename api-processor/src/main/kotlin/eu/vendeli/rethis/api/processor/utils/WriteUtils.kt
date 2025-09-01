@@ -2,7 +2,6 @@ package eu.vendeli.rethis.api.processor.utils
 
 import com.google.devtools.ksp.KspExperimental
 import eu.vendeli.rethis.api.processor.context.CodeGenContext
-import eu.vendeli.rethis.api.processor.context.CodeGenContext.BlockType
 import eu.vendeli.rethis.api.processor.core.RedisCommandProcessor.Companion.context
 import eu.vendeli.rethis.api.processor.types.*
 
@@ -23,7 +22,7 @@ private fun recurse(node: EnrichedNode): List<WriteOp> {
     // --- 2. Splice abstract grouping nodes ---
     if (node.rSpec == null) {
         val childOps = node.children
-            .sortedBy { it.rangeBounds().first }
+            .sortedWith(compareBy({ it.rangeBounds().first }, { it.rangeBounds().second }))
             .flatMap { recurse(it) }
         if (node.ks.type == SymbolType.Function || node.attr.none { it is EnrichedTreeAttr.Name }) return childOps
         return listOf(handleWrappedCall(node, childOps))
@@ -53,14 +52,13 @@ private fun recurse(node: EnrichedNode): List<WriteOp> {
             },
             encodeBlock = { inferWriting(name, node, it) },
         )
-
         return wrapIfNeeded(node, directCall)
     }
 
     // --- 4. Complex types with children ---
     if (node.children.isNotEmpty()) {
         val childOps = node.children
-            .sortedBy { it.rangeBounds().first }
+            .sortedWith(compareBy({ it.rangeBounds().first }, { it.rangeBounds().second }))
             .flatMap { recurse(it) }
         return listOf(handleWrappedCall(node, childOps))
     }
@@ -126,7 +124,7 @@ private fun CodeGenContext.inferWriting(
 private fun handleSealedNode(node: EnrichedNode): List<WriteOp> {
     // Flatten any intermediate wrappers
     val directSubs = node.children
-        .sortedBy { it.rangeBounds().first }
+        .sortedWith(compareBy({ it.rangeBounds().first }, { it.rangeBounds().second }))
         .flatMap { child ->
             if (child.rSpec == null && child.type.declaration.isSealed()) child.children else listOf(
                 child,

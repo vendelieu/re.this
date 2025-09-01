@@ -7,12 +7,10 @@ import com.google.devtools.ksp.symbol.KSType
 import eu.vendeli.rethis.api.processor.core.RedisCommandProcessor.Companion.context
 import eu.vendeli.rethis.api.processor.types.EnrichedNode
 import eu.vendeli.rethis.api.processor.types.EnrichedTreeAttr
+import eu.vendeli.rethis.api.processor.types.WriteOp
 import eu.vendeli.rethis.api.spec.common.annotations.RedisMeta
 import eu.vendeli.rethis.api.spec.common.annotations.RedisOption
 import eu.vendeli.rethis.api.spec.common.decoders.ResponseDecoder
-import kotlin.contracts.ExperimentalContracts
-import kotlin.contracts.InvocationKind
-import kotlin.contracts.contract
 
 internal inline fun <reified T : Annotation> KSAnnotated.getAnnotation(): Map<String, String>? =
     annotations.firstOrNull {
@@ -23,14 +21,6 @@ internal inline fun <reified T : Annotation> KSAnnotated.getAnnotation(): Map<St
 
 internal inline fun <reified T : Annotation> KSAnnotated.hasAnnotation(): Boolean =
     annotations.any { it.shortName.asString() == T::class.simpleName }
-
-@OptIn(ExperimentalContracts::class)
-internal inline fun String?.ifNullOrEmpty(defaultValue: () -> String): String {
-    contract {
-        callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
-    }
-    return if (this == null || isEmpty()) defaultValue() else this
-}
 
 internal fun KSAnnotated.hasCustomEncoder(): Boolean {
     val customDecoder = getAnnotation<RedisMeta.CustomCodec>()?.get("encoder")
@@ -63,7 +53,14 @@ internal fun KSType.collectionAwareType(): KSType =
 @OptIn(KspExperimental::class)
 internal fun KSAnnotated.saveTokens(node: EnrichedNode) {
     getAnnotationsByType(RedisOption.Token::class).forEach { t ->
-        val multipleToken = context.currentRSpec.allArguments.find { it.token == t.name }?.multipleToken
+        val spec = context.currentRSpec.allNodes.find { it.arg.token == t.name }
+        val multipleToken = spec?.arg?.multipleToken
+
+        if (spec != null) {
+            node.attr.add(
+                EnrichedTreeAttr.RelatedRSpec(spec)
+            )
+        }
         node.attr.add(
             EnrichedTreeAttr.Token(
                 t.name,
@@ -72,6 +69,31 @@ internal fun KSAnnotated.saveTokens(node: EnrichedNode) {
         )
     }
 }
+
+internal fun List<Int>.isWithinBounds(bounds: List<Int>): Boolean {
+    repeat(size - 1) { idx ->
+        if (get(idx) != bounds[idx]) return false
+    }
+
+    return true
+}
+
+internal fun List<WriteOp>.findWrappedCall(
+    predicate: (WriteOp.WrappedCall) -> Boolean
+): WriteOp? {
+    fun recurse(op: WriteOp): WriteOp? {
+        return when (op) {
+            is WriteOp.WrappedCall -> when {
+                predicate(op) -> op
+                else -> op.inner.singleOrNull { recurse(it) != null }?.let { recurse(it) }
+            }
+            else -> null
+        }
+    }
+
+    return singleOrNull { recurse(it) != null }
+}
+
 
 internal val KSType.name: String
     get() {

@@ -31,7 +31,7 @@ fun KSAnnotated.getCommandData(): RCommandData = annotations.filter {
     RCommandData(
         name = name,
         operation = operation,
-        responseTypes = responseTypes ?: emptyList(),
+        responseTypes = responseTypes.orEmpty(),
         isBlocking = isBlocking ?: false,
     )
 }

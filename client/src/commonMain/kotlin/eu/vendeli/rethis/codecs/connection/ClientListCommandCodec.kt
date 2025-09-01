@@ -31,23 +31,29 @@ public object ClientListCommandCodec {
         COMMAND_HEADER.copyTo(buffer)
         clientType?.let { it0 ->
             when (it0) {
-                is ClientType.Master ->  {
+                is ClientType ->  {
                     size += 1
-                    buffer.writeStringArg("MASTER", charset)
-                }
-                is ClientType.Normal ->  {
-                    size += 1
-                    buffer.writeStringArg("NORMAL", charset)
-                }
-                is ClientType.PubSub ->  {
-                    size += 1
-                    buffer.writeStringArg("PUBSUB", charset)
-                }
-                is ClientType.Replica ->  {
-                    size += 1
-                    buffer.writeStringArg("REPLICA", charset)
-                }
-                is ClientType.Slave ->  {
+                    buffer.writeStringArg("TYPE", charset)
+                    when (it0) {
+                        is ClientType.Slave ->  {
+                        }
+                        is ClientType.Normal ->  {
+                            size += 1
+                            buffer.writeStringArg("NORMAL", charset)
+                        }
+                        is ClientType.Master ->  {
+                            size += 1
+                            buffer.writeStringArg("MASTER", charset)
+                        }
+                        is ClientType.Replica ->  {
+                            size += 1
+                            buffer.writeStringArg("REPLICA", charset)
+                        }
+                        is ClientType.PubSub ->  {
+                            size += 1
+                            buffer.writeStringArg("PUBSUB", charset)
+                        }
+                    }
                 }
             }
         }

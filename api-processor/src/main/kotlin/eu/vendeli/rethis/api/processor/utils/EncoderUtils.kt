@@ -8,11 +8,9 @@ import com.squareup.kotlinpoet.ksp.toTypeName
 import eu.vendeli.rethis.api.processor.context.CodeGenContext
 import eu.vendeli.rethis.api.processor.core.LibTreePlanter
 import eu.vendeli.rethis.api.processor.core.RedisCommandProcessor.Companion.context
-import eu.vendeli.rethis.api.processor.types.WriteOp
 import eu.vendeli.rethis.api.processor.types.WriteOpProps
 import eu.vendeli.rethis.api.processor.types.emitOp
 import eu.vendeli.rethis.api.processor.types.filterWithoutKey
-import eu.vendeli.rethis.api.processor.types.rangeBounds
 
 @OptIn(KspExperimental::class)
 internal fun addEncoderCode() {
@@ -34,8 +32,7 @@ internal fun addEncoderCode() {
     }
 
     LibTreePlanter.prepare()
-    val root = context.enrichedTree
-    val ops = buildWritePlan(root).sortedBy { it.node.rangeBounds().second }
+    val ops = buildWritePlan(context.enrichedTree)
 
     if (!context.currentCommand.hasCustomEncoder) {
         encodeCode.addStatement("va%L buffer = Buffer()", if (context.currentCommand.haveVaryingSize) "r" else "l")
@@ -86,15 +83,9 @@ internal fun addEncoderCode() {
         val slotOps = ops.mapNotNull { it.filterWithoutKey() }
         slotOps.forEach { it.emitOp(encode = false) }
 
-        val collectionCheck: (WriteOp) -> Boolean = {
-            it is WriteOp.WrappedCall && it.props.contains(WriteOpProps.COLLECTION)
-        }
-        slotOps.singleOrNull { op ->
-            collectionCheck(op) || op is WriteOp.WrappedCall
-                && op.inner.singleOrNull { collectionCheck(it) } != null
-        }?.also {
+        slotOps.findWrappedCall { it.props.contains(WriteOpProps.COLLECTION) }?.also {
             addImport("eu.vendeli.rethis.api.spec.common.types.KeyAbsentException")
-            addStatement("if(slot == null) throw KeyAbsentException(\"Expected key is not provided\")")
+            addStatement("if (slot == null) throw KeyAbsentException(\"Expected key is not provided\")")
         }
 
         addStatement("val request = %L", requestStatement)

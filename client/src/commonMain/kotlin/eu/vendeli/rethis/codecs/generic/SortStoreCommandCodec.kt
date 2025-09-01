@@ -108,7 +108,7 @@ public object SortStoreCommandCodec {
             }
         }
         slot = validateSlot(slot, CRC16.lookup(storeDestination.toByteArray(charset)))
-        if(slot == null) throw KeyAbsentException("Expected key is not provided")
+        if (slot == null) throw KeyAbsentException("Expected key is not provided")
         val request = encode(charset, key = key, storeDestination = storeDestination, option = option)
         return request.withSlot(slot % 16384)
     }

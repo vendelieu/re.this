@@ -43,7 +43,7 @@ public object MSetCommandCodec {
         data.forEach { it0 ->
             slot = validateSlot(slot, CRC16.lookup(it0.key.toByteArray(charset)))
         }
-        if(slot == null) throw KeyAbsentException("Expected key is not provided")
+        if (slot == null) throw KeyAbsentException("Expected key is not provided")
         val request = encode(charset, data = data)
         return request.withSlot(slot % 16384)
     }
