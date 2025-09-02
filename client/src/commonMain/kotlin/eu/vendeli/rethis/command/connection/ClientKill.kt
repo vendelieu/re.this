@@ -1,7 +1,7 @@
 package eu.vendeli.rethis.command.connection
 
 import eu.vendeli.rethis.ReThis
-import eu.vendeli.rethis.api.spec.common.request.connection.ClientKillOptions
+import eu.vendeli.rethis.shared.request.connection.ClientKillOptions
 import eu.vendeli.rethis.codecs.connection.ClientKillCommandCodec
 import eu.vendeli.rethis.codecs.connection.ClientKillStringCommandCodec
 import eu.vendeli.rethis.topology.handle

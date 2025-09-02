@@ -1,12 +1,12 @@
 package eu.vendeli.rethis.api.spec.commands.json
 
-import eu.vendeli.rethis.api.spec.common.annotations.RIgnoreSpecAbsence
-import eu.vendeli.rethis.api.spec.common.annotations.RedisCommand
-import eu.vendeli.rethis.api.spec.common.request.json.JsonGetOption
-import eu.vendeli.rethis.api.spec.common.types.CommandRequest
-import eu.vendeli.rethis.api.spec.common.types.RedisCommandSpec
-import eu.vendeli.rethis.api.spec.common.types.RedisOperation
-import eu.vendeli.rethis.api.spec.common.types.RespCode
+import eu.vendeli.rethis.shared.annotations.RIgnoreSpecAbsence
+import eu.vendeli.rethis.shared.annotations.RedisCommand
+import eu.vendeli.rethis.shared.request.json.JsonGetOption
+import eu.vendeli.rethis.shared.types.CommandRequest
+import eu.vendeli.rethis.shared.types.RedisCommandSpec
+import eu.vendeli.rethis.shared.types.RedisOperation
+import eu.vendeli.rethis.shared.types.RespCode
 
 @RedisCommand("JSON.GET", RedisOperation.READ, [RespCode.BULK, RespCode.NULL])
 fun interface JsonGetCommand : RedisCommandSpec<String> {

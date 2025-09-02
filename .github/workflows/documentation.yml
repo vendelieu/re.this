@@ -53,7 +53,7 @@ jobs:
       - name: Generate docs
         env:
           libVersion: ${{ steps.vars.outputs.version }}
-        run: ./gradlew dokkaGenerate
+        run: ./gradlew :docs:dokkaGenerate
 
       - name: Publish documentation
         uses: JamesIves/github-pages-deploy-action@releases/v4

@@ -1,9 +1,9 @@
 package eu.vendeli.rethis.utils
 
 import eu.vendeli.rethis.ReThis
-import eu.vendeli.rethis.api.spec.common.decoders.general.RTypeDecoder
-import eu.vendeli.rethis.api.spec.common.types.CommandRequest
-import eu.vendeli.rethis.api.spec.common.types.RType
+import eu.vendeli.rethis.shared.decoders.general.RTypeDecoder
+import eu.vendeli.rethis.shared.types.CommandRequest
+import eu.vendeli.rethis.shared.types.RType
 import eu.vendeli.rethis.providers.withConnection
 import eu.vendeli.rethis.topology.StandaloneTopologyManager
 import eu.vendeli.rethis.types.common.RConnection

@@ -1,7 +1,7 @@
 package eu.vendeli.rethis.commands.generic
 
 import eu.vendeli.rethis.ReThisTestCtx
-import eu.vendeli.rethis.api.spec.common.types.ReThisException
+import eu.vendeli.rethis.shared.types.ReThisException
 import eu.vendeli.rethis.command.generic.waitAof
 import eu.vendeli.rethis.command.string.set
 import io.kotest.assertions.throwables.shouldThrow

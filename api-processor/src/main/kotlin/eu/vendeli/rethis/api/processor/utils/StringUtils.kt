@@ -1,6 +1,6 @@
 package eu.vendeli.rethis.api.processor.utils
 
-import eu.vendeli.rethis.api.spec.common.types.RespCode
+import eu.vendeli.rethis.shared.types.RespCode
 
 internal fun String.toPascalCase(): String {
     val regex = Regex(

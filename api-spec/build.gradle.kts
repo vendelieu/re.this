@@ -3,15 +3,8 @@ plugins {
     alias(libs.plugins.ksp)
 }
 
-group = "eu.vendeli.utils"
-version = "1.0-SNAPSHOT"
-
-repositories {
-    mavenCentral()
-}
-
 dependencies {
-    compileOnly(project(":api-spec-common"))
+    compileOnly(project(":shared"))
     ksp(project(":api-processor"))
 }
 

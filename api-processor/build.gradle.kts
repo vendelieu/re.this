@@ -8,7 +8,7 @@ group = "eu.vendeli"
 
 
 dependencies {
-    implementation(project(":api-spec-common"))
+    implementation(project(":shared"))
     implementation(project(":client"))
     implementation(libs.ksp)
     implementation(libs.poet)

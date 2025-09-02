@@ -1,8 +1,8 @@
 package eu.vendeli.rethis.command.stream
 
 import eu.vendeli.rethis.ReThis
-import eu.vendeli.rethis.api.spec.common.request.stream.Exactement
-import eu.vendeli.rethis.api.spec.common.request.stream.TrimmingStrategy
+import eu.vendeli.rethis.shared.request.stream.Exactement
+import eu.vendeli.rethis.shared.request.stream.TrimmingStrategy
 import eu.vendeli.rethis.codecs.stream.XTrimCommandCodec
 import eu.vendeli.rethis.topology.handle
 

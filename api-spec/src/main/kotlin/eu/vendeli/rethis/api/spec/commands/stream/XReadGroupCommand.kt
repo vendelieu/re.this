@@ -1,11 +1,11 @@
 package eu.vendeli.rethis.api.spec.commands.stream
 
-import eu.vendeli.rethis.api.spec.common.annotations.RIgnoreSpecAbsence
-import eu.vendeli.rethis.api.spec.common.annotations.RedisCommand
-import eu.vendeli.rethis.api.spec.common.annotations.RedisOption
-import eu.vendeli.rethis.api.spec.common.request.stream.XReadGroupKeyIds
-import eu.vendeli.rethis.api.spec.common.request.stream.XReadGroupOption
-import eu.vendeli.rethis.api.spec.common.types.*
+import eu.vendeli.rethis.shared.annotations.RIgnoreSpecAbsence
+import eu.vendeli.rethis.shared.annotations.RedisCommand
+import eu.vendeli.rethis.shared.annotations.RedisOption
+import eu.vendeli.rethis.shared.request.stream.XReadGroupKeyIds
+import eu.vendeli.rethis.shared.request.stream.XReadGroupOption
+import eu.vendeli.rethis.shared.types.*
 
 @RedisCommand(
     "XREADGROUP",

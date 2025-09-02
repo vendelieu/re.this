@@ -1,8 +1,8 @@
 package eu.vendeli.rethis.commands
 
 import eu.vendeli.rethis.ReThisTestCtx
-import eu.vendeli.rethis.api.spec.common.response.stream.ZMember
-import eu.vendeli.rethis.api.spec.common.response.stream.ZPopResult
+import eu.vendeli.rethis.shared.response.stream.ZMember
+import eu.vendeli.rethis.shared.response.stream.ZPopResult
 import eu.vendeli.rethis.command.sortedset.*
 import io.kotest.matchers.shouldBe
 

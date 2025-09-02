@@ -1,12 +1,12 @@
 package eu.vendeli.rethis.commands
 
 import eu.vendeli.rethis.ReThisTestCtx
-import eu.vendeli.rethis.api.spec.common.request.common.FieldValue
-import eu.vendeli.rethis.api.spec.common.request.stream.MAXLEN
-import eu.vendeli.rethis.api.spec.common.request.stream.XAddOption
-import eu.vendeli.rethis.api.spec.common.request.stream.XId
-import eu.vendeli.rethis.api.spec.common.request.stream.XReadGroupKeyIds
-import eu.vendeli.rethis.api.spec.common.types.RType
+import eu.vendeli.rethis.shared.request.common.FieldValue
+import eu.vendeli.rethis.shared.request.stream.MAXLEN
+import eu.vendeli.rethis.shared.request.stream.XAddOption
+import eu.vendeli.rethis.shared.request.stream.XId
+import eu.vendeli.rethis.shared.request.stream.XReadGroupKeyIds
+import eu.vendeli.rethis.shared.types.RType
 import eu.vendeli.rethis.command.stream.*
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe

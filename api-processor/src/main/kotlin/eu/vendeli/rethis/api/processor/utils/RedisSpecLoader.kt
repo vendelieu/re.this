@@ -4,7 +4,7 @@ import eu.vendeli.rethis.api.processor.context.RSpecRaw
 import eu.vendeli.rethis.api.processor.context.SpecResponses
 import eu.vendeli.rethis.api.processor.core.RedisCommandProcessor.Companion.context
 import eu.vendeli.rethis.api.processor.types.RedisCommandApiSpec
-import eu.vendeli.rethis.api.spec.common.types.RespCode
+import eu.vendeli.rethis.shared.types.RespCode
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromStream

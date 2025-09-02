@@ -1,12 +1,12 @@
 package eu.vendeli.rethis.commands
 
 import eu.vendeli.rethis.ReThisTestCtx
-import eu.vendeli.rethis.api.spec.common.types.Int64
-import eu.vendeli.rethis.api.spec.common.types.PlainString
-import eu.vendeli.rethis.api.spec.common.types.RArray
-import eu.vendeli.rethis.api.spec.common.types.ReThisException
-import eu.vendeli.rethis.api.spec.common.utils.isOk
-import eu.vendeli.rethis.api.spec.common.utils.readResponseWrapped
+import eu.vendeli.rethis.shared.types.Int64
+import eu.vendeli.rethis.shared.types.PlainString
+import eu.vendeli.rethis.shared.types.RArray
+import eu.vendeli.rethis.shared.types.ReThisException
+import eu.vendeli.rethis.shared.utils.isOk
+import eu.vendeli.rethis.shared.utils.readResponseWrapped
 import eu.vendeli.rethis.codecs.string.SetCommandCodec
 import eu.vendeli.rethis.codecs.transaction.ExecCommandCodec
 import eu.vendeli.rethis.codecs.transaction.MultiCommandCodec

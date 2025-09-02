@@ -1,7 +1,7 @@
 package eu.vendeli.rethis.command.generic
 
 import eu.vendeli.rethis.ReThis
-import eu.vendeli.rethis.api.spec.common.request.generic.RestoreOption
+import eu.vendeli.rethis.shared.request.generic.RestoreOption
 import eu.vendeli.rethis.codecs.generic.RestoreCommandCodec
 import eu.vendeli.rethis.topology.handle
 

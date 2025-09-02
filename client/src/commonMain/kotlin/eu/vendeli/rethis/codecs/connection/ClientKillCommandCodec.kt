@@ -1,10 +1,10 @@
 package eu.vendeli.rethis.codecs.connection
 
-import eu.vendeli.rethis.api.spec.common.decoders.general.IntegerDecoder
-import eu.vendeli.rethis.api.spec.common.request.connection.ClientKillOptions
-import eu.vendeli.rethis.api.spec.common.request.connection.ClientType
-import eu.vendeli.rethis.api.spec.common.types.*
-import eu.vendeli.rethis.api.spec.common.utils.tryInferCause
+import eu.vendeli.rethis.shared.decoders.general.IntegerDecoder
+import eu.vendeli.rethis.shared.request.connection.ClientKillOptions
+import eu.vendeli.rethis.shared.request.connection.ClientType
+import eu.vendeli.rethis.shared.types.*
+import eu.vendeli.rethis.shared.utils.tryInferCause
 import eu.vendeli.rethis.utils.parseCode
 import eu.vendeli.rethis.utils.writeInstantArg
 import eu.vendeli.rethis.utils.writeLongArg

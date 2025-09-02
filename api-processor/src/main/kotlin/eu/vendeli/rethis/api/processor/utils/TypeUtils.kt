@@ -6,12 +6,12 @@ import com.squareup.kotlinpoet.LONG
 import com.squareup.kotlinpoet.STRING
 import com.squareup.kotlinpoet.asClassName
 import eu.vendeli.rethis.api.processor.types.CommandArgument
-import eu.vendeli.rethis.api.spec.common.annotations.RedisOption
-import eu.vendeli.rethis.api.spec.common.decoders.aggregate.*
-import eu.vendeli.rethis.api.spec.common.decoders.general.*
-import eu.vendeli.rethis.api.spec.common.types.CommandRequest
-import eu.vendeli.rethis.api.spec.common.types.RType
-import eu.vendeli.rethis.api.spec.common.types.RespCode
+import eu.vendeli.rethis.shared.annotations.RedisOption
+import eu.vendeli.rethis.shared.decoders.aggregate.*
+import eu.vendeli.rethis.shared.decoders.general.*
+import eu.vendeli.rethis.shared.types.CommandRequest
+import eu.vendeli.rethis.shared.types.RType
+import eu.vendeli.rethis.shared.types.RespCode
 
 internal val charsetClassName = ClassName("io.ktor.utils.io.charsets", "Charset")
 internal val commandRequestClassName = CommandRequest::class.asClassName()

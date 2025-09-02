@@ -18,8 +18,8 @@ configureKotlin {
             implementation(libs.ktor.network)
             implementation(libs.kotlinx.io.core)
             implementation(libs.serde.json.io)
-            implementation(project(":api-spec-common"))
 
+            api(project(":shared"))
             api(libs.ktor.network.tls)
             api(libs.bignum)
             api(libs.coroutines.core)
@@ -34,6 +34,11 @@ configureKotlin {
             implementation(libs.testcontainers.redis)
         }
     }
+}
+
+libraryData {
+    name = "rethis"
+    description = "Kotlin Multiplatform Redis Client: coroutine-based, DSL-powered, and easy to use."
 }
 
 tasks.withType<Test> { useJUnitPlatform() }

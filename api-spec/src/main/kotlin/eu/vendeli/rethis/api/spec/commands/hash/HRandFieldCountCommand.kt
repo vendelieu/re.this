@@ -1,8 +1,8 @@
 package eu.vendeli.rethis.api.spec.commands.hash
 
-import eu.vendeli.rethis.api.spec.common.annotations.RedisCommand
-import eu.vendeli.rethis.api.spec.common.annotations.RedisOption
-import eu.vendeli.rethis.api.spec.common.types.*
+import eu.vendeli.rethis.shared.annotations.RedisCommand
+import eu.vendeli.rethis.shared.annotations.RedisOption
+import eu.vendeli.rethis.shared.types.*
 
 @RedisCommand("HRANDFIELD", RedisOperation.READ, [RespCode.ARRAY])
 fun interface HRandFieldCountCommand : RedisCommandSpec<List<RType>> {

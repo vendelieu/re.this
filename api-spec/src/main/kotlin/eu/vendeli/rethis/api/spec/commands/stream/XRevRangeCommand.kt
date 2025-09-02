@@ -1,8 +1,8 @@
 package eu.vendeli.rethis.api.spec.commands.stream
 
-import eu.vendeli.rethis.api.spec.common.annotations.RedisCommand
-import eu.vendeli.rethis.api.spec.common.annotations.RedisOption
-import eu.vendeli.rethis.api.spec.common.types.*
+import eu.vendeli.rethis.shared.annotations.RedisCommand
+import eu.vendeli.rethis.shared.annotations.RedisOption
+import eu.vendeli.rethis.shared.types.*
 
 @RedisCommand("XREVRANGE", RedisOperation.READ, [RespCode.ARRAY])
 fun interface XRevRangeCommand : RedisCommandSpec<List<RType>> {

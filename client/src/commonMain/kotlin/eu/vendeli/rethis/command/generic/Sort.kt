@@ -1,7 +1,7 @@
 package eu.vendeli.rethis.command.generic
 
 import eu.vendeli.rethis.ReThis
-import eu.vendeli.rethis.api.spec.common.request.generic.SortOption
+import eu.vendeli.rethis.shared.request.generic.SortOption
 import eu.vendeli.rethis.codecs.generic.SortCommandCodec
 import eu.vendeli.rethis.codecs.generic.SortStoreCommandCodec
 import eu.vendeli.rethis.topology.handle

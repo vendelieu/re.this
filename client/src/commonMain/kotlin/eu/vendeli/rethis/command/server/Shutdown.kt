@@ -1,8 +1,8 @@
 package eu.vendeli.rethis.command.server
 
 import eu.vendeli.rethis.ReThis
-import eu.vendeli.rethis.api.spec.common.request.server.SaveSelector
-import eu.vendeli.rethis.api.spec.common.request.server.ShutdownOptions
+import eu.vendeli.rethis.shared.request.server.SaveSelector
+import eu.vendeli.rethis.shared.request.server.ShutdownOptions
 import eu.vendeli.rethis.codecs.server.ShutdownCommandCodec
 import eu.vendeli.rethis.topology.handle
 

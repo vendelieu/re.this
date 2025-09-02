@@ -1,7 +1,7 @@
 package eu.vendeli.rethis.topology
 
 import eu.vendeli.rethis.ReThis
-import eu.vendeli.rethis.api.spec.common.types.CommandRequest
+import eu.vendeli.rethis.shared.types.CommandRequest
 import eu.vendeli.rethis.providers.ConnectionProvider
 import eu.vendeli.rethis.types.common.Address
 

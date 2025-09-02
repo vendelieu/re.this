@@ -1,9 +1,9 @@
 package eu.vendeli.rethis.topology
 
 import eu.vendeli.rethis.ReThis
-import eu.vendeli.rethis.api.spec.common.types.CommandRequest
-import eu.vendeli.rethis.api.spec.common.types.RedisOperation
-import eu.vendeli.rethis.api.spec.common.utils.unwrap
+import eu.vendeli.rethis.shared.types.CommandRequest
+import eu.vendeli.rethis.shared.types.RedisOperation
+import eu.vendeli.rethis.shared.utils.unwrap
 import eu.vendeli.rethis.codecs.connection.PingCommandCodec
 import eu.vendeli.rethis.codecs.sentinel.SentinelGetMasterAddrCommandCodec
 import eu.vendeli.rethis.codecs.sentinel.SentinelReplicasCommandCodec

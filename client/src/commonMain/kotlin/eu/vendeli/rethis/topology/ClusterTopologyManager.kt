@@ -1,8 +1,8 @@
 package eu.vendeli.rethis.topology
 
 import eu.vendeli.rethis.ReThis
-import eu.vendeli.rethis.api.spec.common.response.cluster.ClusterNode
-import eu.vendeli.rethis.api.spec.common.types.*
+import eu.vendeli.rethis.shared.response.cluster.ClusterNode
+import eu.vendeli.rethis.shared.types.*
 import eu.vendeli.rethis.codecs.cluster.AskingCommandCodec
 import eu.vendeli.rethis.codecs.cluster.ClusterSlotsCommandCodec
 import eu.vendeli.rethis.configuration.ClusterConfiguration

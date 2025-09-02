@@ -1,8 +1,8 @@
 package eu.vendeli.rethis.commands
 
 import eu.vendeli.rethis.ReThisTestCtx
-import eu.vendeli.rethis.api.spec.common.request.common.FieldValue
-import eu.vendeli.rethis.api.spec.common.response.common.ScanResult
+import eu.vendeli.rethis.shared.request.common.FieldValue
+import eu.vendeli.rethis.shared.response.common.ScanResult
 import eu.vendeli.rethis.command.hash.*
 import io.kotest.matchers.shouldBe
 import kotlin.time.Duration.Companion.milliseconds

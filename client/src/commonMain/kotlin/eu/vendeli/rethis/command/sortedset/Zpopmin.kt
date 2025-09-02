@@ -1,7 +1,7 @@
 package eu.vendeli.rethis.command.sortedset
 
 import eu.vendeli.rethis.ReThis
-import eu.vendeli.rethis.api.spec.common.types.RType
+import eu.vendeli.rethis.shared.types.RType
 import eu.vendeli.rethis.codecs.sortedset.ZPopMinCommandCodec
 import eu.vendeli.rethis.topology.handle
 

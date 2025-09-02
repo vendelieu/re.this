@@ -1,6 +1,6 @@
 package eu.vendeli.rethis.types.common
 
-import eu.vendeli.rethis.api.spec.common.types.CommandRequest
+import eu.vendeli.rethis.shared.types.CommandRequest
 import eu.vendeli.rethis.codecs.pubsub.PSubscribeCommandCodec
 import eu.vendeli.rethis.codecs.pubsub.SSubscribeCommandCodec
 import eu.vendeli.rethis.codecs.pubsub.SubscribeCommandCodec

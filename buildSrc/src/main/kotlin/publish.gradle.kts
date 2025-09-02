@@ -6,13 +6,14 @@ plugins {
     id("com.vanniktech.maven.publish")
 }
 
+val libraryData = extensions.create("libraryData", PublishingExtension::class)
 val releaseMode: Boolean = System.getenv("release") != null
 val ver = System.getenv("libVersion") ?: "dev"
 
 apply(plugin = "org.jetbrains.kotlin.multiplatform")
 
 mavenPublishing {
-    coordinates("eu.vendeli", project.name, ver)
+    afterEvaluate { coordinates("eu.vendeli", libraryData.name.get(), ver) }
     publishToMavenCentral()
     val javaDoc = if (releaseMode) {
         signAllPublications()
@@ -23,8 +24,8 @@ mavenPublishing {
     configure(KotlinMultiplatform(javaDoc, true))
 
     pom {
-        name = project.name
-        description = "Kotlin Multiplatform Redis Client: coroutine-based, DSL-powered, and easy to use."
+        name = libraryData.name
+        description = libraryData.description
         inceptionYear = "2024"
         url = REPO_URL
 

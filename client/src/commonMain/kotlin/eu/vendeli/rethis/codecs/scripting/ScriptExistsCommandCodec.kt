@@ -1,8 +1,8 @@
 package eu.vendeli.rethis.codecs.scripting
 
-import eu.vendeli.rethis.api.spec.common.decoders.common.ArrayIntBooleanDecoder
-import eu.vendeli.rethis.api.spec.common.types.CommandRequest
-import eu.vendeli.rethis.api.spec.common.types.RedisOperation
+import eu.vendeli.rethis.shared.decoders.common.ArrayIntBooleanDecoder
+import eu.vendeli.rethis.shared.types.CommandRequest
+import eu.vendeli.rethis.shared.types.RedisOperation
 import eu.vendeli.rethis.utils.writeStringArg
 import io.ktor.utils.io.charsets.*
 import kotlinx.io.Buffer

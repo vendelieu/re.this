@@ -1,9 +1,9 @@
 package eu.vendeli.rethis.codecs.json
 
-import eu.vendeli.rethis.api.spec.common.decoders.general.RTypeDecoder
-import eu.vendeli.rethis.api.spec.common.types.CommandRequest
-import eu.vendeli.rethis.api.spec.common.types.RType
-import eu.vendeli.rethis.api.spec.common.types.RedisOperation
+import eu.vendeli.rethis.shared.decoders.general.RTypeDecoder
+import eu.vendeli.rethis.shared.types.CommandRequest
+import eu.vendeli.rethis.shared.types.RType
+import eu.vendeli.rethis.shared.types.RedisOperation
 import eu.vendeli.rethis.utils.writeDoubleArg
 import eu.vendeli.rethis.utils.writeStringArg
 import io.ktor.utils.io.charsets.*

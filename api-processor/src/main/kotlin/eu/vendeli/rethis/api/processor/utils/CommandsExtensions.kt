@@ -3,8 +3,8 @@ package eu.vendeli.rethis.api.processor.utils
 import com.squareup.kotlinpoet.*
 import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.api.processor.core.RedisCommandProcessor.Companion.context
-import eu.vendeli.rethis.api.spec.common.annotations.RedisMeta
-import eu.vendeli.rethis.api.spec.common.types.RespCode
+import eu.vendeli.rethis.shared.annotations.RedisMeta
+import eu.vendeli.rethis.shared.types.RespCode
 
 fun FileSpec.Builder.addCommandFunctions(
     codecName: String,

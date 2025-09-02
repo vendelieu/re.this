@@ -1,7 +1,7 @@
 package eu.vendeli.rethis.command.bitmap
 
 import eu.vendeli.rethis.ReThis
-import eu.vendeli.rethis.api.spec.common.request.bitmap.BitmapUnit
+import eu.vendeli.rethis.shared.request.bitmap.BitmapUnit
 import eu.vendeli.rethis.codecs.bitmap.BitPosCommandCodec
 import eu.vendeli.rethis.topology.handle
 

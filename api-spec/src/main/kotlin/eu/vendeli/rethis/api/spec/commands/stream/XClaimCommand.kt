@@ -1,10 +1,10 @@
 package eu.vendeli.rethis.api.spec.commands.stream
 
-import eu.vendeli.rethis.api.spec.common.annotations.RIgnoreSpecAbsence
-import eu.vendeli.rethis.api.spec.common.annotations.RedisCommand
-import eu.vendeli.rethis.api.spec.common.annotations.RedisOption
-import eu.vendeli.rethis.api.spec.common.request.stream.XClaimOption
-import eu.vendeli.rethis.api.spec.common.types.*
+import eu.vendeli.rethis.shared.annotations.RIgnoreSpecAbsence
+import eu.vendeli.rethis.shared.annotations.RedisCommand
+import eu.vendeli.rethis.shared.annotations.RedisOption
+import eu.vendeli.rethis.shared.request.stream.XClaimOption
+import eu.vendeli.rethis.shared.types.*
 
 @RedisCommand(
     "XCLAIM",

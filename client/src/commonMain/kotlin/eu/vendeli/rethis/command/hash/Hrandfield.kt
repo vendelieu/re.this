@@ -1,7 +1,7 @@
 package eu.vendeli.rethis.command.hash
 
 import eu.vendeli.rethis.ReThis
-import eu.vendeli.rethis.api.spec.common.types.RType
+import eu.vendeli.rethis.shared.types.RType
 import eu.vendeli.rethis.codecs.hash.HRandFieldCommandCodec
 import eu.vendeli.rethis.codecs.hash.HRandFieldCountCommandCodec
 import eu.vendeli.rethis.topology.handle

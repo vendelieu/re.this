@@ -14,7 +14,7 @@ import eu.vendeli.rethis.api.processor.types.getCommandData
 import eu.vendeli.rethis.api.processor.utils.loadCommandCtx
 import eu.vendeli.rethis.api.processor.utils.loadGlobalCtx
 import eu.vendeli.rethis.api.processor.utils.resolvedSpecs
-import eu.vendeli.rethis.api.spec.common.annotations.RedisCommand
+import eu.vendeli.rethis.shared.annotations.RedisCommand
 
 class RedisCommandProcessor(
     internal val logger: KSPLogger,

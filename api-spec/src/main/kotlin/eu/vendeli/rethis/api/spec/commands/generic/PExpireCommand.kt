@@ -1,9 +1,9 @@
 package eu.vendeli.rethis.api.spec.commands.generic
 
-import eu.vendeli.rethis.api.spec.common.annotations.RedisCommand
-import eu.vendeli.rethis.api.spec.common.annotations.RedisMeta
-import eu.vendeli.rethis.api.spec.common.request.common.UpdateStrategyOption
-import eu.vendeli.rethis.api.spec.common.types.*
+import eu.vendeli.rethis.shared.annotations.RedisCommand
+import eu.vendeli.rethis.shared.annotations.RedisMeta
+import eu.vendeli.rethis.shared.request.common.UpdateStrategyOption
+import eu.vendeli.rethis.shared.types.*
 import kotlin.time.Duration
 
 @RedisCommand("PEXPIRE", RedisOperation.WRITE, [RespCode.INTEGER])

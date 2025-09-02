@@ -1,7 +1,7 @@
 package eu.vendeli.rethis
 
-import eu.vendeli.rethis.api.spec.common.types.BulkString
-import eu.vendeli.rethis.api.spec.common.types.PlainString
+import eu.vendeli.rethis.shared.types.BulkString
+import eu.vendeli.rethis.shared.types.PlainString
 import eu.vendeli.rethis.command.string.get
 import eu.vendeli.rethis.command.string.set
 import eu.vendeli.rethis.types.common.RespVer

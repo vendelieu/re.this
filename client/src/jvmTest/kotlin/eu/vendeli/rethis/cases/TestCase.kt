@@ -2,8 +2,8 @@ package eu.vendeli.rethis.cases
 
 import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.ReThisTestCtx
-import eu.vendeli.rethis.api.spec.common.request.common.FieldValue
-import eu.vendeli.rethis.api.spec.common.types.RType
+import eu.vendeli.rethis.shared.request.common.FieldValue
+import eu.vendeli.rethis.shared.types.RType
 import eu.vendeli.rethis.command.generic.del
 import eu.vendeli.rethis.command.hash.hExpire
 import eu.vendeli.rethis.command.hash.hGet

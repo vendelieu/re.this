@@ -6,7 +6,7 @@ import eu.vendeli.rethis.api.processor.core.RedisCommandProcessor
 import eu.vendeli.rethis.api.processor.core.RedisCommandProcessor.Companion.context
 import eu.vendeli.rethis.api.processor.types.RCommandData
 import eu.vendeli.rethis.api.processor.utils.RedisSpecLoader.loadSpecs
-import eu.vendeli.rethis.api.spec.common.types.RespCode
+import eu.vendeli.rethis.shared.types.RespCode
 
 internal val ProcessorContext.currentCommand get() = this[CurrentCommand]!!
 internal val ProcessorContext.logger get() = this[Logger]!!.logger

@@ -1,8 +1,8 @@
 package eu.vendeli.rethis.command.stream
 
 import eu.vendeli.rethis.ReThis
-import eu.vendeli.rethis.api.spec.common.request.common.FieldValue
-import eu.vendeli.rethis.api.spec.common.request.stream.XAddOption
+import eu.vendeli.rethis.shared.request.common.FieldValue
+import eu.vendeli.rethis.shared.request.stream.XAddOption
 import eu.vendeli.rethis.codecs.stream.XAddCommandCodec
 import eu.vendeli.rethis.topology.handle
 

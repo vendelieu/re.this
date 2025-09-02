@@ -1,7 +1,7 @@
 package eu.vendeli.rethis.command.generic
 
 import eu.vendeli.rethis.ReThis
-import eu.vendeli.rethis.api.spec.common.request.common.UpdateStrategyOption
+import eu.vendeli.rethis.shared.request.common.UpdateStrategyOption
 import eu.vendeli.rethis.codecs.generic.ExpireAtCommandCodec
 import eu.vendeli.rethis.topology.handle
 import kotlin.time.Instant

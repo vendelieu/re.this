@@ -1,9 +1,9 @@
 package eu.vendeli.rethis.codecs.pubsub
 
-import eu.vendeli.rethis.api.spec.common.decoders.pubsub.PubSubNumSubDecoder
-import eu.vendeli.rethis.api.spec.common.response.common.PubSubNumEntry
-import eu.vendeli.rethis.api.spec.common.types.CommandRequest
-import eu.vendeli.rethis.api.spec.common.types.RedisOperation
+import eu.vendeli.rethis.shared.decoders.pubsub.PubSubNumSubDecoder
+import eu.vendeli.rethis.shared.response.common.PubSubNumEntry
+import eu.vendeli.rethis.shared.types.CommandRequest
+import eu.vendeli.rethis.shared.types.RedisOperation
 import eu.vendeli.rethis.utils.writeStringArg
 import io.ktor.utils.io.charsets.*
 import kotlinx.io.Buffer

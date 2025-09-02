@@ -1,10 +1,10 @@
 package eu.vendeli.rethis.codecs.generic
 
-import eu.vendeli.rethis.api.spec.common.decoders.common.StringScanDecoder
-import eu.vendeli.rethis.api.spec.common.request.generic.ScanOption
-import eu.vendeli.rethis.api.spec.common.response.common.ScanResult
-import eu.vendeli.rethis.api.spec.common.types.CommandRequest
-import eu.vendeli.rethis.api.spec.common.types.RedisOperation
+import eu.vendeli.rethis.shared.decoders.common.StringScanDecoder
+import eu.vendeli.rethis.shared.request.generic.ScanOption
+import eu.vendeli.rethis.shared.response.common.ScanResult
+import eu.vendeli.rethis.shared.types.CommandRequest
+import eu.vendeli.rethis.shared.types.RedisOperation
 import eu.vendeli.rethis.utils.writeLongArg
 import eu.vendeli.rethis.utils.writeStringArg
 import io.ktor.utils.io.charsets.*

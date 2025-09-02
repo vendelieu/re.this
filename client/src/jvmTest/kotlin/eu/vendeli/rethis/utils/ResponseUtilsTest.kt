@@ -3,7 +3,7 @@
 //import com.ionspin.kotlin.bignum.integer.BigInteger
 //import com.ionspin.kotlin.bignum.integer.toBigInteger
 //import eu.vendeli.rethis.ReThisTestCtx
-//import eu.vendeli.rethis.api.spec.common.types.ReThisException
+//import eu.vendeli.rethis.shared.types.ReThisException
 //import eu.vendeli.rethis.utils.response.parseResponse
 //import eu.vendeli.rethis.utils.response.readListResponseTyped
 //import eu.vendeli.rethis.utils.response.readMapResponseTyped

@@ -1,7 +1,7 @@
 package eu.vendeli.rethis.utils
 
 import eu.vendeli.rethis.ReThis
-import eu.vendeli.rethis.api.spec.common.decoders.pubsub.SubEventDecoder
+import eu.vendeli.rethis.shared.decoders.pubsub.SubEventDecoder
 import eu.vendeli.rethis.providers.ConnectionProvider
 import eu.vendeli.rethis.types.common.Subscription
 import eu.vendeli.rethis.types.common.SubscriptionWorker

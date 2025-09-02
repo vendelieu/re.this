@@ -1,7 +1,7 @@
 package eu.vendeli.rethis.commands.generic
 
 import eu.vendeli.rethis.ReThisTestCtx
-import eu.vendeli.rethis.api.spec.common.request.common.UpdateStrategyOption
+import eu.vendeli.rethis.shared.request.common.UpdateStrategyOption
 import eu.vendeli.rethis.command.generic.expireAt
 import eu.vendeli.rethis.command.string.set
 import io.kotest.matchers.shouldBe

@@ -1,9 +1,9 @@
 package eu.vendeli.rethis
 
 import eu.vendeli.rethis.annotations.ReThisDSL
-import eu.vendeli.rethis.api.spec.common.types.CommandRequest
-import eu.vendeli.rethis.api.spec.common.types.RType
-import eu.vendeli.rethis.api.spec.common.types.TransactionInvalidStateException
+import eu.vendeli.rethis.shared.types.CommandRequest
+import eu.vendeli.rethis.shared.types.RType
+import eu.vendeli.rethis.shared.types.TransactionInvalidStateException
 import eu.vendeli.rethis.codecs.transaction.DiscardCommandCodec
 import eu.vendeli.rethis.codecs.transaction.ExecCommandCodec
 import eu.vendeli.rethis.codecs.transaction.MultiCommandCodec

@@ -1,13 +1,13 @@
 package eu.vendeli.rethis.codecs.sortedset
 
-import eu.vendeli.rethis.api.spec.common.decoders.common.LMPopDecoder
-import eu.vendeli.rethis.api.spec.common.request.sortedset.ZPopCommonOption
-import eu.vendeli.rethis.api.spec.common.response.common.MPopResult
-import eu.vendeli.rethis.api.spec.common.types.CommandRequest
-import eu.vendeli.rethis.api.spec.common.types.KeyAbsentException
-import eu.vendeli.rethis.api.spec.common.types.RedisOperation
-import eu.vendeli.rethis.api.spec.common.utils.CRC16
-import eu.vendeli.rethis.api.spec.common.utils.validateSlot
+import eu.vendeli.rethis.shared.decoders.common.LMPopDecoder
+import eu.vendeli.rethis.shared.request.sortedset.ZPopCommonOption
+import eu.vendeli.rethis.shared.response.common.MPopResult
+import eu.vendeli.rethis.shared.types.CommandRequest
+import eu.vendeli.rethis.shared.types.KeyAbsentException
+import eu.vendeli.rethis.shared.types.RedisOperation
+import eu.vendeli.rethis.shared.utils.CRC16
+import eu.vendeli.rethis.shared.utils.validateSlot
 import eu.vendeli.rethis.utils.writeDoubleArg
 import eu.vendeli.rethis.utils.writeIntArg
 import eu.vendeli.rethis.utils.writeLongArg

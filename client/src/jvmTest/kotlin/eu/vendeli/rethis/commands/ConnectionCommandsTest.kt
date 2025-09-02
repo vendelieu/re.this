@@ -1,9 +1,9 @@
 package eu.vendeli.rethis.commands
 
 import eu.vendeli.rethis.ReThisTestCtx
-import eu.vendeli.rethis.api.spec.common.request.connection.HelloAuth
-import eu.vendeli.rethis.api.spec.common.types.Int64
-import eu.vendeli.rethis.api.spec.common.types.ReThisException
+import eu.vendeli.rethis.shared.request.connection.HelloAuth
+import eu.vendeli.rethis.shared.types.Int64
+import eu.vendeli.rethis.shared.types.ReThisException
 import eu.vendeli.rethis.command.connection.hello
 import eu.vendeli.rethis.command.connection.ping
 import eu.vendeli.rethis.command.connection.select

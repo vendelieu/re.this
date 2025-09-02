@@ -1,7 +1,7 @@
 package eu.vendeli.rethis.command.server
 
 import eu.vendeli.rethis.ReThis
-import eu.vendeli.rethis.api.spec.common.types.RType
+import eu.vendeli.rethis.shared.types.RType
 import eu.vendeli.rethis.codecs.server.LatencyHistoryCommandCodec
 import eu.vendeli.rethis.topology.handle
 

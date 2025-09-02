@@ -1,5 +1,10 @@
 # Re.this Changelog
 
+## 0.3.0
+
+* Refactored project structure.
+* Added experimental support for cluster and sentinel.
+
 ## 0.2.9
 
 * Reorganized project structure (some imports may break).

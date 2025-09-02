@@ -1,11 +1,11 @@
 package eu.vendeli.rethis.codecs.string
 
-import eu.vendeli.rethis.api.spec.common.decoders.general.IntegerDecoder
-import eu.vendeli.rethis.api.spec.common.request.string.KeyValue
-import eu.vendeli.rethis.api.spec.common.types.*
-import eu.vendeli.rethis.api.spec.common.utils.CRC16
-import eu.vendeli.rethis.api.spec.common.utils.tryInferCause
-import eu.vendeli.rethis.api.spec.common.utils.validateSlot
+import eu.vendeli.rethis.shared.decoders.general.IntegerDecoder
+import eu.vendeli.rethis.shared.request.string.KeyValue
+import eu.vendeli.rethis.shared.types.*
+import eu.vendeli.rethis.shared.utils.CRC16
+import eu.vendeli.rethis.shared.utils.tryInferCause
+import eu.vendeli.rethis.shared.utils.validateSlot
 import eu.vendeli.rethis.utils.parseCode
 import eu.vendeli.rethis.utils.writeStringArg
 import io.ktor.utils.io.charsets.*

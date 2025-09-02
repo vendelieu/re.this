@@ -1,7 +1,7 @@
 package eu.vendeli.rethis.command.scripting
 
 import eu.vendeli.rethis.ReThis
-import eu.vendeli.rethis.api.spec.common.types.RType
+import eu.vendeli.rethis.shared.types.RType
 import eu.vendeli.rethis.codecs.scripting.EvalCommandCodec
 import eu.vendeli.rethis.topology.handle
 

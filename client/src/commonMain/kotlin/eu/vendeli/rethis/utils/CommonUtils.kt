@@ -4,11 +4,11 @@ package eu.vendeli.rethis.utils
 
 import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.annotations.ReThisInternal
-import eu.vendeli.rethis.api.spec.common.response.common.HostAndPort
-import eu.vendeli.rethis.api.spec.common.types.CommandRequest
-import eu.vendeli.rethis.api.spec.common.types.ReThisException
-import eu.vendeli.rethis.api.spec.common.types.RespCode
-import eu.vendeli.rethis.api.spec.common.utils.EMPTY_BUFFER
+import eu.vendeli.rethis.shared.response.common.HostAndPort
+import eu.vendeli.rethis.shared.types.CommandRequest
+import eu.vendeli.rethis.shared.types.ReThisException
+import eu.vendeli.rethis.shared.types.RespCode
+import eu.vendeli.rethis.shared.utils.EMPTY_BUFFER
 import eu.vendeli.rethis.configuration.ReThisConfiguration
 import eu.vendeli.rethis.types.common.Address
 import io.ktor.network.sockets.*
@@ -18,8 +18,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.io.Buffer
-import kotlin.contracts.ExperimentalContracts
-import kotlin.contracts.contract
 
 internal val COMMON_LOGGER = KtorSimpleLogger("eu.vendeli.rethis.ReThisCommonLogger")
 
@@ -62,16 +60,5 @@ internal suspend inline fun <T> withRetry(
 internal inline fun HostAndPort.toAddress(): Address = Address(host, port)
 internal inline fun Address.toHostAndPort(): HostAndPort? =
     if (socket is InetSocketAddress) HostAndPort(socket.hostname, socket.port) else null
-
-@OptIn(ExperimentalContracts::class)
-inline fun requireOrPanic(condition: Boolean, message: () -> String) {
-    contract {
-        returns() implies condition
-    }
-    if (!condition) {
-        val message = message()
-        throw ReThisException(message)
-    }
-}
 
 inline fun panic(message: String): Nothing = throw ReThisException(message) // todo remove

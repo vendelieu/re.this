@@ -4,9 +4,9 @@ import com.google.devtools.ksp.symbol.KSAnnotated
 import eu.vendeli.rethis.api.processor.utils.inferEnumValue
 import eu.vendeli.rethis.api.processor.utils.parseResponseTypes
 import eu.vendeli.rethis.api.processor.utils.safeCast
-import eu.vendeli.rethis.api.spec.common.annotations.RedisCommand
-import eu.vendeli.rethis.api.spec.common.types.RedisOperation
-import eu.vendeli.rethis.api.spec.common.types.RespCode
+import eu.vendeli.rethis.shared.annotations.RedisCommand
+import eu.vendeli.rethis.shared.types.RedisOperation
+import eu.vendeli.rethis.shared.types.RespCode
 
 data class RCommandData(
     val name: String,

@@ -1,8 +1,8 @@
 package eu.vendeli.rethis.codecs.server
 
-import eu.vendeli.rethis.api.spec.common.decoders.connection.AclLogDecoder
-import eu.vendeli.rethis.api.spec.common.types.CommandRequest
-import eu.vendeli.rethis.api.spec.common.types.RedisOperation
+import eu.vendeli.rethis.shared.decoders.connection.AclLogDecoder
+import eu.vendeli.rethis.shared.types.CommandRequest
+import eu.vendeli.rethis.shared.types.RedisOperation
 import eu.vendeli.rethis.utils.writeLongArg
 import eu.vendeli.rethis.utils.writeStringArg
 import io.ktor.utils.io.charsets.*

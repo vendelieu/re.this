@@ -1,7 +1,7 @@
 package eu.vendeli.rethis.command.sentinel
 
 import eu.vendeli.rethis.ReThis
-import eu.vendeli.rethis.api.spec.common.request.sentinel.SentinelSimulateFailureMode
+import eu.vendeli.rethis.shared.request.sentinel.SentinelSimulateFailureMode
 import eu.vendeli.rethis.codecs.sentinel.SentinelSimulateFailureCommandCodec
 import eu.vendeli.rethis.topology.handle
 

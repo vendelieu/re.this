@@ -1,7 +1,7 @@
 package eu.vendeli.rethis.command.sortedset
 
 import eu.vendeli.rethis.ReThis
-import eu.vendeli.rethis.api.spec.common.response.stream.ZPopResult
+import eu.vendeli.rethis.shared.response.stream.ZPopResult
 import eu.vendeli.rethis.codecs.sortedset.BzPopMaxCommandCodec
 import eu.vendeli.rethis.topology.handle
 

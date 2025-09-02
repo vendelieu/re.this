@@ -1,7 +1,7 @@
 package eu.vendeli.rethis.utils
 
-import eu.vendeli.rethis.api.spec.common.types.RespCode
-import eu.vendeli.rethis.api.spec.common.types.TimeUnit
+import eu.vendeli.rethis.shared.types.RespCode
+import eu.vendeli.rethis.shared.types.TimeUnit
 import io.ktor.utils.io.charsets.*
 import io.ktor.utils.io.core.*
 import kotlinx.io.Buffer

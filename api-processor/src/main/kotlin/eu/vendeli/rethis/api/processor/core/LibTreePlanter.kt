@@ -9,8 +9,8 @@ import eu.vendeli.rethis.api.processor.context.ETree
 import eu.vendeli.rethis.api.processor.core.RedisCommandProcessor.Companion.context
 import eu.vendeli.rethis.api.processor.types.*
 import eu.vendeli.rethis.api.processor.utils.*
-import eu.vendeli.rethis.api.spec.common.annotations.RIgnoreSpecAbsence
-import eu.vendeli.rethis.api.spec.common.annotations.RedisMeta
+import eu.vendeli.rethis.shared.annotations.RIgnoreSpecAbsence
+import eu.vendeli.rethis.shared.annotations.RedisMeta
 
 internal object LibTreePlanter {
     fun prepare() {

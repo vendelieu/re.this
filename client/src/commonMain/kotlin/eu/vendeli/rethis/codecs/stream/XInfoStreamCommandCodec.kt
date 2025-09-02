@@ -1,10 +1,10 @@
 package eu.vendeli.rethis.codecs.stream
 
-import eu.vendeli.rethis.api.spec.common.decoders.aggregate.MapRTypeDecoder
-import eu.vendeli.rethis.api.spec.common.types.*
-import eu.vendeli.rethis.api.spec.common.utils.CRC16
-import eu.vendeli.rethis.api.spec.common.utils.tryInferCause
-import eu.vendeli.rethis.api.spec.common.utils.validateSlot
+import eu.vendeli.rethis.shared.decoders.aggregate.MapRTypeDecoder
+import eu.vendeli.rethis.shared.types.*
+import eu.vendeli.rethis.shared.utils.CRC16
+import eu.vendeli.rethis.shared.utils.tryInferCause
+import eu.vendeli.rethis.shared.utils.validateSlot
 import eu.vendeli.rethis.utils.parseCode
 import eu.vendeli.rethis.utils.writeLongArg
 import eu.vendeli.rethis.utils.writeStringArg

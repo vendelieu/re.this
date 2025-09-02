@@ -1,10 +1,10 @@
 package eu.vendeli.rethis.codecs.connection
 
-import eu.vendeli.rethis.api.spec.common.decoders.aggregate.MapRTypeDecoder
-import eu.vendeli.rethis.api.spec.common.decoders.general.SimpleErrorDecoder
-import eu.vendeli.rethis.api.spec.common.request.connection.HelloAuth
-import eu.vendeli.rethis.api.spec.common.types.*
-import eu.vendeli.rethis.api.spec.common.utils.tryInferCause
+import eu.vendeli.rethis.shared.decoders.aggregate.MapRTypeDecoder
+import eu.vendeli.rethis.shared.decoders.general.SimpleErrorDecoder
+import eu.vendeli.rethis.shared.request.connection.HelloAuth
+import eu.vendeli.rethis.shared.types.*
+import eu.vendeli.rethis.shared.utils.tryInferCause
 import eu.vendeli.rethis.utils.parseCode
 import eu.vendeli.rethis.utils.writeCharArrayArg
 import eu.vendeli.rethis.utils.writeLongArg

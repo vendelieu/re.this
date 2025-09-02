@@ -1,7 +1,7 @@
 package eu.vendeli.rethis.command.stream
 
 import eu.vendeli.rethis.ReThis
-import eu.vendeli.rethis.api.spec.common.request.stream.XId
+import eu.vendeli.rethis.shared.request.stream.XId
 import eu.vendeli.rethis.codecs.stream.XGroupCreateCommandCodec
 import eu.vendeli.rethis.topology.handle
 

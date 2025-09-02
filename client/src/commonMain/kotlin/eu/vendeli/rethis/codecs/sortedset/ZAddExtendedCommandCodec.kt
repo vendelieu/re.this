@@ -1,16 +1,16 @@
 package eu.vendeli.rethis.codecs.sortedset
 
-import eu.vendeli.rethis.api.spec.common.decoders.general.BulkStringDecoder
-import eu.vendeli.rethis.api.spec.common.decoders.general.DoubleDecoder
-import eu.vendeli.rethis.api.spec.common.request.common.UpdateStrategyOption
-import eu.vendeli.rethis.api.spec.common.response.stream.ZMember
-import eu.vendeli.rethis.api.spec.common.types.CommandRequest
-import eu.vendeli.rethis.api.spec.common.types.RedisOperation
-import eu.vendeli.rethis.api.spec.common.types.RespCode
-import eu.vendeli.rethis.api.spec.common.types.UnexpectedResponseType
-import eu.vendeli.rethis.api.spec.common.utils.CRC16
-import eu.vendeli.rethis.api.spec.common.utils.tryInferCause
-import eu.vendeli.rethis.api.spec.common.utils.validateSlot
+import eu.vendeli.rethis.shared.decoders.general.BulkStringDecoder
+import eu.vendeli.rethis.shared.decoders.general.DoubleDecoder
+import eu.vendeli.rethis.shared.request.common.UpdateStrategyOption
+import eu.vendeli.rethis.shared.response.stream.ZMember
+import eu.vendeli.rethis.shared.types.CommandRequest
+import eu.vendeli.rethis.shared.types.RedisOperation
+import eu.vendeli.rethis.shared.types.RespCode
+import eu.vendeli.rethis.shared.types.UnexpectedResponseType
+import eu.vendeli.rethis.shared.utils.CRC16
+import eu.vendeli.rethis.shared.utils.tryInferCause
+import eu.vendeli.rethis.shared.utils.validateSlot
 import eu.vendeli.rethis.utils.parseCode
 import eu.vendeli.rethis.utils.writeDoubleArg
 import eu.vendeli.rethis.utils.writeStringArg

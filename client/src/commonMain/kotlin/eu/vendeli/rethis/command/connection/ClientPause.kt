@@ -1,7 +1,7 @@
 package eu.vendeli.rethis.command.connection
 
 import eu.vendeli.rethis.ReThis
-import eu.vendeli.rethis.api.spec.common.request.connection.ClientPauseMode
+import eu.vendeli.rethis.shared.request.connection.ClientPauseMode
 import eu.vendeli.rethis.codecs.connection.ClientPauseCommandCodec
 import eu.vendeli.rethis.topology.handle
 

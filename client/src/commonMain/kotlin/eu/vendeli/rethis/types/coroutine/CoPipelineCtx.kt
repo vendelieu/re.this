@@ -1,6 +1,6 @@
 package eu.vendeli.rethis.types.coroutine
 
-import eu.vendeli.rethis.api.spec.common.types.CommandRequest
+import eu.vendeli.rethis.shared.types.CommandRequest
 import kotlin.coroutines.AbstractCoroutineContextElement
 import kotlin.coroutines.CoroutineContext
 

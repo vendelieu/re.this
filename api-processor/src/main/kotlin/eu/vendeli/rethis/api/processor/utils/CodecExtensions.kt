@@ -8,9 +8,9 @@ import com.squareup.kotlinpoet.KModifier
 import com.squareup.kotlinpoet.TypeSpec
 import com.squareup.kotlinpoet.ksp.toTypeName
 import eu.vendeli.rethis.api.processor.core.RedisCommandProcessor.Companion.context
-import eu.vendeli.rethis.api.spec.common.decoders.ResponseDecoder
-import eu.vendeli.rethis.api.spec.common.types.RedisOperation
-import eu.vendeli.rethis.api.spec.common.types.RespCode
+import eu.vendeli.rethis.shared.decoders.ResponseDecoder
+import eu.vendeli.rethis.shared.types.RedisOperation
+import eu.vendeli.rethis.shared.types.RespCode
 import kotlinx.io.Buffer
 
 internal fun TypeSpec.Builder.addDecodeFunction(

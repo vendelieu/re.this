@@ -1,7 +1,7 @@
 package eu.vendeli.rethis.command.scripting
 
 import eu.vendeli.rethis.ReThis
-import eu.vendeli.rethis.api.spec.common.request.common.FlushType
+import eu.vendeli.rethis.shared.request.common.FlushType
 import eu.vendeli.rethis.codecs.scripting.FunctionFlushCommandCodec
 import eu.vendeli.rethis.topology.handle
 

@@ -1,7 +1,7 @@
 package eu.vendeli.rethis.providers
 
 import eu.vendeli.rethis.ReThis
-import eu.vendeli.rethis.api.spec.common.types.CommandRequest
+import eu.vendeli.rethis.shared.types.CommandRequest
 import eu.vendeli.rethis.core.ConnectionPool
 import eu.vendeli.rethis.types.common.Address
 import eu.vendeli.rethis.types.common.RConnection

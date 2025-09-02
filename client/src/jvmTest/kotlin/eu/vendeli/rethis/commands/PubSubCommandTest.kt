@@ -1,9 +1,9 @@
 package eu.vendeli.rethis.commands
 
 import eu.vendeli.rethis.ReThisTestCtx
-import eu.vendeli.rethis.api.spec.common.response.common.PubSubNumEntry
-import eu.vendeli.rethis.api.spec.common.types.DataProcessingException
-import eu.vendeli.rethis.api.spec.common.types.processingException
+import eu.vendeli.rethis.shared.response.common.PubSubNumEntry
+import eu.vendeli.rethis.shared.types.DataProcessingException
+import eu.vendeli.rethis.shared.types.processingException
 import eu.vendeli.rethis.command.pubsub.*
 import eu.vendeli.rethis.types.interfaces.SubscriptionEventHandler
 import io.kotest.assertions.throwables.shouldNotThrowAny

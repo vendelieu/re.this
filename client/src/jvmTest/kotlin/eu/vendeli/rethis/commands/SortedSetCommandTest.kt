@@ -1,12 +1,12 @@
 package eu.vendeli.rethis.commands
 
 import eu.vendeli.rethis.ReThisTestCtx
-import eu.vendeli.rethis.api.spec.common.request.sortedset.ZPopCommonOption
-import eu.vendeli.rethis.api.spec.common.response.common.MPopResult
-import eu.vendeli.rethis.api.spec.common.response.common.ScanResult
-import eu.vendeli.rethis.api.spec.common.response.stream.ZMember
-import eu.vendeli.rethis.api.spec.common.response.stream.ZPopResult
-import eu.vendeli.rethis.api.spec.common.types.BulkString
+import eu.vendeli.rethis.shared.request.sortedset.ZPopCommonOption
+import eu.vendeli.rethis.shared.response.common.MPopResult
+import eu.vendeli.rethis.shared.response.common.ScanResult
+import eu.vendeli.rethis.shared.response.stream.ZMember
+import eu.vendeli.rethis.shared.response.stream.ZPopResult
+import eu.vendeli.rethis.shared.types.BulkString
 import eu.vendeli.rethis.command.sortedset.*
 import io.kotest.matchers.collections.shouldNotBeEmpty
 import io.kotest.matchers.shouldBe

@@ -1,7 +1,7 @@
 package eu.vendeli.rethis.command.list
 
 import eu.vendeli.rethis.ReThis
-import eu.vendeli.rethis.api.spec.common.response.common.PopResult
+import eu.vendeli.rethis.shared.response.common.PopResult
 import eu.vendeli.rethis.codecs.list.BlPopCommandCodec
 import eu.vendeli.rethis.topology.handle
 

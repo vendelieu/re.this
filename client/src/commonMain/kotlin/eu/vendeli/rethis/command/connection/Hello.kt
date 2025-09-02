@@ -1,8 +1,8 @@
 package eu.vendeli.rethis.command.connection
 
 import eu.vendeli.rethis.ReThis
-import eu.vendeli.rethis.api.spec.common.request.connection.HelloAuth
-import eu.vendeli.rethis.api.spec.common.types.RType
+import eu.vendeli.rethis.shared.request.connection.HelloAuth
+import eu.vendeli.rethis.shared.types.RType
 import eu.vendeli.rethis.codecs.connection.HelloCommandCodec
 import eu.vendeli.rethis.topology.handle
 

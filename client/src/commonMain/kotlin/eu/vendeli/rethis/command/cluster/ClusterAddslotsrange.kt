@@ -1,7 +1,7 @@
 package eu.vendeli.rethis.command.cluster
 
 import eu.vendeli.rethis.ReThis
-import eu.vendeli.rethis.api.spec.common.request.cluster.SlotRange
+import eu.vendeli.rethis.shared.request.cluster.SlotRange
 import eu.vendeli.rethis.codecs.cluster.ClusterAddSlotsRangeCommandCodec
 import eu.vendeli.rethis.topology.handle
 

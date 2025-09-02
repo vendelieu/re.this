@@ -8,7 +8,7 @@ import eu.vendeli.rethis.api.processor.context.CodeGenContext
 import eu.vendeli.rethis.api.processor.context.CodeGenContext.BlockType
 import eu.vendeli.rethis.api.processor.core.RedisCommandProcessor.Companion.context
 import eu.vendeli.rethis.api.processor.utils.*
-import eu.vendeli.rethis.api.spec.common.annotations.RedisOption
+import eu.vendeli.rethis.shared.annotations.RedisOption
 
 internal sealed class WriteOp {
     abstract val node: EnrichedNode

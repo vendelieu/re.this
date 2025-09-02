@@ -1,9 +1,9 @@
 package eu.vendeli.rethis.codecs.cluster
 
-import eu.vendeli.rethis.api.spec.common.decoders.cluster.ClusterSlotsDecoder
-import eu.vendeli.rethis.api.spec.common.response.cluster.Cluster
-import eu.vendeli.rethis.api.spec.common.types.CommandRequest
-import eu.vendeli.rethis.api.spec.common.types.RedisOperation
+import eu.vendeli.rethis.shared.decoders.cluster.ClusterSlotsDecoder
+import eu.vendeli.rethis.shared.response.cluster.Cluster
+import eu.vendeli.rethis.shared.types.CommandRequest
+import eu.vendeli.rethis.shared.types.RedisOperation
 import io.ktor.utils.io.charsets.*
 import kotlinx.io.Buffer
 import kotlinx.io.writeString

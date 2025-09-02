@@ -10,7 +10,7 @@ import com.squareup.kotlinpoet.ksp.toTypeName
 import eu.vendeli.rethis.api.processor.core.RedisCommandProcessor.Companion.context
 import eu.vendeli.rethis.api.processor.types.*
 import eu.vendeli.rethis.api.processor.utils.*
-import eu.vendeli.rethis.api.spec.common.types.RespCode
+import eu.vendeli.rethis.shared.types.RespCode
 import java.io.File
 
 internal interface ContextElement {
@@ -52,12 +52,12 @@ internal class ResolvedSpecs(val spec: Map<RCommandData, KSClassDeclaration>) : 
 }
 
 internal class SpecResponses(
-    val responses: Map<String, Set<RespCode>>,
+    val responses: Map<String, Set<eu.vendeli.rethis.shared.types.RespCode>>,
 ) : ContextElement {
     override val key = SpecResponses
-    private val processedResponses = mutableMapOf<String, MutableSet<RespCode>>()
+    private val processedResponses = mutableMapOf<String, MutableSet<eu.vendeli.rethis.shared.types.RespCode>>()
 
-    fun addProcessedResponses(command: String, rTypes: List<RespCode>) {
+    fun addProcessedResponses(command: String, rTypes: List<eu.vendeli.rethis.shared.types.RespCode>) {
         val container = processedResponses.getOrPut(command) { mutableSetOf() }
         container += rTypes
     }

@@ -6,8 +6,8 @@ import com.squareup.kotlinpoet.DOUBLE
 import com.squareup.kotlinpoet.ksp.toClassName
 import com.squareup.kotlinpoet.ksp.toTypeName
 import eu.vendeli.rethis.api.processor.core.RedisCommandProcessor.Companion.context
-import eu.vendeli.rethis.api.spec.common.decoders.aggregate.SetStringDecoder
-import eu.vendeli.rethis.api.spec.common.types.RespCode
+import eu.vendeli.rethis.shared.decoders.aggregate.SetStringDecoder
+import eu.vendeli.rethis.shared.types.RespCode
 import eu.vendeli.rethis.utils.panic
 
 private const val DECODE_STRING = "%L.decode(input, charset, code)"

@@ -1,9 +1,9 @@
 package eu.vendeli.rethis.wrappers
 
 import eu.vendeli.rethis.ReThis
-import eu.vendeli.rethis.api.spec.common.request.stream.XReadGroupKeyIds
-import eu.vendeli.rethis.api.spec.common.request.stream.XReadGroupOption
-import eu.vendeli.rethis.api.spec.common.types.RType
+import eu.vendeli.rethis.shared.request.stream.XReadGroupKeyIds
+import eu.vendeli.rethis.shared.request.stream.XReadGroupOption
+import eu.vendeli.rethis.shared.types.RType
 import eu.vendeli.rethis.command.stream.xReadGroup
 import eu.vendeli.rethis.utils.IO_OR_UNCONFINED
 import kotlinx.coroutines.Dispatchers

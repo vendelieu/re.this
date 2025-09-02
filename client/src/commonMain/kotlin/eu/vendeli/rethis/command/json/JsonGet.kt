@@ -1,7 +1,7 @@
 package eu.vendeli.rethis.command.json
 
 import eu.vendeli.rethis.ReThis
-import eu.vendeli.rethis.api.spec.common.request.json.JsonGetOption
+import eu.vendeli.rethis.shared.request.json.JsonGetOption
 import eu.vendeli.rethis.codecs.json.JsonGetCommandCodec
 import eu.vendeli.rethis.topology.handle
 

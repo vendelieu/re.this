@@ -1,7 +1,7 @@
 package eu.vendeli.rethis.commands.generic
 
 import eu.vendeli.rethis.ReThisTestCtx
-import eu.vendeli.rethis.api.spec.common.request.generic.CopyOption
+import eu.vendeli.rethis.shared.request.generic.CopyOption
 import eu.vendeli.rethis.command.generic.copy
 import eu.vendeli.rethis.command.generic.del
 import eu.vendeli.rethis.command.string.set

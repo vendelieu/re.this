@@ -8,9 +8,9 @@ import eu.vendeli.rethis.api.processor.core.RedisCommandProcessor.Companion.cont
 import eu.vendeli.rethis.api.processor.types.EnrichedNode
 import eu.vendeli.rethis.api.processor.types.EnrichedTreeAttr
 import eu.vendeli.rethis.api.processor.types.WriteOp
-import eu.vendeli.rethis.api.spec.common.annotations.RedisMeta
-import eu.vendeli.rethis.api.spec.common.annotations.RedisOption
-import eu.vendeli.rethis.api.spec.common.decoders.ResponseDecoder
+import eu.vendeli.rethis.shared.annotations.RedisMeta
+import eu.vendeli.rethis.shared.annotations.RedisOption
+import eu.vendeli.rethis.shared.decoders.ResponseDecoder
 
 internal inline fun <reified T : Annotation> KSAnnotated.getAnnotation(): Map<String, String>? =
     annotations.firstOrNull {

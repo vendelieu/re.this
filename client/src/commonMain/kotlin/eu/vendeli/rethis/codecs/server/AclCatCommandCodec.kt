@@ -1,12 +1,12 @@
 package eu.vendeli.rethis.codecs.server
 
-import eu.vendeli.rethis.api.spec.common.decoders.aggregate.ArrayStringDecoder
-import eu.vendeli.rethis.api.spec.common.decoders.general.SimpleErrorDecoder
-import eu.vendeli.rethis.api.spec.common.types.CommandRequest
-import eu.vendeli.rethis.api.spec.common.types.RedisOperation
-import eu.vendeli.rethis.api.spec.common.types.RespCode
-import eu.vendeli.rethis.api.spec.common.types.UnexpectedResponseType
-import eu.vendeli.rethis.api.spec.common.utils.tryInferCause
+import eu.vendeli.rethis.shared.decoders.aggregate.ArrayStringDecoder
+import eu.vendeli.rethis.shared.decoders.general.SimpleErrorDecoder
+import eu.vendeli.rethis.shared.types.CommandRequest
+import eu.vendeli.rethis.shared.types.RedisOperation
+import eu.vendeli.rethis.shared.types.RespCode
+import eu.vendeli.rethis.shared.types.UnexpectedResponseType
+import eu.vendeli.rethis.shared.utils.tryInferCause
 import eu.vendeli.rethis.utils.parseCode
 import eu.vendeli.rethis.utils.writeStringArg
 import io.ktor.utils.io.charsets.*

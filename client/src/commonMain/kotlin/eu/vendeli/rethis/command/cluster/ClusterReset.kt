@@ -1,7 +1,7 @@
 package eu.vendeli.rethis.command.cluster
 
 import eu.vendeli.rethis.ReThis
-import eu.vendeli.rethis.api.spec.common.request.cluster.ClusterResetMode
+import eu.vendeli.rethis.shared.request.cluster.ClusterResetMode
 import eu.vendeli.rethis.codecs.cluster.ClusterResetCommandCodec
 import eu.vendeli.rethis.topology.handle
 

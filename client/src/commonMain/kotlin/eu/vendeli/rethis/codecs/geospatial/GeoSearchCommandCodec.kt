@@ -1,12 +1,12 @@
 package eu.vendeli.rethis.codecs.geospatial
 
-import eu.vendeli.rethis.api.spec.common.decoders.aggregate.ArrayRTypeDecoder
-import eu.vendeli.rethis.api.spec.common.request.geospatial.*
-import eu.vendeli.rethis.api.spec.common.response.geospatial.GeoSort
-import eu.vendeli.rethis.api.spec.common.types.*
-import eu.vendeli.rethis.api.spec.common.utils.CRC16
-import eu.vendeli.rethis.api.spec.common.utils.tryInferCause
-import eu.vendeli.rethis.api.spec.common.utils.validateSlot
+import eu.vendeli.rethis.shared.decoders.aggregate.ArrayRTypeDecoder
+import eu.vendeli.rethis.shared.request.geospatial.*
+import eu.vendeli.rethis.shared.response.geospatial.GeoSort
+import eu.vendeli.rethis.shared.types.*
+import eu.vendeli.rethis.shared.utils.CRC16
+import eu.vendeli.rethis.shared.utils.tryInferCause
+import eu.vendeli.rethis.shared.utils.validateSlot
 import eu.vendeli.rethis.utils.parseCode
 import eu.vendeli.rethis.utils.writeDoubleArg
 import eu.vendeli.rethis.utils.writeLongArg

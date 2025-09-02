@@ -1,8 +1,8 @@
 package eu.vendeli.rethis.codecs.scripting
 
-import eu.vendeli.rethis.api.spec.common.decoders.aggregate.MapRTypeDecoder
-import eu.vendeli.rethis.api.spec.common.types.*
-import eu.vendeli.rethis.api.spec.common.utils.tryInferCause
+import eu.vendeli.rethis.shared.decoders.aggregate.MapRTypeDecoder
+import eu.vendeli.rethis.shared.types.*
+import eu.vendeli.rethis.shared.utils.tryInferCause
 import eu.vendeli.rethis.utils.parseCode
 import io.ktor.utils.io.charsets.*
 import kotlinx.io.Buffer

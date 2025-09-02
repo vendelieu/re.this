@@ -1,7 +1,7 @@
 package eu.vendeli.rethis.command.list
 
 import eu.vendeli.rethis.ReThis
-import eu.vendeli.rethis.api.spec.common.request.list.LPosOption
+import eu.vendeli.rethis.shared.request.list.LPosOption
 import eu.vendeli.rethis.codecs.list.LPosCommandCodec
 import eu.vendeli.rethis.codecs.list.LPosCountCommandCodec
 import eu.vendeli.rethis.topology.handle

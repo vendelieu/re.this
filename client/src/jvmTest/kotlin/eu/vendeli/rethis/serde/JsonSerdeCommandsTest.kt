@@ -5,7 +5,7 @@
 //import eu.vendeli.rethis.commands.jsonGet
 //import eu.vendeli.rethis.commands.jsonMGet
 //import eu.vendeli.rethis.commands.jsonSet
-//import eu.vendeli.rethis.api.spec.common.types.RArray
+//import eu.vendeli.rethis.shared.types.RArray
 //import eu.vendeli.rethis.utils.__jsonModule
 //import eu.vendeli.rethis.utils.unwrap
 //import io.kotest.matchers.collections.shouldHaveSize
