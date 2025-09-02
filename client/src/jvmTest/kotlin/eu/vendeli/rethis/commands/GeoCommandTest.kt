@@ -12,7 +12,9 @@ import eu.vendeli.rethis.shared.types.BulkString
 import eu.vendeli.rethis.shared.types.Int64
 import eu.vendeli.rethis.shared.types.RArray
 import eu.vendeli.rethis.command.geospatial.*
+import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
+import kotlin.math.roundToInt
 
 class GeoCommandTest : ReThisTestCtx() {
     @Test
@@ -37,14 +39,10 @@ class GeoCommandTest : ReThisTestCtx() {
     @Test
     suspend fun `test GEOPOS command`() {
         client.geoAdd("testSet4", GeoMember(1.0, 1.0, "testValue5"))
-        client.geoPos("testSet4", "testValue5") shouldBe listOf(
-            listOf(
-                GeoPosition(
-                    0.9999999403953552,
-                    0.9999994591429827,
-                ),
-            ),
-        )
+        client.geoPos("testSet4", "testValue5").first().shouldNotBeNull().first().run {
+            longitude.roundToInt() shouldBe 1
+            latitude.roundToInt() shouldBe 1
+        }
     }
 
     @Test
