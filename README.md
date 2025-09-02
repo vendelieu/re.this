@@ -36,7 +36,7 @@ Add to your `build.gradle.kts`:
 
 ```kotlin
 dependencies {
-    implementation("eu.vendeli:rethis:0.2.9")
+    implementation("eu.vendeli:rethis:0.3.0")
 }
 ```
 
