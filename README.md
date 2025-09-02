@@ -1,182 +1,100 @@
 <p align="center">
-  <img src="./assets/logo.png" alt="Logo" />
+  <img src="./assets/logo.png" alt="Re.This Logo" width="200" />
 </p>
-
-# <img src="./assets/logo-icon.svg" alt="icon" height="30" /> re.this
 
 [![Maven Central](https://img.shields.io/maven-central/v/eu.vendeli/rethis?style=flat&label=Maven&logo=apache-maven)](https://search.maven.org/artifact/eu.vendeli/rethis) [![CodeQL](https://github.com/vendelieu/re.this/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/vendelieu/re.this/actions/workflows/github-code-scanning/codeql)\
 [![KDocs](https://img.shields.io/static/v1?label=Dokka&message=KDocs&color=blue&logo=kotlin)](https://vendelieu.github.io/re.this/)
 [![codecov](https://codecov.io/gh/vendelieu/re.this/graph/badge.svg?token=F8SY97KR17)](https://codecov.io/gh/vendelieu/re.this)
 
-[![Validate Gradle Wrapper](https://github.com/vendelieu/re.this/actions/workflows/gradle-wrapper-validation.yml/badge.svg)](https://github.com/vendelieu/re.this/actions/workflows/gradle-wrapper-validation.yml)
+## What is Re.This?
 
-# Overview
+Re.This is a **Kotlin Multiplatform** Redis client built for **coroutine‑based**, **non‑blocking**, **high‑performance**
+applications.
 
-Re.This is a coroutine-based, multiplatform Redis client written in Kotlin.
+* ✅ **Raw sockets** & connection pooling for rock‑solid throughput
+* ✅ Full support for RESPv2/RESPv3, RedisJSON, Streams, Pub/Sub, and more
+* ✅ Tiny footprint over all targets: JVM, Android, iOS, WASM, Node.js, and other native targets
+* ✅ Сompatible with Valkey/KeyDB — since it shares the same API as Redis.
 
-It provides a simple and efficient way to interact with Redis from your Kotlin applications.
+Designed for modern Kotlin developers seeking a **fast**, **lightweight**, and **idiomatic** Redis integration.
 
-Built on raw sockets, using connection pool, it gives robust and fast interaction with Redis.
+## Key Features
 
-# Installation
+* **Complete Command Coverage**
+  Strings, Hashes, Lists, Sets, Sorted Sets, Streams, Bitmaps, Geospatial, Transactions, Scripting, Functions, …
+* **Advanced Patterns**
+  * Pipelining & Transactions DSL
+  * Publish/Subscribe with lifecycle management
+  * Script & JSON support
+* **Multiplatform Targets**
+  JVM, Android, iOS, Linux, Windows, macOS, tvOS, watchOS, Node.js, WASM
+* **High Performance**
+  Optimized for throughput and minimal latency via raw socket I/O
 
-To use Re.This in your project, add the following dependency to your Gradle build file:
+## Installation
 
-```gradle
+Add to your `build.gradle.kts`:
+
+```kotlin
 dependencies {
     implementation("eu.vendeli:rethis:0.2.9")
 }
 ```
 
-# Benchmark
-
-There is
-a [benchmark](https://github.com/vendelieu/re.this/tree/master/benchmarks/src/main/kotlin/eu/vendeli/rethis/benchmarks)
-comparing popular library solutions (more is better):
-
-```javascript
-Benchmark                        Mode  Cnt        Score         Error  Units
-JedisBenchmark.jedisSetGet      thrpt    5    15726.989 ±    1939.998  ops/s
-KredsBenchmark.kredsSetGet      thrpt    5   839860.900 ±   28180.928  ops/s
-LettuceBenchmark.lettuceSetGet  thrpt    5  1380333.188 ± 6181093.607  ops/s
-RethisBenchmark.rethisSetGet    thrpt    5  1452718.508 ± 1341935.933  ops/s
-```
-
-<details>
-  <summary>Details</summary>
-
-* `Jedis` (Pooled) inside coroutines starts to fail to cope with the thread pool and starts throwing errors.
-* `Kreds` with the `.use {}` approach gives worse results.
-* `Lettuce` gives similar performance, the difference is ~100k ops more or less, but it takes an order of magnitude more
-  RAM and starts to freeze because of this.
-
-</details>
-
-
-<details>
-  <summary>Specs</summary>
-  Intel® Core™ i9-10900K CPU @ 3.70GHz × 20 | RAM: 16,0 GiB
-</details>
-
-# Usage
-
-### Connecting to Redis
-
-To connect to a Redis instance, create a ReThis instance and specify the connection details:
+## Quick Start
 
 ```kotlin
-val client = ReThis("localhost", 6379) // or just ReThis() if you're using default connection settings 
-```
+import eu.vendeli.rethis.ReThis
 
-### Executing Commands
+suspend fun main() {
+    // 1. Initialize client (defaults to localhost:6379)
+    val client = ReThis()
 
-Re.This supports a comprehensive set of Redis commands, including:
+    // 2. Simple SET/GET
+    client.set("hello", "world")
+    println(client.get("hello")) // → "world"
 
-* Data structures: Strings, Hash, Lists, Sets, Sorted Sets, Geospatial indexes, Streams, Bitmaps
-* Advanced features: Blocking commands, Pipelining, Publish/Subscribe, Connection handling commands
-* Additional features: RedisJSON support, Scripting support, Functions, Transactions
+    // 3. Pipeline multiple commands
+    val results = client.pipeline {
+        set("foo", "bar")
+        get("foo")
+    }
+    println(results) // → [OK, "bar"]
+  
+    // 4. Transaction
+    val txResults = client.transaction {
+        set("bar", "baz")
+        get("bar")
+    }
+    println(txResults) // → [OK, "baz"]
 
-to use them, you can call method by its name:
-
-```kotlin
-client.set("testKey", "testValue")
-client.get("testKey") // == testValue
-```
-
-#### Subscription
-
-Using pub/sub in the library is quite easy, call the `subscribe`/... function,
-and the library will take care of the processing.
-
-```kotlin
-client.subscribe("testChannel") { client, message ->
-    println(message)
+    // 5. Pub/Sub example
+    client.subscribe("news") { _, msg -> println("Received: $msg") }
 }
 ```
 
-To manage the lifecycle of subscriptions, you can use the `client.subscriptions` parameter.
+## Benchmarks & Performance
 
-#### Pipelining
+| Library        |       Ops/sec |
+|----------------|--------------:|
+| **Rethis**     | **1,452,718** |
+| Lettuce        |     1,380,333 |
+| Kreds          |       839,861 |
+| Jedis (pooled) |        15,727 |
 
-Pipelining can also be easily achieved with an appropriate scope function:
+## Compatibility & Requirements
 
-```kotlin
-client.pipeline {
-    set("key", "value")
-    get("key")
-}
-```
+* **Java**: 17+
+* **Redis/Valkey/KeyDB**: any modern version (RESPv2/v3)
 
-Executing the scope returns the result of the pipelines so the result will not go missing anywhere :)
+## Resources & Documentation
 
-#### Transactions
+* 📖 [KDocs API Reference](https://vendelieu.github.io/re.this/)
+* 💬 [GitHub Discussions](https://github.com/vendelieu/re.this/discussions)
+* 🐞 [Issue Tracker](https://github.com/vendelieu/re.this/issues)
 
-As you might have realized for transactions there is also a similar DSL that can help in your development.
+## Acknowledgements
 
-```kotlin
-client.transaction {
-    set("key", "value")
-    get("key")
-}
-```
+Thanks to all contributors and users—your feedback drives our improvements!
 
-transaction functionality also takes into account fail-state cases and gracefully completes transactions.
-
-(yes, if you have also thought about mixing pipelines and transactions, we have taken such a case into account ;) )
-
-#### More out-of-the-box stuff/commands.
-
-Also you can execute Redis commands using the execute method:
-
-```kotlin
-val result = client.execute(listOf("SET", "key", "value").toArg())
-```
-
-# Resources/Documentation
-
-You can learn more about the library through the following resources:
-
-* [KDocs API Reference](https://vendelieu.github.io/re.this/)
-* [Github Discussion](https://github.com/vendelieu/re.this/discussions)
-
-# Targets
-
-Re.This supports the following targets:
-
-* JVM
-* Linux (linuxArm64, linuxX64)
-* Windows (mingwX64)
-* Android (androidNativeArm32, androidNativeArm64, androidNativeX64, androidNativeX86)
-* IOS (iosArm64, iosSimulatorArm64, iosX64)
-* MacOS (macosArm64, macosX64)
-* TvOS (tvosArm64, tvosSimulatorArm64, tvosX64)
-* WatchOS (watchosArm32, watchosArm64, watchosSimulatorArm64, watchosX64)
-* Js (nodejs)
-* WasmJs (nodejs, d8)
-
-# Compatibility
-
-Re.This is compatible with:
-
-- Java 17
-- Redis (any version)
-
-Supports and handles the use of `RESPv2`/`RESPv3` and handles differences in responses within a command.
-
-The only note is that deprecated commands were omitted during development (you can use `execute` method).
-
-# Contribution
-
-We'd love your contributions!
-
-* Bug reports are always welcome! You can open a bug report on GitHub.
-* You can also contribute documentation or anything to improve Re.This.
-
-Please see our contribution [guideline](./CONTRIBUTING.md) for more details.
-
-# Acknowledgements
-
-A big thank you to everyone who has contributed to this project. Your support and feedback are invaluable.
-
-If you find this library useful, please consider giving it a star. Your support helps us continue to improve and
-maintain this project.
+⭐ If you find Re.This helpful, please give it a star on GitHub!

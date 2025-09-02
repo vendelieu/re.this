@@ -1,0 +1,9 @@
+package eu.vendeli.rethis.api.spec.commands.server
+
+import eu.vendeli.rethis.shared.annotations.RedisCommand
+import eu.vendeli.rethis.shared.types.*
+
+@RedisCommand("COMMAND GETKEYSANDFLAGS", RedisOperation.READ, [RespCode.ARRAY])
+fun interface CommandGetKeysAndFlagsCommand : RedisCommandSpec<List<RType>> {
+    suspend fun encode(command: String, vararg arg: String): CommandRequest
+}
