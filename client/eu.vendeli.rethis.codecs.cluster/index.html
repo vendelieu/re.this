@@ -1,0 +1,574 @@
+<!doctype html>
+<html class="no-js">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>eu.vendeli.rethis.codecs.cluster</title>
+<link href="../../images/logo-icon.svg" rel="icon" type="image/svg">    <script>var pathToRoot = "../../";</script>
+    <script>document.documentElement.classList.replace("no-js","js");</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+    if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    } else {
+        const savedDarkMode = JSON.parse(storage)
+        if(savedDarkMode === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    }
+    </script>
+<script type="text/javascript" src="https://unpkg.com/kotlin-playground@1/dist/playground.min.js" async></script>
+<script type="text/javascript" src="../../scripts/sourceset_dependencies.js" async></script>
+<link href="../../styles/style.css" rel="Stylesheet">
+<link href="../../styles/main.css" rel="Stylesheet">
+<link href="../../styles/prism.css" rel="Stylesheet">
+<link href="../../styles/logo-styles.css" rel="Stylesheet">
+<link href="../../styles/font-jb-sans-auto.css" rel="Stylesheet">
+<link href="../../ui-kit/ui-kit.min.css" rel="Stylesheet">
+<script type="text/javascript" src="../../scripts/clipboard.js" async></script>
+<script type="text/javascript" src="../../scripts/navigation-loader.js" async></script>
+<script type="text/javascript" src="../../scripts/platform-content-handler.js" async></script>
+<script type="text/javascript" src="../../scripts/main.js" defer></script>
+<script type="text/javascript" src="../../scripts/prism.js" async></script>
+<script type="text/javascript" src="../../ui-kit/ui-kit.min.js" defer></script>
+<script type="text/javascript" src="../../scripts/symbol-parameters-wrapper_deferred.js" defer></script>
+<link href="../../images/logo-icon.svg"></head>
+<body>
+    <div class="root">
+    <nav class="navigation theme-dark" id="navigation-wrapper">
+<a class="library-name--link" href="../../index.html">
+                    re.this
+            </a>        <button class="navigation-controls--btn navigation-controls--btn_toc ui-kit_mobile-only" id="toc-toggle" type="button">Toggle table of contents
+        </button>
+        <div class="navigation-controls--break ui-kit_mobile-only"></div>
+        <div class="library-version" id="library-version">dev
+        </div>
+        <div class="navigation-controls">
+        <div class="filter-section filter-section_loading" id="filter-section">
+                <button class="platform-tag platform-selector common-like" data-active="" data-filter=":client/commonMain">common</button>
+            <div class="dropdown filter-section--dropdown" data-role="dropdown" id="filter-section-dropdown">
+                <button class="button button_dropdown filter-section--dropdown-toggle" role="combobox" data-role="dropdown-toggle" aria-controls="platform-tags-listbox" aria-haspopup="listbox" aria-expanded="false" aria-label="Toggle source sets"></button>
+                <ul role="listbox" id="platform-tags-listbox" class="dropdown--list" data-role="dropdown-listbox">
+                    <div class="dropdown--header"><span>Platform filter</span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close platform filter">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                        <li role="option" class="dropdown--option platform-selector-option common-like" tabindex="0">
+                            <label class="checkbox">
+                                <input type="checkbox" class="checkbox--input" id=":client/commonMain" data-filter=":client/commonMain">
+                                <span class="checkbox--icon"></span>
+                                common
+                            </label>
+                        </li>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </div>
+                <a class="navigation-controls--btn navigation-controls--btn_homepage" id="homepage-link" href="https://github.com/vendelieu/re.this"></a>
+            <button class="navigation-controls--btn navigation-controls--btn_theme" id="theme-toggle-button" type="button">Switch theme
+            </button>
+            <div class="navigation-controls--btn navigation-controls--btn_search" id="searchBar" role="button">Search in
+                API
+            </div>
+        </div>
+    </nav>
+        <div id="container">
+            <div class="sidebar" id="leftColumn">
+                <div class="dropdown theme-dark_mobile" data-role="dropdown" id="toc-dropdown">
+                    <ul role="listbox" id="toc-listbox" class="dropdown--list dropdown--list_toc-list" data-role="dropdown-listbox">
+                        <div class="dropdown--header">
+                            <span>
+                                    re.this
+                            </span>
+                            <button class="button" data-role="dropdown-toggle" aria-label="Close table of contents">
+                                <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                            </button>
+                        </div>
+                        <div class="sidebar--inner" id="sideMenu"></div>
+                    </ul>
+                    <div class="dropdown--overlay"></div>
+                </div>
+            </div>
+            <div id="main">
+<div class="main-content" data-page-type="package" id="content" pageids="client::eu.vendeli.rethis.codecs.cluster////PointingToDeclaration//121649622">
+  <div class="breadcrumbs"><a href="../index.html">client</a><span class="delimiter">/</span><span class="current">eu.vendeli.rethis.codecs.cluster</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span><span>Package-level</span></span> <span><span>declarations</span></span></h1>
+  </div>
+  <div class="tabbedcontent">
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="TYPE">Types</button></div>
+    <div class="tabs-section-body">
+      <div data-togglable="TYPE">
+        <h2 class="">Types</h2>
+        <div class="table"><a data-name="1266241509%2FClasslikes%2F121649622" anchor-label="AskingCommandCodec" id="1266241509%2FClasslikes%2F121649622" data-filterable-set=":client/commonMain"></a>
+          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-asking-command-codec/index.html"><span>Asking</span><wbr><span>Command</span><wbr><span><span>Codec</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1266241509%2FClasslikes%2F121649622"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":client/commonMain"><div class="symbol monospace"><span class="token keyword">object </span><a href="-asking-command-codec/index.html">AskingCommandCodec</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="128071760%2FClasslikes%2F121649622" anchor-label="ClusterAddSlotsCommandCodec" id="128071760%2FClasslikes%2F121649622" data-filterable-set=":client/commonMain"></a>
+          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-cluster-add-slots-command-codec/index.html"><span>Cluster</span><wbr><span>Add</span><wbr><span>Slots</span><wbr><span>Command</span><wbr><span><span>Codec</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="128071760%2FClasslikes%2F121649622"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":client/commonMain"><div class="symbol monospace"><span class="token keyword">object </span><a href="-cluster-add-slots-command-codec/index.html">ClusterAddSlotsCommandCodec</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="263295167%2FClasslikes%2F121649622" anchor-label="ClusterAddSlotsRangeCommandCodec" id="263295167%2FClasslikes%2F121649622" data-filterable-set=":client/commonMain"></a>
+          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-cluster-add-slots-range-command-codec/index.html"><span>Cluster</span><wbr><span>Add</span><wbr><span>Slots</span><wbr><span>Range</span><wbr><span>Command</span><wbr><span><span>Codec</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="263295167%2FClasslikes%2F121649622"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":client/commonMain"><div class="symbol monospace"><span class="token keyword">object </span><a href="-cluster-add-slots-range-command-codec/index.html">ClusterAddSlotsRangeCommandCodec</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="71146133%2FClasslikes%2F121649622" anchor-label="ClusterBumpEpochCommandCodec" id="71146133%2FClasslikes%2F121649622" data-filterable-set=":client/commonMain"></a>
+          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-cluster-bump-epoch-command-codec/index.html"><span>Cluster</span><wbr><span>Bump</span><wbr><span>Epoch</span><wbr><span>Command</span><wbr><span><span>Codec</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="71146133%2FClasslikes%2F121649622"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":client/commonMain"><div class="symbol monospace"><span class="token keyword">object </span><a href="-cluster-bump-epoch-command-codec/index.html">ClusterBumpEpochCommandCodec</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1363067932%2FClasslikes%2F121649622" anchor-label="ClusterCountFailureReportsCommandCodec" id="-1363067932%2FClasslikes%2F121649622" data-filterable-set=":client/commonMain"></a>
+          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-cluster-count-failure-reports-command-codec/index.html"><span>Cluster</span><wbr><span>Count</span><wbr><span>Failure</span><wbr><span>Reports</span><wbr><span>Command</span><wbr><span><span>Codec</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1363067932%2FClasslikes%2F121649622"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":client/commonMain"><div class="symbol monospace"><span class="token keyword">object </span><a href="-cluster-count-failure-reports-command-codec/index.html">ClusterCountFailureReportsCommandCodec</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="316558242%2FClasslikes%2F121649622" anchor-label="ClusterCountKeysInSlotCommandCodec" id="316558242%2FClasslikes%2F121649622" data-filterable-set=":client/commonMain"></a>
+          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-cluster-count-keys-in-slot-command-codec/index.html"><span>Cluster</span><wbr><span>Count</span><wbr><span>Keys</span><wbr><span>In</span><wbr><span>Slot</span><wbr><span>Command</span><wbr><span><span>Codec</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="316558242%2FClasslikes%2F121649622"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":client/commonMain"><div class="symbol monospace"><span class="token keyword">object </span><a href="-cluster-count-keys-in-slot-command-codec/index.html">ClusterCountKeysInSlotCommandCodec</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-998482118%2FClasslikes%2F121649622" anchor-label="ClusterDelSlotsCommandCodec" id="-998482118%2FClasslikes%2F121649622" data-filterable-set=":client/commonMain"></a>
+          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-cluster-del-slots-command-codec/index.html"><span>Cluster</span><wbr><span>Del</span><wbr><span>Slots</span><wbr><span>Command</span><wbr><span><span>Codec</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-998482118%2FClasslikes%2F121649622"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":client/commonMain"><div class="symbol monospace"><span class="token keyword">object </span><a href="-cluster-del-slots-command-codec/index.html">ClusterDelSlotsCommandCodec</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1299370987%2FClasslikes%2F121649622" anchor-label="ClusterDelSlotsRangeCommandCodec" id="-1299370987%2FClasslikes%2F121649622" data-filterable-set=":client/commonMain"></a>
+          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-cluster-del-slots-range-command-codec/index.html"><span>Cluster</span><wbr><span>Del</span><wbr><span>Slots</span><wbr><span>Range</span><wbr><span>Command</span><wbr><span><span>Codec</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1299370987%2FClasslikes%2F121649622"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":client/commonMain"><div class="symbol monospace"><span class="token keyword">object </span><a href="-cluster-del-slots-range-command-codec/index.html">ClusterDelSlotsRangeCommandCodec</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-696573902%2FClasslikes%2F121649622" anchor-label="ClusterFailoverCommandCodec" id="-696573902%2FClasslikes%2F121649622" data-filterable-set=":client/commonMain"></a>
+          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-cluster-failover-command-codec/index.html"><span>Cluster</span><wbr><span>Failover</span><wbr><span>Command</span><wbr><span><span>Codec</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-696573902%2FClasslikes%2F121649622"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":client/commonMain"><div class="symbol monospace"><span class="token keyword">object </span><a href="-cluster-failover-command-codec/index.html">ClusterFailoverCommandCodec</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1682241677%2FClasslikes%2F121649622" anchor-label="ClusterFlushSlotsCommandCodec" id="-1682241677%2FClasslikes%2F121649622" data-filterable-set=":client/commonMain"></a>
+          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-cluster-flush-slots-command-codec/index.html"><span>Cluster</span><wbr><span>Flush</span><wbr><span>Slots</span><wbr><span>Command</span><wbr><span><span>Codec</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1682241677%2FClasslikes%2F121649622"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":client/commonMain"><div class="symbol monospace"><span class="token keyword">object </span><a href="-cluster-flush-slots-command-codec/index.html">ClusterFlushSlotsCommandCodec</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1948699543%2FClasslikes%2F121649622" anchor-label="ClusterForgetCommandCodec" id="1948699543%2FClasslikes%2F121649622" data-filterable-set=":client/commonMain"></a>
+          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-cluster-forget-command-codec/index.html"><span>Cluster</span><wbr><span>Forget</span><wbr><span>Command</span><wbr><span><span>Codec</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1948699543%2FClasslikes%2F121649622"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":client/commonMain"><div class="symbol monospace"><span class="token keyword">object </span><a href="-cluster-forget-command-codec/index.html">ClusterForgetCommandCodec</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1369793797%2FClasslikes%2F121649622" anchor-label="ClusterGetKeysInSlotCommandCodec" id="-1369793797%2FClasslikes%2F121649622" data-filterable-set=":client/commonMain"></a>
+          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-cluster-get-keys-in-slot-command-codec/index.html"><span>Cluster</span><wbr><span>Get</span><wbr><span>Keys</span><wbr><span>In</span><wbr><span>Slot</span><wbr><span>Command</span><wbr><span><span>Codec</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1369793797%2FClasslikes%2F121649622"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":client/commonMain"><div class="symbol monospace"><span class="token keyword">object </span><a href="-cluster-get-keys-in-slot-command-codec/index.html">ClusterGetKeysInSlotCommandCodec</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-418929418%2FClasslikes%2F121649622" anchor-label="ClusterInfoCommandCodec" id="-418929418%2FClasslikes%2F121649622" data-filterable-set=":client/commonMain"></a>
+          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-cluster-info-command-codec/index.html"><span>Cluster</span><wbr><span>Info</span><wbr><span>Command</span><wbr><span><span>Codec</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-418929418%2FClasslikes%2F121649622"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":client/commonMain"><div class="symbol monospace"><span class="token keyword">object </span><a href="-cluster-info-command-codec/index.html">ClusterInfoCommandCodec</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1155184971%2FClasslikes%2F121649622" anchor-label="ClusterKeySlotCommandCodec" id="1155184971%2FClasslikes%2F121649622" data-filterable-set=":client/commonMain"></a>
+          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-cluster-key-slot-command-codec/index.html"><span>Cluster</span><wbr><span>Key</span><wbr><span>Slot</span><wbr><span>Command</span><wbr><span><span>Codec</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1155184971%2FClasslikes%2F121649622"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":client/commonMain"><div class="symbol monospace"><span class="token keyword">object </span><a href="-cluster-key-slot-command-codec/index.html">ClusterKeySlotCommandCodec</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="849300623%2FClasslikes%2F121649622" anchor-label="ClusterLinksCommandCodec" id="849300623%2FClasslikes%2F121649622" data-filterable-set=":client/commonMain"></a>
+          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-cluster-links-command-codec/index.html"><span>Cluster</span><wbr><span>Links</span><wbr><span>Command</span><wbr><span><span>Codec</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="849300623%2FClasslikes%2F121649622"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":client/commonMain"><div class="symbol monospace"><span class="token keyword">object </span><a href="-cluster-links-command-codec/index.html">ClusterLinksCommandCodec</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="655814909%2FClasslikes%2F121649622" anchor-label="ClusterMeetCommandCodec" id="655814909%2FClasslikes%2F121649622" data-filterable-set=":client/commonMain"></a>
+          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-cluster-meet-command-codec/index.html"><span>Cluster</span><wbr><span>Meet</span><wbr><span>Command</span><wbr><span><span>Codec</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="655814909%2FClasslikes%2F121649622"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":client/commonMain"><div class="symbol monospace"><span class="token keyword">object </span><a href="-cluster-meet-command-codec/index.html">ClusterMeetCommandCodec</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-467079843%2FClasslikes%2F121649622" anchor-label="ClusterMyIdCommandCodec" id="-467079843%2FClasslikes%2F121649622" data-filterable-set=":client/commonMain"></a>
+          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-cluster-my-id-command-codec/index.html"><span>Cluster</span><wbr><span>My</span><wbr><span>Id</span><wbr><span>Command</span><wbr><span><span>Codec</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-467079843%2FClasslikes%2F121649622"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":client/commonMain"><div class="symbol monospace"><span class="token keyword">object </span><a href="-cluster-my-id-command-codec/index.html">ClusterMyIdCommandCodec</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1418015365%2FClasslikes%2F121649622" anchor-label="ClusterMyShardIdCommandCodec" id="-1418015365%2FClasslikes%2F121649622" data-filterable-set=":client/commonMain"></a>
+          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-cluster-my-shard-id-command-codec/index.html"><span>Cluster</span><wbr><span>My</span><wbr><span>Shard</span><wbr><span>Id</span><wbr><span>Command</span><wbr><span><span>Codec</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1418015365%2FClasslikes%2F121649622"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":client/commonMain"><div class="symbol monospace"><span class="token keyword">object </span><a href="-cluster-my-shard-id-command-codec/index.html">ClusterMyShardIdCommandCodec</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1878623383%2FClasslikes%2F121649622" anchor-label="ClusterNodesCommandCodec" id="1878623383%2FClasslikes%2F121649622" data-filterable-set=":client/commonMain"></a>
+          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-cluster-nodes-command-codec/index.html"><span>Cluster</span><wbr><span>Nodes</span><wbr><span>Command</span><wbr><span><span>Codec</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1878623383%2FClasslikes%2F121649622"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":client/commonMain"><div class="symbol monospace"><span class="token keyword">object </span><a href="-cluster-nodes-command-codec/index.html">ClusterNodesCommandCodec</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-522926071%2FClasslikes%2F121649622" anchor-label="ClusterReplicasCommandCodec" id="-522926071%2FClasslikes%2F121649622" data-filterable-set=":client/commonMain"></a>
+          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-cluster-replicas-command-codec/index.html"><span>Cluster</span><wbr><span>Replicas</span><wbr><span>Command</span><wbr><span><span>Codec</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-522926071%2FClasslikes%2F121649622"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":client/commonMain"><div class="symbol monospace"><span class="token keyword">object </span><a href="-cluster-replicas-command-codec/index.html">ClusterReplicasCommandCodec</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-50823137%2FClasslikes%2F121649622" anchor-label="ClusterReplicateCommandCodec" id="-50823137%2FClasslikes%2F121649622" data-filterable-set=":client/commonMain"></a>
+          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-cluster-replicate-command-codec/index.html"><span>Cluster</span><wbr><span>Replicate</span><wbr><span>Command</span><wbr><span><span>Codec</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-50823137%2FClasslikes%2F121649622"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":client/commonMain"><div class="symbol monospace"><span class="token keyword">object </span><a href="-cluster-replicate-command-codec/index.html">ClusterReplicateCommandCodec</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1956617031%2FClasslikes%2F121649622" anchor-label="ClusterResetCommandCodec" id="-1956617031%2FClasslikes%2F121649622" data-filterable-set=":client/commonMain"></a>
+          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-cluster-reset-command-codec/index.html"><span>Cluster</span><wbr><span>Reset</span><wbr><span>Command</span><wbr><span><span>Codec</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1956617031%2FClasslikes%2F121649622"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":client/commonMain"><div class="symbol monospace"><span class="token keyword">object </span><a href="-cluster-reset-command-codec/index.html">ClusterResetCommandCodec</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="258250405%2FClasslikes%2F121649622" anchor-label="ClusterSaveConfigCommandCodec" id="258250405%2FClasslikes%2F121649622" data-filterable-set=":client/commonMain"></a>
+          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-cluster-save-config-command-codec/index.html"><span>Cluster</span><wbr><span>Save</span><wbr><span>Config</span><wbr><span>Command</span><wbr><span><span>Codec</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="258250405%2FClasslikes%2F121649622"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":client/commonMain"><div class="symbol monospace"><span class="token keyword">object </span><a href="-cluster-save-config-command-codec/index.html">ClusterSaveConfigCommandCodec</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-428390945%2FClasslikes%2F121649622" anchor-label="ClusterSetConfigEpochCommandCodec" id="-428390945%2FClasslikes%2F121649622" data-filterable-set=":client/commonMain"></a>
+          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-cluster-set-config-epoch-command-codec/index.html"><span>Cluster</span><wbr><span>Set</span><wbr><span>Config</span><wbr><span>Epoch</span><wbr><span>Command</span><wbr><span><span>Codec</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-428390945%2FClasslikes%2F121649622"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":client/commonMain"><div class="symbol monospace"><span class="token keyword">object </span><a href="-cluster-set-config-epoch-command-codec/index.html">ClusterSetConfigEpochCommandCodec</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="927201960%2FClasslikes%2F121649622" anchor-label="ClusterSetSlotCommandCodec" id="927201960%2FClasslikes%2F121649622" data-filterable-set=":client/commonMain"></a>
+          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-cluster-set-slot-command-codec/index.html"><span>Cluster</span><wbr><span>Set</span><wbr><span>Slot</span><wbr><span>Command</span><wbr><span><span>Codec</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="927201960%2FClasslikes%2F121649622"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":client/commonMain"><div class="symbol monospace"><span class="token keyword">object </span><a href="-cluster-set-slot-command-codec/index.html">ClusterSetSlotCommandCodec</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="570941999%2FClasslikes%2F121649622" anchor-label="ClusterShardsCommandCodec" id="570941999%2FClasslikes%2F121649622" data-filterable-set=":client/commonMain"></a>
+          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-cluster-shards-command-codec/index.html"><span>Cluster</span><wbr><span>Shards</span><wbr><span>Command</span><wbr><span><span>Codec</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="570941999%2FClasslikes%2F121649622"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":client/commonMain"><div class="symbol monospace"><span class="token keyword">object </span><a href="-cluster-shards-command-codec/index.html">ClusterShardsCommandCodec</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1695904104%2FClasslikes%2F121649622" anchor-label="ClusterSlavesCommandCodec" id="1695904104%2FClasslikes%2F121649622" data-filterable-set=":client/commonMain"></a>
+          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-cluster-slaves-command-codec/index.html"><span>Cluster</span><wbr><span>Slaves</span><wbr><span>Command</span><wbr><span><span>Codec</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1695904104%2FClasslikes%2F121649622"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":client/commonMain"><div class="symbol monospace"><span class="token keyword">object </span><a href="-cluster-slaves-command-codec/index.html">ClusterSlavesCommandCodec</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1953162131%2FClasslikes%2F121649622" anchor-label="ClusterSlotsCommandCodec" id="1953162131%2FClasslikes%2F121649622" data-filterable-set=":client/commonMain"></a>
+          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-cluster-slots-command-codec/index.html"><span>Cluster</span><wbr><span>Slots</span><wbr><span>Command</span><wbr><span><span>Codec</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1953162131%2FClasslikes%2F121649622"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":client/commonMain"><div class="symbol monospace"><span class="token keyword">object </span><a href="-cluster-slots-command-codec/index.html">ClusterSlotsCommandCodec</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1897067028%2FClasslikes%2F121649622" anchor-label="ReadOnlyCommandCodec" id="-1897067028%2FClasslikes%2F121649622" data-filterable-set=":client/commonMain"></a>
+          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-read-only-command-codec/index.html"><span>Read</span><wbr><span>Only</span><wbr><span>Command</span><wbr><span><span>Codec</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1897067028%2FClasslikes%2F121649622"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":client/commonMain"><div class="symbol monospace"><span class="token keyword">object </span><a href="-read-only-command-codec/index.html">ReadOnlyCommandCodec</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1003246219%2FClasslikes%2F121649622" anchor-label="ReadWriteCommandCodec" id="-1003246219%2FClasslikes%2F121649622" data-filterable-set=":client/commonMain"></a>
+          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-read-write-command-codec/index.html"><span>Read</span><wbr><span>Write</span><wbr><span>Command</span><wbr><span><span>Codec</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1003246219%2FClasslikes%2F121649622"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":client/commonMain"><div class="symbol monospace"><span class="token keyword">object </span><a href="-read-write-command-codec/index.html">ReadWriteCommandCodec</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    <div class="footer">
+        <a href="#content" id="go-to-top-link" class="footer--button footer--button_go-to-top"></a>
+        <span>© 2025 Vendelieu</span>
+        <span class="pull-right">
+            <span>Generated by </span>
+            <a class="footer--link footer--link_external" href="https://github.com/Kotlin/dokka">
+                <span>dokka</span>
+            </a>
+        </span>
+    </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
