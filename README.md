@@ -2,8 +2,7 @@
   <img src="./assets/logo.png" alt="Re.This Logo" width="200" />
 </p>
 
-[![Maven Central](https://img.shields.io/maven-central/v/eu.vendeli/rethis?style=flat&label=Maven&logo=apache-maven)](https://search.maven.org/artifact/eu.vendeli/rethis) [![CodeQL](https://github.com/vendelieu/re.this/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/vendelieu/re.this/actions/workflows/github-code-scanning/codeql)\
-[![KDocs](https://img.shields.io/static/v1?label=Dokka&message=KDocs&color=blue&logo=kotlin)](https://vendelieu.github.io/re.this/)
+[![Maven Central](https://img.shields.io/maven-central/v/eu.vendeli/rethis?style=flat&label=Maven&logo=apache-maven)](https://search.maven.org/artifact/eu.vendeli/rethis) [![KDocs](https://img.shields.io/static/v1?label=Dokka&message=KDocs&color=blue&logo=kotlin)](https://vendelieu.github.io/re.this/) \
 [![codecov](https://codecov.io/gh/vendelieu/re.this/graph/badge.svg?token=F8SY97KR17)](https://codecov.io/gh/vendelieu/re.this)
 
 ## What is Re.This?
