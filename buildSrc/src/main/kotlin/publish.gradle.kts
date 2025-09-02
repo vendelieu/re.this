@@ -1,4 +1,3 @@
-import CommonParams.REPO_URL
 import com.vanniktech.maven.publish.JavadocJar
 import com.vanniktech.maven.publish.KotlinMultiplatform
 
@@ -7,7 +6,7 @@ plugins {
 }
 
 val libraryData = extensions.create("libraryData", PublishingExtension::class)
-val releaseMode: Boolean = System.getenv("release") != null
+val releaseMode: Boolean = System.getenv("release").toBoolean()
 val ver = System.getenv("libVersion") ?: "dev"
 
 apply(plugin = "org.jetbrains.kotlin.multiplatform")

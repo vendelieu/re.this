@@ -1,4 +1,3 @@
-import CommonParams.REPO_URL
 import java.time.LocalDate
 
 plugins {
