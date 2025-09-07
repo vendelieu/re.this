@@ -1,4 +1,5 @@
 plugins {
+    alias(libs.plugins.kotlin.binvalid)
     dokka
     publish
 }
@@ -12,6 +13,6 @@ configureKotlin {
 }
 
 libraryData {
-    name = "shared"
+    name = "rethis-shared"
     description = "Shared Kotlin Multiplatform code for Rethis"
 }
