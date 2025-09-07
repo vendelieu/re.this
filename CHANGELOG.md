@@ -2,7 +2,7 @@
 
 ## 0.3.0
 
-* Refactored project structure.
+* Refactored project structure, some imports may break.
 * Added experimental support for cluster and sentinel.
 
 ## 0.2.9
