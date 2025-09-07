@@ -4110,6 +4110,7 @@ public abstract class eu/vendeli/rethis/configuration/ReThisConfiguration {
 	public final fun setMaxConnections (I)V
 	public final fun setReadFromStrategy (Leu/vendeli/rethis/types/common/ReadFromStrategy;)V
 	public final fun setUsePooling (Z)V
+	public final fun socket (Lkotlin/jvm/functions/Function1;)V
 	public final fun tls (Lkotlin/jvm/functions/Function0;)V
 }
 
