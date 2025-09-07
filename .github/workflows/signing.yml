@@ -1,0 +1,20 @@
+name: GPG Key Submission
+
+on:
+  workflow_dispatch:
+
+jobs:
+  submit-key:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Decode GPG key
+        run: echo "${{ secrets.GPG_KEY_CONTENT }}" | base64 -d > private.key
+
+      - name: Import GPG key
+        run: gpg --import private.key
+
+      - name: Submit key to keyserver
+        run: gpg --keyserver keyserver.ubuntu.com --send-keys ${{ secrets.GPG_KEY_ID }}
+
+      - name: Cleanup
+        run: rm private.key

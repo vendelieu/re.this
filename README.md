@@ -43,8 +43,6 @@ dependencies {
 ## Quick Start
 
 ```kotlin
-import eu.vendeli.rethis.ReThis
-
 suspend fun main() {
     // 1. Initialize client (defaults to localhost:6379)
     val client = ReThis()

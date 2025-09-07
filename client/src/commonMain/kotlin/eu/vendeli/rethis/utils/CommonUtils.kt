@@ -2,14 +2,11 @@
 
 package eu.vendeli.rethis.utils
 
-import eu.vendeli.rethis.ReThis
-import eu.vendeli.rethis.annotations.ReThisInternal
+import eu.vendeli.rethis.configuration.ReThisConfiguration
 import eu.vendeli.rethis.shared.response.common.HostAndPort
-import eu.vendeli.rethis.shared.types.CommandRequest
 import eu.vendeli.rethis.shared.types.ReThisException
 import eu.vendeli.rethis.shared.types.RespCode
 import eu.vendeli.rethis.shared.utils.EMPTY_BUFFER
-import eu.vendeli.rethis.configuration.ReThisConfiguration
 import eu.vendeli.rethis.types.common.Address
 import io.ktor.network.sockets.*
 import io.ktor.util.logging.*
@@ -25,9 +22,6 @@ expect val Dispatchers.IO_OR_UNCONFINED: CoroutineDispatcher
 
 expect fun <T> coRunBlocking(block: suspend CoroutineScope.() -> T): T
 
-@ReThisInternal
-suspend fun ReThis.execute(request: CommandRequest): Buffer = topology.route(request).execute(request)
-
 internal fun Buffer.parseCode(default: RespCode) =
     if (this == EMPTY_BUFFER) default else RespCode.fromCode(readByte())
 
@@ -39,11 +33,12 @@ internal suspend inline fun <T> withRetry(
     var currentDelay = cfg.retry.initialDelay.inWholeMilliseconds
     var ex: Exception? = null
     repeat(cfg.retry.times - 1) {
-        logger.trace { "Attempt ${it + 1} of ${cfg.retry.times}" }
+        val attempt = it + 1
+        logger.trace { "Attempt $attempt of ${cfg.retry.times}" }
         try {
             return block(it)
         } catch (e: Exception) {
-            logger.debug { "Caught exception\n${e.stackTraceToString()}" }
+            logger.debug("Caught exception at $attempt attempt", e)
             if (ex == null) {
                 ex = e
             } else {
@@ -60,5 +55,3 @@ internal suspend inline fun <T> withRetry(
 internal inline fun HostAndPort.toAddress(): Address = Address(host, port)
 internal inline fun Address.toHostAndPort(): HostAndPort? =
     if (socket is InetSocketAddress) HostAndPort(socket.hostname, socket.port) else null
-
-inline fun panic(message: String): Nothing = throw ReThisException(message) // todo remove

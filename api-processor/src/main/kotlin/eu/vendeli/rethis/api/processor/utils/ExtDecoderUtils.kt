@@ -7,8 +7,8 @@ import com.squareup.kotlinpoet.ksp.toClassName
 import com.squareup.kotlinpoet.ksp.toTypeName
 import eu.vendeli.rethis.api.processor.core.RedisCommandProcessor.Companion.context
 import eu.vendeli.rethis.shared.decoders.aggregate.SetStringDecoder
+import eu.vendeli.rethis.shared.types.ReThisException
 import eu.vendeli.rethis.shared.types.RespCode
-import eu.vendeli.rethis.utils.panic
 
 private const val DECODE_STRING = "%L.decode(input, charset, code)"
 private const val DECODE_STRING_N = "%L.decodeNullable(input, charset, code)"
@@ -27,7 +27,7 @@ internal fun CodeBlock.Builder.writeDecoder(code: RespCode) {
         isImplicitMapResponse && code == RespCode.ARRAY -> {
             val baseArg = currCmd.arguments.last().toClassName()
             val argument = baseArg.copy(false)
-            val decoder = mapDecoders[argument] ?: panic(
+            val decoder = mapDecoders[argument] ?: throw ReThisException(
                 "Unsupported type for map decoder: $baseArg [${currName()}]",
             )
             addImport(decoder)
@@ -66,7 +66,7 @@ internal fun CodeBlock.Builder.writePlainDecoder(code: RespCode) {
         else -> ""
     }
     val decoder =
-        plainDecoders[code] ?: panic("Unsupported response type for plain decoder: ${code.name} [${currName()}]")
+        plainDecoders[code] ?: throw ReThisException("Unsupported response type for plain decoder: ${code.name} [${currName()}]")
     addImport(decoder)
 
     val baseStatement = if (baseType.isNullable) DECODE_STRING_N else DECODE_STRING
@@ -87,9 +87,9 @@ internal fun CodeBlock.Builder.writeCollectionDecoder(code: RespCode) {
     }
 
     val decoderOptions = collectionDecoders[code]
-        ?: panic("Unsupported response type for collection decoder: ${code.name} [${currName()}]")
+        ?: throw ReThisException("Unsupported response type for collection decoder: ${code.name} [${currName()}]")
     val decoder =
-        decoderOptions[argument] ?: panic("Unsupported type for collection decoder: $argument [${currName()}]")
+        decoderOptions[argument] ?: throw ReThisException("Unsupported type for collection decoder: $argument [${currName()}]")
     addImport(decoder)
 
     val baseStatement = if (baseArg.isNullable) DECODE_STRING_N else DECODE_STRING
@@ -101,7 +101,7 @@ internal fun CodeBlock.Builder.writeMapDecoder() {
     val baseArg = currentCmd.arguments.last().toTypeName()
     val argument = baseArg.copy(false)
 
-    val decoder = mapDecoders[argument] ?: panic("Unsupported type for map decoder: $argument [${currName()}]")
+    val decoder = mapDecoders[argument] ?: throw ReThisException("Unsupported type for map decoder: $argument [${currName()}]")
     addImport(decoder)
 
     val baseStatement = if (baseArg.isNullable) DECODE_STRING_N else DECODE_STRING

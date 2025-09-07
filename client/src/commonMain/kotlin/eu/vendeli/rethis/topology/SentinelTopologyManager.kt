@@ -1,19 +1,19 @@
 package eu.vendeli.rethis.topology
 
 import eu.vendeli.rethis.ReThis
-import eu.vendeli.rethis.shared.types.CommandRequest
-import eu.vendeli.rethis.shared.types.RedisOperation
-import eu.vendeli.rethis.shared.utils.unwrap
 import eu.vendeli.rethis.codecs.connection.PingCommandCodec
 import eu.vendeli.rethis.codecs.sentinel.SentinelGetMasterAddrCommandCodec
 import eu.vendeli.rethis.codecs.sentinel.SentinelReplicasCommandCodec
 import eu.vendeli.rethis.configuration.SentinelConfiguration
 import eu.vendeli.rethis.providers.ConnectionProvider
 import eu.vendeli.rethis.providers.withConnection
+import eu.vendeli.rethis.shared.types.CommandRequest
+import eu.vendeli.rethis.shared.types.ReThisException
+import eu.vendeli.rethis.shared.types.RedisOperation
+import eu.vendeli.rethis.shared.utils.unwrap
 import eu.vendeli.rethis.types.common.*
 import eu.vendeli.rethis.types.interfaces.SubscriptionHandler
 import eu.vendeli.rethis.utils.ClusterEventNames
-import eu.vendeli.rethis.utils.panic
 import eu.vendeli.rethis.utils.registerSubscription
 import io.ktor.utils.io.charsets.*
 import kotlinx.coroutines.*
@@ -123,7 +123,7 @@ class SentinelTopologyManager(
     override suspend fun route(request: CommandRequest) = snapshot.load()?.let {
         if (request.operation == RedisOperation.WRITE) return it.providers[it.masterIdx]
         cfg.readFromStrategy.pick(request, it)
-    } ?: panic("Sentinel topology not initialized")
+    } ?: throw ReThisException("Sentinel topology not initialized")
 
     override fun close() {
         scope.cancel()

@@ -64,7 +64,7 @@ internal suspend fun ReThis.registerSubscription(
                 delay(1)
             }
         } catch (e: Exception) {
-            logger.error("Caught exception in $target channel handler")
+            logger.error("Caught exception in $target channel handler", e)
             subscriptions.eventHandler?.onException(target, e)
         } finally {
             subscriptions.unregisterHandler(target, subscription)
