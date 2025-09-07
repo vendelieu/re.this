@@ -14,7 +14,7 @@ publisher = "0.34.0"
 binvalid = "0.18.1"
 kover = "0.9.1"
 
-kotest = "6.0.1"
+kotest = "6.0.2"
 logback = "1.5.18"
 rtestcontainers = "2.2.4"
 
