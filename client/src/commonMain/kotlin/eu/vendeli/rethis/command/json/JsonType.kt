@@ -1,8 +1,8 @@
 package eu.vendeli.rethis.command.json
 
 import eu.vendeli.rethis.ReThis
-import eu.vendeli.rethis.shared.types.RType
 import eu.vendeli.rethis.codecs.json.JsonTypeCommandCodec
+import eu.vendeli.rethis.shared.types.RType
 import eu.vendeli.rethis.topology.handle
 
 public suspend fun ReThis.jsonType(key: String, path: String? = null): RType {

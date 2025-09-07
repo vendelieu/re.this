@@ -1,9 +1,9 @@
 package eu.vendeli.rethis.types.common
 
-import eu.vendeli.rethis.shared.types.CommandRequest
 import eu.vendeli.rethis.codecs.pubsub.PSubscribeCommandCodec
 import eu.vendeli.rethis.codecs.pubsub.SSubscribeCommandCodec
 import eu.vendeli.rethis.codecs.pubsub.SubscribeCommandCodec
+import eu.vendeli.rethis.shared.types.CommandRequest
 import io.ktor.utils.io.charsets.*
 
 sealed class SubscriptionType {

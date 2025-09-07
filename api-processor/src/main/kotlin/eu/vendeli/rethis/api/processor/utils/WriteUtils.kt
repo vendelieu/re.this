@@ -94,7 +94,7 @@ private fun CodeGenContext.inferWriting(
             val additionalParams = buildList {
                 when {
                     resolvedType.declaration.isTimeType() -> {
-                        addImport("eu.vendeli.rethis.api.spec.common.types.TimeUnit")
+                        addImport("eu.vendeli.rethis.shared.types.TimeUnit")
                         add("TimeUnit.${resolvedType.getTimeUnit()}")
                     }
                 }

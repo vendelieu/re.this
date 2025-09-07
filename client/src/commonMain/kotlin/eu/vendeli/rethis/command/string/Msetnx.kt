@@ -1,8 +1,8 @@
 package eu.vendeli.rethis.command.string
 
 import eu.vendeli.rethis.ReThis
-import eu.vendeli.rethis.shared.request.string.KeyValue
 import eu.vendeli.rethis.codecs.string.MSetNxCommandCodec
+import eu.vendeli.rethis.shared.request.string.KeyValue
 import eu.vendeli.rethis.topology.handle
 
 public suspend fun ReThis.mSetNx(vararg `data`: KeyValue): Boolean {

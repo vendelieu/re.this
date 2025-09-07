@@ -66,8 +66,10 @@ public object HExpireCommandCodec {
                 }
             }
         }
-        size += 1
-        buffer.writeStringArg("FIELDS", charset)
+        if (field.isNotEmpty()) {
+            size += 1
+            buffer.writeStringArg("FIELDS", charset)
+        }
         size += 1
         buffer.writeIntArg(field.size, charset)
         field.forEach { it1 ->

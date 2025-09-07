@@ -1,9 +1,9 @@
 package eu.vendeli.rethis.command.sortedset
 
 import eu.vendeli.rethis.ReThis
+import eu.vendeli.rethis.codecs.sortedset.ZRangeStoreCommandCodec
 import eu.vendeli.rethis.shared.request.sortedset.ZRangeOption
 import eu.vendeli.rethis.shared.request.sortedset.ZRangeStoreLimit
-import eu.vendeli.rethis.codecs.sortedset.ZRangeStoreCommandCodec
 import eu.vendeli.rethis.topology.handle
 
 public suspend fun ReThis.zRangeStore(

@@ -1,8 +1,8 @@
 package eu.vendeli.rethis.command.transaction
 
 import eu.vendeli.rethis.ReThis
-import eu.vendeli.rethis.shared.types.RType
 import eu.vendeli.rethis.codecs.transaction.ExecCommandCodec
+import eu.vendeli.rethis.shared.types.RType
 import eu.vendeli.rethis.topology.handle
 
 public suspend fun ReThis.exec(): List<RType>? {

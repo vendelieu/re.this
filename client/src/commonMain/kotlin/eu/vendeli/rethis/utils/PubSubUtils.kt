@@ -1,19 +1,14 @@
 package eu.vendeli.rethis.utils
 
 import eu.vendeli.rethis.ReThis
-import eu.vendeli.rethis.shared.decoders.pubsub.SubEventDecoder
 import eu.vendeli.rethis.providers.ConnectionProvider
+import eu.vendeli.rethis.shared.decoders.pubsub.SubEventDecoder
 import eu.vendeli.rethis.types.common.Subscription
 import eu.vendeli.rethis.types.common.SubscriptionWorker
 import eu.vendeli.rethis.types.coroutine.CoLocalConn
 import io.ktor.util.logging.*
 import io.ktor.utils.io.*
-import kotlinx.coroutines.CoroutineName
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.currentCoroutineContext
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.isActive
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import kotlinx.io.Buffer
 import kotlinx.io.InternalIoApi
 

@@ -1,12 +1,12 @@
 package eu.vendeli.rethis.topology
 
+import eu.vendeli.rethis.configuration.ReThisConfiguration
+import eu.vendeli.rethis.providers.ConnectionProvider
 import eu.vendeli.rethis.shared.decoders.general.BulkErrorDecoder
 import eu.vendeli.rethis.shared.decoders.general.SimpleErrorDecoder
 import eu.vendeli.rethis.shared.types.CommandRequest
 import eu.vendeli.rethis.shared.types.RespCode
 import eu.vendeli.rethis.shared.utils.EMPTY_BUFFER
-import eu.vendeli.rethis.configuration.ReThisConfiguration
-import eu.vendeli.rethis.providers.ConnectionProvider
 import eu.vendeli.rethis.types.coroutine.CoLocalConn
 import eu.vendeli.rethis.types.coroutine.CoPipelineCtx
 import eu.vendeli.rethis.utils.withRetry

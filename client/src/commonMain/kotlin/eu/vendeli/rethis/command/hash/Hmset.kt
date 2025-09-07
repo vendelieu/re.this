@@ -1,8 +1,8 @@
 package eu.vendeli.rethis.command.hash
 
 import eu.vendeli.rethis.ReThis
-import eu.vendeli.rethis.shared.request.common.FieldValue
 import eu.vendeli.rethis.codecs.hash.HMSetCommandCodec
+import eu.vendeli.rethis.shared.request.common.FieldValue
 import eu.vendeli.rethis.topology.handle
 
 public suspend fun ReThis.hMSet(key: String, vararg `data`: FieldValue): Boolean {

@@ -1,8 +1,8 @@
 package eu.vendeli.rethis.commands
 
 import eu.vendeli.rethis.ReThisTestCtx
-import eu.vendeli.rethis.shared.types.BulkString
 import eu.vendeli.rethis.command.json.*
+import eu.vendeli.rethis.shared.types.BulkString
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeTypeOf
 

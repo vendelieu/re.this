@@ -1,8 +1,8 @@
 package eu.vendeli.rethis.command.sentinel
 
 import eu.vendeli.rethis.ReThis
-import eu.vendeli.rethis.shared.request.common.FieldValue
 import eu.vendeli.rethis.codecs.sentinel.SentinelSetCommandCodec
+import eu.vendeli.rethis.shared.request.common.FieldValue
 import eu.vendeli.rethis.topology.handle
 
 public suspend fun ReThis.sentinelSet(name: String, vararg optionValue: FieldValue): Boolean {

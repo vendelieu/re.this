@@ -42,8 +42,10 @@ public object XReadCommandCodec {
             size += 1
             buffer.writeLongArg(it1, charset, )
         }
-        size += 1
-        buffer.writeStringArg("STREAMS", charset)
+        if (key.isNotEmpty()) {
+            size += 1
+            buffer.writeStringArg("STREAMS", charset)
+        }
         key.forEach { it2 ->
             size += 1
             buffer.writeStringArg(it2, charset, )

@@ -1,6 +1,6 @@
 package eu.vendeli.rethis.codecs.server
 
-import eu.vendeli.rethis.shared.decoders.aggregate.ArrayLongDecoder
+import eu.vendeli.rethis.shared.decoders.aggregate.ArrayStringDecoder
 import eu.vendeli.rethis.shared.types.CommandRequest
 import eu.vendeli.rethis.shared.types.RedisOperation
 import eu.vendeli.rethis.shared.types.RespCode
@@ -27,11 +27,11 @@ public object TimeCommandCodec {
 
     public suspend inline fun encodeWithSlot(charset: Charset): CommandRequest = encode(charset, )
 
-    public suspend fun decode(input: Buffer, charset: Charset): List<Long> {
+    public suspend fun decode(input: Buffer, charset: Charset): List<String> {
         val code = input.parseCode(RespCode.ARRAY)
         return when(code) {
             RespCode.ARRAY -> {
-                ArrayLongDecoder.decode(input, charset, code)
+                ArrayStringDecoder.decode(input, charset, code)
             }
             else -> {
                 throw UnexpectedResponseType("Expected [ARRAY] but got $code", input.tryInferCause(code))

@@ -4,7 +4,6 @@ package eu.vendeli.rethis.utils
 
 import eu.vendeli.rethis.configuration.ReThisConfiguration
 import eu.vendeli.rethis.shared.response.common.HostAndPort
-import eu.vendeli.rethis.shared.types.ReThisException
 import eu.vendeli.rethis.shared.types.RespCode
 import eu.vendeli.rethis.shared.utils.EMPTY_BUFFER
 import eu.vendeli.rethis.types.common.Address

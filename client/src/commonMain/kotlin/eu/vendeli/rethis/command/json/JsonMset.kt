@@ -1,8 +1,8 @@
 package eu.vendeli.rethis.command.json
 
 import eu.vendeli.rethis.ReThis
-import eu.vendeli.rethis.shared.request.json.JsonEntry
 import eu.vendeli.rethis.codecs.json.JsonMSetCommandCodec
+import eu.vendeli.rethis.shared.request.json.JsonEntry
 import eu.vendeli.rethis.topology.handle
 
 public suspend fun ReThis.jsonMSet(vararg triplet: JsonEntry): Boolean {

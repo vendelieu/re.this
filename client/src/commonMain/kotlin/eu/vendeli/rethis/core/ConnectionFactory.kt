@@ -1,9 +1,9 @@
 package eu.vendeli.rethis.core
 
-import eu.vendeli.rethis.shared.request.connection.HelloAuth
 import eu.vendeli.rethis.codecs.connection.HelloCommandCodec
 import eu.vendeli.rethis.codecs.connection.SelectCommandCodec
 import eu.vendeli.rethis.configuration.ReThisConfiguration
+import eu.vendeli.rethis.shared.request.connection.HelloAuth
 import eu.vendeli.rethis.types.common.RConnection
 import eu.vendeli.rethis.types.common.RespVer
 import eu.vendeli.rethis.types.common.rConnection

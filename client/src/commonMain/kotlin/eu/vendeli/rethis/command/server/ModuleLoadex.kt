@@ -1,8 +1,8 @@
 package eu.vendeli.rethis.command.server
 
 import eu.vendeli.rethis.ReThis
-import eu.vendeli.rethis.shared.request.server.ModuleOption
 import eu.vendeli.rethis.codecs.server.ModuleLoadExCommandCodec
+import eu.vendeli.rethis.shared.request.server.ModuleOption
 import eu.vendeli.rethis.topology.handle
 
 public suspend fun ReThis.moduleLoadEx(path: String, vararg options: ModuleOption): Boolean {

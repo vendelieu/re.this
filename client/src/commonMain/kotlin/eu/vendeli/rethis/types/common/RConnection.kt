@@ -19,9 +19,7 @@ data class RConnection(
     @OptIn(InternalAPI::class, InternalIoApi::class)
     suspend fun doRequest(payload: Buffer): Buffer {
         COMMON_LOGGER.trace { "Request:\n${payload.copy().readByteString().decodeToString()}" }
-        val response = request {
-            writeBuffer.transferFrom(payload)
-        }
+        val response = request { writeBuffer.transferFrom(payload) }
         COMMON_LOGGER.trace { "Response:\n${response.copy().readByteString().decodeToString()}" }
         return response
     }
@@ -52,12 +50,8 @@ data class RConnection(
             throw it
         }
         val response = Buffer()
+        input.awaitContent()
         input.readBuffer.transferTo(response)
-
-        if (response.exhausted()) {
-            input.awaitContent()
-            input.readBuffer.transferTo(response)
-        }
 
         return response
     }

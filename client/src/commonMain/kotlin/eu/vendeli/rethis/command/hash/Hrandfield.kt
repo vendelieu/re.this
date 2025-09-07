@@ -1,9 +1,9 @@
 package eu.vendeli.rethis.command.hash
 
 import eu.vendeli.rethis.ReThis
-import eu.vendeli.rethis.shared.types.RType
 import eu.vendeli.rethis.codecs.hash.HRandFieldCommandCodec
 import eu.vendeli.rethis.codecs.hash.HRandFieldCountCommandCodec
+import eu.vendeli.rethis.shared.types.RType
 import eu.vendeli.rethis.topology.handle
 
 public suspend fun ReThis.hRandField(key: String): String? {

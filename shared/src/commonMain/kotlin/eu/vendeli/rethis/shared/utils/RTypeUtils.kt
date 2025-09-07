@@ -97,6 +97,10 @@ private fun Buffer.readSimpleResponseWrapped(
         RespCode.BULK -> {
             val size = readLineStrict().toInt()
             if (size < 0) return RType.Null
+            else if (size == 0) {
+                readLineCRLF() // skip crlf
+                return RType.Null
+            }
             val content = readPartLine(charset)
             BulkString(content)
         }
@@ -118,9 +122,8 @@ private fun Buffer.readSimpleResponseWrapped(
 
 private fun Buffer.readPartLine(charset: Charset) = readLineCRLF().readText(charset)
 
-
-private const val NEWLINE_BYTE = '\n'.code.toByte()
 private const val CARRIAGE_RETURN_BYTE = '\r'.code.toByte()
+private const val NEWLINE_BYTE = '\n'.code.toByte()
 
 private inline fun Buffer.readLineCRLF(): Buffer {
     val buffer = Buffer()

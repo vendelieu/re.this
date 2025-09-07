@@ -41,8 +41,10 @@ public object ZInterStoreCommandCodec {
             buffer.writeStringArg(it0, charset, )
         }
         weight?.let { it1 ->
-            size += 1
-            buffer.writeStringArg("WEIGHTS", charset)
+            if (it1.isNotEmpty()) {
+                size += 1
+                buffer.writeStringArg("WEIGHTS", charset)
+            }
             it1.forEach { it2 ->
                 size += 1
                 buffer.writeLongArg(it2, charset, )

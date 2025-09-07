@@ -1,10 +1,10 @@
 package eu.vendeli.rethis.commands.generic
 
 import eu.vendeli.rethis.ReThisTestCtx
-import eu.vendeli.rethis.shared.types.RType
-import eu.vendeli.rethis.shared.types.ReThisException
 import eu.vendeli.rethis.command.generic.objectFreq
 import eu.vendeli.rethis.command.string.set
+import eu.vendeli.rethis.shared.types.RType
+import eu.vendeli.rethis.shared.types.ReThisException
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.throwable.shouldHaveMessage

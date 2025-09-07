@@ -1,12 +1,12 @@
 package eu.vendeli.rethis.command.string
 
 import eu.vendeli.rethis.ReThis
-import eu.vendeli.rethis.shared.request.string.LcsMode
-import eu.vendeli.rethis.shared.request.string.MinMatchLen
-import eu.vendeli.rethis.shared.response.string.LcsResult
 import eu.vendeli.rethis.codecs.string.LcsCommandCodec
 import eu.vendeli.rethis.codecs.string.LcsDetailedCommandCodec
 import eu.vendeli.rethis.codecs.string.LcsLengthCommandCodec
+import eu.vendeli.rethis.shared.request.string.LcsMode
+import eu.vendeli.rethis.shared.request.string.MinMatchLen
+import eu.vendeli.rethis.shared.response.string.LcsResult
 import eu.vendeli.rethis.topology.handle
 
 public suspend fun ReThis.lcsLength(

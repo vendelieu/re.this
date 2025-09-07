@@ -1,9 +1,9 @@
 package eu.vendeli.rethis.command.generic
 
 import eu.vendeli.rethis.ReThis
+import eu.vendeli.rethis.codecs.generic.MigrateCommandCodec
 import eu.vendeli.rethis.shared.request.generic.MigrateKey
 import eu.vendeli.rethis.shared.request.generic.MigrateOption
-import eu.vendeli.rethis.codecs.generic.MigrateCommandCodec
 import eu.vendeli.rethis.topology.handle
 import kotlin.time.Duration
 

@@ -1,8 +1,8 @@
 package eu.vendeli.rethis.command.pubsub
 
 import eu.vendeli.rethis.ReThis
-import eu.vendeli.rethis.shared.response.common.PubSubNumEntry
 import eu.vendeli.rethis.codecs.pubsub.PubSubShardNumSubCommandCodec
+import eu.vendeli.rethis.shared.response.common.PubSubNumEntry
 import eu.vendeli.rethis.topology.handle
 
 public suspend fun ReThis.pubSubShardNumSub(vararg shardchannel: String): List<PubSubNumEntry> {

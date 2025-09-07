@@ -1,9 +1,9 @@
 package eu.vendeli.rethis.command.connection
 
 import eu.vendeli.rethis.ReThis
+import eu.vendeli.rethis.codecs.connection.HelloCommandCodec
 import eu.vendeli.rethis.shared.request.connection.HelloAuth
 import eu.vendeli.rethis.shared.types.RType
-import eu.vendeli.rethis.codecs.connection.HelloCommandCodec
 import eu.vendeli.rethis.topology.handle
 
 public suspend fun ReThis.hello(

@@ -1,9 +1,9 @@
 package eu.vendeli.rethis.commands
 
 import eu.vendeli.rethis.ReThisTestCtx
+import eu.vendeli.rethis.command.set.*
 import eu.vendeli.rethis.shared.request.set.SScanOption
 import eu.vendeli.rethis.shared.response.common.ScanResult
-import eu.vendeli.rethis.command.set.*
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.shouldBe
 

@@ -1,9 +1,9 @@
 package eu.vendeli.rethis.command.sortedset
 
 import eu.vendeli.rethis.ReThis
+import eu.vendeli.rethis.codecs.sortedset.BzMPopCommandCodec
 import eu.vendeli.rethis.shared.request.sortedset.ZPopCommonOption
 import eu.vendeli.rethis.shared.response.common.MPopResult
-import eu.vendeli.rethis.codecs.sortedset.BzMPopCommandCodec
 import eu.vendeli.rethis.topology.handle
 
 public suspend fun ReThis.bzMPop(

@@ -1,10 +1,10 @@
 package eu.vendeli.rethis.commands.generic
 
 import eu.vendeli.rethis.ReThisTestCtx
-import eu.vendeli.rethis.shared.request.generic.ScanOption
-import eu.vendeli.rethis.shared.response.common.ScanResult
 import eu.vendeli.rethis.command.generic.scan
 import eu.vendeli.rethis.command.string.set
+import eu.vendeli.rethis.shared.request.generic.ScanOption
+import eu.vendeli.rethis.shared.response.common.ScanResult
 import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe

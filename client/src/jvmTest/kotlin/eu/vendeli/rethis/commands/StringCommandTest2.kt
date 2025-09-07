@@ -1,8 +1,8 @@
 package eu.vendeli.rethis.commands
 
 import eu.vendeli.rethis.ReThisTestCtx
-import eu.vendeli.rethis.shared.request.string.GetExOption
 import eu.vendeli.rethis.command.string.*
+import eu.vendeli.rethis.shared.request.string.GetExOption
 import io.kotest.matchers.shouldBe
 import kotlin.time.Duration.Companion.seconds
 

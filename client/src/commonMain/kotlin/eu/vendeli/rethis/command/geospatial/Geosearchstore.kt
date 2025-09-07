@@ -1,10 +1,10 @@
 package eu.vendeli.rethis.command.geospatial
 
 import eu.vendeli.rethis.ReThis
+import eu.vendeli.rethis.codecs.geospatial.GeoSearchStoreCommandCodec
 import eu.vendeli.rethis.shared.request.geospatial.CenterPoint
 import eu.vendeli.rethis.shared.request.geospatial.Shape
 import eu.vendeli.rethis.shared.response.geospatial.GeoSort
-import eu.vendeli.rethis.codecs.geospatial.GeoSearchStoreCommandCodec
 import eu.vendeli.rethis.topology.handle
 
 public suspend fun ReThis.geoSearchStore(

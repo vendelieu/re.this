@@ -1,8 +1,8 @@
 package eu.vendeli.rethis.command.sortedset
 
 import eu.vendeli.rethis.ReThis
-import eu.vendeli.rethis.shared.response.common.ScanResult
 import eu.vendeli.rethis.codecs.sortedset.ZScanCommandCodec
+import eu.vendeli.rethis.shared.response.common.ScanResult
 import eu.vendeli.rethis.topology.handle
 
 public suspend fun ReThis.zScan(

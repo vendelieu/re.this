@@ -7,6 +7,6 @@ import eu.vendeli.rethis.shared.types.RedisOperation
 import eu.vendeli.rethis.shared.types.RespCode
 
 @RedisCommand("TIME", RedisOperation.READ, [RespCode.ARRAY])
-fun interface TimeCommand : RedisCommandSpec<List<Long>> {
+fun interface TimeCommand : RedisCommandSpec<List<String>> {
     suspend fun encode(): CommandRequest
 }

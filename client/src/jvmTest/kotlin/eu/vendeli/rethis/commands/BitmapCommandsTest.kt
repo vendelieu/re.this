@@ -1,9 +1,9 @@
 package eu.vendeli.rethis.commands
 
 import eu.vendeli.rethis.ReThisTestCtx
+import eu.vendeli.rethis.command.bitmap.*
 import eu.vendeli.rethis.shared.request.bitmap.BitOpOption
 import eu.vendeli.rethis.shared.request.bitmap.BitfieldOption
-import eu.vendeli.rethis.command.bitmap.*
 import io.kotest.matchers.shouldBe
 
 class BitmapCommandsTest : ReThisTestCtx() {

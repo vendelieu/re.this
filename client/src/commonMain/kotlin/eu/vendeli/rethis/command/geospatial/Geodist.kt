@@ -1,8 +1,8 @@
 package eu.vendeli.rethis.command.geospatial
 
 import eu.vendeli.rethis.ReThis
-import eu.vendeli.rethis.shared.response.geospatial.GeoUnit
 import eu.vendeli.rethis.codecs.geospatial.GeoDistCommandCodec
+import eu.vendeli.rethis.shared.response.geospatial.GeoUnit
 import eu.vendeli.rethis.topology.handle
 
 public suspend fun ReThis.geoDist(

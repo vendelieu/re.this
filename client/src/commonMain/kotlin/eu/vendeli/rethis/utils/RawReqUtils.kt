@@ -4,9 +4,9 @@ import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.annotations.ReThisInternal
 import eu.vendeli.rethis.shared.types.CommandRequest
 import eu.vendeli.rethis.shared.types.RedisOperation
-import io.ktor.utils.io.charsets.Charset
-import io.ktor.utils.io.charsets.Charsets
+import io.ktor.utils.io.charsets.*
 import kotlinx.io.Buffer
+import kotlinx.io.writeString
 
 /**
  * Low-level execute function
@@ -32,7 +32,7 @@ suspend fun ReThis.execute(
 @ReThisInternal
 fun List<Any?>.toRESPBuffer(charset: Charset = Charsets.UTF_8): Buffer {
     val buffer = Buffer()
-    buffer.writeStringArg("*$size\r\n", charset)
+    buffer.writeString("*$size\r\n")
 
     forEach { element ->
         when (element) {
@@ -43,7 +43,7 @@ fun List<Any?>.toRESPBuffer(charset: Charset = Charsets.UTF_8): Buffer {
             is Boolean -> buffer.writeBooleanArg(element, charset)
             is Double -> buffer.writeDoubleArg(element, charset)
 
-            null -> buffer.writeStringArg("$-1\r\n", charset)
+            null -> buffer.writeString("$-1\r\n")
             else -> throw IllegalArgumentException("Unsupported type: ${element::class}")
         }
     }

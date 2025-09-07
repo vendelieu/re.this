@@ -1,12 +1,6 @@
 package eu.vendeli.rethis.commands
 
 import eu.vendeli.rethis.ReThisTestCtx
-import eu.vendeli.rethis.shared.types.Int64
-import eu.vendeli.rethis.shared.types.PlainString
-import eu.vendeli.rethis.shared.types.RArray
-import eu.vendeli.rethis.shared.types.ReThisException
-import eu.vendeli.rethis.shared.utils.isOk
-import eu.vendeli.rethis.shared.utils.readResponseWrapped
 import eu.vendeli.rethis.codecs.string.SetCommandCodec
 import eu.vendeli.rethis.codecs.transaction.ExecCommandCodec
 import eu.vendeli.rethis.codecs.transaction.MultiCommandCodec
@@ -17,6 +11,12 @@ import eu.vendeli.rethis.command.transaction.exec
 import eu.vendeli.rethis.command.transaction.multi
 import eu.vendeli.rethis.command.transaction.unwatch
 import eu.vendeli.rethis.command.transaction.watch
+import eu.vendeli.rethis.shared.types.Int64
+import eu.vendeli.rethis.shared.types.PlainString
+import eu.vendeli.rethis.shared.types.RArray
+import eu.vendeli.rethis.shared.types.ReThisException
+import eu.vendeli.rethis.shared.utils.isOk
+import eu.vendeli.rethis.shared.utils.readResponseWrapped
 import eu.vendeli.rethis.types.coroutine.CoLocalConn
 import eu.vendeli.rethis.utils.writeStringArg
 import io.kotest.assertions.throwables.shouldNotThrowAny

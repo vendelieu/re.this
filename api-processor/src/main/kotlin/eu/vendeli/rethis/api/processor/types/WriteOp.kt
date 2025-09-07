@@ -108,7 +108,18 @@ internal fun WriteOp.emitOp(encode: Boolean, complex: Boolean = false) {
                     WriteOpProps.NULLABLE -> ctx.buildBlock(node.name, BlockType.LET) { action() }
 
                     WriteOpProps.SINGLE_TOKEN -> {
-                        if (encode) ctx.writeTokens(node, tokens) { t -> !t.multiple }
+                        if (encode) {
+                            if (type.contains(WriteOpProps.COLLECTION)) {
+                                ctx.builder.beginControlFlow(
+                                    "if (%L.isNotEmpty())",
+                                    ctx.pointedParameter(node.name)
+                                )
+                            }
+
+                            ctx.writeTokens(node, tokens) { t -> !t.multiple }
+
+                            if (type.contains(WriteOpProps.COLLECTION)) ctx.builder.endControlFlow()
+                        }
                         action()
                     }
 

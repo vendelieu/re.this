@@ -1,8 +1,8 @@
 package eu.vendeli.rethis.command.sortedset
 
 import eu.vendeli.rethis.ReThis
-import eu.vendeli.rethis.shared.types.RType
 import eu.vendeli.rethis.codecs.sortedset.ZMScoreCommandCodec
+import eu.vendeli.rethis.shared.types.RType
 import eu.vendeli.rethis.topology.handle
 
 public suspend fun ReThis.zMScore(key: String, vararg member: String): List<RType>? {

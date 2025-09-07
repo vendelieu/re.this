@@ -1,8 +1,8 @@
 package eu.vendeli.rethis.command.geospatial
 
 import eu.vendeli.rethis.ReThis
-import eu.vendeli.rethis.shared.response.geospatial.GeoPosition
 import eu.vendeli.rethis.codecs.geospatial.GeoPosCommandCodec
+import eu.vendeli.rethis.shared.response.geospatial.GeoPosition
 import eu.vendeli.rethis.topology.handle
 
 public suspend fun ReThis.geoPos(key: String, vararg member: String): List<List<GeoPosition>?> {
