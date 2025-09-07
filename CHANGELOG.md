@@ -1,5 +1,9 @@
 # Re.this Changelog
 
+## 0.3.1
+
+* Return missing socket configuration.
+
 ## 0.3.0
 
 * Refactored project structure, some imports may break.
