@@ -7,14 +7,37 @@ jobs:
   submit-key:
     runs-on: ubuntu-latest
     steps:
-      - name: Decode GPG key
+      - name: Decode private key
         run: echo "${{ secrets.GPG_KEY_CONTENT }}" | base64 -d > private.key
 
-      - name: Import GPG key
-        run: gpg --import private.key
+      - name: Configure GPG for non-interactive use
+        run: |
+          mkdir -p ~/.gnupg
+          chmod 700 ~/.gnupg
+          echo "allow-loopback-pinentry" > ~/.gnupg/gpg-agent.conf
+          echo "pinentry-mode loopback" > ~/.gnupg/gpg.conf
+          gpgconf --kill gpg-agent
 
-      - name: Submit key to keyserver
-        run: gpg --keyserver keyserver.ubuntu.com --send-keys ${{ secrets.GPG_KEY_ID }}
+      - name: Import private key
+        env:
+          GPG_KEY_PWD: ${{ secrets.GPG_KEY_PWD }}
+        run: |
+          gpg --batch --yes --pinentry-mode loopback --passphrase "$GPG_KEY_PWD" --import private.key
+
+      - name: Determine key fingerprint
+        id: keyinfo
+        run: |
+          FPR=$(gpg --list-secret-keys --with-colons | awk -F: '/^fpr:/ {print $10; exit}')
+          if [ -z "$FPR" ]; then
+            echo "Failed to extract key fingerprint." >&2
+            exit 1
+          fi
+          echo "fingerprint=$FPR" >> $GITHUB_OUTPUT
+
+      - name: Submit public key to Ubuntu keyserver
+        run: |
+          gpg --keyserver hkps://keyserver.ubuntu.com --send-keys "${{ steps.keyinfo.outputs.fingerprint }}"
 
       - name: Cleanup
-        run: rm private.key
+        run: |
+          shred -u private.key || rm -f private.key
