@@ -2058,7 +2058,7 @@ final object eu.vendeli.rethis.codecs.server/SwapDbCommandCodec { // eu.vendeli.
 }
 
 final object eu.vendeli.rethis.codecs.server/TimeCommandCodec { // eu.vendeli.rethis.codecs.server/TimeCommandCodec|null[0]
-    final suspend fun decode(kotlinx.io/Buffer, io.ktor.utils.io.charsets/Charset): kotlin.collections/List<kotlin/Long> // eu.vendeli.rethis.codecs.server/TimeCommandCodec.decode|decode(kotlinx.io.Buffer;io.ktor.utils.io.charsets.Charset){}[0]
+    final suspend fun decode(kotlinx.io/Buffer, io.ktor.utils.io.charsets/Charset): kotlin.collections/List<kotlin/String> // eu.vendeli.rethis.codecs.server/TimeCommandCodec.decode|decode(kotlinx.io.Buffer;io.ktor.utils.io.charsets.Charset){}[0]
     final suspend fun encode(io.ktor.utils.io.charsets/Charset): eu.vendeli.rethis.shared.types/CommandRequest // eu.vendeli.rethis.codecs.server/TimeCommandCodec.encode|encode(io.ktor.utils.io.charsets.Charset){}[0]
     final suspend inline fun encodeWithSlot(io.ktor.utils.io.charsets/Charset): eu.vendeli.rethis.shared.types/CommandRequest // eu.vendeli.rethis.codecs.server/TimeCommandCodec.encodeWithSlot|encodeWithSlot(io.ktor.utils.io.charsets.Charset){}[0]
 }
@@ -2947,7 +2947,7 @@ final suspend fun (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.command.server/sl
 final suspend fun (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.command.server/slowLogLen(): kotlin/Long // eu.vendeli.rethis.command.server/slowLogLen|slowLogLen@eu.vendeli.rethis.ReThis(){}[0]
 final suspend fun (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.command.server/slowLogReset(): kotlin/Boolean // eu.vendeli.rethis.command.server/slowLogReset|slowLogReset@eu.vendeli.rethis.ReThis(){}[0]
 final suspend fun (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.command.server/swapDb(kotlin/Long, kotlin/Long): kotlin/Boolean // eu.vendeli.rethis.command.server/swapDb|swapDb@eu.vendeli.rethis.ReThis(kotlin.Long;kotlin.Long){}[0]
-final suspend fun (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.command.server/time(): kotlin.collections/List<kotlin/Long> // eu.vendeli.rethis.command.server/time|time@eu.vendeli.rethis.ReThis(){}[0]
+final suspend fun (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.command.server/time(): kotlin.collections/List<kotlin/String> // eu.vendeli.rethis.command.server/time|time@eu.vendeli.rethis.ReThis(){}[0]
 final suspend fun (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.command.set/sAdd(kotlin/String, kotlin/Array<out kotlin/String>...): kotlin/Long // eu.vendeli.rethis.command.set/sAdd|sAdd@eu.vendeli.rethis.ReThis(kotlin.String;kotlin.Array<out|kotlin.String>...){}[0]
 final suspend fun (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.command.set/sCard(kotlin/String): kotlin/Long // eu.vendeli.rethis.command.set/sCard|sCard@eu.vendeli.rethis.ReThis(kotlin.String){}[0]
 final suspend fun (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.command.set/sDiff(kotlin/Array<out kotlin/String>...): kotlin.collections/Set<kotlin/String> // eu.vendeli.rethis.command.set/sDiff|sDiff@eu.vendeli.rethis.ReThis(kotlin.Array<out|kotlin.String>...){}[0]
