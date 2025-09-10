@@ -1,7 +1,7 @@
 [versions]
 ktor = "3.2.3"
 
-kotlin = "2.2.10"
+kotlin = "2.2.20"
 coroutines = "1.10.2"
 io = "0.8.0"
 bignum = "0.3.10"
