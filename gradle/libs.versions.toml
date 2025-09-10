@@ -18,7 +18,7 @@ kotest = "6.0.3"
 logback = "1.5.18"
 rtestcontainers = "2.2.4"
 
-ksp = "2.2.10-2.0.2"
+ksp = "2.2.20-2.0.2"
 poet = "2.2.0"
 autoservice-annotations = "1.1.1"
 autoservice-ksp = "1.2.0"
