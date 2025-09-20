@@ -44,6 +44,11 @@ class ReThis internal constructor(
     val subscriptions = SubscriptionManager()
     val isActive get() = rootJob.isActive
 
+    init {
+        logger.info("Initialized ReThis with ${topology::class.simpleName}")
+        logger.info("Using configuration: $cfg")
+    }
+
     fun close() {
         logger.info("Shutting down")
 

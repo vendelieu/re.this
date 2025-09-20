@@ -9,6 +9,12 @@ internal class StandaloneTopologyManager(
     node: Address,
     client: ReThis,
 ) : TopologyManager {
+    private val logger = client.cfg.loggerFactory.get("eu.vendeli.rethis.topology.StandaloneTopologyManager")
+
+    init {
+        logger.info("Connecting to ${node.socket}")
+    }
+
     override val cfg = client.cfg
     internal val provider = client.connectionProviderFactory.create(node)
 

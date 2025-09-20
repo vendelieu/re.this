@@ -45,7 +45,6 @@ internal class ConnectionPool(
 
     init {
         logger.info("Initializing connection pool for $address")
-        logger.debug { "Pool configuration: ${cfg.pool}" }
         populatePool()
         runObserver()
     }

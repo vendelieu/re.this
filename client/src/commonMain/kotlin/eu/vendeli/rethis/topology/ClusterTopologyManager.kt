@@ -27,11 +27,13 @@ class ClusterTopologyManager(
     private val client: ReThis,
     override val cfg: ClusterConfiguration,
 ) : TopologyManager {
+    private val logger = cfg.loggerFactory.get("eu.vendeli.rethis.topology.ClusterTopologyManager")
     private val snapshotRef: AtomicReference<ClusterSnapshot?> = AtomicReference(null)
     private val refreshMutex = Mutex()
     private val scope = CoroutineScope(cfg.dispatcher + Job(client.rootJob))
 
     init {
+        logger.info("Connecting to $initialNodes")
         initialize()
     }
 

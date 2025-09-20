@@ -37,6 +37,7 @@ class SentinelTopologyManager(
     private val scope = CoroutineScope(cfg.dispatcher + Job(client.rootJob))
 
     init {
+        logger.info("Connecting to $sentinelNodes with $masterName as master")
         initialize()
     }
 
