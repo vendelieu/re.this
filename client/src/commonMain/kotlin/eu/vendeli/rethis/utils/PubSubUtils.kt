@@ -34,7 +34,7 @@ internal suspend fun ReThis.registerSubscription(
             while (isActive) {
                 conn.input.awaitContent()
                 val payload = Buffer()
-                conn.input.readBuffer.buffer.copyTo(payload)
+                conn.input.readBuffer.buffer.transferTo(payload)
                 val event = SubEventDecoder.decode(payload, cfg.charset)
                 logger.debug { "Handling event in $target channel subscription" }
 
