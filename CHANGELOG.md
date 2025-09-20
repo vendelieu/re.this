@@ -1,5 +1,10 @@
 # Re.this Changelog
 
+## 0.3.2
+
+* Improve logging
+* Fix pubsub event handling
+
 ## 0.3.1
 
 * Return missing socket configuration.
