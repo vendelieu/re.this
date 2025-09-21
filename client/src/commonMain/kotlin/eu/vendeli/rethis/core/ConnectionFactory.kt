@@ -1,9 +1,9 @@
 package eu.vendeli.rethis.core
 
-import eu.vendeli.rethis.shared.request.connection.HelloAuth
 import eu.vendeli.rethis.codecs.connection.HelloCommandCodec
 import eu.vendeli.rethis.codecs.connection.SelectCommandCodec
 import eu.vendeli.rethis.configuration.ReThisConfiguration
+import eu.vendeli.rethis.shared.request.connection.HelloAuth
 import eu.vendeli.rethis.types.common.RConnection
 import eu.vendeli.rethis.types.common.RespVer
 import eu.vendeli.rethis.types.common.rConnection
@@ -64,20 +64,22 @@ internal class ConnectionFactory(
     }
 
     suspend fun prepareConnection(conn: RConnection) {
-        if (cfg.protocol != RespVer.V3 && cfg.auth == null && (cfg.db == null || cfg.db!! <= 0)) return
+        val cfgAuth = cfg.auth
+        val cfgDb = cfg.db
+        if (cfg.protocol != RespVer.V3 && cfgAuth == null && (cfgDb == null || cfgDb <= 0)) return
 
         val helloBuffer = HelloCommandCodec.encode(
             Charsets.UTF_8,
             cfg.protocol.literal.toLong(),
-            cfg.auth?.let { HelloAuth(it.username ?: "default", it.password) },
+            cfgAuth?.let { HelloAuth(it.username ?: "default", it.password) },
             CLIENT_NAME.takeIf { cfg.pool.setClientName },
         ).buffer
 
-        if (cfg.db != null && cfg.db!! > 0) {
+        if (cfgDb != null && cfgDb > 0) {
             conn.doBatchRequest(
                 listOf(
                     helloBuffer,
-                    SelectCommandCodec.encode(Charsets.UTF_8, cfg.db!!.toLong()).buffer,
+                    SelectCommandCodec.encode(Charsets.UTF_8, cfgDb.toLong()).buffer,
                 ),
             )
         } else {

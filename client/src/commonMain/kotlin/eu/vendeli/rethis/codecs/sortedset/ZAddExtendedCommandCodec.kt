@@ -112,7 +112,7 @@ public object ZAddExtendedCommandCodec {
                 DoubleDecoder.decode(input, charset, code)
             }
             RespCode.BULK -> {
-                BulkStringDecoder.decode(input, charset, code).toDouble()
+                BulkStringDecoder.decodeNullable(input, charset, code)?.toDouble()
             }
             RespCode.NULL -> {
                 null

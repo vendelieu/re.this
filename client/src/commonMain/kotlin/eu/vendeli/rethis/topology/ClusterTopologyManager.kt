@@ -1,13 +1,13 @@
 package eu.vendeli.rethis.topology
 
 import eu.vendeli.rethis.ReThis
-import eu.vendeli.rethis.shared.response.cluster.ClusterNode
-import eu.vendeli.rethis.shared.types.*
 import eu.vendeli.rethis.codecs.cluster.AskingCommandCodec
 import eu.vendeli.rethis.codecs.cluster.ClusterSlotsCommandCodec
 import eu.vendeli.rethis.configuration.ClusterConfiguration
 import eu.vendeli.rethis.providers.ConnectionProvider
 import eu.vendeli.rethis.providers.withConnection
+import eu.vendeli.rethis.shared.response.cluster.ClusterNode
+import eu.vendeli.rethis.shared.types.*
 import eu.vendeli.rethis.types.common.Address
 import eu.vendeli.rethis.types.common.ClusterSnapshot
 import eu.vendeli.rethis.utils.toAddress
@@ -27,11 +27,13 @@ class ClusterTopologyManager(
     private val client: ReThis,
     override val cfg: ClusterConfiguration,
 ) : TopologyManager {
+    private val logger = cfg.loggerFactory.get("eu.vendeli.rethis.topology.ClusterTopologyManager")
     private val snapshotRef: AtomicReference<ClusterSnapshot?> = AtomicReference(null)
     private val refreshMutex = Mutex()
     private val scope = CoroutineScope(cfg.dispatcher + Job(client.rootJob))
 
     init {
+        logger.info("Connecting to $initialNodes")
         initialize()
     }
 

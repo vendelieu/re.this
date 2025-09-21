@@ -1,8 +1,8 @@
 package eu.vendeli.rethis.command.server
 
 import eu.vendeli.rethis.ReThis
-import eu.vendeli.rethis.shared.types.RType
 import eu.vendeli.rethis.codecs.server.MonitorCommandCodec
+import eu.vendeli.rethis.shared.types.RType
 import eu.vendeli.rethis.topology.handle
 
 public suspend fun ReThis.monitor(): RType {

@@ -48,6 +48,7 @@ sealed class ReThisConfiguration(internal val protocol: RespVer) {
      * True by default.
      */
     var usePooling = true
+
     /**
      * Defines the strategy for selecting a connection to read data from within a Redis cluster or sentinel setup.
      * The selection strategy determines which node (master or replica) is chosen for handling read operations.
@@ -73,6 +74,7 @@ sealed class ReThisConfiguration(internal val protocol: RespVer) {
      * for connections. If the value is null, the default database is used.
      */
     var db: Int? = null
+
     /**
      * The character set used for encoding and decoding data in communication with the Redis server.
      *
@@ -83,6 +85,7 @@ sealed class ReThisConfiguration(internal val protocol: RespVer) {
      * such as preparing commands or handling responses.
      */
     var charset: Charset = Charsets.UTF_8
+
     /**
      * Specifies the [CoroutineDispatcher] to be used for executing general asynchronous operations.
      *
@@ -92,6 +95,7 @@ sealed class ReThisConfiguration(internal val protocol: RespVer) {
      * dispatcher or a custom thread pool.
      */
     var dispatcher: CoroutineDispatcher = Dispatchers.Default
+
     /**
      * Determines the maximum number of connections allowed generally (in pool, requests over pool, pubsub, and transaction mode).
      *
@@ -99,6 +103,7 @@ sealed class ReThisConfiguration(internal val protocol: RespVer) {
      * be maintained. The default value is set to 5000.
      */
     var maxConnections: Int = 5000
+
     /**
      * Specifies the maximum duration to wait when attempting to acquire a connection
      * from the connection provider before timing out.
@@ -106,6 +111,7 @@ sealed class ReThisConfiguration(internal val protocol: RespVer) {
      * and a new connection is being created or awaited.
      */
     var connectionAcquireTimeout: Duration = 10.seconds
+
     /**
      * Factory used for creating loggers within the configuration.
      *
@@ -162,4 +168,29 @@ sealed class ReThisConfiguration(internal val protocol: RespVer) {
     fun socket(block: SocketConfiguration.() -> Unit) {
         socket.block()
     }
+
+    override fun toString(): String = StringBuilder().apply {
+        appendLine("${this@ReThisConfiguration::class.simpleName} {")
+
+        appendLine(
+            "\tauth=${
+                auth?.let {
+                    "username=${auth?.username}, password=${auth?.password?.size?.let { "*".repeat(it) }}"
+                }
+            }",
+        )
+        appendLine("\ttls=$tls")
+        appendLine("\t${socket}")
+        appendLine("\t$retry")
+        appendLine("\tusePooling=$usePooling")
+        if (usePooling) appendLine("\tpool=$pool")
+        appendLine("\tdb=${db ?: 0}")
+        appendLine("\tcharset=$charset")
+        appendLine("\tdispatcher=$dispatcher")
+        appendLine("\tmaxConnections=$maxConnections")
+        appendLine("\tconnectionAcquireTimeout=$connectionAcquireTimeout")
+        appendLine("\tloggerFactory=${loggerFactory::class.simpleName}")
+
+        appendLine("}")
+    }.toString()
 }

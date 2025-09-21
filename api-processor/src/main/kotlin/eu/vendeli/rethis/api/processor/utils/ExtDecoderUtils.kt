@@ -59,30 +59,42 @@ internal fun CodeBlock.Builder.writePlainDecoder(code: RespCode) {
     val isReturnBool = BOOLEAN.copy(true) == cType
     val isReturnDouble = DOUBLE.copy(true) == cType
 
-    val tailStatement = when {
-        code.isString() && isReturnBool -> " == \"OK\""
-        code == RespCode.INTEGER && isReturnBool -> " == 1L"
-        code.isString() && isReturnDouble -> ".toDouble()"
-        else -> ""
-    }
     val decoder =
         plainDecoders[code] ?: throw ReThisException("Unsupported response type for plain decoder: ${code.name} [${currName()}]")
     addImport(decoder)
 
-    val baseStatement = if (baseType.isNullable) DECODE_STRING_N else DECODE_STRING
-    addStatement(baseStatement + tailStatement, decoder.name)
+    val statement = StringBuilder()
+    val baseStatement = when {
+        code == RespCode.BULK && context.currentCommand.command.responseTypes.contains(RespCode.NULL) -> DECODE_STRING_N
+        baseType.isNullable -> DECODE_STRING_N
+        else -> DECODE_STRING
+    }
+    statement.append(baseStatement)
+
+
+    when {
+        code.isString() && isReturnBool -> statement.append(" == \"OK\"")
+        code == RespCode.INTEGER && isReturnBool -> statement.append(" == 1L")
+        code.isString() && isReturnDouble -> {
+            if (statement.get(10) == DECODE_STRING_N.get(10)) statement.append("?")
+            statement.append(".toDouble()")
+        }
+    }
+
+    addStatement(statement.toString(), decoder.name)
 }
 
 internal fun CodeBlock.Builder.writeCollectionDecoder(code: RespCode) {
     val currentCmd = context.currentCommand
     val baseArg = currentCmd.arguments.first().toTypeName()
+    val baseStatement = if (baseArg.isNullable) DECODE_STRING_N else DECODE_STRING
     val argument = baseArg.copy(false)
     val respCode = context.currentCommand.command.responseTypes
 
     if (RespCode.SET in respCode && RespCode.ARRAY == code) {
         val decoder = SetStringDecoder::class.qualifiedName!!
         addImport(decoder)
-        addStatement(DECODE_STRING, decoder.name)
+        addStatement(baseStatement, decoder.name)
         return
     }
 
@@ -92,7 +104,6 @@ internal fun CodeBlock.Builder.writeCollectionDecoder(code: RespCode) {
         decoderOptions[argument] ?: throw ReThisException("Unsupported type for collection decoder: $argument [${currName()}]")
     addImport(decoder)
 
-    val baseStatement = if (baseArg.isNullable) DECODE_STRING_N else DECODE_STRING
     addStatement(baseStatement, decoder.name)
 }
 

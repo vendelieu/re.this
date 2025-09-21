@@ -1,9 +1,6 @@
 package eu.vendeli.rethis
 
 import eu.vendeli.rethis.annotations.ReThisDSL
-import eu.vendeli.rethis.shared.types.CommandRequest
-import eu.vendeli.rethis.shared.types.RType
-import eu.vendeli.rethis.shared.types.TransactionInvalidStateException
 import eu.vendeli.rethis.codecs.transaction.DiscardCommandCodec
 import eu.vendeli.rethis.codecs.transaction.ExecCommandCodec
 import eu.vendeli.rethis.codecs.transaction.MultiCommandCodec
@@ -12,6 +9,9 @@ import eu.vendeli.rethis.core.ConnectionFactory
 import eu.vendeli.rethis.core.SubscriptionManager
 import eu.vendeli.rethis.providers.DefaultConnectionProviderFactory
 import eu.vendeli.rethis.providers.withConnection
+import eu.vendeli.rethis.shared.types.CommandRequest
+import eu.vendeli.rethis.shared.types.RType
+import eu.vendeli.rethis.shared.types.TransactionInvalidStateException
 import eu.vendeli.rethis.topology.ClusterTopologyManager
 import eu.vendeli.rethis.topology.SentinelTopologyManager
 import eu.vendeli.rethis.topology.StandaloneTopologyManager
@@ -43,6 +43,11 @@ class ReThis internal constructor(
 
     val subscriptions = SubscriptionManager()
     val isActive get() = rootJob.isActive
+
+    init {
+        logger.info("Initialized ReThis with ${topology::class.simpleName}")
+        logger.info("Using configuration: $cfg")
+    }
 
     fun close() {
         logger.info("Shutting down")

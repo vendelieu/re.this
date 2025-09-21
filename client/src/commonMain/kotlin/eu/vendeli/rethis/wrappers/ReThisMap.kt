@@ -1,8 +1,8 @@
 package eu.vendeli.rethis.wrappers
 
 import eu.vendeli.rethis.ReThis
-import eu.vendeli.rethis.shared.request.common.FieldValue
 import eu.vendeli.rethis.command.hash.*
+import eu.vendeli.rethis.shared.request.common.FieldValue
 import eu.vendeli.rethis.utils.coRunBlocking
 
 class ReThisMap(

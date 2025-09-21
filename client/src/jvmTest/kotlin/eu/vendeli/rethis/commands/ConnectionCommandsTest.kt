@@ -1,12 +1,12 @@
 package eu.vendeli.rethis.commands
 
 import eu.vendeli.rethis.ReThisTestCtx
-import eu.vendeli.rethis.shared.request.connection.HelloAuth
-import eu.vendeli.rethis.shared.types.Int64
-import eu.vendeli.rethis.shared.types.ReThisException
 import eu.vendeli.rethis.command.connection.hello
 import eu.vendeli.rethis.command.connection.ping
 import eu.vendeli.rethis.command.connection.select
+import eu.vendeli.rethis.shared.request.connection.HelloAuth
+import eu.vendeli.rethis.shared.types.Int64
+import eu.vendeli.rethis.shared.types.ReThisException
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.ints.shouldBeGreaterThan
 import io.kotest.matchers.nulls.shouldNotBeNull

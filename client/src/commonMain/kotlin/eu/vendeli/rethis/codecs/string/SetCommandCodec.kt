@@ -115,7 +115,7 @@ public object SetCommandCodec {
         val code = input.parseCode(RespCode.BULK)
         return when(code) {
             RespCode.BULK -> {
-                BulkStringDecoder.decode(input, charset, code)
+                BulkStringDecoder.decodeNullable(input, charset, code)
             }
             RespCode.SIMPLE_STRING -> {
                 SimpleStringDecoder.decode(input, charset, code)

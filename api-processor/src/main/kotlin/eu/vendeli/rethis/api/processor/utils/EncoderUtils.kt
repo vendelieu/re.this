@@ -18,9 +18,9 @@ internal fun addEncoderCode() {
     addImport(
         "kotlinx.io.Buffer",
         "kotlinx.io.writeString",
-        "eu.vendeli.rethis.api.spec.common.utils.CRC16",
-        "eu.vendeli.rethis.api.spec.common.types.CommandRequest",
-        "eu.vendeli.rethis.api.spec.common.types.RedisOperation",
+        "eu.vendeli.rethis.shared.utils.CRC16",
+        "eu.vendeli.rethis.shared.types.CommandRequest",
+        "eu.vendeli.rethis.shared.types.RedisOperation",
         "io.ktor.utils.io.core.toByteArray",
     )
 
@@ -76,7 +76,7 @@ internal fun addEncoderCode() {
             addStatement("return %L", requestStatement)
             return@apply
         }
-        addImport("eu.vendeli.rethis.api.spec.common.utils.validateSlot")
+        addImport("eu.vendeli.rethis.shared.utils.validateSlot")
 
         addStatement("var slot: Int? = null")
         context += CodeGenContext(this)
@@ -84,7 +84,7 @@ internal fun addEncoderCode() {
         slotOps.forEach { it.emitOp(encode = false) }
 
         slotOps.findWrappedCall { it.props.contains(WriteOpProps.COLLECTION) }?.also {
-            addImport("eu.vendeli.rethis.api.spec.common.types.KeyAbsentException")
+            addImport("eu.vendeli.rethis.shared.types.KeyAbsentException")
             addStatement("if (slot == null) throw KeyAbsentException(\"Expected key is not provided\")")
         }
 

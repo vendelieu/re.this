@@ -1,9 +1,9 @@
 package eu.vendeli.rethis.command.stream
 
 import eu.vendeli.rethis.ReThis
+import eu.vendeli.rethis.codecs.stream.XPendingCommandCodec
 import eu.vendeli.rethis.shared.request.stream.XPendingMainFilter
 import eu.vendeli.rethis.shared.types.RType
-import eu.vendeli.rethis.codecs.stream.XPendingCommandCodec
 import eu.vendeli.rethis.topology.handle
 
 public suspend fun ReThis.xPending(

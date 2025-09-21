@@ -1,8 +1,8 @@
 package eu.vendeli.rethis.command.scripting
 
 import eu.vendeli.rethis.ReThis
-import eu.vendeli.rethis.shared.types.RType
 import eu.vendeli.rethis.codecs.scripting.FunctionListCommandCodec
+import eu.vendeli.rethis.shared.types.RType
 import eu.vendeli.rethis.topology.handle
 
 public suspend fun ReThis.functionList(libraryNamePattern: String? = null, withCode: Boolean? = null): List<RType> {

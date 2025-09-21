@@ -1,9 +1,9 @@
 package eu.vendeli.rethis.command.connection
 
 import eu.vendeli.rethis.ReThis
+import eu.vendeli.rethis.codecs.connection.ClientTrackingCommandCodec
 import eu.vendeli.rethis.shared.request.connection.ClientStandby
 import eu.vendeli.rethis.shared.request.connection.ClientTrackingMode
-import eu.vendeli.rethis.codecs.connection.ClientTrackingCommandCodec
 import eu.vendeli.rethis.topology.handle
 
 public suspend fun ReThis.clientTracking(status: ClientStandby, vararg options: ClientTrackingMode): Boolean {

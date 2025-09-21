@@ -30,4 +30,6 @@ abstract class ReThisTestCtx(
     protected fun resetClient(new: ReThis) {
         reThis = new
     }
+
+    protected fun createClient(): ReThis = ReThis(redis.host, redis.firstMappedPort)
 }

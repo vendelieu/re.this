@@ -1,8 +1,8 @@
 package eu.vendeli.rethis.command.sortedset
 
 import eu.vendeli.rethis.ReThis
-import eu.vendeli.rethis.shared.response.stream.ZPopResult
 import eu.vendeli.rethis.codecs.sortedset.BzPopMinCommandCodec
+import eu.vendeli.rethis.shared.response.stream.ZPopResult
 import eu.vendeli.rethis.topology.handle
 
 public suspend fun ReThis.bzPopMin(timeout: Double, vararg key: String): ZPopResult? {

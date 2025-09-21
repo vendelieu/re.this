@@ -1,9 +1,9 @@
 package eu.vendeli.rethis.command.list
 
 import eu.vendeli.rethis.ReThis
+import eu.vendeli.rethis.codecs.list.BlmPopCommandCodec
 import eu.vendeli.rethis.shared.response.common.MPopResult
 import eu.vendeli.rethis.shared.response.common.MoveDirection
-import eu.vendeli.rethis.codecs.list.BlmPopCommandCodec
 import eu.vendeli.rethis.topology.handle
 
 public suspend fun ReThis.blmPop(

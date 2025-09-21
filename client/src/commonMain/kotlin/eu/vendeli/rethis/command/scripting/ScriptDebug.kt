@@ -1,8 +1,8 @@
 package eu.vendeli.rethis.command.scripting
 
 import eu.vendeli.rethis.ReThis
-import eu.vendeli.rethis.shared.request.scripting.ScriptDebugMode
 import eu.vendeli.rethis.codecs.scripting.ScriptDebugCommandCodec
+import eu.vendeli.rethis.shared.request.scripting.ScriptDebugMode
 import eu.vendeli.rethis.topology.handle
 
 public suspend fun ReThis.scriptDebug(mode: ScriptDebugMode): Boolean {

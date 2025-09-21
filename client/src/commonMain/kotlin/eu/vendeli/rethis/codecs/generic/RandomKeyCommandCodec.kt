@@ -31,7 +31,7 @@ public object RandomKeyCommandCodec {
         val code = input.parseCode(RespCode.BULK)
         return when(code) {
             RespCode.BULK -> {
-                BulkStringDecoder.decode(input, charset, code)
+                BulkStringDecoder.decodeNullable(input, charset, code)
             }
             RespCode.NULL -> {
                 null

@@ -1,8 +1,8 @@
 package eu.vendeli.rethis.command.generic
 
 import eu.vendeli.rethis.ReThis
-import eu.vendeli.rethis.shared.request.common.UpdateStrategyOption
 import eu.vendeli.rethis.codecs.generic.PExpireCommandCodec
+import eu.vendeli.rethis.shared.request.common.UpdateStrategyOption
 import eu.vendeli.rethis.topology.handle
 import kotlin.time.Duration
 

@@ -177,6 +177,8 @@ public final class eu/vendeli/rethis/shared/decoders/general/SimpleErrorDecoder 
 public final class eu/vendeli/rethis/shared/decoders/general/SimpleStringDecoder : eu/vendeli/rethis/shared/decoders/ResponseDecoder {
 	public static final field INSTANCE Leu/vendeli/rethis/shared/decoders/general/SimpleStringDecoder;
 	public fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun decodeNullable (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;)Ljava/lang/String;
+	public static synthetic fun decodeNullable$default (Leu/vendeli/rethis/shared/decoders/general/SimpleStringDecoder;Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;ILjava/lang/Object;)Ljava/lang/String;
 }
 
 public final class eu/vendeli/rethis/shared/decoders/general/VerbatimStringDecoder : eu/vendeli/rethis/shared/decoders/ResponseDecoder {

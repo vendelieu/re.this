@@ -47,8 +47,8 @@ internal fun TypeSpec.Builder.addDecodeFunction(
     }
 
     addImport(
-        "eu.vendeli.rethis.api.spec.common.types.RespCode",
-        "eu.vendeli.rethis.api.spec.common.types.UnexpectedResponseType",
+        "eu.vendeli.rethis.shared.types.RespCode",
+        "eu.vendeli.rethis.shared.types.UnexpectedResponseType",
     )
 
     addFunction(
@@ -66,7 +66,7 @@ internal fun TypeSpec.Builder.addDecodeFunction(
                     beginControlFlow("return when(code)")
                     respCode.forEach { writeDecoder(it) }
                     beginControlFlow("else ->")
-                    addImport("eu.vendeli.rethis.api.spec.common.utils.tryInferCause")
+                    addImport("eu.vendeli.rethis.shared.utils.tryInferCause")
                     addStatement($$"throw UnexpectedResponseType(\"Expected $$respCode but got $code\", input.tryInferCause(code))")
                     endControlFlow()
 

@@ -1,11 +1,11 @@
 package eu.vendeli.rethis.commands.generic
 
 import eu.vendeli.rethis.ReThisTestCtx
-import eu.vendeli.rethis.shared.request.generic.RestoreOption
 import eu.vendeli.rethis.command.generic.del
 import eu.vendeli.rethis.command.generic.dump
 import eu.vendeli.rethis.command.generic.restore
 import eu.vendeli.rethis.command.string.set
+import eu.vendeli.rethis.shared.request.generic.RestoreOption
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import kotlin.time.Duration.Companion.seconds

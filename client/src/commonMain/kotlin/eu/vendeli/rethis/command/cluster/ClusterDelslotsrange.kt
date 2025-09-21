@@ -1,8 +1,8 @@
 package eu.vendeli.rethis.command.cluster
 
 import eu.vendeli.rethis.ReThis
-import eu.vendeli.rethis.shared.request.cluster.SlotRange
 import eu.vendeli.rethis.codecs.cluster.ClusterDelSlotsRangeCommandCodec
+import eu.vendeli.rethis.shared.request.cluster.SlotRange
 import eu.vendeli.rethis.topology.handle
 
 public suspend fun ReThis.clusterDelSlotsRange(vararg range: SlotRange): Boolean {

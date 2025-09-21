@@ -19,7 +19,7 @@ object AclLogDecoder : ResponseDecoder<List<String>> {
         val code = code ?: RespCode.fromCode(input.readByte())
         if (code == RespCode.SIMPLE_STRING && SimpleStringDecoder.decode(input, charset) == "OK") return emptyList()
 
-        val response = ArrayStringDecoder.decode(input, charset, null)
+        val response = ArrayStringDecoder.decode(input, charset, code)
 
         return response
     }

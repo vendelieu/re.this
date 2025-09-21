@@ -1,8 +1,8 @@
 package eu.vendeli.rethis.command.generic
 
 import eu.vendeli.rethis.ReThis
-import eu.vendeli.rethis.shared.request.generic.CopyOption
 import eu.vendeli.rethis.codecs.generic.CopyCommandCodec
+import eu.vendeli.rethis.shared.request.generic.CopyOption
 import eu.vendeli.rethis.topology.handle
 
 public suspend fun ReThis.copy(

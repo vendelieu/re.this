@@ -1,8 +1,8 @@
 package eu.vendeli.rethis.command.server
 
 import eu.vendeli.rethis.ReThis
-import eu.vendeli.rethis.shared.request.server.FailoverOptions
 import eu.vendeli.rethis.codecs.server.FailoverCommandCodec
+import eu.vendeli.rethis.shared.request.server.FailoverOptions
 import eu.vendeli.rethis.topology.handle
 
 public suspend fun ReThis.failover(vararg option: FailoverOptions): Boolean {

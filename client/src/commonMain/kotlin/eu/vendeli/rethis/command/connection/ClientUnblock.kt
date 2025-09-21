@@ -1,8 +1,8 @@
 package eu.vendeli.rethis.command.connection
 
 import eu.vendeli.rethis.ReThis
-import eu.vendeli.rethis.shared.request.connection.ClientUnblockType
 import eu.vendeli.rethis.codecs.connection.ClientUnblockCommandCodec
+import eu.vendeli.rethis.shared.request.connection.ClientUnblockType
 import eu.vendeli.rethis.topology.handle
 
 public suspend fun ReThis.clientUnblock(clientId: Long, unblockType: ClientUnblockType? = null): Boolean {

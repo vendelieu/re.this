@@ -1,8 +1,8 @@
 package eu.vendeli.rethis.command.list
 
 import eu.vendeli.rethis.ReThis
-import eu.vendeli.rethis.shared.response.common.PopResult
 import eu.vendeli.rethis.codecs.list.BrPopCommandCodec
+import eu.vendeli.rethis.shared.response.common.PopResult
 import eu.vendeli.rethis.topology.handle
 
 public suspend fun ReThis.brPop(vararg key: String, timeout: Double): PopResult? {

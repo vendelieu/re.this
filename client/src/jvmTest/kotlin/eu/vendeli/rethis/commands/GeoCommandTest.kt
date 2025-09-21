@@ -1,17 +1,16 @@
 package eu.vendeli.rethis.commands
 
 import eu.vendeli.rethis.ReThisTestCtx
+import eu.vendeli.rethis.command.geospatial.*
 import eu.vendeli.rethis.shared.request.geospatial.ByBox
 import eu.vendeli.rethis.shared.request.geospatial.ByRadius
 import eu.vendeli.rethis.shared.request.geospatial.FromLongitudeLatitude
 import eu.vendeli.rethis.shared.response.geospatial.GeoMember
-import eu.vendeli.rethis.shared.response.geospatial.GeoPosition
 import eu.vendeli.rethis.shared.response.geospatial.GeoSort
 import eu.vendeli.rethis.shared.response.geospatial.GeoUnit
 import eu.vendeli.rethis.shared.types.BulkString
 import eu.vendeli.rethis.shared.types.Int64
 import eu.vendeli.rethis.shared.types.RArray
-import eu.vendeli.rethis.command.geospatial.*
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import kotlin.math.roundToInt

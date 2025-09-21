@@ -1,8 +1,8 @@
 package eu.vendeli.rethis.command.server
 
 import eu.vendeli.rethis.ReThis
-import eu.vendeli.rethis.shared.request.common.FlushType
 import eu.vendeli.rethis.codecs.server.FlushDbCommandCodec
+import eu.vendeli.rethis.shared.request.common.FlushType
 import eu.vendeli.rethis.topology.handle
 
 public suspend fun ReThis.flushDb(flushType: FlushType? = null): Boolean {

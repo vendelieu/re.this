@@ -51,7 +51,7 @@ public object ZScoreCommandCodec {
         val code = input.parseCode(RespCode.BULK)
         return when(code) {
             RespCode.BULK -> {
-                BulkStringDecoder.decode(input, charset, code).toDouble()
+                BulkStringDecoder.decodeNullable(input, charset, code)?.toDouble()
             }
             RespCode.DOUBLE -> {
                 DoubleDecoder.decode(input, charset, code)

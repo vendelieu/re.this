@@ -68,7 +68,7 @@ public object GeoDistCommandCodec {
         val code = input.parseCode(RespCode.BULK)
         return when(code) {
             RespCode.BULK -> {
-                BulkStringDecoder.decode(input, charset, code).toDouble()
+                BulkStringDecoder.decodeNullable(input, charset, code)?.toDouble()
             }
             RespCode.NULL -> {
                 null

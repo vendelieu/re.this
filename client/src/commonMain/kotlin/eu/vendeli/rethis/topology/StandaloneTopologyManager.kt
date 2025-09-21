@@ -1,14 +1,20 @@
 package eu.vendeli.rethis.topology
 
 import eu.vendeli.rethis.ReThis
-import eu.vendeli.rethis.shared.types.CommandRequest
 import eu.vendeli.rethis.providers.ConnectionProvider
+import eu.vendeli.rethis.shared.types.CommandRequest
 import eu.vendeli.rethis.types.common.Address
 
 internal class StandaloneTopologyManager(
     node: Address,
     client: ReThis,
 ) : TopologyManager {
+    private val logger = client.cfg.loggerFactory.get("eu.vendeli.rethis.topology.StandaloneTopologyManager")
+
+    init {
+        logger.info("Connecting to ${node.socket}")
+    }
+
     override val cfg = client.cfg
     internal val provider = client.connectionProviderFactory.create(node)
 

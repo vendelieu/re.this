@@ -1,8 +1,8 @@
 package eu.vendeli.rethis.command.connection
 
 import eu.vendeli.rethis.ReThis
-import eu.vendeli.rethis.shared.request.connection.ClientReplyMode
 import eu.vendeli.rethis.codecs.connection.ClientReplyCommandCodec
+import eu.vendeli.rethis.shared.request.connection.ClientReplyMode
 import eu.vendeli.rethis.topology.handle
 
 public suspend fun ReThis.clientReply(action: ClientReplyMode): Boolean {

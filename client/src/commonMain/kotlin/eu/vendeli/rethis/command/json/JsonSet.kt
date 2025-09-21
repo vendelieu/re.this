@@ -1,8 +1,8 @@
 package eu.vendeli.rethis.command.json
 
 import eu.vendeli.rethis.ReThis
-import eu.vendeli.rethis.shared.request.string.UpsertMode
 import eu.vendeli.rethis.codecs.json.JsonSetCommandCodec
+import eu.vendeli.rethis.shared.request.string.UpsertMode
 import eu.vendeli.rethis.topology.handle
 
 public suspend fun ReThis.jsonSet(

@@ -1,11 +1,11 @@
 package eu.vendeli.rethis.commands
 
 import eu.vendeli.rethis.ReThisTestCtx
+import eu.vendeli.rethis.command.string.*
 import eu.vendeli.rethis.shared.request.string.KeyValue
 import eu.vendeli.rethis.shared.request.string.LcsMode
 import eu.vendeli.rethis.shared.request.string.MinMatchLen
 import eu.vendeli.rethis.shared.response.string.LcsResult
-import eu.vendeli.rethis.command.string.*
 import io.kotest.matchers.booleans.shouldBeTrue
 import io.kotest.matchers.shouldBe
 

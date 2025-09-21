@@ -1,9 +1,9 @@
 package eu.vendeli.rethis
 
-import eu.vendeli.rethis.shared.types.BulkString
-import eu.vendeli.rethis.shared.types.PlainString
 import eu.vendeli.rethis.command.string.get
 import eu.vendeli.rethis.command.string.set
+import eu.vendeli.rethis.shared.types.BulkString
+import eu.vendeli.rethis.shared.types.PlainString
 import eu.vendeli.rethis.types.common.RespVer
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.nulls.shouldNotBeNull

@@ -1,9 +1,9 @@
 package eu.vendeli.rethis.commands.generic
 
 import eu.vendeli.rethis.ReThisTestCtx
-import eu.vendeli.rethis.shared.request.generic.SortOption
 import eu.vendeli.rethis.command.generic.sortRo
 import eu.vendeli.rethis.command.list.rPush
+import eu.vendeli.rethis.shared.request.generic.SortOption
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 

@@ -1,9 +1,9 @@
 package eu.vendeli.rethis.command.hash
 
 import eu.vendeli.rethis.ReThis
+import eu.vendeli.rethis.codecs.hash.HScanCommandCodec
 import eu.vendeli.rethis.shared.request.hash.HScanOption
 import eu.vendeli.rethis.shared.response.common.ScanResult
-import eu.vendeli.rethis.codecs.hash.HScanCommandCodec
 import eu.vendeli.rethis.topology.handle
 
 public suspend fun ReThis.hScan(

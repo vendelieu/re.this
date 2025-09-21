@@ -1,10 +1,10 @@
 package eu.vendeli.rethis.commands.generic
 
 import eu.vendeli.rethis.ReThisTestCtx
-import eu.vendeli.rethis.shared.request.generic.SortOption
 import eu.vendeli.rethis.command.generic.sort
 import eu.vendeli.rethis.command.generic.sortStore
 import eu.vendeli.rethis.command.set.sAdd
+import eu.vendeli.rethis.shared.request.generic.SortOption
 import io.kotest.matchers.shouldBe
 
 class SortCommandTest : ReThisTestCtx() {

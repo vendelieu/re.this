@@ -1,11 +1,11 @@
 package eu.vendeli.rethis.commands
 
 import eu.vendeli.rethis.ReThisTestCtx
+import eu.vendeli.rethis.command.list.*
 import eu.vendeli.rethis.shared.request.list.LInsertPlace
 import eu.vendeli.rethis.shared.response.common.MPopResult
 import eu.vendeli.rethis.shared.response.common.MoveDirection
 import eu.vendeli.rethis.shared.response.common.PopResult
-import eu.vendeli.rethis.command.list.*
 import io.kotest.matchers.shouldBe
 
 class ListCommandTest : ReThisTestCtx() {

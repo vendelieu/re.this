@@ -1,8 +1,8 @@
 package eu.vendeli.rethis.command.list
 
 import eu.vendeli.rethis.ReThis
-import eu.vendeli.rethis.shared.request.list.LInsertPlace
 import eu.vendeli.rethis.codecs.list.LInsertCommandCodec
+import eu.vendeli.rethis.shared.request.list.LInsertPlace
 import eu.vendeli.rethis.topology.handle
 
 public suspend fun ReThis.lInsert(
