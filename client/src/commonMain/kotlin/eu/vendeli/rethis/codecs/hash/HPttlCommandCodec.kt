@@ -36,9 +36,9 @@ public object HPttlCommandCodec {
         if (field.isNotEmpty()) {
             size += 1
             buffer.writeStringArg("FIELDS", charset)
+            size += 1
+            buffer.writeIntArg(field.size, charset)
         }
-        size += 1
-        buffer.writeIntArg(field.size, charset)
         field.forEach { it0 ->
             size += 1
             buffer.writeStringArg(it0, charset, )

@@ -9,7 +9,7 @@ import kotlinx.io.*
 import kotlinx.io.Buffer
 
 fun Buffer.readResponseWrapped(
-    charset: Charset,
+    charset: Charset = Charsets.UTF_8,
     rawOnly: Boolean = false,
     code: RespCode? = null,
 ): RType {

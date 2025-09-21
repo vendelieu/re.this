@@ -91,6 +91,7 @@ internal fun WriteOp.emitOp(encode: Boolean, complex: Boolean = false) {
                     it > 0
                 } == true
 
+            var collectionGuard = false
             fun handleWrapping(type: ArrayDeque<WriteOpProps>) {
                 val action = {
                     when {
@@ -110,15 +111,19 @@ internal fun WriteOp.emitOp(encode: Boolean, complex: Boolean = false) {
                     WriteOpProps.SINGLE_TOKEN -> {
                         if (encode) {
                             if (type.contains(WriteOpProps.COLLECTION)) {
+                                collectionGuard = true
                                 ctx.builder.beginControlFlow(
                                     "if (%L.isNotEmpty())",
-                                    ctx.pointedParameter(node.name)
+                                    ctx.pointedParameter(node.name),
                                 )
                             }
 
                             ctx.writeTokens(node, tokens) { t -> !t.multiple }
 
-                            if (type.contains(WriteOpProps.COLLECTION)) ctx.builder.endControlFlow()
+                            if (collectionGuard && !type.contains(WriteOpProps.WITH_SIZE)) {
+                                collectionGuard = false
+                                ctx.builder.endControlFlow()
+                            }
                         }
                         action()
                     }
@@ -128,6 +133,8 @@ internal fun WriteOp.emitOp(encode: Boolean, complex: Boolean = false) {
                             addImport("eu.vendeli.rethis.utils.writeIntArg")
                             if (context.currentCommand.haveVaryingSize) ctx.appendLine("size += 1")
                             ctx.appendLine("buffer.writeIntArg(%L.size, charset)", ctx.pointedParameter(node.name))
+
+                            if (collectionGuard) ctx.builder.endControlFlow()
                         }
                         action()
                     }

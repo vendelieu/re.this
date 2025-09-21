@@ -69,9 +69,9 @@ public object HExpireAtCommandCodec {
         if (field.isNotEmpty()) {
             size += 1
             buffer.writeStringArg("FIELDS", charset)
+            size += 1
+            buffer.writeIntArg(field.size, charset)
         }
-        size += 1
-        buffer.writeIntArg(field.size, charset)
         field.forEach { it1 ->
             size += 1
             buffer.writeStringArg(it1, charset, )
