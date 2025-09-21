@@ -18,7 +18,7 @@ object SimpleStringDecoder : ResponseDecoder<String> {
     }
 
     fun decodeNullable(input: Buffer, charset: Charset, code: RespCode? = null): String? {
-        if (input == EMPTY_BUFFER) return null
+        if (input == EMPTY_BUFFER) return ""
         if (code == null) input.resolveToken(RespCode.SIMPLE_STRING)
 
         return input.readLineStrict()

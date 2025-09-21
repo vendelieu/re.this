@@ -24,6 +24,7 @@ object VerbatimStringDecoder : ResponseDecoder<String> {
     }
 
     suspend fun decodeNullable(input: Buffer, charset: Charset, code: RespCode?,): String? {
+        if (input == EMPTY_BUFFER) return ""
         if (code == null) input.resolveToken(RespCode.VERBATIM_STRING)
 
         if (input.readLineStrict().toInt() < 0) return null

@@ -11,30 +11,24 @@ import eu.vendeli.rethis.command.transaction.exec
 import eu.vendeli.rethis.command.transaction.multi
 import eu.vendeli.rethis.command.transaction.unwatch
 import eu.vendeli.rethis.command.transaction.watch
-import eu.vendeli.rethis.shared.types.Int64
-import eu.vendeli.rethis.shared.types.PlainString
-import eu.vendeli.rethis.shared.types.RArray
-import eu.vendeli.rethis.shared.types.ReThisException
+import eu.vendeli.rethis.shared.types.*
 import eu.vendeli.rethis.shared.utils.isOk
 import eu.vendeli.rethis.shared.utils.readResponseWrapped
 import eu.vendeli.rethis.types.coroutine.CoLocalConn
-import eu.vendeli.rethis.utils.writeStringArg
+import eu.vendeli.rethis.utils.execute
+import eu.vendeli.rethis.utils.toRESPBuffer
 import io.kotest.assertions.throwables.shouldNotThrowAny
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.booleans.shouldBeTrue
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeTypeOf
-import io.ktor.utils.io.*
 import kotlinx.coroutines.launch
-import kotlinx.io.Buffer
 
 class TransactionCommandTest : ReThisTestCtx() {
     @BeforeAll
     fun prepare() = rewriteCfg {
-        retry {
-            times = 1
-        }
+        retry { times = 1 }
     }
 
     @Test
@@ -85,10 +79,12 @@ class TransactionCommandTest : ReThisTestCtx() {
                 client.multi()
                 client.set("testKey1", "testVal1")
                 client.set("testKey2", "testVal2")
-                conn.output.writeBuffer(Buffer().apply { writeStringArg("get", Charsets.UTF_8) })
-                conn.output.flush()
-                shouldThrow<ReThisException> { client.exec() }.message shouldBe
-                    "ERR wrong number of arguments for 'get' command"
+                client.execute(listOf("GETBIT").toRESPBuffer())
+                    .readResponseWrapped()
+                    .shouldBeTypeOf<RType.Error>()
+                    .exception
+                    .message shouldBe "ERR wrong number of arguments for 'getbit' command"
+                client.exec()
             }.join()
         provider.releaseConnection(conn)
     }

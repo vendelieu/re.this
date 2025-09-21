@@ -24,6 +24,7 @@ object BulkStringDecoder : ResponseDecoder<String> {
     }
 
     suspend fun decodeNullable(input: Buffer, charset: Charset, code: RespCode? = null): String? {
+        if (input == EMPTY_BUFFER) return ""
         if (code == null) input.resolveToken(RespCode.BULK)
 
         if (input.readLineStrict().toInt() < 0) return null

@@ -5,7 +5,6 @@ import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
 import io.kotest.matchers.string.shouldNotBeBlank
-import kotlinx.coroutines.test.runTest
 import kotlinx.io.Buffer
 import kotlinx.io.readString
 import java.util.*
@@ -14,21 +13,21 @@ class RawReqUtilsTest : ReThisTestCtx() {
     private fun Buffer.readAllUtf8(): String = readString()
 
     @Test
-    fun `toRESPBuffer encodes ECHO properly`() = runTest {
+    fun `toRESPBuffer encodes ECHO properly`() {
         val payload = listOf("ECHO", "hi").toRESPBuffer()
         val encoded = payload.readAllUtf8()
         encoded shouldBe "*2\r\n\$4\r\nECHO\r\n\$2\r\nhi\r\n"
     }
 
     @Test
-    fun `toRESPBuffer encodes null as Null Bulk String`() = runTest {
+    fun `toRESPBuffer encodes null as Null Bulk String`() {
         val payload = listOf("ECHO", null).toRESPBuffer()
         val encoded = payload.readAllUtf8()
         encoded shouldBe "*2\r\n\$4\r\nECHO\r\n\$-1\r\n"
     }
 
     @Test
-    fun `execute with prepared RESP buffer returns expected bulk string for ECHO`() = runTest {
+    suspend fun `execute with prepared RESP buffer returns expected bulk string for ECHO`() {
         val req = listOf("ECHO", "ok").toRESPBuffer()
         val resp = client.execute(req)
         val raw = resp.readAllUtf8()
@@ -37,7 +36,7 @@ class RawReqUtilsTest : ReThisTestCtx() {
     }
 
     @Test
-    fun `execute block helper builds buffer and PING succeeds`() = runTest {
+    suspend fun `execute block helper builds buffer and PING succeeds`() {
         val resp = client.execute {
             add("PING")
         }
@@ -47,7 +46,7 @@ class RawReqUtilsTest : ReThisTestCtx() {
     }
 
     @Test
-    fun `toRESPBuffer supports numbers and byte arrays with INCRBY and ECHO`() = runTest {
+    suspend fun `toRESPBuffer supports numbers and byte arrays with INCRBY and ECHO`() {
         // Use a fresh key to avoid collisions
         val key = "raw:req:int:" + UUID.randomUUID()
         // INCRBY key by Int(2)
@@ -63,7 +62,7 @@ class RawReqUtilsTest : ReThisTestCtx() {
     }
 
     @Test
-    fun `execute block can send multi-arg commands`() = runTest {
+    suspend fun `execute block can send multi-arg commands`() {
         val key = "raw:req:kv:" + UUID.randomUUID()
         // SET key value
         val setResp = client.execute {
@@ -80,7 +79,7 @@ class RawReqUtilsTest : ReThisTestCtx() {
     }
 
     @Test
-    fun `execute with explicit operationKind and isBlocking flags`() = runTest {
+    suspend fun `execute with explicit operationKind and isBlocking flags`() {
         // Use PING — flags should not affect correctness for a simple command
         val resp = client.execute(
             request = listOf("PING").toRESPBuffer(),
@@ -91,13 +90,11 @@ class RawReqUtilsTest : ReThisTestCtx() {
     }
 
     @Test
-    fun `QUIT a temporary client using low-level execute`() = runTest {
+    suspend fun `QUIT a temporary client using low-level execute`() {
         val tmp = createClient()
 
-        val quitReq = listOf("QUIT").toRESPBuffer()
-        val resp = tmp.execute(quitReq).readAllUtf8()
+        val resp = tmp.execute(listOf("QUIT").toRESPBuffer()).readAllUtf8()
         // QUIT returns +OK and then closes the connection
         resp shouldBe "+OK\r\n"
-
     }
 }
