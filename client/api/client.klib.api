@@ -415,6 +415,7 @@ sealed class eu.vendeli.rethis.configuration/ReThisConfiguration { // eu.vendeli
     final fun retry(kotlin/Function1<eu.vendeli.rethis.configuration/RetryConfiguration, kotlin/Unit>) // eu.vendeli.rethis.configuration/ReThisConfiguration.retry|retry(kotlin.Function1<eu.vendeli.rethis.configuration.RetryConfiguration,kotlin.Unit>){}[0]
     final fun socket(kotlin/Function1<eu.vendeli.rethis.configuration/SocketConfiguration, kotlin/Unit>) // eu.vendeli.rethis.configuration/ReThisConfiguration.socket|socket(kotlin.Function1<eu.vendeli.rethis.configuration.SocketConfiguration,kotlin.Unit>){}[0]
     final fun tls(kotlin/Function0<io.ktor.network.tls/TLSConfig>) // eu.vendeli.rethis.configuration/ReThisConfiguration.tls|tls(kotlin.Function0<io.ktor.network.tls.TLSConfig>){}[0]
+    open fun toString(): kotlin/String // eu.vendeli.rethis.configuration/ReThisConfiguration.toString|toString(){}[0]
 }
 
 sealed class eu.vendeli.rethis.types.common/ReadFrom : eu.vendeli.rethis.types.common/ReadFromStrategy { // eu.vendeli.rethis.types.common/ReadFrom|null[0]
