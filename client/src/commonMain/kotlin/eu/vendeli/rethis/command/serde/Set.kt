@@ -9,7 +9,7 @@ import kotlinx.serialization.serializer
 suspend inline fun <reified T> ReThis.`set`(
     key: String,
     value: T,
-    vararg options: SetOption
+    vararg options: SetOption,
 ): String? where T : Any {
     return set(key, value, serializer<T>(), *options)
 }
@@ -18,18 +18,8 @@ suspend fun <T> ReThis.`set`(
     key: String,
     value: T,
     serializer: KSerializer<T>,
-    vararg options: SetOption
-): String? {
-    val value = cfg.serializationFormat.serialize(serializer, value)
-    return set(key, value, *options)
-}
-
-suspend fun <T> ReThis.`set`(
-    key: String,
-    value: T,
-    serializer: KSerializer<T>,
-    serializationFormat: SerializationFormat,
-    vararg options: SetOption
+    vararg options: SetOption,
+    serializationFormat: SerializationFormat = cfg.serializationFormat,
 ): String? {
     val value = serializationFormat.serialize(serializer, value)
     return set(key, value, *options)

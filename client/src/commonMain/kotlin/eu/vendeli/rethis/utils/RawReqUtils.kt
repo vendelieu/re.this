@@ -53,3 +53,15 @@ fun List<Any?>.toRESPBuffer(charset: Charset = Charsets.UTF_8): Buffer {
 @ReThisInternal
 suspend fun ReThis.execute(requestBlock: MutableList<Any?>.() -> Unit): Buffer =
     execute(buildList(requestBlock).toRESPBuffer())
+
+/**
+ * Retrieves the serialization format specified in the configuration of the current `ReThis` instance.
+ * This is used to determine how data is serialized or deserialized within the `ReThis` framework.
+ *
+ * Note: This function is marked as an internal API and is not intended for external usage. It may
+ * be subject to change or removal without notice.
+ *
+ * @return The serialization format defined in the configuration.
+ */
+@ReThisInternal
+fun ReThis.serdeModule() = cfg.serializationFormat
