@@ -7,7 +7,7 @@ import eu.vendeli.rethis.command.serde.jsonGet
 import eu.vendeli.rethis.command.serde.jsonMGet
 import eu.vendeli.rethis.command.serde.jsonSet
 import eu.vendeli.rethis.shared.request.json.JsonGetOption
-import eu.vendeli.rethis.shared.types.PlainString
+import eu.vendeli.rethis.shared.types.BulkString
 import eu.vendeli.rethis.shared.types.RArray
 import eu.vendeli.rethis.shared.utils.unwrap
 import eu.vendeli.rethis.utils.serdeModule
@@ -81,7 +81,7 @@ class JsonSerdeCommandsTest : ReThisTestCtx(true) {
             .shouldBeTypeOf<RArray>()
             .value
             .first()
-            .shouldBeTypeOf<PlainString>().let {
+            .shouldBeTypeOf<BulkString>().let {
                 client.serdeModule().deserialize(User.serializer(), it.unwrap<String>()!!)
             } shouldBe User(5, "Eve")
         client.jsonGet<NestedUserList>(key) shouldBe NestedUserList(
