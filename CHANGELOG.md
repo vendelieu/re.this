@@ -1,5 +1,11 @@
 # Re.this Changelog
 
+## 0.3.3
+
+* Returned serialization support, with ability to use different serialization formats \
+  (through configuration `serializationFormat` parameter, or by command function parameter), \
+  supported commands `get`, `hget`, `hmget`, `hset`, `hvals`, `json.get`, `json.mget`, `json.set`, `mget`, `mset`, `set`.
+
 ## 0.3.2
 
 * Improve logging
