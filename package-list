@@ -34,6 +34,7 @@ eu.vendeli.rethis.command.list
 eu.vendeli.rethis.command.pubsub
 eu.vendeli.rethis.command.scripting
 eu.vendeli.rethis.command.sentinel
+eu.vendeli.rethis.command.serde
 eu.vendeli.rethis.command.server
 eu.vendeli.rethis.command.set
 eu.vendeli.rethis.command.sortedset

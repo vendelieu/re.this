@@ -42,7 +42,7 @@
             </a>        <button class="navigation-controls--btn navigation-controls--btn_toc ui-kit_mobile-only" id="toc-toggle" type="button">Toggle table of contents
         </button>
         <div class="navigation-controls--break ui-kit_mobile-only"></div>
-        <div class="library-version" id="library-version">0.3.2
+        <div class="library-version" id="library-version">0.3.3
         </div>
         <div class="navigation-controls">
         <div class="filter-section filter-section_loading" id="filter-section">
@@ -96,7 +96,7 @@
   <div class="breadcrumbs"><a href="../../index.html">client</a><span class="delimiter">/</span><a href="../index.html">eu.vendeli.rethis.configuration</a><span class="delimiter">/</span><span class="current">ReThisConfiguration</span></div>
   <div class="cover ">
     <h1 class="cover"><span>Re</span><wbr><span>This</span><wbr><span><span>Configuration</span></span></h1>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":client/commonMain"><div class="symbol monospace"><span class="token keyword">sealed </span><span class="token keyword">class </span><a href="index.html">ReThisConfiguration</a><span class="clearfix"><span class="floating-right">(<a href="https://github.com/vendelieu/re.this/blob/master/client/src/commonMain/kotlin/eu/vendeli/rethis/configuration/ReThisConfiguration.kt#L32">source</a>)</span></span></div><p class="paragraph">Represents the configuration for a Redis client, allowing customization of connection parameters, authentication, pooling, retry mechanisms, socket options, and more. This class serves as the base for defining configurations using the DSL approach.</p><h4 class="">Inheritors</h4><div class="table"><div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><a href="../-cluster-configuration/index.html">ClusterConfiguration</a></div></span></div><div></div></div></div><div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><a href="../-sentinel-configuration/index.html">SentinelConfiguration</a></div></span></div><div></div></div></div><div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><a href="../-standalone-configuration/index.html">StandaloneConfiguration</a></div></span></div><div></div></div></div></div></div></div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":client/commonMain"><div class="symbol monospace"><span class="token keyword">sealed </span><span class="token keyword">class </span><a href="index.html">ReThisConfiguration</a><span class="clearfix"><span class="floating-right">(<a href="https://github.com/vendelieu/re.this/blob/master/client/src/commonMain/kotlin/eu/vendeli/rethis/configuration/ReThisConfiguration.kt#L34">source</a>)</span></span></div><p class="paragraph">Represents the configuration for a Redis client, allowing customization of connection parameters, authentication, pooling, retry mechanisms, socket options, and more. This class serves as the base for defining configurations using the DSL approach.</p><h4 class="">Inheritors</h4><div class="table"><div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><a href="../-cluster-configuration/index.html">ClusterConfiguration</a></div></span></div><div></div></div></div><div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><a href="../-sentinel-configuration/index.html">SentinelConfiguration</a></div></span></div><div></div></div></div><div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><a href="../-standalone-configuration/index.html">StandaloneConfiguration</a></div></span></div><div></div></div></div></div></div></div>
   </div>
   <div class="tabbedcontent">
     <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
@@ -173,7 +173,7 @@
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":client/commonMain"><div class="symbol monospace"><span class="token keyword">var </span><a href="logger-factory.html">loggerFactory</a><span class="token operator">: </span><a href="../../eu.vendeli.rethis.types.common/-logger-factory/index.html">LoggerFactory</a></div><div class="brief "><p class="paragraph">Factory used for creating loggers within the configuration.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":client/commonMain"><div class="symbol monospace"><span class="token keyword">var </span><a href="logger-factory.html">loggerFactory</a><span class="token operator">: </span><a href="../../eu.vendeli.rethis.types.interfaces/-logger-factory/index.html">LoggerFactory</a></div><div class="brief "><p class="paragraph">Factory used for creating loggers within the configuration.</p></div></div></div>
                 </div>
               </div>
             </div>
@@ -203,7 +203,22 @@
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":client/commonMain"><div class="symbol monospace"><span class="token keyword">var </span><a href="read-from-strategy.html">readFromStrategy</a><span class="token operator">: </span><a href="../../eu.vendeli.rethis.types.common/-read-from-strategy/index.html">ReadFromStrategy</a></div><div class="brief "><p class="paragraph">Defines the strategy for selecting a connection to read data from within a Redis cluster or sentinel setup. The selection strategy determines which node (master or replica) is chosen for handling read operations.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":client/commonMain"><div class="symbol monospace"><span class="token keyword">var </span><a href="read-from-strategy.html">readFromStrategy</a><span class="token operator">: </span><a href="../../eu.vendeli.rethis.types.interfaces/-read-from-strategy/index.html">ReadFromStrategy</a></div><div class="brief "><p class="paragraph">Defines the strategy for selecting a connection to read data from within a Redis cluster or sentinel setup. The selection strategy determines which node (master or replica) is chosen for handling read operations.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1099908441%2FProperties%2F121649622" anchor-label="serializationFormat" id="-1099908441%2FProperties%2F121649622" data-filterable-set=":client/commonMain"></a>
+          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="serialization-format.html"><span>serialization</span><wbr><span><span>Format</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1099908441%2FProperties%2F121649622"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":client/commonMain"><div class="symbol monospace"><span class="token keyword">var </span><a href="serialization-format.html">serializationFormat</a><span class="token operator">: </span><a href="../../eu.vendeli.rethis.types.interfaces/-serialization-format/index.html">SerializationFormat</a></div><div class="brief "><p class="paragraph">Specifies the serialization format used for serializing and deserializing values in the Redis client.</p></div></div></div>
                 </div>
               </div>
             </div>
