@@ -54,8 +54,8 @@ final enum class eu.vendeli.rethis.utils/ClusterEventNames : kotlin/Enum<eu.vend
     final fun values(): kotlin/Array<eu.vendeli.rethis.utils/ClusterEventNames> // eu.vendeli.rethis.utils/ClusterEventNames.values|values#static(){}[0]
 }
 
-abstract fun interface eu.vendeli.rethis.types.common/LoggerFactory { // eu.vendeli.rethis.types.common/LoggerFactory|null[0]
-    abstract fun get(kotlin/String): io.ktor.util.logging/Logger // eu.vendeli.rethis.types.common/LoggerFactory.get|get(kotlin.String){}[0]
+abstract fun interface eu.vendeli.rethis.types.interfaces/LoggerFactory { // eu.vendeli.rethis.types.interfaces/LoggerFactory|null[0]
+    abstract fun get(kotlin/String): io.ktor.util.logging/Logger // eu.vendeli.rethis.types.interfaces/LoggerFactory.get|get(kotlin.String){}[0]
 }
 
 abstract fun interface eu.vendeli.rethis.types.interfaces/SubscriptionHandler { // eu.vendeli.rethis.types.interfaces/SubscriptionHandler|null[0]
@@ -67,14 +67,19 @@ abstract interface eu.vendeli.rethis.providers/ConnectionProviderFactory { // eu
     open fun createAll(kotlin.collections/Collection<eu.vendeli.rethis.types.common/Address>): kotlin.collections/Map<eu.vendeli.rethis.types.common/Address, eu.vendeli.rethis.providers/ConnectionProvider> // eu.vendeli.rethis.providers/ConnectionProviderFactory.createAll|createAll(kotlin.collections.Collection<eu.vendeli.rethis.types.common.Address>){}[0]
 }
 
+abstract interface eu.vendeli.rethis.types.interfaces/ReadFromStrategy { // eu.vendeli.rethis.types.interfaces/ReadFromStrategy|null[0]
+    abstract fun pick(eu.vendeli.rethis.shared.types/CommandRequest, eu.vendeli.rethis.types.common/Snapshot): eu.vendeli.rethis.providers/ConnectionProvider // eu.vendeli.rethis.types.interfaces/ReadFromStrategy.pick|pick(eu.vendeli.rethis.shared.types.CommandRequest;eu.vendeli.rethis.types.common.Snapshot){}[0]
+}
+
+abstract interface eu.vendeli.rethis.types.interfaces/SerializationFormat { // eu.vendeli.rethis.types.interfaces/SerializationFormat|null[0]
+    abstract fun <#A1: kotlin/Any?> deserialize(kotlinx.serialization/KSerializer<#A1>, kotlin/String): #A1 // eu.vendeli.rethis.types.interfaces/SerializationFormat.deserialize|deserialize(kotlinx.serialization.KSerializer<0:0>;kotlin.String){0§<kotlin.Any?>}[0]
+    abstract fun <#A1: kotlin/Any?> serialize(kotlinx.serialization/KSerializer<#A1>, #A1): kotlin/String // eu.vendeli.rethis.types.interfaces/SerializationFormat.serialize|serialize(kotlinx.serialization.KSerializer<0:0>;0:0){0§<kotlin.Any?>}[0]
+}
+
 abstract interface eu.vendeli.rethis.types.interfaces/SubscriptionEventHandler { // eu.vendeli.rethis.types.interfaces/SubscriptionEventHandler|null[0]
     abstract suspend fun onException(kotlin/String, kotlin/Exception) // eu.vendeli.rethis.types.interfaces/SubscriptionEventHandler.onException|onException(kotlin.String;kotlin.Exception){}[0]
     abstract suspend fun onSubscribe(kotlin/String, kotlin/Long) // eu.vendeli.rethis.types.interfaces/SubscriptionEventHandler.onSubscribe|onSubscribe(kotlin.String;kotlin.Long){}[0]
     abstract suspend fun onUnsubscribe(kotlin/String, kotlin/Long) // eu.vendeli.rethis.types.interfaces/SubscriptionEventHandler.onUnsubscribe|onUnsubscribe(kotlin.String;kotlin.Long){}[0]
-}
-
-sealed interface eu.vendeli.rethis.types.common/ReadFromStrategy { // eu.vendeli.rethis.types.common/ReadFromStrategy|null[0]
-    abstract fun pick(eu.vendeli.rethis.shared.types/CommandRequest, eu.vendeli.rethis.types.common/Snapshot): eu.vendeli.rethis.providers/ConnectionProvider // eu.vendeli.rethis.types.common/ReadFromStrategy.pick|pick(eu.vendeli.rethis.shared.types.CommandRequest;eu.vendeli.rethis.types.common.Snapshot){}[0]
 }
 
 abstract class eu.vendeli.rethis.providers/ConnectionProvider { // eu.vendeli.rethis.providers/ConnectionProvider|null[0]
@@ -221,6 +226,13 @@ final class eu.vendeli.rethis.configuration/SocketConfiguration { // eu.vendeli.
 
 final class eu.vendeli.rethis.configuration/StandaloneConfiguration : eu.vendeli.rethis.configuration/ReThisConfiguration { // eu.vendeli.rethis.configuration/StandaloneConfiguration|null[0]
     constructor <init>(eu.vendeli.rethis.types.common/RespVer) // eu.vendeli.rethis.configuration/StandaloneConfiguration.<init>|<init>(eu.vendeli.rethis.types.common.RespVer){}[0]
+}
+
+final class eu.vendeli.rethis.core/JsonSerializationFormat : eu.vendeli.rethis.types.interfaces/SerializationFormat { // eu.vendeli.rethis.core/JsonSerializationFormat|null[0]
+    constructor <init>(kotlinx.serialization.json/Json = ...) // eu.vendeli.rethis.core/JsonSerializationFormat.<init>|<init>(kotlinx.serialization.json.Json){}[0]
+
+    final fun <#A1: kotlin/Any?> deserialize(kotlinx.serialization/KSerializer<#A1>, kotlin/String): #A1 // eu.vendeli.rethis.core/JsonSerializationFormat.deserialize|deserialize(kotlinx.serialization.KSerializer<0:0>;kotlin.String){0§<kotlin.Any?>}[0]
+    final fun <#A1: kotlin/Any?> serialize(kotlinx.serialization/KSerializer<#A1>, #A1): kotlin/String // eu.vendeli.rethis.core/JsonSerializationFormat.serialize|serialize(kotlinx.serialization.KSerializer<0:0>;0:0){0§<kotlin.Any?>}[0]
 }
 
 final class eu.vendeli.rethis.core/SubscriptionManager { // eu.vendeli.rethis.core/SubscriptionManager|null[0]
@@ -398,14 +410,17 @@ sealed class eu.vendeli.rethis.configuration/ReThisConfiguration { // eu.vendeli
         final fun <get-dispatcher>(): kotlinx.coroutines/CoroutineDispatcher // eu.vendeli.rethis.configuration/ReThisConfiguration.dispatcher.<get-dispatcher>|<get-dispatcher>(){}[0]
         final fun <set-dispatcher>(kotlinx.coroutines/CoroutineDispatcher) // eu.vendeli.rethis.configuration/ReThisConfiguration.dispatcher.<set-dispatcher>|<set-dispatcher>(kotlinx.coroutines.CoroutineDispatcher){}[0]
     final var loggerFactory // eu.vendeli.rethis.configuration/ReThisConfiguration.loggerFactory|{}loggerFactory[0]
-        final fun <get-loggerFactory>(): eu.vendeli.rethis.types.common/LoggerFactory // eu.vendeli.rethis.configuration/ReThisConfiguration.loggerFactory.<get-loggerFactory>|<get-loggerFactory>(){}[0]
-        final fun <set-loggerFactory>(eu.vendeli.rethis.types.common/LoggerFactory) // eu.vendeli.rethis.configuration/ReThisConfiguration.loggerFactory.<set-loggerFactory>|<set-loggerFactory>(eu.vendeli.rethis.types.common.LoggerFactory){}[0]
+        final fun <get-loggerFactory>(): eu.vendeli.rethis.types.interfaces/LoggerFactory // eu.vendeli.rethis.configuration/ReThisConfiguration.loggerFactory.<get-loggerFactory>|<get-loggerFactory>(){}[0]
+        final fun <set-loggerFactory>(eu.vendeli.rethis.types.interfaces/LoggerFactory) // eu.vendeli.rethis.configuration/ReThisConfiguration.loggerFactory.<set-loggerFactory>|<set-loggerFactory>(eu.vendeli.rethis.types.interfaces.LoggerFactory){}[0]
     final var maxConnections // eu.vendeli.rethis.configuration/ReThisConfiguration.maxConnections|{}maxConnections[0]
         final fun <get-maxConnections>(): kotlin/Int // eu.vendeli.rethis.configuration/ReThisConfiguration.maxConnections.<get-maxConnections>|<get-maxConnections>(){}[0]
         final fun <set-maxConnections>(kotlin/Int) // eu.vendeli.rethis.configuration/ReThisConfiguration.maxConnections.<set-maxConnections>|<set-maxConnections>(kotlin.Int){}[0]
     final var readFromStrategy // eu.vendeli.rethis.configuration/ReThisConfiguration.readFromStrategy|{}readFromStrategy[0]
-        final fun <get-readFromStrategy>(): eu.vendeli.rethis.types.common/ReadFromStrategy // eu.vendeli.rethis.configuration/ReThisConfiguration.readFromStrategy.<get-readFromStrategy>|<get-readFromStrategy>(){}[0]
-        final fun <set-readFromStrategy>(eu.vendeli.rethis.types.common/ReadFromStrategy) // eu.vendeli.rethis.configuration/ReThisConfiguration.readFromStrategy.<set-readFromStrategy>|<set-readFromStrategy>(eu.vendeli.rethis.types.common.ReadFromStrategy){}[0]
+        final fun <get-readFromStrategy>(): eu.vendeli.rethis.types.interfaces/ReadFromStrategy // eu.vendeli.rethis.configuration/ReThisConfiguration.readFromStrategy.<get-readFromStrategy>|<get-readFromStrategy>(){}[0]
+        final fun <set-readFromStrategy>(eu.vendeli.rethis.types.interfaces/ReadFromStrategy) // eu.vendeli.rethis.configuration/ReThisConfiguration.readFromStrategy.<set-readFromStrategy>|<set-readFromStrategy>(eu.vendeli.rethis.types.interfaces.ReadFromStrategy){}[0]
+    final var serializationFormat // eu.vendeli.rethis.configuration/ReThisConfiguration.serializationFormat|{}serializationFormat[0]
+        final fun <get-serializationFormat>(): eu.vendeli.rethis.types.interfaces/SerializationFormat // eu.vendeli.rethis.configuration/ReThisConfiguration.serializationFormat.<get-serializationFormat>|<get-serializationFormat>(){}[0]
+        final fun <set-serializationFormat>(eu.vendeli.rethis.types.interfaces/SerializationFormat) // eu.vendeli.rethis.configuration/ReThisConfiguration.serializationFormat.<set-serializationFormat>|<set-serializationFormat>(eu.vendeli.rethis.types.interfaces.SerializationFormat){}[0]
     final var usePooling // eu.vendeli.rethis.configuration/ReThisConfiguration.usePooling|{}usePooling[0]
         final fun <get-usePooling>(): kotlin/Boolean // eu.vendeli.rethis.configuration/ReThisConfiguration.usePooling.<get-usePooling>|<get-usePooling>(){}[0]
         final fun <set-usePooling>(kotlin/Boolean) // eu.vendeli.rethis.configuration/ReThisConfiguration.usePooling.<set-usePooling>|<set-usePooling>(kotlin.Boolean){}[0]
@@ -418,32 +433,32 @@ sealed class eu.vendeli.rethis.configuration/ReThisConfiguration { // eu.vendeli
     open fun toString(): kotlin/String // eu.vendeli.rethis.configuration/ReThisConfiguration.toString|toString(){}[0]
 }
 
-sealed class eu.vendeli.rethis.types.common/ReadFrom : eu.vendeli.rethis.types.common/ReadFromStrategy { // eu.vendeli.rethis.types.common/ReadFrom|null[0]
-    final object Any : eu.vendeli.rethis.types.common/ReadFromStrategy { // eu.vendeli.rethis.types.common/ReadFrom.Any|null[0]
+sealed class eu.vendeli.rethis.types.common/ReadFrom : eu.vendeli.rethis.types.interfaces/ReadFromStrategy { // eu.vendeli.rethis.types.common/ReadFrom|null[0]
+    final object Any : eu.vendeli.rethis.types.interfaces/ReadFromStrategy { // eu.vendeli.rethis.types.common/ReadFrom.Any|null[0]
         final fun pick(eu.vendeli.rethis.shared.types/CommandRequest, eu.vendeli.rethis.types.common/Snapshot): eu.vendeli.rethis.providers/ConnectionProvider // eu.vendeli.rethis.types.common/ReadFrom.Any.pick|pick(eu.vendeli.rethis.shared.types.CommandRequest;eu.vendeli.rethis.types.common.Snapshot){}[0]
     }
 
-    final object AnyReplica : eu.vendeli.rethis.types.common/ReadFromStrategy { // eu.vendeli.rethis.types.common/ReadFrom.AnyReplica|null[0]
+    final object AnyReplica : eu.vendeli.rethis.types.interfaces/ReadFromStrategy { // eu.vendeli.rethis.types.common/ReadFrom.AnyReplica|null[0]
         final fun pick(eu.vendeli.rethis.shared.types/CommandRequest, eu.vendeli.rethis.types.common/Snapshot): eu.vendeli.rethis.providers/ConnectionProvider // eu.vendeli.rethis.types.common/ReadFrom.AnyReplica.pick|pick(eu.vendeli.rethis.shared.types.CommandRequest;eu.vendeli.rethis.types.common.Snapshot){}[0]
     }
 
-    final object LowestLatency : eu.vendeli.rethis.types.common/ReadFromStrategy { // eu.vendeli.rethis.types.common/ReadFrom.LowestLatency|null[0]
+    final object LowestLatency : eu.vendeli.rethis.types.interfaces/ReadFromStrategy { // eu.vendeli.rethis.types.common/ReadFrom.LowestLatency|null[0]
         final fun pick(eu.vendeli.rethis.shared.types/CommandRequest, eu.vendeli.rethis.types.common/Snapshot): eu.vendeli.rethis.providers/ConnectionProvider // eu.vendeli.rethis.types.common/ReadFrom.LowestLatency.pick|pick(eu.vendeli.rethis.shared.types.CommandRequest;eu.vendeli.rethis.types.common.Snapshot){}[0]
     }
 
-    final object Master : eu.vendeli.rethis.types.common/ReadFromStrategy { // eu.vendeli.rethis.types.common/ReadFrom.Master|null[0]
+    final object Master : eu.vendeli.rethis.types.interfaces/ReadFromStrategy { // eu.vendeli.rethis.types.common/ReadFrom.Master|null[0]
         final fun pick(eu.vendeli.rethis.shared.types/CommandRequest, eu.vendeli.rethis.types.common/Snapshot): eu.vendeli.rethis.providers/ConnectionProvider // eu.vendeli.rethis.types.common/ReadFrom.Master.pick|pick(eu.vendeli.rethis.shared.types.CommandRequest;eu.vendeli.rethis.types.common.Snapshot){}[0]
     }
 
-    final object MasterPreferred : eu.vendeli.rethis.types.common/ReadFromStrategy { // eu.vendeli.rethis.types.common/ReadFrom.MasterPreferred|null[0]
+    final object MasterPreferred : eu.vendeli.rethis.types.interfaces/ReadFromStrategy { // eu.vendeli.rethis.types.common/ReadFrom.MasterPreferred|null[0]
         final fun pick(eu.vendeli.rethis.shared.types/CommandRequest, eu.vendeli.rethis.types.common/Snapshot): eu.vendeli.rethis.providers/ConnectionProvider // eu.vendeli.rethis.types.common/ReadFrom.MasterPreferred.pick|pick(eu.vendeli.rethis.shared.types.CommandRequest;eu.vendeli.rethis.types.common.Snapshot){}[0]
     }
 
-    final object Replica : eu.vendeli.rethis.types.common/ReadFromStrategy { // eu.vendeli.rethis.types.common/ReadFrom.Replica|null[0]
+    final object Replica : eu.vendeli.rethis.types.interfaces/ReadFromStrategy { // eu.vendeli.rethis.types.common/ReadFrom.Replica|null[0]
         final fun pick(eu.vendeli.rethis.shared.types/CommandRequest, eu.vendeli.rethis.types.common/Snapshot): eu.vendeli.rethis.providers/ConnectionProvider // eu.vendeli.rethis.types.common/ReadFrom.Replica.pick|pick(eu.vendeli.rethis.shared.types.CommandRequest;eu.vendeli.rethis.types.common.Snapshot){}[0]
     }
 
-    final object ReplicaPreferred : eu.vendeli.rethis.types.common/ReadFromStrategy { // eu.vendeli.rethis.types.common/ReadFrom.ReplicaPreferred|null[0]
+    final object ReplicaPreferred : eu.vendeli.rethis.types.interfaces/ReadFromStrategy { // eu.vendeli.rethis.types.common/ReadFrom.ReplicaPreferred|null[0]
         final fun pick(eu.vendeli.rethis.shared.types/CommandRequest, eu.vendeli.rethis.types.common/Snapshot): eu.vendeli.rethis.providers/ConnectionProvider // eu.vendeli.rethis.types.common/ReadFrom.ReplicaPreferred.pick|pick(eu.vendeli.rethis.shared.types.CommandRequest;eu.vendeli.rethis.types.common.Snapshot){}[0]
     }
 }
@@ -2652,7 +2667,7 @@ final object eu.vendeli.rethis.codecs.transaction/WatchCommandCodec { // eu.vend
     final suspend inline fun encodeWithSlot(io.ktor.utils.io.charsets/Charset, kotlin/Array<out kotlin/String>...): eu.vendeli.rethis.shared.types/CommandRequest // eu.vendeli.rethis.codecs.transaction/WatchCommandCodec.encodeWithSlot|encodeWithSlot(io.ktor.utils.io.charsets.Charset;kotlin.Array<out|kotlin.String>...){}[0]
 }
 
-final object eu.vendeli.rethis.core/DefaultLoggerFactory : eu.vendeli.rethis.types.common/LoggerFactory { // eu.vendeli.rethis.core/DefaultLoggerFactory|null[0]
+final object eu.vendeli.rethis.core/DefaultLoggerFactory : eu.vendeli.rethis.types.interfaces/LoggerFactory { // eu.vendeli.rethis.core/DefaultLoggerFactory|null[0]
     final fun get(kotlin/String): io.ktor.util.logging/Logger // eu.vendeli.rethis.core/DefaultLoggerFactory.get|get(kotlin.String){}[0]
 }
 
@@ -2662,12 +2677,15 @@ final const val eu.vendeli.rethis.utils/DEFAULT_HOST // eu.vendeli.rethis.utils/
     final fun <get-DEFAULT_HOST>(): kotlin/String // eu.vendeli.rethis.utils/DEFAULT_HOST.<get-DEFAULT_HOST>|<get-DEFAULT_HOST>(){}[0]
 final const val eu.vendeli.rethis.utils/DEFAULT_PORT // eu.vendeli.rethis.utils/DEFAULT_PORT|{}DEFAULT_PORT[0]
     final fun <get-DEFAULT_PORT>(): kotlin/Int // eu.vendeli.rethis.utils/DEFAULT_PORT.<get-DEFAULT_PORT>|<get-DEFAULT_PORT>(){}[0]
+final const val eu.vendeli.rethis.utils/JSON_DEFAULT_PATH // eu.vendeli.rethis.utils/JSON_DEFAULT_PATH|{}JSON_DEFAULT_PATH[0]
+    final fun <get-JSON_DEFAULT_PATH>(): kotlin/String // eu.vendeli.rethis.utils/JSON_DEFAULT_PATH.<get-JSON_DEFAULT_PATH>|<get-JSON_DEFAULT_PATH>(){}[0]
 
 final val eu.vendeli.rethis.utils/EOL // eu.vendeli.rethis.utils/EOL|{}EOL[0]
     final fun <get-EOL>(): kotlin/ByteArray // eu.vendeli.rethis.utils/EOL.<get-EOL>|<get-EOL>(){}[0]
 final val eu.vendeli.rethis.utils/IO_OR_UNCONFINED // eu.vendeli.rethis.utils/IO_OR_UNCONFINED|@kotlinx.coroutines.Dispatchers{}IO_OR_UNCONFINED[0]
     final fun (kotlinx.coroutines/Dispatchers).<get-IO_OR_UNCONFINED>(): kotlinx.coroutines/CoroutineDispatcher // eu.vendeli.rethis.utils/IO_OR_UNCONFINED.<get-IO_OR_UNCONFINED>|<get-IO_OR_UNCONFINED>@kotlinx.coroutines.Dispatchers(){}[0]
 
+final fun (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.utils/serdeModule(): eu.vendeli.rethis.types.interfaces/SerializationFormat // eu.vendeli.rethis.utils/serdeModule|serdeModule@eu.vendeli.rethis.ReThis(){}[0]
 final fun (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.wrappers/Hash(kotlin/String): eu.vendeli.rethis.wrappers/ReThisMap // eu.vendeli.rethis.wrappers/Hash|Hash@eu.vendeli.rethis.ReThis(kotlin.String){}[0]
 final fun (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.wrappers/Set(kotlin/String): eu.vendeli.rethis.wrappers/ReThisSet // eu.vendeli.rethis.wrappers/Set|Set@eu.vendeli.rethis.ReThis(kotlin.String){}[0]
 final fun (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.wrappers/StreamFlow(kotlin/String, kotlin/String, kotlin/String, kotlin/Long = ..., kotlin.time/Duration = ..., kotlin/Boolean = ...): kotlinx.coroutines.flow/Flow<kotlin.collections/Map<kotlin/String, eu.vendeli.rethis.shared.types/RType>> // eu.vendeli.rethis.wrappers/StreamFlow|StreamFlow@eu.vendeli.rethis.ReThis(kotlin.String;kotlin.String;kotlin.String;kotlin.Long;kotlin.time.Duration;kotlin.Boolean){}[0]
@@ -3049,3 +3067,25 @@ final suspend fun (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.command.transacti
 final suspend fun (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.command.transaction/watch(kotlin/Array<out kotlin/String>...): kotlin/Boolean // eu.vendeli.rethis.command.transaction/watch|watch@eu.vendeli.rethis.ReThis(kotlin.Array<out|kotlin.String>...){}[0]
 final suspend fun (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.utils/execute(kotlin/Function1<kotlin.collections/MutableList<kotlin/Any?>, kotlin/Unit>): kotlinx.io/Buffer // eu.vendeli.rethis.utils/execute|execute@eu.vendeli.rethis.ReThis(kotlin.Function1<kotlin.collections.MutableList<kotlin.Any?>,kotlin.Unit>){}[0]
 final suspend fun (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.utils/execute(kotlinx.io/Buffer, eu.vendeli.rethis.shared.types/RedisOperation = ..., kotlin/Boolean = ...): kotlinx.io/Buffer // eu.vendeli.rethis.utils/execute|execute@eu.vendeli.rethis.ReThis(kotlinx.io.Buffer;eu.vendeli.rethis.shared.types.RedisOperation;kotlin.Boolean){}[0]
+final suspend fun <#A: kotlin/Any> (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.command.serde/hGet(kotlin/String, kotlin/String, kotlinx.serialization/KSerializer<#A>, eu.vendeli.rethis.types.interfaces/SerializationFormat = ...): #A? // eu.vendeli.rethis.command.serde/hGet|hGet@eu.vendeli.rethis.ReThis(kotlin.String;kotlin.String;kotlinx.serialization.KSerializer<0:0>;eu.vendeli.rethis.types.interfaces.SerializationFormat){0§<kotlin.Any>}[0]
+final suspend fun <#A: kotlin/Any> (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.command.serde/hMGet(kotlin/String, kotlin/Array<out kotlin/String>..., kotlinx.serialization/KSerializer<#A>, eu.vendeli.rethis.types.interfaces/SerializationFormat = ...): kotlin.collections/List<#A?> // eu.vendeli.rethis.command.serde/hMGet|hMGet@eu.vendeli.rethis.ReThis(kotlin.String;kotlin.Array<out|kotlin.String>...;kotlinx.serialization.KSerializer<0:0>;eu.vendeli.rethis.types.interfaces.SerializationFormat){0§<kotlin.Any>}[0]
+final suspend fun <#A: kotlin/Any> (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.command.serde/hSet(kotlin/String, kotlin/Array<out kotlin/Pair<kotlin/String, #A>>..., kotlinx.serialization/KSerializer<#A>, eu.vendeli.rethis.types.interfaces/SerializationFormat = ...): kotlin/Long // eu.vendeli.rethis.command.serde/hSet|hSet@eu.vendeli.rethis.ReThis(kotlin.String;kotlin.Array<out|kotlin.Pair<kotlin.String,0:0>>...;kotlinx.serialization.KSerializer<0:0>;eu.vendeli.rethis.types.interfaces.SerializationFormat){0§<kotlin.Any>}[0]
+final suspend fun <#A: kotlin/Any> (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.command.serde/hVals(kotlin/String, kotlinx.serialization/KSerializer<#A>, eu.vendeli.rethis.types.interfaces/SerializationFormat = ...): kotlin.collections/List<#A> // eu.vendeli.rethis.command.serde/hVals|hVals@eu.vendeli.rethis.ReThis(kotlin.String;kotlinx.serialization.KSerializer<0:0>;eu.vendeli.rethis.types.interfaces.SerializationFormat){0§<kotlin.Any>}[0]
+final suspend fun <#A: kotlin/Any> (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.command.serde/jsonGet(kotlin/String, kotlin/Array<out eu.vendeli.rethis.shared.request.json/JsonGetOption>..., kotlinx.serialization/KSerializer<#A>, eu.vendeli.rethis.types.interfaces/SerializationFormat = ...): #A? // eu.vendeli.rethis.command.serde/jsonGet|jsonGet@eu.vendeli.rethis.ReThis(kotlin.String;kotlin.Array<out|eu.vendeli.rethis.shared.request.json.JsonGetOption>...;kotlinx.serialization.KSerializer<0:0>;eu.vendeli.rethis.types.interfaces.SerializationFormat){0§<kotlin.Any>}[0]
+final suspend fun <#A: kotlin/Any> (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.command.serde/jsonMGet(kotlin/String, kotlin/Array<out kotlin/String>..., kotlinx.serialization/KSerializer<#A>, eu.vendeli.rethis.types.interfaces/SerializationFormat = ...): kotlin.collections/List<#A?> // eu.vendeli.rethis.command.serde/jsonMGet|jsonMGet@eu.vendeli.rethis.ReThis(kotlin.String;kotlin.Array<out|kotlin.String>...;kotlinx.serialization.KSerializer<0:0>;eu.vendeli.rethis.types.interfaces.SerializationFormat){0§<kotlin.Any>}[0]
+final suspend fun <#A: kotlin/Any> (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.command.serde/jsonSet(kotlin/String, #A, kotlinx.serialization/KSerializer<#A>, kotlin/String = ..., eu.vendeli.rethis.shared.request.string/UpsertMode? = ..., eu.vendeli.rethis.types.interfaces/SerializationFormat = ...): kotlin/String // eu.vendeli.rethis.command.serde/jsonSet|jsonSet@eu.vendeli.rethis.ReThis(kotlin.String;0:0;kotlinx.serialization.KSerializer<0:0>;kotlin.String;eu.vendeli.rethis.shared.request.string.UpsertMode?;eu.vendeli.rethis.types.interfaces.SerializationFormat){0§<kotlin.Any>}[0]
+final suspend fun <#A: kotlin/Any> (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.command.serde/mGet(kotlin/Array<out kotlin/String>..., kotlinx.serialization/KSerializer<#A>, eu.vendeli.rethis.types.interfaces/SerializationFormat = ...): kotlin.collections/List<#A?> // eu.vendeli.rethis.command.serde/mGet|mGet@eu.vendeli.rethis.ReThis(kotlin.Array<out|kotlin.String>...;kotlinx.serialization.KSerializer<0:0>;eu.vendeli.rethis.types.interfaces.SerializationFormat){0§<kotlin.Any>}[0]
+final suspend fun <#A: kotlin/Any> (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.command.serde/mSet(kotlin/Array<out kotlin/Pair<kotlin/String, #A>>..., kotlinx.serialization/KSerializer<#A>, eu.vendeli.rethis.types.interfaces/SerializationFormat = ...): kotlin/Boolean // eu.vendeli.rethis.command.serde/mSet|mSet@eu.vendeli.rethis.ReThis(kotlin.Array<out|kotlin.Pair<kotlin.String,0:0>>...;kotlinx.serialization.KSerializer<0:0>;eu.vendeli.rethis.types.interfaces.SerializationFormat){0§<kotlin.Any>}[0]
+final suspend fun <#A: kotlin/Any?> (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.command.serde/get(kotlin/String, kotlinx.serialization/KSerializer<#A>, eu.vendeli.rethis.types.interfaces/SerializationFormat = ...): #A? // eu.vendeli.rethis.command.serde/get|get@eu.vendeli.rethis.ReThis(kotlin.String;kotlinx.serialization.KSerializer<0:0>;eu.vendeli.rethis.types.interfaces.SerializationFormat){0§<kotlin.Any?>}[0]
+final suspend fun <#A: kotlin/Any?> (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.command.serde/set(kotlin/String, #A, kotlinx.serialization/KSerializer<#A>, kotlin/Array<out eu.vendeli.rethis.shared.request.string/SetOption>..., eu.vendeli.rethis.types.interfaces/SerializationFormat = ...): kotlin/String? // eu.vendeli.rethis.command.serde/set|set@eu.vendeli.rethis.ReThis(kotlin.String;0:0;kotlinx.serialization.KSerializer<0:0>;kotlin.Array<out|eu.vendeli.rethis.shared.request.string.SetOption>...;eu.vendeli.rethis.types.interfaces.SerializationFormat){0§<kotlin.Any?>}[0]
+final suspend inline fun <#A: reified kotlin/Any> (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.command.serde/get(kotlin/String): #A? // eu.vendeli.rethis.command.serde/get|get@eu.vendeli.rethis.ReThis(kotlin.String){0§<kotlin.Any>}[0]
+final suspend inline fun <#A: reified kotlin/Any> (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.command.serde/hGet(kotlin/String, kotlin/String): #A? // eu.vendeli.rethis.command.serde/hGet|hGet@eu.vendeli.rethis.ReThis(kotlin.String;kotlin.String){0§<kotlin.Any>}[0]
+final suspend inline fun <#A: reified kotlin/Any> (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.command.serde/hMGet(kotlin/String, kotlin/Array<out kotlin/String>...): kotlin.collections/List<#A?> // eu.vendeli.rethis.command.serde/hMGet|hMGet@eu.vendeli.rethis.ReThis(kotlin.String;kotlin.Array<out|kotlin.String>...){0§<kotlin.Any>}[0]
+final suspend inline fun <#A: reified kotlin/Any> (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.command.serde/hSet(kotlin/String, kotlin/Array<out kotlin/Pair<kotlin/String, #A>>...): kotlin/Long // eu.vendeli.rethis.command.serde/hSet|hSet@eu.vendeli.rethis.ReThis(kotlin.String;kotlin.Array<out|kotlin.Pair<kotlin.String,0:0>>...){0§<kotlin.Any>}[0]
+final suspend inline fun <#A: reified kotlin/Any> (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.command.serde/hVals(kotlin/String): kotlin.collections/List<#A> // eu.vendeli.rethis.command.serde/hVals|hVals@eu.vendeli.rethis.ReThis(kotlin.String){0§<kotlin.Any>}[0]
+final suspend inline fun <#A: reified kotlin/Any> (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.command.serde/jsonGet(kotlin/String, kotlin/Array<out eu.vendeli.rethis.shared.request.json/JsonGetOption>...): #A? // eu.vendeli.rethis.command.serde/jsonGet|jsonGet@eu.vendeli.rethis.ReThis(kotlin.String;kotlin.Array<out|eu.vendeli.rethis.shared.request.json.JsonGetOption>...){0§<kotlin.Any>}[0]
+final suspend inline fun <#A: reified kotlin/Any> (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.command.serde/jsonMGet(kotlin/String, kotlin/Array<out kotlin/String>...): kotlin.collections/List<#A?> // eu.vendeli.rethis.command.serde/jsonMGet|jsonMGet@eu.vendeli.rethis.ReThis(kotlin.String;kotlin.Array<out|kotlin.String>...){0§<kotlin.Any>}[0]
+final suspend inline fun <#A: reified kotlin/Any> (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.command.serde/jsonSet(kotlin/String, #A, kotlin/String = ..., eu.vendeli.rethis.shared.request.string/UpsertMode? = ...): kotlin/String // eu.vendeli.rethis.command.serde/jsonSet|jsonSet@eu.vendeli.rethis.ReThis(kotlin.String;0:0;kotlin.String;eu.vendeli.rethis.shared.request.string.UpsertMode?){0§<kotlin.Any>}[0]
+final suspend inline fun <#A: reified kotlin/Any> (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.command.serde/mGet(kotlin/Array<out kotlin/String>...): kotlin.collections/List<#A?> // eu.vendeli.rethis.command.serde/mGet|mGet@eu.vendeli.rethis.ReThis(kotlin.Array<out|kotlin.String>...){0§<kotlin.Any>}[0]
+final suspend inline fun <#A: reified kotlin/Any> (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.command.serde/mSet(kotlin/Array<out kotlin/Pair<kotlin/String, #A>>...): kotlin/Boolean // eu.vendeli.rethis.command.serde/mSet|mSet@eu.vendeli.rethis.ReThis(kotlin.Array<out|kotlin.Pair<kotlin.String,0:0>>...){0§<kotlin.Any>}[0]
+final suspend inline fun <#A: reified kotlin/Any> (eu.vendeli.rethis/ReThis).eu.vendeli.rethis.command.serde/set(kotlin/String, #A, kotlin/Array<out eu.vendeli.rethis.shared.request.string/SetOption>...): kotlin/String? // eu.vendeli.rethis.command.serde/set|set@eu.vendeli.rethis.ReThis(kotlin.String;0:0;kotlin.Array<out|eu.vendeli.rethis.shared.request.string.SetOption>...){0§<kotlin.Any>}[0]
