@@ -17,9 +17,9 @@ suspend fun <T : Any> ReThis.hVals(
     format: SerializationFormat = cfg.serializationFormat,
 ): List<T> {
     val raw: List<String> = hVals(key)
-    return raw.map { s ->
+    return raw.map { string ->
         try {
-            format.deserialize(serializer, s)
+            format.deserialize(serializer, string)
         } catch (ex: Exception) {
             throw DataProcessingException("Failed to deserialize hVals for key \"$key\"", ex)
         }

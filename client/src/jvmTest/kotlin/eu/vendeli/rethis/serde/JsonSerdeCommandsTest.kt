@@ -50,7 +50,6 @@ class JsonSerdeCommandsTest : ReThisTestCtx(true) {
             number = 3.14,
         )
 
-        client.jsonSet("a", "v")
         client.jsonSet(key, data)
 
         // Access individual fields with proper types

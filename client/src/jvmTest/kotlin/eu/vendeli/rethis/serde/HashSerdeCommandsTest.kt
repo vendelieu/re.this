@@ -1,6 +1,7 @@
 package eu.vendeli.rethis.serde
 
 import eu.vendeli.rethis.ReThisTestCtx
+import eu.vendeli.rethis.command.hash.hDel
 import eu.vendeli.rethis.command.serde.hGet
 import eu.vendeli.rethis.command.serde.hSet
 import eu.vendeli.rethis.command.serde.hVals
@@ -44,7 +45,8 @@ class HashSerdeCommandsTest : ReThisTestCtx() {
         val result = client.hVals<String>(key)
         result shouldBe listOf(value1.quote(), encodedEntity)
 
+        client.hDel(key, field1)
         val serializedResult = client.hVals(key, TestData.serializer())
-        serializedResult shouldBe listOf(value1, value2)
+        serializedResult.single() shouldBe TestData(entity.first, entity.second)
     }
 }

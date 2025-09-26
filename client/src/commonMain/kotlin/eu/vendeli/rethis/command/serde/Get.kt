@@ -1,6 +1,7 @@
 package eu.vendeli.rethis.command.serde
 
 import eu.vendeli.rethis.ReThis
+import eu.vendeli.rethis.command.string.get
 import eu.vendeli.rethis.shared.types.DataProcessingException
 import eu.vendeli.rethis.types.interfaces.SerializationFormat
 import kotlinx.serialization.KSerializer

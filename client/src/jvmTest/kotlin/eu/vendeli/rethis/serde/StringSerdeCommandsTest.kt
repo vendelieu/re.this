@@ -9,10 +9,8 @@ import eu.vendeli.rethis.utils.serdeModule
 import io.kotest.matchers.shouldBe
 
 class StringSerdeCommandsTest : ReThisTestCtx() {
+    private val encodedEntity = """{"first":"testValue","second":2}"""
     private val entity = TestData("testValue", 2)
-    private val encodedEntity by lazy {
-        client.serdeModule().serialize(TestData.serializer(), entity)
-    }
 
     @Test
     suspend fun `test set and get`() {
