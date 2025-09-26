@@ -1,8 +1,9 @@
-package eu.vendeli.rethis.types.common
+package eu.vendeli.rethis.types.interfaces
 
 import eu.vendeli.rethis.providers.ConnectionProvider
 import eu.vendeli.rethis.shared.types.CommandRequest
+import eu.vendeli.rethis.types.common.Snapshot
 
-sealed interface ReadFromStrategy {
+interface ReadFromStrategy {
     fun pick(request: CommandRequest, snapshot: Snapshot): ConnectionProvider
 }

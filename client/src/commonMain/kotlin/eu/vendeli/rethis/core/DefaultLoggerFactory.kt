@@ -1,6 +1,6 @@
 package eu.vendeli.rethis.core
 
-import eu.vendeli.rethis.types.common.LoggerFactory
+import eu.vendeli.rethis.types.interfaces.LoggerFactory
 import io.ktor.util.logging.*
 
 object DefaultLoggerFactory : LoggerFactory {

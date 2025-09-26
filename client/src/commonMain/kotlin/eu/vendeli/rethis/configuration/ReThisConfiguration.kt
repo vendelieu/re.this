@@ -2,10 +2,12 @@ package eu.vendeli.rethis.configuration
 
 import eu.vendeli.rethis.annotations.ConfigurationDSL
 import eu.vendeli.rethis.core.DefaultLoggerFactory
-import eu.vendeli.rethis.types.common.LoggerFactory
+import eu.vendeli.rethis.core.JsonSerializationFormat
+import eu.vendeli.rethis.types.interfaces.LoggerFactory
 import eu.vendeli.rethis.types.common.ReadFrom
-import eu.vendeli.rethis.types.common.ReadFromStrategy
+import eu.vendeli.rethis.types.interfaces.ReadFromStrategy
 import eu.vendeli.rethis.types.common.RespVer
+import eu.vendeli.rethis.types.interfaces.SerializationFormat
 import io.ktor.network.tls.*
 import io.ktor.utils.io.charsets.*
 import kotlinx.coroutines.CoroutineDispatcher
@@ -120,6 +122,18 @@ sealed class ReThisConfiguration(internal val protocol: RespVer) {
      * it uses `DefaultLoggerFactory`.
      */
     var loggerFactory: LoggerFactory = DefaultLoggerFactory
+
+    /**
+     * Specifies the serialization format used for serializing and deserializing values in the Redis client.
+     *
+     * This property determines how objects are transformed into strings to be stored in Redis and
+     * how strings retrieved from Redis are converted back into objects. By default, it is configured
+     * to use a JSON-based serialization format provided by [JsonSerializationFormat].
+     *
+     * You can customize this property to use a different implementation of [SerializationFormat],
+     * enabling support for other serialization mechanisms as required.
+     */
+    var serializationFormat: SerializationFormat = JsonSerializationFormat()
 
     /**
      * Configures authentication for the Redis connection by setting the password and optional username.
