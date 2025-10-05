@@ -60,6 +60,7 @@ eu.vendeli.rethis.shared.decoders.general
 eu.vendeli.rethis.shared.decoders.generic
 eu.vendeli.rethis.shared.decoders.geospatial
 eu.vendeli.rethis.shared.decoders.pubsub
+eu.vendeli.rethis.shared.decoders.server
 eu.vendeli.rethis.shared.decoders.sortedset
 eu.vendeli.rethis.shared.decoders.string
 eu.vendeli.rethis.shared.request.bitmap
