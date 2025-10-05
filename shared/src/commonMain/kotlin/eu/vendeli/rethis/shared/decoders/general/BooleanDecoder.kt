@@ -15,9 +15,7 @@ object BooleanDecoder : ResponseDecoder<Boolean> {
         if (input == EMPTY_BUFFER) return false
         if (code == null) input.resolveToken(RespCode.BOOLEAN)
 
-
-        val value = input.readLineStrict()
-        return when (value) {
+        return when (val value = input.readLineStrict()) {
             "t" -> true
             "f" -> false
             else -> throw ResponseParsingException("Invalid response structure, expected boolean, given $value")

@@ -27,6 +27,10 @@ public abstract interface annotation class eu/vendeli/rethis/shared/annotations/
 public abstract interface annotation class eu/vendeli/rethis/shared/annotations/RedisMeta$SkipCommand : java/lang/annotation/Annotation {
 }
 
+public abstract interface annotation class eu/vendeli/rethis/shared/annotations/RedisMeta$Weight : java/lang/annotation/Annotation {
+	public abstract fun value ()I
+}
+
 public abstract interface annotation class eu/vendeli/rethis/shared/annotations/RedisMeta$WithSizeParam : java/lang/annotation/Annotation {
 	public abstract fun name ()Ljava/lang/String;
 }
@@ -209,6 +213,11 @@ public final class eu/vendeli/rethis/shared/decoders/pubsub/PubSubNumSubDecoder 
 
 public final class eu/vendeli/rethis/shared/decoders/pubsub/SubEventDecoder : eu/vendeli/rethis/shared/decoders/ResponseDecoder {
 	public static final field INSTANCE Leu/vendeli/rethis/shared/decoders/pubsub/SubEventDecoder;
+	public fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class eu/vendeli/rethis/shared/decoders/server/ShutdownDecoder : eu/vendeli/rethis/shared/decoders/ResponseDecoder {
+	public static final field INSTANCE Leu/vendeli/rethis/shared/decoders/server/ShutdownDecoder;
 	public fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 

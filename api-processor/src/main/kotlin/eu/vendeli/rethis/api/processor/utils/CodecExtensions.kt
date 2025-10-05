@@ -1,5 +1,7 @@
 package eu.vendeli.rethis.api.processor.utils
 
+import com.google.devtools.ksp.KspExperimental
+import com.google.devtools.ksp.getAnnotationsByType
 import com.google.devtools.ksp.symbol.KSTypeArgument
 import com.google.devtools.ksp.symbol.KSValueParameter
 import com.squareup.kotlinpoet.CodeBlock
@@ -8,6 +10,7 @@ import com.squareup.kotlinpoet.KModifier
 import com.squareup.kotlinpoet.TypeSpec
 import com.squareup.kotlinpoet.ksp.toTypeName
 import eu.vendeli.rethis.api.processor.core.RedisCommandProcessor.Companion.context
+import eu.vendeli.rethis.shared.annotations.RedisMeta
 import eu.vendeli.rethis.shared.decoders.ResponseDecoder
 import eu.vendeli.rethis.shared.types.RedisOperation
 import eu.vendeli.rethis.shared.types.RespCode
@@ -79,11 +82,17 @@ internal fun TypeSpec.Builder.addDecodeFunction(
     return this
 }
 
+@OptIn(KspExperimental::class)
 internal fun buildStaticCommandParts(
     vararg mainCommandPart: String,
     parameters: List<KSValueParameter>,
 ): String {
-    val size = mainCommandPart.size + parameters.size
+    val commandSize = mainCommandPart.size
+    val parametersSize = parameters.sumOf {
+        it.getAnnotationsByType(RedisMeta.Weight::class).firstOrNull()?.value ?: 1
+    }
+    val size = commandSize + parametersSize
+
     val commandPart = mainCommandPart.joinToString("\\r\\n") { "$${it.length}\\r\\n$it" }
     val sizePart = if (context.currentCommand.haveVaryingSize) "" else "*$size"
     return "$sizePart\\r\\n$commandPart\\r\\n"

@@ -6,7 +6,7 @@ import eu.vendeli.rethis.shared.request.server.SaveSelector
 import eu.vendeli.rethis.shared.request.server.ShutdownOptions
 import eu.vendeli.rethis.topology.handle
 
-public suspend fun ReThis.shutdown(saveSelector: SaveSelector? = null, vararg options: ShutdownOptions): Boolean {
+public suspend fun ReThis.shutdown(saveSelector: SaveSelector? = null, vararg options: ShutdownOptions): Boolean? {
     val request = if(cfg.withSlots) {
         ShutdownCommandCodec.encodeWithSlot(charset = cfg.charset, saveSelector = saveSelector, options = options)
     } else {

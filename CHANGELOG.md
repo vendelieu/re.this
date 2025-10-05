@@ -1,5 +1,9 @@
 # Re.this Changelog
 
+## 0.3.4
+
+* Fixed decoder of `REPLICAOF` and `SHUTDOWN` commands.
+
 ## 0.3.3
 
 * Returned serialization support, with ability to use different serialization formats \

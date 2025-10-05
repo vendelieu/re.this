@@ -3436,6 +3436,61 @@ public final class eu/vendeli/rethis/command/sentinel/SentinelSimulateFailureKt 
 	public static final fun sentinelSimulateFailure (Leu/vendeli/rethis/ReThis;Leu/vendeli/rethis/shared/request/sentinel/SentinelSimulateFailureMode;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
+public final class eu/vendeli/rethis/command/serde/GetKt {
+	public static final fun get (Leu/vendeli/rethis/ReThis;Ljava/lang/String;Lkotlinx/serialization/KSerializer;Leu/vendeli/rethis/types/interfaces/SerializationFormat;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun get$default (Leu/vendeli/rethis/ReThis;Ljava/lang/String;Lkotlinx/serialization/KSerializer;Leu/vendeli/rethis/types/interfaces/SerializationFormat;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+}
+
+public final class eu/vendeli/rethis/command/serde/HGetKt {
+	public static final fun hGet (Leu/vendeli/rethis/ReThis;Ljava/lang/String;Ljava/lang/String;Lkotlinx/serialization/KSerializer;Leu/vendeli/rethis/types/interfaces/SerializationFormat;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun hGet$default (Leu/vendeli/rethis/ReThis;Ljava/lang/String;Ljava/lang/String;Lkotlinx/serialization/KSerializer;Leu/vendeli/rethis/types/interfaces/SerializationFormat;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+}
+
+public final class eu/vendeli/rethis/command/serde/HMGetKt {
+	public static final fun hMGet (Leu/vendeli/rethis/ReThis;Ljava/lang/String;[Ljava/lang/String;Lkotlinx/serialization/KSerializer;Leu/vendeli/rethis/types/interfaces/SerializationFormat;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun hMGet$default (Leu/vendeli/rethis/ReThis;Ljava/lang/String;[Ljava/lang/String;Lkotlinx/serialization/KSerializer;Leu/vendeli/rethis/types/interfaces/SerializationFormat;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+}
+
+public final class eu/vendeli/rethis/command/serde/HSetKt {
+	public static final fun hSet (Leu/vendeli/rethis/ReThis;Ljava/lang/String;[Lkotlin/Pair;Lkotlinx/serialization/KSerializer;Leu/vendeli/rethis/types/interfaces/SerializationFormat;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun hSet$default (Leu/vendeli/rethis/ReThis;Ljava/lang/String;[Lkotlin/Pair;Lkotlinx/serialization/KSerializer;Leu/vendeli/rethis/types/interfaces/SerializationFormat;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+}
+
+public final class eu/vendeli/rethis/command/serde/HValsKt {
+	public static final fun hVals (Leu/vendeli/rethis/ReThis;Ljava/lang/String;Lkotlinx/serialization/KSerializer;Leu/vendeli/rethis/types/interfaces/SerializationFormat;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun hVals$default (Leu/vendeli/rethis/ReThis;Ljava/lang/String;Lkotlinx/serialization/KSerializer;Leu/vendeli/rethis/types/interfaces/SerializationFormat;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+}
+
+public final class eu/vendeli/rethis/command/serde/JsonGetKt {
+	public static final fun jsonGet (Leu/vendeli/rethis/ReThis;Ljava/lang/String;[Leu/vendeli/rethis/shared/request/json/JsonGetOption;Lkotlinx/serialization/KSerializer;Leu/vendeli/rethis/types/interfaces/SerializationFormat;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun jsonGet$default (Leu/vendeli/rethis/ReThis;Ljava/lang/String;[Leu/vendeli/rethis/shared/request/json/JsonGetOption;Lkotlinx/serialization/KSerializer;Leu/vendeli/rethis/types/interfaces/SerializationFormat;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+}
+
+public final class eu/vendeli/rethis/command/serde/JsonMGetKt {
+	public static final fun jsonMGet (Leu/vendeli/rethis/ReThis;Ljava/lang/String;[Ljava/lang/String;Lkotlinx/serialization/KSerializer;Leu/vendeli/rethis/types/interfaces/SerializationFormat;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun jsonMGet$default (Leu/vendeli/rethis/ReThis;Ljava/lang/String;[Ljava/lang/String;Lkotlinx/serialization/KSerializer;Leu/vendeli/rethis/types/interfaces/SerializationFormat;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+}
+
+public final class eu/vendeli/rethis/command/serde/JsonSetKt {
+	public static final fun jsonSet (Leu/vendeli/rethis/ReThis;Ljava/lang/String;Ljava/lang/Object;Lkotlinx/serialization/KSerializer;Ljava/lang/String;Leu/vendeli/rethis/shared/request/string/UpsertMode;Leu/vendeli/rethis/types/interfaces/SerializationFormat;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun jsonSet$default (Leu/vendeli/rethis/ReThis;Ljava/lang/String;Ljava/lang/Object;Lkotlinx/serialization/KSerializer;Ljava/lang/String;Leu/vendeli/rethis/shared/request/string/UpsertMode;Leu/vendeli/rethis/types/interfaces/SerializationFormat;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+}
+
+public final class eu/vendeli/rethis/command/serde/MgetKt {
+	public static final fun mGet (Leu/vendeli/rethis/ReThis;[Ljava/lang/String;Lkotlinx/serialization/KSerializer;Leu/vendeli/rethis/types/interfaces/SerializationFormat;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun mGet$default (Leu/vendeli/rethis/ReThis;[Ljava/lang/String;Lkotlinx/serialization/KSerializer;Leu/vendeli/rethis/types/interfaces/SerializationFormat;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+}
+
+public final class eu/vendeli/rethis/command/serde/MsetKt {
+	public static final fun mSet (Leu/vendeli/rethis/ReThis;[Lkotlin/Pair;Lkotlinx/serialization/KSerializer;Leu/vendeli/rethis/types/interfaces/SerializationFormat;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun mSet$default (Leu/vendeli/rethis/ReThis;[Lkotlin/Pair;Lkotlinx/serialization/KSerializer;Leu/vendeli/rethis/types/interfaces/SerializationFormat;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+}
+
+public final class eu/vendeli/rethis/command/serde/SetKt {
+	public static final fun set (Leu/vendeli/rethis/ReThis;Ljava/lang/String;Ljava/lang/Object;Lkotlinx/serialization/KSerializer;[Leu/vendeli/rethis/shared/request/string/SetOption;Leu/vendeli/rethis/types/interfaces/SerializationFormat;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun set$default (Leu/vendeli/rethis/ReThis;Ljava/lang/String;Ljava/lang/Object;Lkotlinx/serialization/KSerializer;[Leu/vendeli/rethis/shared/request/string/SetOption;Leu/vendeli/rethis/types/interfaces/SerializationFormat;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+}
+
 public final class eu/vendeli/rethis/command/server/AclCatKt {
 	public static final fun aclCat (Leu/vendeli/rethis/ReThis;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static synthetic fun aclCat$default (Leu/vendeli/rethis/ReThis;Ljava/lang/String;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
@@ -4096,9 +4151,10 @@ public abstract class eu/vendeli/rethis/configuration/ReThisConfiguration {
 	public final fun getConnectionAcquireTimeout-UwyO8pc ()J
 	public final fun getDb ()Ljava/lang/Integer;
 	public final fun getDispatcher ()Lkotlinx/coroutines/CoroutineDispatcher;
-	public final fun getLoggerFactory ()Leu/vendeli/rethis/types/common/LoggerFactory;
+	public final fun getLoggerFactory ()Leu/vendeli/rethis/types/interfaces/LoggerFactory;
 	public final fun getMaxConnections ()I
-	public final fun getReadFromStrategy ()Leu/vendeli/rethis/types/common/ReadFromStrategy;
+	public final fun getReadFromStrategy ()Leu/vendeli/rethis/types/interfaces/ReadFromStrategy;
+	public final fun getSerializationFormat ()Leu/vendeli/rethis/types/interfaces/SerializationFormat;
 	public final fun getUsePooling ()Z
 	public final fun pool (Lkotlin/jvm/functions/Function1;)V
 	public final fun retry (Lkotlin/jvm/functions/Function1;)V
@@ -4106,9 +4162,10 @@ public abstract class eu/vendeli/rethis/configuration/ReThisConfiguration {
 	public final fun setConnectionAcquireTimeout-LRDsOJo (J)V
 	public final fun setDb (Ljava/lang/Integer;)V
 	public final fun setDispatcher (Lkotlinx/coroutines/CoroutineDispatcher;)V
-	public final fun setLoggerFactory (Leu/vendeli/rethis/types/common/LoggerFactory;)V
+	public final fun setLoggerFactory (Leu/vendeli/rethis/types/interfaces/LoggerFactory;)V
 	public final fun setMaxConnections (I)V
-	public final fun setReadFromStrategy (Leu/vendeli/rethis/types/common/ReadFromStrategy;)V
+	public final fun setReadFromStrategy (Leu/vendeli/rethis/types/interfaces/ReadFromStrategy;)V
+	public final fun setSerializationFormat (Leu/vendeli/rethis/types/interfaces/SerializationFormat;)V
 	public final fun setUsePooling (Z)V
 	public final fun socket (Lkotlin/jvm/functions/Function1;)V
 	public final fun tls (Lkotlin/jvm/functions/Function0;)V
@@ -4172,9 +4229,17 @@ public final class eu/vendeli/rethis/configuration/StandaloneConfiguration : eu/
 	public fun <init> (Leu/vendeli/rethis/types/common/RespVer;)V
 }
 
-public final class eu/vendeli/rethis/core/DefaultLoggerFactory : eu/vendeli/rethis/types/common/LoggerFactory {
+public final class eu/vendeli/rethis/core/DefaultLoggerFactory : eu/vendeli/rethis/types/interfaces/LoggerFactory {
 	public static final field INSTANCE Leu/vendeli/rethis/core/DefaultLoggerFactory;
 	public fun get (Ljava/lang/String;)Lorg/slf4j/Logger;
+}
+
+public final class eu/vendeli/rethis/core/JsonSerializationFormat : eu/vendeli/rethis/types/interfaces/SerializationFormat {
+	public fun <init> ()V
+	public fun <init> (Lkotlinx/serialization/json/Json;)V
+	public synthetic fun <init> (Lkotlinx/serialization/json/Json;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun deserialize (Lkotlinx/serialization/KSerializer;Ljava/lang/String;)Ljava/lang/Object;
+	public fun serialize (Lkotlinx/serialization/KSerializer;Ljava/lang/Object;)Ljava/lang/String;
 }
 
 public final class eu/vendeli/rethis/core/SubscriptionManager {
@@ -4258,10 +4323,6 @@ public final class eu/vendeli/rethis/types/common/ClusterSnapshot : eu/vendeli/r
 	public final fun getSlotOwner ()[I
 }
 
-public abstract interface class eu/vendeli/rethis/types/common/LoggerFactory {
-	public abstract fun get (Ljava/lang/String;)Lorg/slf4j/Logger;
-}
-
 public final class eu/vendeli/rethis/types/common/RConnection {
 	public fun <init> (Lio/ktor/network/sockets/Socket;Lio/ktor/utils/io/ByteReadChannel;Lio/ktor/utils/io/ByteWriteChannel;)V
 	public final fun component1 ()Lio/ktor/network/sockets/Socket;
@@ -4279,46 +4340,42 @@ public final class eu/vendeli/rethis/types/common/RConnection {
 	public fun toString ()Ljava/lang/String;
 }
 
-public abstract class eu/vendeli/rethis/types/common/ReadFrom : eu/vendeli/rethis/types/common/ReadFromStrategy {
+public abstract class eu/vendeli/rethis/types/common/ReadFrom : eu/vendeli/rethis/types/interfaces/ReadFromStrategy {
 }
 
-public final class eu/vendeli/rethis/types/common/ReadFrom$Any : eu/vendeli/rethis/types/common/ReadFromStrategy {
+public final class eu/vendeli/rethis/types/common/ReadFrom$Any : eu/vendeli/rethis/types/interfaces/ReadFromStrategy {
 	public static final field INSTANCE Leu/vendeli/rethis/types/common/ReadFrom$Any;
 	public fun pick (Leu/vendeli/rethis/shared/types/CommandRequest;Leu/vendeli/rethis/types/common/Snapshot;)Leu/vendeli/rethis/providers/ConnectionProvider;
 }
 
-public final class eu/vendeli/rethis/types/common/ReadFrom$AnyReplica : eu/vendeli/rethis/types/common/ReadFromStrategy {
+public final class eu/vendeli/rethis/types/common/ReadFrom$AnyReplica : eu/vendeli/rethis/types/interfaces/ReadFromStrategy {
 	public static final field INSTANCE Leu/vendeli/rethis/types/common/ReadFrom$AnyReplica;
 	public fun pick (Leu/vendeli/rethis/shared/types/CommandRequest;Leu/vendeli/rethis/types/common/Snapshot;)Leu/vendeli/rethis/providers/ConnectionProvider;
 }
 
-public final class eu/vendeli/rethis/types/common/ReadFrom$LowestLatency : eu/vendeli/rethis/types/common/ReadFromStrategy {
+public final class eu/vendeli/rethis/types/common/ReadFrom$LowestLatency : eu/vendeli/rethis/types/interfaces/ReadFromStrategy {
 	public static final field INSTANCE Leu/vendeli/rethis/types/common/ReadFrom$LowestLatency;
 	public fun pick (Leu/vendeli/rethis/shared/types/CommandRequest;Leu/vendeli/rethis/types/common/Snapshot;)Leu/vendeli/rethis/providers/ConnectionProvider;
 }
 
-public final class eu/vendeli/rethis/types/common/ReadFrom$Master : eu/vendeli/rethis/types/common/ReadFromStrategy {
+public final class eu/vendeli/rethis/types/common/ReadFrom$Master : eu/vendeli/rethis/types/interfaces/ReadFromStrategy {
 	public static final field INSTANCE Leu/vendeli/rethis/types/common/ReadFrom$Master;
 	public fun pick (Leu/vendeli/rethis/shared/types/CommandRequest;Leu/vendeli/rethis/types/common/Snapshot;)Leu/vendeli/rethis/providers/ConnectionProvider;
 }
 
-public final class eu/vendeli/rethis/types/common/ReadFrom$MasterPreferred : eu/vendeli/rethis/types/common/ReadFromStrategy {
+public final class eu/vendeli/rethis/types/common/ReadFrom$MasterPreferred : eu/vendeli/rethis/types/interfaces/ReadFromStrategy {
 	public static final field INSTANCE Leu/vendeli/rethis/types/common/ReadFrom$MasterPreferred;
 	public fun pick (Leu/vendeli/rethis/shared/types/CommandRequest;Leu/vendeli/rethis/types/common/Snapshot;)Leu/vendeli/rethis/providers/ConnectionProvider;
 }
 
-public final class eu/vendeli/rethis/types/common/ReadFrom$Replica : eu/vendeli/rethis/types/common/ReadFromStrategy {
+public final class eu/vendeli/rethis/types/common/ReadFrom$Replica : eu/vendeli/rethis/types/interfaces/ReadFromStrategy {
 	public static final field INSTANCE Leu/vendeli/rethis/types/common/ReadFrom$Replica;
 	public fun pick (Leu/vendeli/rethis/shared/types/CommandRequest;Leu/vendeli/rethis/types/common/Snapshot;)Leu/vendeli/rethis/providers/ConnectionProvider;
 }
 
-public final class eu/vendeli/rethis/types/common/ReadFrom$ReplicaPreferred : eu/vendeli/rethis/types/common/ReadFromStrategy {
+public final class eu/vendeli/rethis/types/common/ReadFrom$ReplicaPreferred : eu/vendeli/rethis/types/interfaces/ReadFromStrategy {
 	public static final field INSTANCE Leu/vendeli/rethis/types/common/ReadFrom$ReplicaPreferred;
 	public fun pick (Leu/vendeli/rethis/shared/types/CommandRequest;Leu/vendeli/rethis/types/common/Snapshot;)Leu/vendeli/rethis/providers/ConnectionProvider;
-}
-
-public abstract interface class eu/vendeli/rethis/types/common/ReadFromStrategy {
-	public abstract fun pick (Leu/vendeli/rethis/shared/types/CommandRequest;Leu/vendeli/rethis/types/common/Snapshot;)Leu/vendeli/rethis/providers/ConnectionProvider;
 }
 
 public abstract class eu/vendeli/rethis/types/common/RespVer {
@@ -4388,6 +4445,19 @@ public final class eu/vendeli/rethis/types/common/SubscriptionType$SHARD : eu/ve
 	public fun toString ()Ljava/lang/String;
 }
 
+public abstract interface class eu/vendeli/rethis/types/interfaces/LoggerFactory {
+	public abstract fun get (Ljava/lang/String;)Lorg/slf4j/Logger;
+}
+
+public abstract interface class eu/vendeli/rethis/types/interfaces/ReadFromStrategy {
+	public abstract fun pick (Leu/vendeli/rethis/shared/types/CommandRequest;Leu/vendeli/rethis/types/common/Snapshot;)Leu/vendeli/rethis/providers/ConnectionProvider;
+}
+
+public abstract interface class eu/vendeli/rethis/types/interfaces/SerializationFormat {
+	public abstract fun deserialize (Lkotlinx/serialization/KSerializer;Ljava/lang/String;)Ljava/lang/Object;
+	public abstract fun serialize (Lkotlinx/serialization/KSerializer;Ljava/lang/Object;)Ljava/lang/String;
+}
+
 public abstract interface class eu/vendeli/rethis/types/interfaces/SubscriptionEventHandler {
 	public abstract fun onException (Ljava/lang/String;Ljava/lang/Exception;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun onSubscribe (Ljava/lang/String;JLkotlin/coroutines/Continuation;)Ljava/lang/Object;
@@ -4451,6 +4521,7 @@ public final class eu/vendeli/rethis/utils/ConstKt {
 	public static final field CLIENT_NAME Ljava/lang/String;
 	public static final field DEFAULT_HOST Ljava/lang/String;
 	public static final field DEFAULT_PORT I
+	public static final field JSON_DEFAULT_PATH Ljava/lang/String;
 	public static final fun getEOL ()[B
 }
 
@@ -4458,6 +4529,7 @@ public final class eu/vendeli/rethis/utils/RawReqUtilsKt {
 	public static final fun execute (Leu/vendeli/rethis/ReThis;Lkotlin/jvm/functions/Function1;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static final fun execute (Leu/vendeli/rethis/ReThis;Lkotlinx/io/Buffer;Leu/vendeli/rethis/shared/types/RedisOperation;ZLkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static synthetic fun execute$default (Leu/vendeli/rethis/ReThis;Lkotlinx/io/Buffer;Leu/vendeli/rethis/shared/types/RedisOperation;ZLkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public static final fun serdeModule (Leu/vendeli/rethis/ReThis;)Leu/vendeli/rethis/types/interfaces/SerializationFormat;
 	public static final fun toRESPBuffer (Ljava/util/List;Ljava/nio/charset/Charset;)Lkotlinx/io/Buffer;
 	public static synthetic fun toRESPBuffer$default (Ljava/util/List;Ljava/nio/charset/Charset;ILjava/lang/Object;)Lkotlinx/io/Buffer;
 }

@@ -18,6 +18,10 @@ annotation class RedisMeta {
     @Retention(AnnotationRetention.SOURCE)
     annotation class WithSizeParam(val name: String)
 
+    @Target(AnnotationTarget.VALUE_PARAMETER)
+    @Retention(AnnotationRetention.SOURCE)
+    annotation class Weight(val value: Int)
+
     @Target(AnnotationTarget.TYPE)
     @Retention(AnnotationRetention.SOURCE)
     annotation class OutgoingTimeUnit(val unit: TimeUnit)
