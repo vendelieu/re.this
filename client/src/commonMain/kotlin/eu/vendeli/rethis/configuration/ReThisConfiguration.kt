@@ -3,10 +3,10 @@ package eu.vendeli.rethis.configuration
 import eu.vendeli.rethis.annotations.ConfigurationDSL
 import eu.vendeli.rethis.core.DefaultLoggerFactory
 import eu.vendeli.rethis.core.JsonSerializationFormat
-import eu.vendeli.rethis.types.interfaces.LoggerFactory
 import eu.vendeli.rethis.types.common.ReadFrom
-import eu.vendeli.rethis.types.interfaces.ReadFromStrategy
 import eu.vendeli.rethis.types.common.RespVer
+import eu.vendeli.rethis.types.interfaces.LoggerFactory
+import eu.vendeli.rethis.types.interfaces.ReadFromStrategy
 import eu.vendeli.rethis.types.interfaces.SerializationFormat
 import io.ktor.network.tls.*
 import io.ktor.utils.io.charsets.*

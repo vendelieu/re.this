@@ -2,7 +2,6 @@ package eu.vendeli.rethis.serde
 
 import eu.vendeli.rethis.ReThisTestCtx
 import eu.vendeli.rethis.command.json.jsonArrPop
-import eu.vendeli.rethis.command.json.jsonSet
 import eu.vendeli.rethis.command.serde.jsonGet
 import eu.vendeli.rethis.command.serde.jsonMGet
 import eu.vendeli.rethis.command.serde.jsonSet

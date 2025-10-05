@@ -7,7 +7,7 @@ import eu.vendeli.rethis.command.serde.hMGet
 import eu.vendeli.rethis.command.serde.hSet
 import eu.vendeli.rethis.command.serde.hVals
 import io.kotest.matchers.shouldBe
-import io.ktor.http.quote
+import io.ktor.http.*
 import kotlinx.serialization.builtins.PairSerializer
 import kotlinx.serialization.builtins.serializer
 

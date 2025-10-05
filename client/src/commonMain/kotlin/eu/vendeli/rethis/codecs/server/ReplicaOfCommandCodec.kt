@@ -18,7 +18,7 @@ public object ReplicaOfCommandCodec {
     private const val BLOCKING_STATUS: Boolean = false
 
     private val COMMAND_HEADER: Buffer = Buffer().apply {
-        writeString("*2\r\n$9\r\nREPLICAOF\r\n")
+        writeString("*3\r\n$9\r\nREPLICAOF\r\n")
     }
 
     public suspend fun encode(charset: Charset, args: ReplicaOfArgs): CommandRequest {
