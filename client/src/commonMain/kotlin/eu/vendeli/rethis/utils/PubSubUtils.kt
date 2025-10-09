@@ -9,6 +9,7 @@ import eu.vendeli.rethis.types.coroutine.CoLocalConn
 import io.ktor.util.logging.*
 import io.ktor.utils.io.*
 import kotlinx.coroutines.*
+import kotlinx.coroutines.CancellationException
 import kotlinx.io.Buffer
 import kotlinx.io.InternalIoApi
 
@@ -58,6 +59,8 @@ internal suspend fun ReThis.registerSubscription(
 
                 delay(1)
             }
+        } catch (e: CancellationException) {
+            throw e //Cancellation exceptions are normal part of coroutines, and should not be catched or spam logs
         } catch (e: Exception) {
             logger.error("Caught exception in $target channel handler", e)
             subscriptions.eventHandler?.onException(target, e)
