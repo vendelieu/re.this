@@ -27,7 +27,7 @@ class SubscriptionManager {
     }
 
     fun unsubscribeAll(): Boolean {
-        subscriptionsHandlers.forEach { unsubscribe(it.key) }
+        subscriptionsHandlers.toMap().forEach { unsubscribe(it.key) }
         return subscriptionsHandlers.isEmpty()
     }
 
