@@ -24,6 +24,15 @@ abstract class ConnectionProvider {
 }
 
 
+internal suspend inline fun <R> withConn(
+    provider: ConnectionProvider,
+    conn: RConnection? = null,
+    block: (RConnection) -> R,
+): R {
+    if (conn != null) return block(conn)
+    return provider.withConnection(block)
+}
+
 @OptIn(ExperimentalContracts::class)
 internal suspend inline fun <R> ConnectionProvider.withConnection(block: (RConnection) -> R): R {
     contract {

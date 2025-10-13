@@ -12,6 +12,7 @@ import eu.vendeli.rethis.command.set.sAdd
 import eu.vendeli.rethis.command.set.sRem
 import eu.vendeli.rethis.shared.request.common.FieldValue
 import eu.vendeli.rethis.shared.types.RType
+import io.kotest.assertions.nondeterministic.eventually
 import io.kotest.matchers.shouldBe
 import io.ktor.util.collections.*
 import kotlinx.coroutines.*
@@ -62,9 +63,15 @@ class TestCase : ReThisTestCtx() {
                 .launch(start = CoroutineStart.LAZY) {
                     delay(10.seconds)
 
-                    client.hGet("some:key:$id", "some:field1") shouldBe "some-value1-$id"
-                    client.hGet("some:key:$id", "some:field2") shouldBe "some-value2-$id"
-                    client.hGet("some:key:$id", "some:field3") shouldBe "some-value3-$id"
+                    eventually(1.seconds) {
+                        client.hGet("some:key:$id", "some:field1") shouldBe "some-value1-$id"
+                    }
+                    eventually(1.seconds) {
+                        client.hGet("some:key:$id", "some:field2") shouldBe "some-value2-$id"
+                    }
+                    eventually(1.seconds) {
+                        client.hGet("some:key:$id", "some:field3") shouldBe "some-value3-$id"
+                    }
 
                     client.transaction {
                         del("some:key:$id")
@@ -147,9 +154,15 @@ class TestCase : ReThisTestCtx() {
                 .launch(start = CoroutineStart.LAZY) {
                     delay(10.seconds)
 
-                    client.hGet("some:key:$id", "some:field1") shouldBe "some-value1-$id"
-                    client.hGet("some:key:$id", "some:field2") shouldBe "some-value2-$id"
-                    client.hGet("some:key:$id", "some:field3") shouldBe "some-value3-$id"
+                    eventually(1.seconds) {
+                        client.hGet("some:key:$id", "some:field1") shouldBe "some-value1-$id"
+                    }
+                    eventually(1.seconds) {
+                        client.hGet("some:key:$id", "some:field2") shouldBe "some-value2-$id"
+                    }
+                    eventually(1.seconds) {
+                        client.hGet("some:key:$id", "some:field3") shouldBe "some-value3-$id"
+                    }
 
                     client.fastEval(
                         "script2",

@@ -1,5 +1,11 @@
 # Re.this Changelog
 
+## 0.3.5
+
+* Fixed ConcurrentModificationException in subscriptions (thanks to @peterdk).
+* Improved pubsub CancelationException handling (thanks to @peterdk).
+* Improved using transactions in subscriptions.
+
 ## 0.3.4
 
 * Fixed decoder of `REPLICAOF` and `SHUTDOWN` commands.
