@@ -8,7 +8,7 @@ import eu.vendeli.rethis.configuration.*
 import eu.vendeli.rethis.core.ConnectionFactory
 import eu.vendeli.rethis.core.SubscriptionManager
 import eu.vendeli.rethis.providers.DefaultConnectionProviderFactory
-import eu.vendeli.rethis.providers.withConnection
+import eu.vendeli.rethis.providers.withConn
 import eu.vendeli.rethis.shared.types.CommandRequest
 import eu.vendeli.rethis.shared.types.RType
 import eu.vendeli.rethis.shared.types.TransactionInvalidStateException
@@ -87,14 +87,14 @@ class ReThis internal constructor(
 
     suspend fun transaction(block: suspend ReThis.() -> Unit): List<RType>? {
         val coLocalCon = currentCoroutineContext()[CoLocalConn]
-        if (coLocalCon != null) {
+        if (coLocalCon != null && coLocalCon.isTx) {
             logger.warn("Nested transaction detected")
             block()
             return emptyList()
         }
 
         val multiCommand = MultiCommandCodec.encode(cfg.charset)
-        return topology.route(multiCommand).withConnection { conn ->
+        return withConn(topology.route(multiCommand), coLocalCon?.connection) { conn ->
             val tx = MultiCommandCodec.decode(conn.doRequest(multiCommand.buffer), cfg.charset)
             if (!tx) throw TransactionInvalidStateException("Failed to start transaction")
             logger.debug { "Started transaction" }

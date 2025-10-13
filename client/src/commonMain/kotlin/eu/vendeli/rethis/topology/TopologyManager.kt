@@ -35,7 +35,7 @@ internal suspend inline fun TopologyManager.handle(request: CommandRequest): Buf
             coLocalConn != null -> coLocalConn.connection.doRequest(request.buffer)
                 .also {
                     val peekedByte = it.readByte()
-                    when(val code = RespCode.fromCode(peekedByte)) {
+                    when (val code = RespCode.fromCode(peekedByte)) {
                         RespCode.SIMPLE_ERROR -> SimpleErrorDecoder.decode(it, cfg.charset, code)
                         RespCode.BULK_ERROR -> BulkErrorDecoder.decode(it, cfg.charset, code)
                         else -> it.writeByte(peekedByte)
