@@ -7,11 +7,13 @@ import eu.vendeli.rethis.shared.response.common.HostAndPort
 import eu.vendeli.rethis.shared.types.RespCode
 import eu.vendeli.rethis.shared.utils.EMPTY_BUFFER
 import eu.vendeli.rethis.types.common.Address
+import eu.vendeli.rethis.types.coroutine.CoLocalConn
 import io.ktor.network.sockets.*
 import io.ktor.util.logging.*
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.delay
 import kotlinx.io.Buffer
 
@@ -54,3 +56,8 @@ internal suspend inline fun <T> withRetry(
 internal inline fun HostAndPort.toAddress(): Address = Address(host, port)
 internal inline fun Address.toHostAndPort(): HostAndPort? =
     if (socket is InetSocketAddress) HostAndPort(socket.hostname, socket.port) else null
+
+internal suspend fun isInTx(): Boolean {
+    val coLocalCon = currentCoroutineContext()[CoLocalConn]
+    return coLocalCon != null && coLocalCon.isTx
+}

@@ -29,6 +29,7 @@ internal suspend inline fun TopologyManager.handle(request: CommandRequest): Buf
         when {
             coPipeline != null -> {
                 coPipeline.pipelined.add(request)
+                warnOfSubstitution(cfg)
                 EMPTY_BUFFER
             }
 
@@ -40,10 +41,19 @@ internal suspend inline fun TopologyManager.handle(request: CommandRequest): Buf
                         RespCode.BULK_ERROR -> BulkErrorDecoder.decode(it, cfg.charset, code)
                         else -> it.writeByte(peekedByte)
                     }
-                }.takeIf { !coLocalConn.isTx } ?: EMPTY_BUFFER
+                }.takeIf { !coLocalConn.isTx } ?: run {
+                    warnOfSubstitution(cfg)
+                    EMPTY_BUFFER
+                }
             // return empty buffer if transaction (to not break response contract since transaction return QUEUED)
 
             else -> route(request).execute(request)
         }
     }.getOrElse { handleFailure(request, it) }
+}
+
+private inline fun warnOfSubstitution(cfg: ReThisConfiguration) {
+    cfg.loggerFactory.get("eu.vendeli.rethis.topology.TopologyManager")
+        .debug("Response substituted to EMPTY_BUFFER " +
+            "and will be handled as default response since it been executed in special construction")
 }
