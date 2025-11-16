@@ -30,5 +30,11 @@ class UnexpectedResponseType(
     override val cause: Throwable? = null
 ) : ReThisException()
 
+/**
+ * Exception thrown when the lock is lost in Redis due to TTL expiry or token mismatch.
+ */
+class LockLostException(message: String) : ReThisException(message)
+
+
 inline fun processingException(cause: Throwable? = null, message: () -> String? = { null }): Nothing =
     throw DataProcessingException(message(), cause)

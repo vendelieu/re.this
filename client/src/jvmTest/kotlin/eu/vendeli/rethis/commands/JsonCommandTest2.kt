@@ -29,7 +29,7 @@ class JsonCommandTest2 : ReThisTestCtx(true) {
     @Test
     suspend fun `test JSON_NUMMULTBY command`() {
         client.jsonSet("testKey16", "{\"a\":\"b\",\"b\":[{\"a\":2}, {\"a\":5}, {\"a\":\"c\"}]}", ".")
-        client.jsonNumMultBy("testKey16", "..a", 2.0) shouldBe BulkString(value="10.0")
+        client.jsonNumMultBy("testKey16", "..a", 2.0) shouldBe BulkString(value = "10.0")
     }
 
     @Test
@@ -42,7 +42,8 @@ class JsonCommandTest2 : ReThisTestCtx(true) {
     suspend fun `test JSON_OBJLEN command`() {
         client.jsonSet("testKey18", "{\"a\":[3], \"nested\": {\"a\": {\"b\":2, \"c\": 1}}}", ".")
         client.jsonObjLen("testKey18", "$..a").shouldBeTypeOf<RArray>().value shouldBe listOf(
-            RType.Null, Int64(2)
+            RType.Null,
+            Int64(2),
         )
     }
 
@@ -84,6 +85,6 @@ class JsonCommandTest2 : ReThisTestCtx(true) {
     @Test
     suspend fun `test JSON_TYPE command`() {
         client.jsonSet("testKey24", "[1, 2, 3]", ".")
-        client.jsonType("testKey24", ".") shouldBe BulkString(value="array")
+        client.jsonType("testKey24", ".") shouldBe BulkString(value = "array")
     }
 }

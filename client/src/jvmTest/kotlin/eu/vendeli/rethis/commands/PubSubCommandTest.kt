@@ -59,7 +59,7 @@ class PubSubCommandTest : ReThisTestCtx() {
     }
 
     @Test
-    suspend fun `test PUNSUBSCRIBE command`()  = shouldNotThrowAny {
+    suspend fun `test PUNSUBSCRIBE command`() = shouldNotThrowAny {
         client.pUnsubscribe("testPattern")
     }
 
@@ -74,7 +74,7 @@ class PubSubCommandTest : ReThisTestCtx() {
     }
 
     @Test
-    suspend fun `test UNSUBSCRIBE command`()  = shouldNotThrowAny {
+    suspend fun `test UNSUBSCRIBE command`() = shouldNotThrowAny {
         client.unsubscribe("testPattern")
     }
 

@@ -17,6 +17,7 @@ fun Project.configureKotlin(block: KotlinMultiplatformExtension.() -> Unit) {
                 "-Xwarning-level=NOTHING_TO_INLINE:disabled",
                 "-Xwarning-level=REDUNDANT_VISIBILITY_MODIFIER:disabled",
                 "-opt-in=eu.vendeli.rethis.annotations.ReThisInternal",
+                "-opt-in=eu.vendeli.rethis.annotations.ReThisExperimental",
                 "-Xannotation-default-target=param-property",
                 "-opt-in=kotlin.time.ExperimentalTime",
             )
@@ -30,7 +31,6 @@ fun Project.configureKotlin(block: KotlinMultiplatformExtension.() -> Unit) {
                         jvmTarget.set(JvmTarget.fromTarget("$jvmTargetVer"))
                         freeCompilerArgs.addAll(
                             "-Xjsr305=strict",
-                            "-opt-in=eu.vendeli.rethis.annotations.ReThisInternal",
                         )
                     }
                 }

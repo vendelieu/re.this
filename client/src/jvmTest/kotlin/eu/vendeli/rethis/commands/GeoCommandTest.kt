@@ -66,9 +66,9 @@ class GeoCommandTest : ReThisTestCtx() {
                         listOf(
                             BulkString("13.36138933897018433"),
                             BulkString("38.11555639549629859"),
-                        )
-                    )
-                )
+                        ),
+                    ),
+                ),
             ),
             RArray(
                 listOf(
@@ -79,12 +79,11 @@ class GeoCommandTest : ReThisTestCtx() {
                         listOf(
                             BulkString("12.7584877610206604"),
                             BulkString("38.78813451624225195"),
-                        )
-                    )
-                )
-            )
+                        ),
+                    ),
+                ),
+            ),
         )
-
     }
 
     @Test

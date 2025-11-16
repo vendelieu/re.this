@@ -3,6 +3,7 @@ package eu.vendeli.rethis
 import com.redis.testcontainers.RedisContainer
 import eu.vendeli.rethis.codecs.connection.PingCommandCodec
 import eu.vendeli.rethis.configuration.ReThisConfiguration
+import eu.vendeli.rethis.configuration.StandaloneConfiguration
 import io.kotest.core.spec.style.AnnotationSpec
 import org.testcontainers.utility.DockerImageName
 import kotlin.time.Clock
@@ -31,5 +32,7 @@ abstract class ReThisTestCtx(
         reThis = new
     }
 
-    protected fun createClient(): ReThis = ReThis(redis.host, redis.firstMappedPort)
+    protected fun createClient(
+        cfg: StandaloneConfiguration.() -> Unit = {},
+    ): ReThis = ReThis(redis.host, redis.firstMappedPort, configurator = cfg)
 }

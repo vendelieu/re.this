@@ -39,7 +39,8 @@ class PipeliningTest : ReThisTestCtx() {
                     }.also {
                         println("------$it")
                     }
-            }.shouldNotBeNull().run {
+            }.shouldNotBeNull()
+            .run {
                 this shouldHaveSize 2
                 first() shouldBe PlainString("OK")
                 last() shouldBe BulkString("testv1")
@@ -94,7 +95,8 @@ class PipeliningTest : ReThisTestCtx() {
                 client.transaction {
                     get("test1")
                 }
-            }.shouldNotBeNull().run {
+            }.shouldNotBeNull()
+            .run {
                 shouldHaveSize(2)
                 first() shouldBe PlainString("OK")
                 last() shouldBe BulkString("testv1")

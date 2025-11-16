@@ -150,9 +150,9 @@ fun RType.isOk() = unwrap<String>() == "OK"
 inline fun RType.handleEx(): RType =
     if (this is RType.Error) throw exception else this
 
-inline fun <reified T> RType.unwrap(): T? = run {
+inline fun <reified T> RType.unwrap(): T? {
     handleEx()
-    when {
+    return when {
         T::class == RType::class -> this as T
         T::class == RPrimitive::class -> this as? T
         this is PlainString -> if (T::class == String::class) value as T else null

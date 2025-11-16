@@ -55,7 +55,12 @@ class SortedSetCommandTest : ReThisTestCtx() {
     suspend fun `test ZPOPMIN command`() {
         client.zAdd("testSet27", ZMember("testValue27", 1.0))
 
-        client.zPopMin("testSet27").shouldNotBeEmpty().first().shouldBeTypeOf<BulkString>().value shouldBe "testValue27"
+        client
+            .zPopMin("testSet27")
+            .shouldNotBeEmpty()
+            .first()
+            .shouldBeTypeOf<BulkString>()
+            .value shouldBe "testValue27"
     }
 
     @Test

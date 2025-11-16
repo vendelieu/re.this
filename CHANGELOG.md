@@ -1,5 +1,10 @@
 # Re.this Changelog
 
+## 0.3.6
+
+* Added experimental distributed lock, try with `client.reDistributedLock`.
+* Added logging entries when response is substituted with default value in specific modes (transaction, pipeline).
+
 ## 0.3.5
 
 * Fixed ConcurrentModificationException in subscriptions (thanks to @peterdk).
