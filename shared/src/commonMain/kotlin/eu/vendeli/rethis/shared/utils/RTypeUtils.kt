@@ -105,7 +105,10 @@ private fun Buffer.readSimpleResponseWrapped(
             BulkString(content)
         }
 
-        RespCode.BULK_ERROR -> RType.Error(readPartLine(charset))
+        RespCode.BULK_ERROR -> {
+            readLineCRLF() // skip size
+            RType.Error(readPartLine(charset))
+        }
         RespCode.VERBATIM_STRING -> {
             val size = readLineStrict().toInt()
             if (size < 0) return RType.Null
@@ -172,12 +175,18 @@ inline fun <reified T> RType.unwrap(): T? {
 inline fun <reified T> RType.unwrapList(): List<T> {
     handleEx()
     val response = mutableListOf<T>()
-    if (this is RArray) {
-        value.forEach { i ->
-            i.unwrap<T>()?.let { response.add(it) }
+    when (this) {
+        is RArray -> {
+            value.forEach { i -> i.unwrap<T>()?.let { response.add(it) } }
         }
-    } else {
-        __ParserLogger.warn("Wrong unwrapping [list] method used for $this")
+
+        is Push -> {
+            value.forEach { i -> i.unwrap<T>()?.let { response.add(it) } }
+        }
+
+        else -> {
+            __ParserLogger.warn("Wrong unwrapping [list] method used for $this")
+        }
     }
     return response.toList()
 }
