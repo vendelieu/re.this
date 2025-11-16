@@ -10,6 +10,7 @@ import eu.vendeli.rethis.shared.utils.EMPTY_BUFFER
 import eu.vendeli.rethis.types.coroutine.CoLocalConn
 import eu.vendeli.rethis.types.coroutine.CoPipelineCtx
 import eu.vendeli.rethis.utils.withRetry
+import io.ktor.util.logging.debug
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.io.Buffer
 
@@ -54,6 +55,8 @@ internal suspend inline fun TopologyManager.handle(request: CommandRequest): Buf
 
 private inline fun warnOfSubstitution(cfg: ReThisConfiguration) {
     cfg.loggerFactory.get("eu.vendeli.rethis.topology.TopologyManager")
-        .debug("Response substituted to EMPTY_BUFFER " +
-            "and will be handled as default response since it been executed in special construction")
+        .debug {
+            "Response substituted to EMPTY_BUFFER " +
+            "and will be handled as default response since it been executed in special construction"
+        }
 }
