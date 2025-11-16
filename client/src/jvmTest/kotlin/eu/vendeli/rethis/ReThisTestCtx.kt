@@ -33,6 +33,6 @@ abstract class ReThisTestCtx(
     }
 
     protected fun createClient(
-        cfg: StandaloneConfiguration.() -> Unit = {}
+        cfg: StandaloneConfiguration.() -> Unit = {},
     ): ReThis = ReThis(redis.host, redis.firstMappedPort, configurator = cfg)
 }

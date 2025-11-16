@@ -7,7 +7,6 @@ import eu.vendeli.rethis.types.interfaces.SubscriptionHandler
 import org.junit.jupiter.api.assertDoesNotThrow
 
 class SubscriptionManagerTest : ReThisTestCtx() {
-
     @Test
     fun `Given pattern subscriptions, When unsubscribing all, Then no exception is thrown`() {
         // Given

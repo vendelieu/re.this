@@ -16,7 +16,8 @@ class StreamCommandsTest2 : ReThisTestCtx() {
         val groupName = "mygroup-1"
         client.xGroupCreate(streamName, groupName, XId.Id("0"), mkstream = true)
         val id = client.xAdd(
-            streamName, idSelector = XAddOption.Asterisk,
+            streamName,
+            idSelector = XAddOption.Asterisk,
             data = arrayOf(
                 FieldValue(
                     "field1",

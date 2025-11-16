@@ -9,6 +9,7 @@ import io.kotest.matchers.booleans.shouldBeFalse
 import io.kotest.matchers.booleans.shouldBeTrue
 import io.kotest.matchers.ints.shouldBeExactly
 import io.kotest.matchers.shouldBe
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.joinAll
@@ -19,7 +20,6 @@ import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 
 class RedisDistributedLockTest : ReThisTestCtx() {
-
     @Test
     suspend fun `reentrancy in same coroutine increments and requires matching unlocks`() {
         val lockName = "rethis:lock:reentrant:${UUID.randomUUID()}"
@@ -159,20 +159,33 @@ class RedisDistributedLockTest : ReThisTestCtx() {
         val lockName = "rethis:lock:cancel:${UUID.randomUUID()}"
         val lock = client.reDistributedLock(lockName)
 
+        val entered = CompletableDeferred<Unit>()
+        val willSuspend = CompletableDeferred<Unit>()
+
         val job = launch {
             lock.withLock(2.seconds) {
-                // Hold for some time, then get cancelled
-                delay(5000)
+                // Signal that we are inside critical section (lock is held)
+                entered.complete(Unit)
+                // Wait here until the test tells us it's time to cancel
+                willSuspend.await()
             }
         }
-        // Give it time to acquire
-        delay(100)
-        // Cancel the job; withLock should unlock in finally
+
+        // Wait until the lock is actually acquired and block entered
+        entered.await()
+
+        // Now cancel; finally { unlock() } runs in NonCancellable
         job.cancel()
+        // Unblock the body so finally can execute promptly
+        willSuspend.complete(Unit)
         job.join()
 
-        // Now we should be able to acquire quickly
-        lock.tryLock(waitTime = 300.milliseconds, leaseTime = 1.seconds).shouldBeTrue()
+        // Give the watchdog a tiny window to observe unlock completion (usually not needed,
+        // but helps on heavily loaded CI). Alternatively, poll Redis key absence.
+        // delay(20)
+
+        // Now we should be able to acquire
+        lock.tryLock(waitTime = 500.milliseconds, leaseTime = 1.seconds).shouldBeTrue()
         lock.unlock().shouldBeTrue()
     }
 }

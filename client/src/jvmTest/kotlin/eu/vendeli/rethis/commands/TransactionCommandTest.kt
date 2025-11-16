@@ -36,21 +36,29 @@ class TransactionCommandTest : ReThisTestCtx() {
         val cProvider = connectionProvider()
         val conn = cProvider.borrowConnection()
 
-        conn.doRequest(MultiCommandCodec.encode(Charsets.UTF_8).buffer).readResponseWrapped(charset = Charsets.UTF_8)
-            .isOk().shouldBeTrue()
+        conn
+            .doRequest(MultiCommandCodec.encode(Charsets.UTF_8).buffer)
+            .readResponseWrapped(charset = Charsets.UTF_8)
+            .isOk()
+            .shouldBeTrue()
 
-        conn.doRequest(
-            SetCommandCodec.encode(Charsets.UTF_8, "test1", "testv1").buffer,
-        ).readResponseWrapped(Charsets.UTF_8).shouldBe(PlainString("QUEUED"))
+        conn
+            .doRequest(
+                SetCommandCodec.encode(Charsets.UTF_8, "test1", "testv1").buffer,
+            ).readResponseWrapped(Charsets.UTF_8)
+            .shouldBe(PlainString("QUEUED"))
 
-        conn.doRequest(
-            SetCommandCodec.encode(Charsets.UTF_8, "test2", "testv2").buffer,
-        ).readResponseWrapped(Charsets.UTF_8).shouldBe(PlainString("QUEUED"))
+        conn
+            .doRequest(
+                SetCommandCodec.encode(Charsets.UTF_8, "test2", "testv2").buffer,
+            ).readResponseWrapped(Charsets.UTF_8)
+            .shouldBe(PlainString("QUEUED"))
 
-
-        conn.doRequest(
-            ExecCommandCodec.encode(Charsets.UTF_8).buffer,
-        ).readResponseWrapped(Charsets.UTF_8).shouldBeTypeOf<RArray>() shouldBe RArray(
+        conn
+            .doRequest(
+                ExecCommandCodec.encode(Charsets.UTF_8).buffer,
+            ).readResponseWrapped(Charsets.UTF_8)
+            .shouldBeTypeOf<RArray>() shouldBe RArray(
             listOf(
                 PlainString("OK"),
                 PlainString("OK"),
@@ -79,7 +87,8 @@ class TransactionCommandTest : ReThisTestCtx() {
                 client.multi()
                 client.set("testKey1", "testVal1")
                 client.set("testKey2", "testVal2")
-                client.execute(listOf("GETBIT").toRESPBuffer())
+                client
+                    .execute(listOf("GETBIT").toRESPBuffer())
                     .readResponseWrapped()
                     .shouldBeTypeOf<RType.Error>()
                     .exception

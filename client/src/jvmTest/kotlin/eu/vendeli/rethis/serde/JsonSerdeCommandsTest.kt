@@ -75,11 +75,13 @@ class JsonSerdeCommandsTest : ReThisTestCtx(true) {
         client.jsonSet(key, data)
 
         // Pop from nested array
-        client.jsonArrPop(key, "$.users")
+        client
+            .jsonArrPop(key, "$.users")
             .shouldBeTypeOf<RArray>()
             .value
             .first()
-            .shouldBeTypeOf<BulkString>().let {
+            .shouldBeTypeOf<BulkString>()
+            .let {
                 client.serdeModule().deserialize(User.serializer(), it.unwrap<String>()!!)
             } shouldBe User(5, "Eve")
         client.jsonGet<NestedUserList>(key) shouldBe NestedUserList(

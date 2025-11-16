@@ -30,8 +30,6 @@ class HashSerdeCommandsTest : ReThisTestCtx() {
         val serializedResult = client.hGet(key, field, serializer)
         serializedResult shouldBe entity
     }
-    
-    
 
     @Test
     suspend fun `test hVals`() {

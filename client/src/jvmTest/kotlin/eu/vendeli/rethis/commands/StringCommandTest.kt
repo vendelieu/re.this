@@ -27,10 +27,11 @@ class StringCommandTest : ReThisTestCtx() {
 
     @Test
     suspend fun `test MSETNX command`() {
-        client.mSetNx(
-            KeyValue("testKey5", "testValue5"),
-            KeyValue("testKey6", "testValue6"),
-        ).shouldBeTrue()
+        client
+            .mSetNx(
+                KeyValue("testKey5", "testValue5"),
+                KeyValue("testKey6", "testValue6"),
+            ).shouldBeTrue()
     }
 
     @Test

@@ -46,7 +46,6 @@ class HashCommandTest2 : ReThisTestCtx() {
         val allFields = listOf("field1", "field2", "field3")
         val allValues = listOf("value1", "value2", "value3")
 
-
         fields.first() shouldBeIn allFields
         fields.get(1) shouldBeIn allValues
         fields.get(2) shouldBeIn allFields

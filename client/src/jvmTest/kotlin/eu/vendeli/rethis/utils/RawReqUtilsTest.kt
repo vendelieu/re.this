@@ -65,16 +65,21 @@ class RawReqUtilsTest : ReThisTestCtx() {
     suspend fun `execute block can send multi-arg commands`() {
         val key = "raw:req:kv:" + UUID.randomUUID()
         // SET key value
-        val setResp = client.execute {
-            add("SET"); add(key); add("v")
-        }.readAllUtf8()
+        val setResp = client
+            .execute {
+                add("SET")
+                add(key)
+                add("v")
+            }.readAllUtf8()
         setResp.shouldNotBeNull().shouldNotBeBlank()
         setResp shouldBe "+OK\r\n"
 
         // GET key
-        val getResp = client.execute {
-            add("GET"); add(key)
-        }.readAllUtf8()
+        val getResp = client
+            .execute {
+                add("GET")
+                add(key)
+            }.readAllUtf8()
         getResp shouldBe "\$1\r\nv\r\n"
     }
 
