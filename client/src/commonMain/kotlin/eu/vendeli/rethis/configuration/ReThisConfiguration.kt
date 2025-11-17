@@ -189,7 +189,7 @@ sealed class ReThisConfiguration(internal val protocol: RespVer) {
         appendLine(
             "\tauth=${
                 auth?.let {
-                    "username=${auth?.username}, password=${auth?.password?.size?.let { "*".repeat(it) }}"
+                    "{username=${auth?.username}, password=${auth?.password?.size?.let { "*".repeat(it) }}}"
                 }
             }",
         )

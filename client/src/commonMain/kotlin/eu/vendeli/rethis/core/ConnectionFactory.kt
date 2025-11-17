@@ -3,7 +3,9 @@ package eu.vendeli.rethis.core
 import eu.vendeli.rethis.codecs.connection.HelloCommandCodec
 import eu.vendeli.rethis.codecs.connection.SelectCommandCodec
 import eu.vendeli.rethis.configuration.ReThisConfiguration
+import eu.vendeli.rethis.shared.decoders.general.RTypeDecoder
 import eu.vendeli.rethis.shared.request.connection.HelloAuth
+import eu.vendeli.rethis.shared.types.RType
 import eu.vendeli.rethis.types.common.RConnection
 import eu.vendeli.rethis.types.common.RespVer
 import eu.vendeli.rethis.types.common.rConnection
@@ -56,8 +58,9 @@ internal class ConnectionFactory(
                     prepareConnection(it)
                 }
         } catch (e: Exception) {
-            connections.release()
             throw e
+        } finally {
+            connections.release()
         }
 
         return conn
@@ -76,14 +79,18 @@ internal class ConnectionFactory(
         ).buffer
 
         if (cfgDb != null && cfgDb > 0) {
-            conn.doBatchRequest(
-                listOf(
-                    helloBuffer,
-                    SelectCommandCodec.encode(Charsets.UTF_8, cfgDb.toLong()).buffer,
-                ),
+            val request = listOf(
+                helloBuffer,
+                SelectCommandCodec.encode(cfg.charset, cfgDb.toLong()).buffer,
             )
+            val responseBuffer = conn.doBatchRequest(request)
+            repeat(request.size) {
+                val response = RTypeDecoder.decode(responseBuffer, cfg.charset)
+                if (response is RType.Error) throw response.exception
+            }
         } else {
-            conn.doRequest(helloBuffer)
+            val response = RTypeDecoder.decode(conn.doRequest(helloBuffer), cfg.charset)
+            if (response is RType.Error) throw response.exception
         }
     }
 
