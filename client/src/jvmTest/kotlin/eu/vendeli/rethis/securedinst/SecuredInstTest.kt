@@ -1,7 +1,6 @@
 package eu.vendeli.rethis.securedinst
 
 import eu.vendeli.rethis.ReThis
-import eu.vendeli.rethis.ReThisTestCtx
 import eu.vendeli.rethis.TestCtx
 import eu.vendeli.rethis.command.connection.ping
 import io.kotest.core.spec.IsolationMode
@@ -19,9 +18,9 @@ class SecuredInstTest : TestCtx() {
     @Test
     @Ignore
     suspend fun `client disconnect test`() {
-        val curPath = File("").absolutePath
+        val rootPath = File("").absolutePath
         val pathPrefix = "src/jvmTest/kotlin/${javaClass.packageName.replace('.', '/')}/"
-        val trustManager = loadTrustManagerFromCA(File(curPath,"${pathPrefix}certs/ca.crt"))
+        val trustManager = loadTrustManagerFromCA(File(rootPath,"${pathPrefix}certs/ca.crt"))
 
         val tlsConfig = TLSConfigBuilder().apply {
             this.trustManager = trustManager
