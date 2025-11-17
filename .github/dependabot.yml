@@ -1,0 +1,25 @@
+version: 2
+updates:
+  # --- GitHub Actions ---
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: monthly
+    groups:
+      actions:
+        patterns:
+          - "*"
+
+  # --- Gradle ---
+  - package-ecosystem: "gradle"
+    directory: "/"
+    schedule:
+      interval: monthly
+
+    # Excluding benchmark modules/sources
+    exclude-paths:
+      - "benchmarks/**"
+
+    # Ignore dokka updates + alerts
+    ignore:
+      - dependency-name: "org.jetbrains.dokka:*"
