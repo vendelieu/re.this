@@ -1,0 +1,54 @@
+name: Stale Issues and Pull Requests
+
+# Controls when the action will run. This schedule runs daily at 00:00 UTC.
+on:
+  schedule:
+    - cron: '0 0 * * *'
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  stale:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      pull-requests: write
+    steps:
+      - uses: actions/stale@v10
+        with:
+          # --- Basic Configuration ---
+          # Days of inactivity before an issue or PR becomes stale
+          days-before-stale: 60
+          # Days a stale issue or PR has to be inactive before it's closed
+          days-before-close: 7
+
+          # --- Stale Labels ---
+          # The label to apply to issues/PRs when they become stale
+          stale-issue-label: 'stale'
+          stale-pr-label: 'stale'
+
+          # --- Exclusion Labels ---
+          # A comma-separated list of labels that will exclude an issue/PR from being marked as stale
+          exempt-issue-labels: 'bug, enhancement, pinned'
+          exempt-pr-labels: 'work in progress, do not merge'
+
+          # --- Messages ---
+          # The message to post when an issue becomes stale
+          stale-issue-message: >
+            This issue has been automatically marked as stale because it has not had
+            recent activity. It will be closed if no further activity occurs.
+            Thank you for your contributions.
+
+          # The message to post when a pull request becomes stale
+          stale-pr-message: >
+            This pull request has been automatically marked as stale because it has not had
+            recent activity. It will be closed if no further activity occurs.
+            Thank you for your contributions.
+
+          # --- Other Options ---
+          # Set to true to close stale issues/PRs
+          close-issue-message: 'Closing this stale issue. If this is still an issue, please reopen it.'
+          close-pr-message: 'Closing this stale pull request. If this is still actual, please reopen it.'
+
+          # Set to true to delete the stale label when the issue/PR is updated
+          remove-stale-when-updated: true
