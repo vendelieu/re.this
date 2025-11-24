@@ -3,7 +3,7 @@ ktor = "3.3.2"
 
 kotlin = "2.2.21"
 coroutines = "1.10.2"
-io = "0.8.1"
+io = "0.8.2"
 bignum = "0.3.10"
 kotlinx-serialization = "1.9.0"
 
