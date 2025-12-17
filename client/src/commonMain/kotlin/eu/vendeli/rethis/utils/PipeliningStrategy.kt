@@ -1,7 +1,7 @@
 package eu.vendeli.rethis.utils
 
 import eu.vendeli.rethis.ReThis
-import eu.vendeli.rethis.providers.withConnection
+import eu.vendeli.rethis.providers.withConn
 import eu.vendeli.rethis.shared.decoders.general.RTypeDecoder
 import eu.vendeli.rethis.shared.types.CommandRequest
 import eu.vendeli.rethis.shared.types.RType
@@ -13,19 +13,16 @@ internal suspend fun ReThis.handlePipelinedRequests(
     ctxConn: RConnection?,
 ): List<RType> {
     if (topology is StandaloneTopologyManager) {
-        return ctxConn?.doRTypeRequest(this, pipelined) ?: topology.provider.withConnection { conn ->
-            conn.doRTypeRequest(this, pipelined)
-        }
+        return withConn(topology.provider, ctxConn) { conn -> conn.doRTypeRequest(this, pipelined) }
     }
 
     val preparedRequests = pipelined.groupBy { it.computedSlot }
     val responses = mutableListOf<RType>()
 
     preparedRequests.forEach { r ->
-        val response = ctxConn?.doRTypeRequest(this, r.value)
-            ?: topology.route(r.value.first()).withConnection { conn ->
-                conn.doRTypeRequest(this, r.value)
-            }
+        val response = withConn(topology.route(r.value.first()), ctxConn) { conn ->
+            conn.doRTypeRequest(this, r.value)
+        }
 
         responses.addAll(response)
     }

@@ -8,6 +8,7 @@ import eu.vendeli.rethis.types.common.RespVer
 import eu.vendeli.rethis.types.interfaces.LoggerFactory
 import eu.vendeli.rethis.types.interfaces.ReadFromStrategy
 import eu.vendeli.rethis.types.interfaces.SerializationFormat
+import eu.vendeli.rethis.utils.IO_OR_UNCONFINED
 import io.ktor.network.tls.*
 import io.ktor.utils.io.charsets.*
 import kotlinx.coroutines.CoroutineDispatcher
@@ -97,6 +98,16 @@ sealed class ReThisConfiguration(internal val protocol: RespVer) {
      * dispatcher or a custom thread pool.
      */
     var dispatcher: CoroutineDispatcher = Dispatchers.Default
+
+    /**
+     * Specifies the [CoroutineDispatcher] to be used for handling connections.
+     *
+     * By default, the dispatcher is set to [Dispatchers.IO_OR_UNCONFINED], which provides a shared pool of
+     * threads optimized for compute-intensive tasks, with fallback to unconfined on js targets.
+     * This property can be customized to enable the use of a specific dispatcher for tailored concurrency handling,
+     * such as a single-threaded dispatcher or a custom thread pool.
+     */
+    var connectionDispatcher: CoroutineDispatcher = Dispatchers.IO_OR_UNCONFINED
 
     /**
      * Determines the maximum number of connections allowed generally (in pool, requests over pool, pubsub, and transaction mode).
@@ -189,7 +200,7 @@ sealed class ReThisConfiguration(internal val protocol: RespVer) {
         appendLine(
             "\tauth=${
                 auth?.let {
-                    "username=${auth?.username}, password=${auth?.password?.size?.let { "*".repeat(it) }}"
+                    "{username=${auth?.username}, password=${auth?.password?.size?.let { "*".repeat(it) }}}"
                 }
             }",
         )

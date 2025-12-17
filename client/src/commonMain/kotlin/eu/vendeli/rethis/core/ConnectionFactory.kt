@@ -3,7 +3,9 @@ package eu.vendeli.rethis.core
 import eu.vendeli.rethis.codecs.connection.HelloCommandCodec
 import eu.vendeli.rethis.codecs.connection.SelectCommandCodec
 import eu.vendeli.rethis.configuration.ReThisConfiguration
+import eu.vendeli.rethis.shared.decoders.general.RTypeDecoder
 import eu.vendeli.rethis.shared.request.connection.HelloAuth
+import eu.vendeli.rethis.shared.types.RType
 import eu.vendeli.rethis.types.common.RConnection
 import eu.vendeli.rethis.types.common.RespVer
 import eu.vendeli.rethis.types.common.rConnection
@@ -27,7 +29,7 @@ internal class ConnectionFactory(
     private val logger = cfg.loggerFactory.get("eu.vendeli.rethis.core.ConnectionFactory")
     private val connections = Semaphore(cfg.maxConnections)
     private val scope = CoroutineScope(
-        Dispatchers.IO_OR_UNCONFINED + CoroutineName("$CLIENT_NAME|ConnectionFactory") + Job(rootJob),
+        cfg.connectionDispatcher + CoroutineName("$CLIENT_NAME|ConnectionFactory") + Job(rootJob),
     )
     private val selector = SelectorManager(scope.coroutineContext)
 
@@ -55,9 +57,8 @@ internal class ConnectionFactory(
                 }.rConnection().also {
                     prepareConnection(it)
                 }
-        } catch (e: Exception) {
+        } finally {
             connections.release()
-            throw e
         }
 
         return conn
@@ -76,14 +77,18 @@ internal class ConnectionFactory(
         ).buffer
 
         if (cfgDb != null && cfgDb > 0) {
-            conn.doBatchRequest(
-                listOf(
-                    helloBuffer,
-                    SelectCommandCodec.encode(Charsets.UTF_8, cfgDb.toLong()).buffer,
-                ),
+            val request = listOf(
+                helloBuffer,
+                SelectCommandCodec.encode(cfg.charset, cfgDb.toLong()).buffer,
             )
+            val responseBuffer = conn.doBatchRequest(request)
+            repeat(request.size) {
+                val response = RTypeDecoder.decode(responseBuffer, cfg.charset)
+                if (response is RType.Error) throw response.exception
+            }
         } else {
-            conn.doRequest(helloBuffer)
+            val response = RTypeDecoder.decode(conn.doRequest(helloBuffer), cfg.charset)
+            if (response is RType.Error) throw response.exception
         }
     }
 
