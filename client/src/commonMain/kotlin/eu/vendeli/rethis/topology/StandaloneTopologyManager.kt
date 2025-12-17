@@ -12,7 +12,7 @@ internal class StandaloneTopologyManager(
     private val logger = client.cfg.loggerFactory.get("eu.vendeli.rethis.topology.StandaloneTopologyManager")
 
     init {
-        logger.info("Connecting to ${node.socket}")
+        logger.info("${node.socket} is configured as Redis server")
     }
 
     override val cfg = client.cfg

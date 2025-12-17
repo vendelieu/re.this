@@ -29,7 +29,7 @@ internal class ConnectionFactory(
     private val logger = cfg.loggerFactory.get("eu.vendeli.rethis.core.ConnectionFactory")
     private val connections = Semaphore(cfg.maxConnections)
     private val scope = CoroutineScope(
-        Dispatchers.IO_OR_UNCONFINED + CoroutineName("$CLIENT_NAME|ConnectionFactory") + Job(rootJob),
+        cfg.connectionDispatcher + CoroutineName("$CLIENT_NAME|ConnectionFactory") + Job(rootJob),
     )
     private val selector = SelectorManager(scope.coroutineContext)
 
@@ -57,8 +57,6 @@ internal class ConnectionFactory(
                 }.rConnection().also {
                     prepareConnection(it)
                 }
-        } catch (e: Exception) {
-            throw e
         } finally {
             connections.release()
         }
