@@ -1,22 +1,22 @@
 <!doctype html>
-<html class="no-js">
+<html class="no-js" lang="en">
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
     <title>eu.vendeli.rethis.command.cluster</title>
-<link href="../../images/logo-icon.svg" rel="icon" type="image/svg">    <script>var pathToRoot = "../../";</script>
-    <script>document.documentElement.classList.replace("no-js","js");</script>
+<link href="../../images/logo-icon.svg" rel="icon" type="image/svg"><script>var pathToRoot = "../../";</script>
+    <script>document.documentElement.classList.replace("no-js", "js");</script>
     <script>const storage = localStorage.getItem("dokka-dark-mode")
-    if (storage == null) {
+      if (storage == null) {
         const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
         if (osDarkSchemePreferred === true) {
-            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
         }
-    } else {
+      } else {
         const savedDarkMode = JSON.parse(storage)
-        if(savedDarkMode === true) {
-            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        if (savedDarkMode === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
         }
-    }
+      }
     </script>
 <script type="text/javascript" src="https://unpkg.com/kotlin-playground@1/dist/playground.min.js" async></script>
 <script type="text/javascript" src="../../scripts/sourceset_dependencies.js" async></script>
@@ -24,34 +24,32 @@
 <link href="../../styles/main.css" rel="Stylesheet">
 <link href="../../styles/prism.css" rel="Stylesheet">
 <link href="../../styles/logo-styles.css" rel="Stylesheet">
-<link href="../../styles/font-jb-sans-auto.css" rel="Stylesheet">
 <link href="../../ui-kit/ui-kit.min.css" rel="Stylesheet">
-<script type="text/javascript" src="../../scripts/clipboard.js" async></script>
+<script type="text/javascript" src="../../scripts/safe-local-storage_blocking.js"></script>
 <script type="text/javascript" src="../../scripts/navigation-loader.js" async></script>
 <script type="text/javascript" src="../../scripts/platform-content-handler.js" async></script>
 <script type="text/javascript" src="../../scripts/main.js" defer></script>
 <script type="text/javascript" src="../../scripts/prism.js" async></script>
 <script type="text/javascript" src="../../ui-kit/ui-kit.min.js" defer></script>
-<script type="text/javascript" src="../../scripts/symbol-parameters-wrapper_deferred.js" defer></script>
 <link href="../../images/logo-icon.svg"></head>
 <body>
-    <div class="root">
-    <nav class="navigation theme-dark" id="navigation-wrapper">
-<a class="library-name--link" href="../../index.html">
+<div class="root">
+    <header class="navigation theme-dark" id="navigation-wrapper" role="banner">
+<a class="library-name--link" href="../../index.html" tabindex="1">
                     re.this
             </a>        <button class="navigation-controls--btn navigation-controls--btn_toc ui-kit_mobile-only" id="toc-toggle" type="button">Toggle table of contents
         </button>
         <div class="navigation-controls--break ui-kit_mobile-only"></div>
-        <div class="library-version" id="library-version">0.3.6
+        <div class="library-version" id="library-version">0.3.7
         </div>
         <div class="navigation-controls">
-        <div class="filter-section filter-section_loading" id="filter-section">
-                <button class="platform-tag platform-selector common-like" data-active="" data-filter=":client/commonMain">common</button>
+        <ul class="filter-section filter-section_loading" id="filter-section" aria-label="Target filter">
+                <button class="platform-tag platform-selector common-like" data-active="" aria-pressed="true" data-filter=":client/commonMain">common</button>
             <div class="dropdown filter-section--dropdown" data-role="dropdown" id="filter-section-dropdown">
                 <button class="button button_dropdown filter-section--dropdown-toggle" role="combobox" data-role="dropdown-toggle" aria-controls="platform-tags-listbox" aria-haspopup="listbox" aria-expanded="false" aria-label="Toggle source sets"></button>
-                <ul role="listbox" id="platform-tags-listbox" class="dropdown--list" data-role="dropdown-listbox">
-                    <div class="dropdown--header"><span>Platform filter</span>
-                        <button class="button" data-role="dropdown-toggle" aria-label="Close platform filter">
+                <ul role="listbox" id="platform-tags-listbox" class="dropdown--list" data-role="dropdown-listbox" aria-label="Target filter">
+                    <div class="dropdown--header"><span>Target filter</span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close target filter">
                             <i class="ui-kit-icon ui-kit-icon_cross"></i>
                         </button>
                     </div>
@@ -65,7 +63,7 @@
                 </ul>
                 <div class="dropdown--overlay"></div>
             </div>
-        </div>
+        </ul>
                 <a class="navigation-controls--btn navigation-controls--btn_homepage" id="homepage-link" href="https://github.com/vendelieu/re.this"></a>
             <button class="navigation-controls--btn navigation-controls--btn_theme" id="theme-toggle-button" type="button">Switch theme
             </button>
@@ -73,25 +71,27 @@
                 API
             </div>
         </div>
-    </nav>
-        <div id="container">
-            <div class="sidebar" id="leftColumn">
-                <div class="dropdown theme-dark_mobile" data-role="dropdown" id="toc-dropdown">
-                    <ul role="listbox" id="toc-listbox" class="dropdown--list dropdown--list_toc-list" data-role="dropdown-listbox">
-                        <div class="dropdown--header">
+    </header>
+    <div id="container">
+        <nav id="leftColumn" class="sidebar" data-item-type="SECTION" data-item-config="{&quot;defaultSize&quot;: 280, &quot;minSize&quot;: 200, &quot;maxSize&quot;: 400}">
+            <a class="toc--skip-link" href="#main">Skip to content</a>
+            <div class="dropdown theme-dark_mobile" data-role="dropdown" id="toc-dropdown">
+                <ul role="listbox" id="toc-listbox" class="dropdown--list dropdown--list_toc-list" data-role="dropdown-listbox" aria-label="Table of contents">
+                    <div class="dropdown--header">
                             <span>
                                     re.this
                             </span>
-                            <button class="button" data-role="dropdown-toggle" aria-label="Close table of contents">
-                                <i class="ui-kit-icon ui-kit-icon_cross"></i>
-                            </button>
-                        </div>
-                        <div class="sidebar--inner" id="sideMenu"></div>
-                    </ul>
-                    <div class="dropdown--overlay"></div>
-                </div>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close table of contents">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                    <div class="sidebar--inner" id="sideMenu"></div>
+                </ul>
+                <div class="dropdown--overlay"></div>
             </div>
-            <div id="main">
+        </nav>
+        <div id="resizer" class="resizer" data-item-type="BAR"></div>
+        <div id="main" data-item-type="SECTION" role="main">
 <div class="main-content" data-page-type="package" id="content" pageids="client::eu.vendeli.rethis.command.cluster////PointingToDeclaration//121649622">
   <div class="breadcrumbs"><a href="../index.html">client</a><span class="delimiter">/</span><span class="current">eu.vendeli.rethis.command.cluster</span></div>
   <div class="cover ">
@@ -101,9 +101,9 @@
     <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="FUNCTION,EXTENSION_FUNCTION">Functions</button></div>
     <div class="tabs-section-body">
       <div data-togglable="EXTENSION_FUNCTION">
-        <h2 class="">Functions</h2>
+        <h2 class="tableheader">Functions</h2>
         <div class="table"><a data-name="-1691679190%2FFunctions%2F121649622" anchor-label="asking" id="-1691679190%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="asking.html"><span><span>asking</span></span></a></div>
@@ -117,12 +117,12 @@
               </div>
             </div>
           </div>
-<a data-name="-1024079833%2FFunctions%2F121649622" anchor-label="clusterAddSlots" id="-1024079833%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+<a data-name="-1339347902%2FFunctions%2F121649622" anchor-label="clusterAddSlots" id="-1339347902%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="cluster-add-slots.html"><span>cluster</span><wbr><span>Add</span><wbr><span><span>Slots</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1024079833%2FFunctions%2F121649622"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1339347902%2FFunctions%2F121649622"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
@@ -132,12 +132,12 @@
               </div>
             </div>
           </div>
-<a data-name="946817383%2FFunctions%2F121649622" anchor-label="clusterAddSlotsRange" id="946817383%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+<a data-name="1388793939%2FFunctions%2F121649622" anchor-label="clusterAddSlotsRange" id="1388793939%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="cluster-add-slots-range.html"><span>cluster</span><wbr><span>Add</span><wbr><span>Slots</span><wbr><span><span>Range</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="946817383%2FFunctions%2F121649622"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1388793939%2FFunctions%2F121649622"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
@@ -148,7 +148,7 @@
             </div>
           </div>
 <a data-name="244029978%2FFunctions%2F121649622" anchor-label="clusterBumpEpoch" id="244029978%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="cluster-bump-epoch.html"><span>cluster</span><wbr><span>Bump</span><wbr><span><span>Epoch</span></span></a></div>
@@ -163,7 +163,7 @@
             </div>
           </div>
 <a data-name="-1055449733%2FFunctions%2F121649622" anchor-label="clusterCountFailureReports" id="-1055449733%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="cluster-count-failure-reports.html"><span>cluster</span><wbr><span>Count</span><wbr><span>Failure</span><wbr><span><span>Reports</span></span></a></div>
@@ -178,7 +178,7 @@
             </div>
           </div>
 <a data-name="-1794124686%2FFunctions%2F121649622" anchor-label="clusterCountKeysInSlot" id="-1794124686%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="cluster-count-keys-in-slot.html"><span>cluster</span><wbr><span>Count</span><wbr><span>Keys</span><wbr><span>In</span><wbr><span><span>Slot</span></span></a></div>
@@ -192,12 +192,12 @@
               </div>
             </div>
           </div>
-<a data-name="-1279144943%2FFunctions%2F121649622" anchor-label="clusterDelSlots" id="-1279144943%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+<a data-name="-1296900584%2FFunctions%2F121649622" anchor-label="clusterDelSlots" id="-1296900584%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="cluster-del-slots.html"><span>cluster</span><wbr><span>Del</span><wbr><span><span>Slots</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1279144943%2FFunctions%2F121649622"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1296900584%2FFunctions%2F121649622"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
@@ -207,12 +207,12 @@
               </div>
             </div>
           </div>
-<a data-name="1589699517%2FFunctions%2F121649622" anchor-label="clusterDelSlotsRange" id="1589699517%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+<a data-name="1336678697%2FFunctions%2F121649622" anchor-label="clusterDelSlotsRange" id="1336678697%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="cluster-del-slots-range.html"><span>cluster</span><wbr><span>Del</span><wbr><span>Slots</span><wbr><span><span>Range</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1589699517%2FFunctions%2F121649622"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1336678697%2FFunctions%2F121649622"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
@@ -223,7 +223,7 @@
             </div>
           </div>
 <a data-name="1891500765%2FFunctions%2F121649622" anchor-label="clusterFailover" id="1891500765%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="cluster-failover.html"><span>cluster</span><wbr><span><span>Failover</span></span></a></div>
@@ -238,7 +238,7 @@
             </div>
           </div>
 <a data-name="-486783750%2FFunctions%2F121649622" anchor-label="clusterFlushSlots" id="-486783750%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="cluster-flush-slots.html"><span>cluster</span><wbr><span>Flush</span><wbr><span><span>Slots</span></span></a></div>
@@ -253,7 +253,7 @@
             </div>
           </div>
 <a data-name="-1453289946%2FFunctions%2F121649622" anchor-label="clusterForget" id="-1453289946%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="cluster-forget.html"><span>cluster</span><wbr><span><span>Forget</span></span></a></div>
@@ -268,7 +268,7 @@
             </div>
           </div>
 <a data-name="1126521619%2FFunctions%2F121649622" anchor-label="clusterGetKeysInSlot" id="1126521619%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="cluster-get-keys-in-slot.html"><span>cluster</span><wbr><span>Get</span><wbr><span>Keys</span><wbr><span>In</span><wbr><span><span>Slot</span></span></a></div>
@@ -283,7 +283,7 @@
             </div>
           </div>
 <a data-name="1024335549%2FFunctions%2F121649622" anchor-label="clusterInfo" id="1024335549%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="cluster-info.html"><span>cluster</span><wbr><span><span>Info</span></span></a></div>
@@ -298,7 +298,7 @@
             </div>
           </div>
 <a data-name="917042036%2FFunctions%2F121649622" anchor-label="clusterKeySlot" id="917042036%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="cluster-key-slot.html"><span>cluster</span><wbr><span>Key</span><wbr><span><span>Slot</span></span></a></div>
@@ -313,7 +313,7 @@
             </div>
           </div>
 <a data-name="-1738263404%2FFunctions%2F121649622" anchor-label="clusterLinks" id="-1738263404%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="cluster-links.html"><span>cluster</span><wbr><span><span>Links</span></span></a></div>
@@ -328,7 +328,7 @@
             </div>
           </div>
 <a data-name="-1728543121%2FFunctions%2F121649622" anchor-label="clusterMeet" id="-1728543121%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="cluster-meet.html"><span>cluster</span><wbr><span><span>Meet</span></span></a></div>
@@ -343,7 +343,7 @@
             </div>
           </div>
 <a data-name="1631257764%2FFunctions%2F121649622" anchor-label="clusterMyId" id="1631257764%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="cluster-my-id.html"><span>cluster</span><wbr><span>My</span><wbr><span><span>Id</span></span></a></div>
@@ -358,7 +358,7 @@
             </div>
           </div>
 <a data-name="-1555717120%2FFunctions%2F121649622" anchor-label="clusterMyShardId" id="-1555717120%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="cluster-my-shard-id.html"><span>cluster</span><wbr><span>My</span><wbr><span>Shard</span><wbr><span><span>Id</span></span></a></div>
@@ -373,7 +373,7 @@
             </div>
           </div>
 <a data-name="-1136484196%2FFunctions%2F121649622" anchor-label="clusterNodes" id="-1136484196%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="cluster-nodes.html"><span>cluster</span><wbr><span><span>Nodes</span></span></a></div>
@@ -388,7 +388,7 @@
             </div>
           </div>
 <a data-name="-1525340620%2FFunctions%2F121649622" anchor-label="clusterReplicas" id="-1525340620%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="cluster-replicas.html"><span>cluster</span><wbr><span><span>Replicas</span></span></a></div>
@@ -403,7 +403,7 @@
             </div>
           </div>
 <a data-name="-246891808%2FFunctions%2F121649622" anchor-label="clusterReplicate" id="-246891808%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="cluster-replicate.html"><span>cluster</span><wbr><span><span>Replicate</span></span></a></div>
@@ -418,7 +418,7 @@
             </div>
           </div>
 <a data-name="1960495909%2FFunctions%2F121649622" anchor-label="clusterReset" id="1960495909%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="cluster-reset.html"><span>cluster</span><wbr><span><span>Reset</span></span></a></div>
@@ -433,7 +433,7 @@
             </div>
           </div>
 <a data-name="-413230804%2FFunctions%2F121649622" anchor-label="clusterSaveConfig" id="-413230804%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="cluster-save-config.html"><span>cluster</span><wbr><span>Save</span><wbr><span><span>Config</span></span></a></div>
@@ -448,7 +448,7 @@
             </div>
           </div>
 <a data-name="-1551282541%2FFunctions%2F121649622" anchor-label="clusterSetConfigEpoch" id="-1551282541%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="cluster-set-config-epoch.html"><span>cluster</span><wbr><span>Set</span><wbr><span>Config</span><wbr><span><span>Epoch</span></span></a></div>
@@ -463,7 +463,7 @@
             </div>
           </div>
 <a data-name="-1117108314%2FFunctions%2F121649622" anchor-label="clusterSetSlot" id="-1117108314%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="cluster-set-slot.html"><span>cluster</span><wbr><span>Set</span><wbr><span><span>Slot</span></span></a></div>
@@ -478,7 +478,7 @@
             </div>
           </div>
 <a data-name="-502741450%2FFunctions%2F121649622" anchor-label="clusterShards" id="-502741450%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="cluster-shards.html"><span>cluster</span><wbr><span><span>Shards</span></span></a></div>
@@ -493,7 +493,7 @@
             </div>
           </div>
 <a data-name="-1791859339%2FFunctions%2F121649622" anchor-label="clusterSlaves" id="-1791859339%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="cluster-slaves.html"><span>cluster</span><wbr><span><span>Slaves</span></span></a></div>
@@ -508,7 +508,7 @@
             </div>
           </div>
 <a data-name="-2070846056%2FFunctions%2F121649622" anchor-label="clusterSlots" id="-2070846056%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="cluster-slots.html"><span>cluster</span><wbr><span><span>Slots</span></span></a></div>
@@ -523,7 +523,7 @@
             </div>
           </div>
 <a data-name="-1616272911%2FFunctions%2F121649622" anchor-label="readOnly" id="-1616272911%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="read-only.html"><span>read</span><wbr><span><span>Only</span></span></a></div>
@@ -538,7 +538,7 @@
             </div>
           </div>
 <a data-name="-1884161796%2FFunctions%2F121649622" anchor-label="readWrite" id="-1884161796%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="read-write.html"><span>read</span><wbr><span><span>Write</span></span></a></div>
@@ -558,17 +558,21 @@
   </div>
 </div>
     <div class="footer">
-        <a href="#content" id="go-to-top-link" class="footer--button footer--button_go-to-top"></a>
-        <span>© 2025 Vendelieu</span>
-        <span class="pull-right">
-            <span>Generated by </span>
-            <a class="footer--link footer--link_external" href="https://github.com/Kotlin/dokka">
-                <span>dokka</span>
-            </a>
-        </span>
-    </div>
+        <div class="footer--container">
+            <a href="#content" id="go-to-top-link" class="footer--button footer--button_go-to-top"></a>
+            <div class="footer--content">
+                <div>
+                    <span>Generated by </span>
+                    <a class="footer--link footer--link_external" href="https://github.com/Kotlin/dokka">
+                        Dokka
+                    </a>
+                    <div>© 2025 Vendelieu</div>
+                </div>
             </div>
         </div>
     </div>
+        </div>
+    </div>
+</div>
 </body>
 </html>

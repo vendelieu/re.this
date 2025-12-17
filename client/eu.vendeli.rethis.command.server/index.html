@@ -1,22 +1,22 @@
 <!doctype html>
-<html class="no-js">
+<html class="no-js" lang="en">
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
     <title>eu.vendeli.rethis.command.server</title>
-<link href="../../images/logo-icon.svg" rel="icon" type="image/svg">    <script>var pathToRoot = "../../";</script>
-    <script>document.documentElement.classList.replace("no-js","js");</script>
+<link href="../../images/logo-icon.svg" rel="icon" type="image/svg"><script>var pathToRoot = "../../";</script>
+    <script>document.documentElement.classList.replace("no-js", "js");</script>
     <script>const storage = localStorage.getItem("dokka-dark-mode")
-    if (storage == null) {
+      if (storage == null) {
         const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
         if (osDarkSchemePreferred === true) {
-            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
         }
-    } else {
+      } else {
         const savedDarkMode = JSON.parse(storage)
-        if(savedDarkMode === true) {
-            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        if (savedDarkMode === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
         }
-    }
+      }
     </script>
 <script type="text/javascript" src="https://unpkg.com/kotlin-playground@1/dist/playground.min.js" async></script>
 <script type="text/javascript" src="../../scripts/sourceset_dependencies.js" async></script>
@@ -24,34 +24,32 @@
 <link href="../../styles/main.css" rel="Stylesheet">
 <link href="../../styles/prism.css" rel="Stylesheet">
 <link href="../../styles/logo-styles.css" rel="Stylesheet">
-<link href="../../styles/font-jb-sans-auto.css" rel="Stylesheet">
 <link href="../../ui-kit/ui-kit.min.css" rel="Stylesheet">
-<script type="text/javascript" src="../../scripts/clipboard.js" async></script>
+<script type="text/javascript" src="../../scripts/safe-local-storage_blocking.js"></script>
 <script type="text/javascript" src="../../scripts/navigation-loader.js" async></script>
 <script type="text/javascript" src="../../scripts/platform-content-handler.js" async></script>
 <script type="text/javascript" src="../../scripts/main.js" defer></script>
 <script type="text/javascript" src="../../scripts/prism.js" async></script>
 <script type="text/javascript" src="../../ui-kit/ui-kit.min.js" defer></script>
-<script type="text/javascript" src="../../scripts/symbol-parameters-wrapper_deferred.js" defer></script>
 <link href="../../images/logo-icon.svg"></head>
 <body>
-    <div class="root">
-    <nav class="navigation theme-dark" id="navigation-wrapper">
-<a class="library-name--link" href="../../index.html">
+<div class="root">
+    <header class="navigation theme-dark" id="navigation-wrapper" role="banner">
+<a class="library-name--link" href="../../index.html" tabindex="1">
                     re.this
             </a>        <button class="navigation-controls--btn navigation-controls--btn_toc ui-kit_mobile-only" id="toc-toggle" type="button">Toggle table of contents
         </button>
         <div class="navigation-controls--break ui-kit_mobile-only"></div>
-        <div class="library-version" id="library-version">0.3.6
+        <div class="library-version" id="library-version">0.3.7
         </div>
         <div class="navigation-controls">
-        <div class="filter-section filter-section_loading" id="filter-section">
-                <button class="platform-tag platform-selector common-like" data-active="" data-filter=":client/commonMain">common</button>
+        <ul class="filter-section filter-section_loading" id="filter-section" aria-label="Target filter">
+                <button class="platform-tag platform-selector common-like" data-active="" aria-pressed="true" data-filter=":client/commonMain">common</button>
             <div class="dropdown filter-section--dropdown" data-role="dropdown" id="filter-section-dropdown">
                 <button class="button button_dropdown filter-section--dropdown-toggle" role="combobox" data-role="dropdown-toggle" aria-controls="platform-tags-listbox" aria-haspopup="listbox" aria-expanded="false" aria-label="Toggle source sets"></button>
-                <ul role="listbox" id="platform-tags-listbox" class="dropdown--list" data-role="dropdown-listbox">
-                    <div class="dropdown--header"><span>Platform filter</span>
-                        <button class="button" data-role="dropdown-toggle" aria-label="Close platform filter">
+                <ul role="listbox" id="platform-tags-listbox" class="dropdown--list" data-role="dropdown-listbox" aria-label="Target filter">
+                    <div class="dropdown--header"><span>Target filter</span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close target filter">
                             <i class="ui-kit-icon ui-kit-icon_cross"></i>
                         </button>
                     </div>
@@ -65,7 +63,7 @@
                 </ul>
                 <div class="dropdown--overlay"></div>
             </div>
-        </div>
+        </ul>
                 <a class="navigation-controls--btn navigation-controls--btn_homepage" id="homepage-link" href="https://github.com/vendelieu/re.this"></a>
             <button class="navigation-controls--btn navigation-controls--btn_theme" id="theme-toggle-button" type="button">Switch theme
             </button>
@@ -73,25 +71,27 @@
                 API
             </div>
         </div>
-    </nav>
-        <div id="container">
-            <div class="sidebar" id="leftColumn">
-                <div class="dropdown theme-dark_mobile" data-role="dropdown" id="toc-dropdown">
-                    <ul role="listbox" id="toc-listbox" class="dropdown--list dropdown--list_toc-list" data-role="dropdown-listbox">
-                        <div class="dropdown--header">
+    </header>
+    <div id="container">
+        <nav id="leftColumn" class="sidebar" data-item-type="SECTION" data-item-config="{&quot;defaultSize&quot;: 280, &quot;minSize&quot;: 200, &quot;maxSize&quot;: 400}">
+            <a class="toc--skip-link" href="#main">Skip to content</a>
+            <div class="dropdown theme-dark_mobile" data-role="dropdown" id="toc-dropdown">
+                <ul role="listbox" id="toc-listbox" class="dropdown--list dropdown--list_toc-list" data-role="dropdown-listbox" aria-label="Table of contents">
+                    <div class="dropdown--header">
                             <span>
                                     re.this
                             </span>
-                            <button class="button" data-role="dropdown-toggle" aria-label="Close table of contents">
-                                <i class="ui-kit-icon ui-kit-icon_cross"></i>
-                            </button>
-                        </div>
-                        <div class="sidebar--inner" id="sideMenu"></div>
-                    </ul>
-                    <div class="dropdown--overlay"></div>
-                </div>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close table of contents">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                    <div class="sidebar--inner" id="sideMenu"></div>
+                </ul>
+                <div class="dropdown--overlay"></div>
             </div>
-            <div id="main">
+        </nav>
+        <div id="resizer" class="resizer" data-item-type="BAR"></div>
+        <div id="main" data-item-type="SECTION" role="main">
 <div class="main-content" data-page-type="package" id="content" pageids="client::eu.vendeli.rethis.command.server////PointingToDeclaration//121649622">
   <div class="breadcrumbs"><a href="../index.html">client</a><span class="delimiter">/</span><span class="current">eu.vendeli.rethis.command.server</span></div>
   <div class="cover ">
@@ -101,9 +101,9 @@
     <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="FUNCTION,EXTENSION_FUNCTION">Functions</button></div>
     <div class="tabs-section-body">
       <div data-togglable="EXTENSION_FUNCTION">
-        <h2 class="">Functions</h2>
+        <h2 class="tableheader">Functions</h2>
         <div class="table"><a data-name="-1751951205%2FFunctions%2F121649622" anchor-label="aclCat" id="-1751951205%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="acl-cat.html"><span>acl</span><wbr><span><span>Cat</span></span></a></div>
@@ -117,12 +117,12 @@
               </div>
             </div>
           </div>
-<a data-name="-543068936%2FFunctions%2F121649622" anchor-label="aclDelUser" id="-543068936%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+<a data-name="822587624%2FFunctions%2F121649622" anchor-label="aclDelUser" id="822587624%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="acl-del-user.html"><span>acl</span><wbr><span>Del</span><wbr><span><span>User</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-543068936%2FFunctions%2F121649622"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="822587624%2FFunctions%2F121649622"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
@@ -132,12 +132,12 @@
               </div>
             </div>
           </div>
-<a data-name="1526298840%2FFunctions%2F121649622" anchor-label="aclDryRun" id="1526298840%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+<a data-name="1592788168%2FFunctions%2F121649622" anchor-label="aclDryRun" id="1592788168%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="acl-dry-run.html"><span>acl</span><wbr><span>Dry</span><wbr><span><span>Run</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1526298840%2FFunctions%2F121649622"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1592788168%2FFunctions%2F121649622"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
@@ -148,7 +148,7 @@
             </div>
           </div>
 <a data-name="-217511621%2FFunctions%2F121649622" anchor-label="aclGenPass" id="-217511621%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="acl-gen-pass.html"><span>acl</span><wbr><span>Gen</span><wbr><span><span>Pass</span></span></a></div>
@@ -163,7 +163,7 @@
             </div>
           </div>
 <a data-name="-485999245%2FFunctions%2F121649622" anchor-label="aclGetUser" id="-485999245%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="acl-get-user.html"><span>acl</span><wbr><span>Get</span><wbr><span><span>User</span></span></a></div>
@@ -178,7 +178,7 @@
             </div>
           </div>
 <a data-name="1034391688%2FFunctions%2F121649622" anchor-label="aclList" id="1034391688%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="acl-list.html"><span>acl</span><wbr><span><span>List</span></span></a></div>
@@ -193,7 +193,7 @@
             </div>
           </div>
 <a data-name="1985525056%2FFunctions%2F121649622" anchor-label="aclLoad" id="1985525056%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="acl-load.html"><span>acl</span><wbr><span><span>Load</span></span></a></div>
@@ -208,7 +208,7 @@
             </div>
           </div>
 <a data-name="-407327945%2FFunctions%2F121649622" anchor-label="aclLog" id="-407327945%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="acl-log.html"><span>acl</span><wbr><span><span>Log</span></span></a></div>
@@ -223,7 +223,7 @@
             </div>
           </div>
 <a data-name="1294873993%2FFunctions%2F121649622" anchor-label="aclSave" id="1294873993%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="acl-save.html"><span>acl</span><wbr><span><span>Save</span></span></a></div>
@@ -237,12 +237,12 @@
               </div>
             </div>
           </div>
-<a data-name="1008578868%2FFunctions%2F121649622" anchor-label="aclSetUser" id="1008578868%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+<a data-name="93179428%2FFunctions%2F121649622" anchor-label="aclSetUser" id="93179428%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="acl-set-user.html"><span>acl</span><wbr><span>Set</span><wbr><span><span>User</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1008578868%2FFunctions%2F121649622"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="93179428%2FFunctions%2F121649622"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
@@ -253,7 +253,7 @@
             </div>
           </div>
 <a data-name="612848074%2FFunctions%2F121649622" anchor-label="aclUsers" id="612848074%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="acl-users.html"><span>acl</span><wbr><span><span>Users</span></span></a></div>
@@ -268,7 +268,7 @@
             </div>
           </div>
 <a data-name="1770236871%2FFunctions%2F121649622" anchor-label="aclWhoAmI" id="1770236871%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="acl-who-am-i.html"><span>acl</span><wbr><span>Who</span><wbr><span>Am</span><wbr><span><span>I</span></span></a></div>
@@ -283,7 +283,7 @@
             </div>
           </div>
 <a data-name="1115429079%2FFunctions%2F121649622" anchor-label="bgRewriteAof" id="1115429079%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="bg-rewrite-aof.html"><span>bg</span><wbr><span>Rewrite</span><wbr><span><span>Aof</span></span></a></div>
@@ -298,7 +298,7 @@
             </div>
           </div>
 <a data-name="1572850168%2FFunctions%2F121649622" anchor-label="bgSave" id="1572850168%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="bg-save.html"><span>bg</span><wbr><span><span>Save</span></span></a></div>
@@ -313,7 +313,7 @@
             </div>
           </div>
 <a data-name="305180580%2FFunctions%2F121649622" anchor-label="commandCount" id="305180580%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="command-count.html"><span>command</span><wbr><span><span>Count</span></span></a></div>
@@ -327,12 +327,12 @@
               </div>
             </div>
           </div>
-<a data-name="-1249635478%2FFunctions%2F121649622" anchor-label="commandDocs" id="-1249635478%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+<a data-name="-690968870%2FFunctions%2F121649622" anchor-label="commandDocs" id="-690968870%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="command-docs.html"><span>command</span><wbr><span><span>Docs</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1249635478%2FFunctions%2F121649622"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-690968870%2FFunctions%2F121649622"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
@@ -342,12 +342,12 @@
               </div>
             </div>
           </div>
-<a data-name="469654896%2FFunctions%2F121649622" anchor-label="commandGetKeys" id="469654896%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+<a data-name="-942779552%2FFunctions%2F121649622" anchor-label="commandGetKeys" id="-942779552%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="command-get-keys.html"><span>command</span><wbr><span>Get</span><wbr><span><span>Keys</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="469654896%2FFunctions%2F121649622"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-942779552%2FFunctions%2F121649622"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
@@ -357,12 +357,12 @@
               </div>
             </div>
           </div>
-<a data-name="-1569735296%2FFunctions%2F121649622" anchor-label="commandGetKeysAndFlags" id="-1569735296%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+<a data-name="-205385872%2FFunctions%2F121649622" anchor-label="commandGetKeysAndFlags" id="-205385872%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="command-get-keys-and-flags.html"><span>command</span><wbr><span>Get</span><wbr><span>Keys</span><wbr><span>And</span><wbr><span><span>Flags</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1569735296%2FFunctions%2F121649622"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-205385872%2FFunctions%2F121649622"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
@@ -373,7 +373,7 @@
             </div>
           </div>
 <a data-name="-532590042%2FFunctions%2F121649622" anchor-label="configRewrite" id="-532590042%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="config-rewrite.html"><span>config</span><wbr><span><span>Rewrite</span></span></a></div>
@@ -387,12 +387,12 @@
               </div>
             </div>
           </div>
-<a data-name="1332806427%2FFunctions%2F121649622" anchor-label="failover" id="1332806427%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+<a data-name="-1178450511%2FFunctions%2F121649622" anchor-label="failover" id="-1178450511%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="failover.html"><span><span>failover</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1332806427%2FFunctions%2F121649622"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1178450511%2FFunctions%2F121649622"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
@@ -403,7 +403,7 @@
             </div>
           </div>
 <a data-name="-429389535%2FFunctions%2F121649622" anchor-label="flushAll" id="-429389535%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="flush-all.html"><span>flush</span><wbr><span><span>All</span></span></a></div>
@@ -418,7 +418,7 @@
             </div>
           </div>
 <a data-name="1274797188%2FFunctions%2F121649622" anchor-label="flushDb" id="1274797188%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="flush-db.html"><span>flush</span><wbr><span><span>Db</span></span></a></div>
@@ -433,7 +433,7 @@
             </div>
           </div>
 <a data-name="-2109308715%2FFunctions%2F121649622" anchor-label="lastSave" id="-2109308715%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="last-save.html"><span>last</span><wbr><span><span>Save</span></span></a></div>
@@ -448,7 +448,7 @@
             </div>
           </div>
 <a data-name="-771325261%2FFunctions%2F121649622" anchor-label="latencyDoctor" id="-771325261%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="latency-doctor.html"><span>latency</span><wbr><span><span>Doctor</span></span></a></div>
@@ -463,7 +463,7 @@
             </div>
           </div>
 <a data-name="-362491572%2FFunctions%2F121649622" anchor-label="latencyGraph" id="-362491572%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="latency-graph.html"><span>latency</span><wbr><span><span>Graph</span></span></a></div>
@@ -477,12 +477,12 @@
               </div>
             </div>
           </div>
-<a data-name="891077234%2FFunctions%2F121649622" anchor-label="latencyHistogram" id="891077234%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+<a data-name="-142294046%2FFunctions%2F121649622" anchor-label="latencyHistogram" id="-142294046%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="latency-histogram.html"><span>latency</span><wbr><span><span>Histogram</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="891077234%2FFunctions%2F121649622"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-142294046%2FFunctions%2F121649622"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
@@ -493,7 +493,7 @@
             </div>
           </div>
 <a data-name="-1348151150%2FFunctions%2F121649622" anchor-label="latencyHistory" id="-1348151150%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="latency-history.html"><span>latency</span><wbr><span><span>History</span></span></a></div>
@@ -508,7 +508,7 @@
             </div>
           </div>
 <a data-name="1373421899%2FFunctions%2F121649622" anchor-label="latencyLatest" id="1373421899%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="latency-latest.html"><span>latency</span><wbr><span><span>Latest</span></span></a></div>
@@ -522,12 +522,12 @@
               </div>
             </div>
           </div>
-<a data-name="-795481891%2FFunctions%2F121649622" anchor-label="latencyReset" id="-795481891%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+<a data-name="1800450445%2FFunctions%2F121649622" anchor-label="latencyReset" id="1800450445%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="latency-reset.html"><span>latency</span><wbr><span><span>Reset</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-795481891%2FFunctions%2F121649622"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1800450445%2FFunctions%2F121649622"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
@@ -538,7 +538,7 @@
             </div>
           </div>
 <a data-name="-1435149784%2FFunctions%2F121649622" anchor-label="memoryDoctor" id="-1435149784%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="memory-doctor.html"><span>memory</span><wbr><span><span>Doctor</span></span></a></div>
@@ -553,7 +553,7 @@
             </div>
           </div>
 <a data-name="-1766428998%2FFunctions%2F121649622" anchor-label="memoryMallocStats" id="-1766428998%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="memory-malloc-stats.html"><span>memory</span><wbr><span>Malloc</span><wbr><span><span>Stats</span></span></a></div>
@@ -568,7 +568,7 @@
             </div>
           </div>
 <a data-name="26417894%2FFunctions%2F121649622" anchor-label="memoryPurge" id="26417894%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="memory-purge.html"><span>memory</span><wbr><span><span>Purge</span></span></a></div>
@@ -583,7 +583,7 @@
             </div>
           </div>
 <a data-name="1554005362%2FFunctions%2F121649622" anchor-label="memoryStats" id="1554005362%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="memory-stats.html"><span>memory</span><wbr><span><span>Stats</span></span></a></div>
@@ -598,7 +598,7 @@
             </div>
           </div>
 <a data-name="-105317131%2FFunctions%2F121649622" anchor-label="memoryUsage" id="-105317131%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="memory-usage.html"><span>memory</span><wbr><span><span>Usage</span></span></a></div>
@@ -613,7 +613,7 @@
             </div>
           </div>
 <a data-name="1780033214%2FFunctions%2F121649622" anchor-label="moduleList" id="1780033214%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="module-list.html"><span>module</span><wbr><span><span>List</span></span></a></div>
@@ -627,12 +627,12 @@
               </div>
             </div>
           </div>
-<a data-name="-2141351293%2FFunctions%2F121649622" anchor-label="moduleLoad" id="-2141351293%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+<a data-name="-1394240077%2FFunctions%2F121649622" anchor-label="moduleLoad" id="-1394240077%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="module-load.html"><span>module</span><wbr><span><span>Load</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2141351293%2FFunctions%2F121649622"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1394240077%2FFunctions%2F121649622"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
@@ -642,12 +642,12 @@
               </div>
             </div>
           </div>
-<a data-name="667936130%2FFunctions%2F121649622" anchor-label="moduleLoadEx" id="667936130%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+<a data-name="-242087348%2FFunctions%2F121649622" anchor-label="moduleLoadEx" id="-242087348%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="module-load-ex.html"><span>module</span><wbr><span>Load</span><wbr><span><span>Ex</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="667936130%2FFunctions%2F121649622"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-242087348%2FFunctions%2F121649622"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
@@ -658,7 +658,7 @@
             </div>
           </div>
 <a data-name="1860116903%2FFunctions%2F121649622" anchor-label="moduleUnload" id="1860116903%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="module-unload.html"><span>module</span><wbr><span><span>Unload</span></span></a></div>
@@ -673,7 +673,7 @@
             </div>
           </div>
 <a data-name="1993566646%2FFunctions%2F121649622" anchor-label="monitor" id="1993566646%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="monitor.html"><span><span>monitor</span></span></a></div>
@@ -688,7 +688,7 @@
             </div>
           </div>
 <a data-name="-1162066522%2FFunctions%2F121649622" anchor-label="replicaOf" id="-1162066522%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="replica-of.html"><span>replica</span><wbr><span><span>Of</span></span></a></div>
@@ -703,7 +703,7 @@
             </div>
           </div>
 <a data-name="1518951922%2FFunctions%2F121649622" anchor-label="role" id="1518951922%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="role.html"><span><span>role</span></span></a></div>
@@ -718,7 +718,7 @@
             </div>
           </div>
 <a data-name="156944331%2FFunctions%2F121649622" anchor-label="save" id="156944331%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="save.html"><span><span>save</span></span></a></div>
@@ -732,12 +732,12 @@
               </div>
             </div>
           </div>
-<a data-name="-1717208052%2FFunctions%2F121649622" anchor-label="shutdown" id="-1717208052%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+<a data-name="-1126355030%2FFunctions%2F121649622" anchor-label="shutdown" id="-1126355030%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="shutdown.html"><span><span>shutdown</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1717208052%2FFunctions%2F121649622"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1126355030%2FFunctions%2F121649622"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
@@ -748,7 +748,7 @@
             </div>
           </div>
 <a data-name="1906054015%2FFunctions%2F121649622" anchor-label="slowLogGet" id="1906054015%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="slow-log-get.html"><span>slow</span><wbr><span>Log</span><wbr><span><span>Get</span></span></a></div>
@@ -763,7 +763,7 @@
             </div>
           </div>
 <a data-name="-101206186%2FFunctions%2F121649622" anchor-label="slowLogLen" id="-101206186%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="slow-log-len.html"><span>slow</span><wbr><span>Log</span><wbr><span><span>Len</span></span></a></div>
@@ -778,7 +778,7 @@
             </div>
           </div>
 <a data-name="-101144676%2FFunctions%2F121649622" anchor-label="slowLogReset" id="-101144676%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="slow-log-reset.html"><span>slow</span><wbr><span>Log</span><wbr><span><span>Reset</span></span></a></div>
@@ -793,7 +793,7 @@
             </div>
           </div>
 <a data-name="1464911836%2FFunctions%2F121649622" anchor-label="swapDb" id="1464911836%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="swap-db.html"><span>swap</span><wbr><span><span>Db</span></span></a></div>
@@ -808,7 +808,7 @@
             </div>
           </div>
 <a data-name="-1518976901%2FFunctions%2F121649622" anchor-label="time" id="-1518976901%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="time.html"><span><span>time</span></span></a></div>
@@ -828,17 +828,21 @@
   </div>
 </div>
     <div class="footer">
-        <a href="#content" id="go-to-top-link" class="footer--button footer--button_go-to-top"></a>
-        <span>© 2025 Vendelieu</span>
-        <span class="pull-right">
-            <span>Generated by </span>
-            <a class="footer--link footer--link_external" href="https://github.com/Kotlin/dokka">
-                <span>dokka</span>
-            </a>
-        </span>
-    </div>
+        <div class="footer--container">
+            <a href="#content" id="go-to-top-link" class="footer--button footer--button_go-to-top"></a>
+            <div class="footer--content">
+                <div>
+                    <span>Generated by </span>
+                    <a class="footer--link footer--link_external" href="https://github.com/Kotlin/dokka">
+                        Dokka
+                    </a>
+                    <div>© 2025 Vendelieu</div>
+                </div>
             </div>
         </div>
     </div>
+        </div>
+    </div>
+</div>
 </body>
 </html>

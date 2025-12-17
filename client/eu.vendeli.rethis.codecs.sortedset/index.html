@@ -1,22 +1,22 @@
 <!doctype html>
-<html class="no-js">
+<html class="no-js" lang="en">
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
     <title>eu.vendeli.rethis.codecs.sortedset</title>
-<link href="../../images/logo-icon.svg" rel="icon" type="image/svg">    <script>var pathToRoot = "../../";</script>
-    <script>document.documentElement.classList.replace("no-js","js");</script>
+<link href="../../images/logo-icon.svg" rel="icon" type="image/svg"><script>var pathToRoot = "../../";</script>
+    <script>document.documentElement.classList.replace("no-js", "js");</script>
     <script>const storage = localStorage.getItem("dokka-dark-mode")
-    if (storage == null) {
+      if (storage == null) {
         const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
         if (osDarkSchemePreferred === true) {
-            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
         }
-    } else {
+      } else {
         const savedDarkMode = JSON.parse(storage)
-        if(savedDarkMode === true) {
-            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        if (savedDarkMode === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
         }
-    }
+      }
     </script>
 <script type="text/javascript" src="https://unpkg.com/kotlin-playground@1/dist/playground.min.js" async></script>
 <script type="text/javascript" src="../../scripts/sourceset_dependencies.js" async></script>
@@ -24,34 +24,32 @@
 <link href="../../styles/main.css" rel="Stylesheet">
 <link href="../../styles/prism.css" rel="Stylesheet">
 <link href="../../styles/logo-styles.css" rel="Stylesheet">
-<link href="../../styles/font-jb-sans-auto.css" rel="Stylesheet">
 <link href="../../ui-kit/ui-kit.min.css" rel="Stylesheet">
-<script type="text/javascript" src="../../scripts/clipboard.js" async></script>
+<script type="text/javascript" src="../../scripts/safe-local-storage_blocking.js"></script>
 <script type="text/javascript" src="../../scripts/navigation-loader.js" async></script>
 <script type="text/javascript" src="../../scripts/platform-content-handler.js" async></script>
 <script type="text/javascript" src="../../scripts/main.js" defer></script>
 <script type="text/javascript" src="../../scripts/prism.js" async></script>
 <script type="text/javascript" src="../../ui-kit/ui-kit.min.js" defer></script>
-<script type="text/javascript" src="../../scripts/symbol-parameters-wrapper_deferred.js" defer></script>
 <link href="../../images/logo-icon.svg"></head>
 <body>
-    <div class="root">
-    <nav class="navigation theme-dark" id="navigation-wrapper">
-<a class="library-name--link" href="../../index.html">
+<div class="root">
+    <header class="navigation theme-dark" id="navigation-wrapper" role="banner">
+<a class="library-name--link" href="../../index.html" tabindex="1">
                     re.this
             </a>        <button class="navigation-controls--btn navigation-controls--btn_toc ui-kit_mobile-only" id="toc-toggle" type="button">Toggle table of contents
         </button>
         <div class="navigation-controls--break ui-kit_mobile-only"></div>
-        <div class="library-version" id="library-version">0.3.6
+        <div class="library-version" id="library-version">0.3.7
         </div>
         <div class="navigation-controls">
-        <div class="filter-section filter-section_loading" id="filter-section">
-                <button class="platform-tag platform-selector common-like" data-active="" data-filter=":client/commonMain">common</button>
+        <ul class="filter-section filter-section_loading" id="filter-section" aria-label="Target filter">
+                <button class="platform-tag platform-selector common-like" data-active="" aria-pressed="true" data-filter=":client/commonMain">common</button>
             <div class="dropdown filter-section--dropdown" data-role="dropdown" id="filter-section-dropdown">
                 <button class="button button_dropdown filter-section--dropdown-toggle" role="combobox" data-role="dropdown-toggle" aria-controls="platform-tags-listbox" aria-haspopup="listbox" aria-expanded="false" aria-label="Toggle source sets"></button>
-                <ul role="listbox" id="platform-tags-listbox" class="dropdown--list" data-role="dropdown-listbox">
-                    <div class="dropdown--header"><span>Platform filter</span>
-                        <button class="button" data-role="dropdown-toggle" aria-label="Close platform filter">
+                <ul role="listbox" id="platform-tags-listbox" class="dropdown--list" data-role="dropdown-listbox" aria-label="Target filter">
+                    <div class="dropdown--header"><span>Target filter</span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close target filter">
                             <i class="ui-kit-icon ui-kit-icon_cross"></i>
                         </button>
                     </div>
@@ -65,7 +63,7 @@
                 </ul>
                 <div class="dropdown--overlay"></div>
             </div>
-        </div>
+        </ul>
                 <a class="navigation-controls--btn navigation-controls--btn_homepage" id="homepage-link" href="https://github.com/vendelieu/re.this"></a>
             <button class="navigation-controls--btn navigation-controls--btn_theme" id="theme-toggle-button" type="button">Switch theme
             </button>
@@ -73,25 +71,27 @@
                 API
             </div>
         </div>
-    </nav>
-        <div id="container">
-            <div class="sidebar" id="leftColumn">
-                <div class="dropdown theme-dark_mobile" data-role="dropdown" id="toc-dropdown">
-                    <ul role="listbox" id="toc-listbox" class="dropdown--list dropdown--list_toc-list" data-role="dropdown-listbox">
-                        <div class="dropdown--header">
+    </header>
+    <div id="container">
+        <nav id="leftColumn" class="sidebar" data-item-type="SECTION" data-item-config="{&quot;defaultSize&quot;: 280, &quot;minSize&quot;: 200, &quot;maxSize&quot;: 400}">
+            <a class="toc--skip-link" href="#main">Skip to content</a>
+            <div class="dropdown theme-dark_mobile" data-role="dropdown" id="toc-dropdown">
+                <ul role="listbox" id="toc-listbox" class="dropdown--list dropdown--list_toc-list" data-role="dropdown-listbox" aria-label="Table of contents">
+                    <div class="dropdown--header">
                             <span>
                                     re.this
                             </span>
-                            <button class="button" data-role="dropdown-toggle" aria-label="Close table of contents">
-                                <i class="ui-kit-icon ui-kit-icon_cross"></i>
-                            </button>
-                        </div>
-                        <div class="sidebar--inner" id="sideMenu"></div>
-                    </ul>
-                    <div class="dropdown--overlay"></div>
-                </div>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close table of contents">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                    <div class="sidebar--inner" id="sideMenu"></div>
+                </ul>
+                <div class="dropdown--overlay"></div>
             </div>
-            <div id="main">
+        </nav>
+        <div id="resizer" class="resizer" data-item-type="BAR"></div>
+        <div id="main" data-item-type="SECTION" role="main">
 <div class="main-content" data-page-type="package" id="content" pageids="client::eu.vendeli.rethis.codecs.sortedset////PointingToDeclaration//121649622">
   <div class="breadcrumbs"><a href="../index.html">client</a><span class="delimiter">/</span><span class="current">eu.vendeli.rethis.codecs.sortedset</span></div>
   <div class="cover ">
@@ -101,9 +101,9 @@
     <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="TYPE">Types</button></div>
     <div class="tabs-section-body">
       <div data-togglable="TYPE">
-        <h2 class="">Types</h2>
+        <h2 class="tableheader">Types</h2>
         <div class="table"><a data-name="1620850237%2FClasslikes%2F121649622" anchor-label="BzMPopCommandCodec" id="1620850237%2FClasslikes%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-bz-m-pop-command-codec/index.html"><span>Bz</span><wbr><span>MPop</span><wbr><span>Command</span><wbr><span><span>Codec</span></span></a></div>
@@ -118,7 +118,7 @@
             </div>
           </div>
 <a data-name="1048399406%2FClasslikes%2F121649622" anchor-label="BzPopMaxCommandCodec" id="1048399406%2FClasslikes%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-bz-pop-max-command-codec/index.html"><span>Bz</span><wbr><span>Pop</span><wbr><span>Max</span><wbr><span>Command</span><wbr><span><span>Codec</span></span></a></div>
@@ -133,7 +133,7 @@
             </div>
           </div>
 <a data-name="-1186272768%2FClasslikes%2F121649622" anchor-label="BzPopMinCommandCodec" id="-1186272768%2FClasslikes%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-bz-pop-min-command-codec/index.html"><span>Bz</span><wbr><span>Pop</span><wbr><span>Min</span><wbr><span>Command</span><wbr><span><span>Codec</span></span></a></div>
@@ -148,7 +148,7 @@
             </div>
           </div>
 <a data-name="1963596594%2FClasslikes%2F121649622" anchor-label="ZAddCommandCodec" id="1963596594%2FClasslikes%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-z-add-command-codec/index.html"><span>ZAdd</span><wbr><span>Command</span><wbr><span><span>Codec</span></span></a></div>
@@ -163,7 +163,7 @@
             </div>
           </div>
 <a data-name="1633046905%2FClasslikes%2F121649622" anchor-label="ZAddExtendedCommandCodec" id="1633046905%2FClasslikes%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-z-add-extended-command-codec/index.html"><span>ZAdd</span><wbr><span>Extended</span><wbr><span>Command</span><wbr><span><span>Codec</span></span></a></div>
@@ -178,7 +178,7 @@
             </div>
           </div>
 <a data-name="-686946519%2FClasslikes%2F121649622" anchor-label="ZCardCommandCodec" id="-686946519%2FClasslikes%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-z-card-command-codec/index.html"><span>ZCard</span><wbr><span>Command</span><wbr><span><span>Codec</span></span></a></div>
@@ -193,7 +193,7 @@
             </div>
           </div>
 <a data-name="1222848580%2FClasslikes%2F121649622" anchor-label="ZCountCommandCodec" id="1222848580%2FClasslikes%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-z-count-command-codec/index.html"><span>ZCount</span><wbr><span>Command</span><wbr><span><span>Codec</span></span></a></div>
@@ -208,7 +208,7 @@
             </div>
           </div>
 <a data-name="1933007700%2FClasslikes%2F121649622" anchor-label="ZDiffCommandCodec" id="1933007700%2FClasslikes%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-z-diff-command-codec/index.html"><span>ZDiff</span><wbr><span>Command</span><wbr><span><span>Codec</span></span></a></div>
@@ -223,7 +223,7 @@
             </div>
           </div>
 <a data-name="-887183593%2FClasslikes%2F121649622" anchor-label="ZDiffStoreCommandCodec" id="-887183593%2FClasslikes%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-z-diff-store-command-codec/index.html"><span>ZDiff</span><wbr><span>Store</span><wbr><span>Command</span><wbr><span><span>Codec</span></span></a></div>
@@ -238,7 +238,7 @@
             </div>
           </div>
 <a data-name="-145606002%2FClasslikes%2F121649622" anchor-label="ZIncrByCommandCodec" id="-145606002%2FClasslikes%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-z-incr-by-command-codec/index.html"><span>ZIncr</span><wbr><span>By</span><wbr><span>Command</span><wbr><span><span>Codec</span></span></a></div>
@@ -253,7 +253,7 @@
             </div>
           </div>
 <a data-name="149419751%2FClasslikes%2F121649622" anchor-label="ZInterCardCommandCodec" id="149419751%2FClasslikes%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-z-inter-card-command-codec/index.html"><span>ZInter</span><wbr><span>Card</span><wbr><span>Command</span><wbr><span><span>Codec</span></span></a></div>
@@ -268,7 +268,7 @@
             </div>
           </div>
 <a data-name="-1110021993%2FClasslikes%2F121649622" anchor-label="ZInterCommandCodec" id="-1110021993%2FClasslikes%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-z-inter-command-codec/index.html"><span>ZInter</span><wbr><span>Command</span><wbr><span><span>Codec</span></span></a></div>
@@ -283,7 +283,7 @@
             </div>
           </div>
 <a data-name="-315331660%2FClasslikes%2F121649622" anchor-label="ZInterStoreCommandCodec" id="-315331660%2FClasslikes%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-z-inter-store-command-codec/index.html"><span>ZInter</span><wbr><span>Store</span><wbr><span>Command</span><wbr><span><span>Codec</span></span></a></div>
@@ -298,7 +298,7 @@
             </div>
           </div>
 <a data-name="990075529%2FClasslikes%2F121649622" anchor-label="ZLexCountCommandCodec" id="990075529%2FClasslikes%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-z-lex-count-command-codec/index.html"><span>ZLex</span><wbr><span>Count</span><wbr><span>Command</span><wbr><span><span>Codec</span></span></a></div>
@@ -313,7 +313,7 @@
             </div>
           </div>
 <a data-name="-1053874155%2FClasslikes%2F121649622" anchor-label="ZMPopCommandCodec" id="-1053874155%2FClasslikes%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-z-m-pop-command-codec/index.html"><span>ZMPop</span><wbr><span>Command</span><wbr><span><span>Codec</span></span></a></div>
@@ -328,7 +328,7 @@
             </div>
           </div>
 <a data-name="-720656268%2FClasslikes%2F121649622" anchor-label="ZMScoreCommandCodec" id="-720656268%2FClasslikes%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-z-m-score-command-codec/index.html"><span>ZMScore</span><wbr><span>Command</span><wbr><span><span>Codec</span></span></a></div>
@@ -343,7 +343,7 @@
             </div>
           </div>
 <a data-name="-971298298%2FClasslikes%2F121649622" anchor-label="ZPopMaxCommandCodec" id="-971298298%2FClasslikes%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-z-pop-max-command-codec/index.html"><span>ZPop</span><wbr><span>Max</span><wbr><span>Command</span><wbr><span><span>Codec</span></span></a></div>
@@ -358,7 +358,7 @@
             </div>
           </div>
 <a data-name="1088996824%2FClasslikes%2F121649622" anchor-label="ZPopMinCommandCodec" id="1088996824%2FClasslikes%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-z-pop-min-command-codec/index.html"><span>ZPop</span><wbr><span>Min</span><wbr><span>Command</span><wbr><span><span>Codec</span></span></a></div>
@@ -373,7 +373,7 @@
             </div>
           </div>
 <a data-name="446976570%2FClasslikes%2F121649622" anchor-label="ZRandMemberCommandCodec" id="446976570%2FClasslikes%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-z-rand-member-command-codec/index.html"><span>ZRand</span><wbr><span>Member</span><wbr><span>Command</span><wbr><span><span>Codec</span></span></a></div>
@@ -388,7 +388,7 @@
             </div>
           </div>
 <a data-name="-1662460797%2FClasslikes%2F121649622" anchor-label="ZRandMemberCountCommandCodec" id="-1662460797%2FClasslikes%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-z-rand-member-count-command-codec/index.html"><span>ZRand</span><wbr><span>Member</span><wbr><span>Count</span><wbr><span>Command</span><wbr><span><span>Codec</span></span></a></div>
@@ -403,7 +403,7 @@
             </div>
           </div>
 <a data-name="1918856406%2FClasslikes%2F121649622" anchor-label="ZRangeCommandCodec" id="1918856406%2FClasslikes%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-z-range-command-codec/index.html"><span>ZRange</span><wbr><span>Command</span><wbr><span><span>Codec</span></span></a></div>
@@ -418,7 +418,7 @@
             </div>
           </div>
 <a data-name="-449890603%2FClasslikes%2F121649622" anchor-label="ZRangeStoreCommandCodec" id="-449890603%2FClasslikes%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-z-range-store-command-codec/index.html"><span>ZRange</span><wbr><span>Store</span><wbr><span>Command</span><wbr><span><span>Codec</span></span></a></div>
@@ -433,7 +433,7 @@
             </div>
           </div>
 <a data-name="-1716586611%2FClasslikes%2F121649622" anchor-label="ZRankCommandCodec" id="-1716586611%2FClasslikes%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-z-rank-command-codec/index.html"><span>ZRank</span><wbr><span>Command</span><wbr><span><span>Codec</span></span></a></div>
@@ -448,7 +448,7 @@
             </div>
           </div>
 <a data-name="-696820090%2FClasslikes%2F121649622" anchor-label="ZRankWithScoresCommandCodec" id="-696820090%2FClasslikes%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-z-rank-with-scores-command-codec/index.html"><span>ZRank</span><wbr><span>With</span><wbr><span>Scores</span><wbr><span>Command</span><wbr><span><span>Codec</span></span></a></div>
@@ -463,7 +463,7 @@
             </div>
           </div>
 <a data-name="1928303321%2FClasslikes%2F121649622" anchor-label="ZRemCommandCodec" id="1928303321%2FClasslikes%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-z-rem-command-codec/index.html"><span>ZRem</span><wbr><span>Command</span><wbr><span><span>Codec</span></span></a></div>
@@ -478,7 +478,7 @@
             </div>
           </div>
 <a data-name="-217967922%2FClasslikes%2F121649622" anchor-label="ZRemRangeByLexCommandCodec" id="-217967922%2FClasslikes%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-z-rem-range-by-lex-command-codec/index.html"><span>ZRem</span><wbr><span>Range</span><wbr><span>By</span><wbr><span>Lex</span><wbr><span>Command</span><wbr><span><span>Codec</span></span></a></div>
@@ -493,7 +493,7 @@
             </div>
           </div>
 <a data-name="-995960717%2FClasslikes%2F121649622" anchor-label="ZRemRangeByRankCommandCodec" id="-995960717%2FClasslikes%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-z-rem-range-by-rank-command-codec/index.html"><span>ZRem</span><wbr><span>Range</span><wbr><span>By</span><wbr><span>Rank</span><wbr><span>Command</span><wbr><span><span>Codec</span></span></a></div>
@@ -508,7 +508,7 @@
             </div>
           </div>
 <a data-name="-1061829509%2FClasslikes%2F121649622" anchor-label="ZRemRangeByScoreCommandCodec" id="-1061829509%2FClasslikes%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-z-rem-range-by-score-command-codec/index.html"><span>ZRem</span><wbr><span>Range</span><wbr><span>By</span><wbr><span>Score</span><wbr><span>Command</span><wbr><span><span>Codec</span></span></a></div>
@@ -523,7 +523,7 @@
             </div>
           </div>
 <a data-name="-500302172%2FClasslikes%2F121649622" anchor-label="ZRevRankCommandCodec" id="-500302172%2FClasslikes%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-z-rev-rank-command-codec/index.html"><span>ZRev</span><wbr><span>Rank</span><wbr><span>Command</span><wbr><span><span>Codec</span></span></a></div>
@@ -538,7 +538,7 @@
             </div>
           </div>
 <a data-name="294915868%2FClasslikes%2F121649622" anchor-label="ZRevRankWithScoreCommandCodec" id="294915868%2FClasslikes%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-z-rev-rank-with-score-command-codec/index.html"><span>ZRev</span><wbr><span>Rank</span><wbr><span>With</span><wbr><span>Score</span><wbr><span>Command</span><wbr><span><span>Codec</span></span></a></div>
@@ -553,7 +553,7 @@
             </div>
           </div>
 <a data-name="-1015657508%2FClasslikes%2F121649622" anchor-label="ZScanCommandCodec" id="-1015657508%2FClasslikes%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-z-scan-command-codec/index.html"><span>ZScan</span><wbr><span>Command</span><wbr><span><span>Codec</span></span></a></div>
@@ -568,7 +568,7 @@
             </div>
           </div>
 <a data-name="-1926395743%2FClasslikes%2F121649622" anchor-label="ZScoreCommandCodec" id="-1926395743%2FClasslikes%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-z-score-command-codec/index.html"><span>ZScore</span><wbr><span>Command</span><wbr><span><span>Codec</span></span></a></div>
@@ -583,7 +583,7 @@
             </div>
           </div>
 <a data-name="-1391803772%2FClasslikes%2F121649622" anchor-label="ZUnionCommandCodec" id="-1391803772%2FClasslikes%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-z-union-command-codec/index.html"><span>ZUnion</span><wbr><span>Command</span><wbr><span><span>Codec</span></span></a></div>
@@ -598,7 +598,7 @@
             </div>
           </div>
 <a data-name="-767803929%2FClasslikes%2F121649622" anchor-label="ZUnionStoreCommandCodec" id="-767803929%2FClasslikes%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-z-union-store-command-codec/index.html"><span>ZUnion</span><wbr><span>Store</span><wbr><span>Command</span><wbr><span><span>Codec</span></span></a></div>
@@ -618,17 +618,21 @@
   </div>
 </div>
     <div class="footer">
-        <a href="#content" id="go-to-top-link" class="footer--button footer--button_go-to-top"></a>
-        <span>© 2025 Vendelieu</span>
-        <span class="pull-right">
-            <span>Generated by </span>
-            <a class="footer--link footer--link_external" href="https://github.com/Kotlin/dokka">
-                <span>dokka</span>
-            </a>
-        </span>
-    </div>
+        <div class="footer--container">
+            <a href="#content" id="go-to-top-link" class="footer--button footer--button_go-to-top"></a>
+            <div class="footer--content">
+                <div>
+                    <span>Generated by </span>
+                    <a class="footer--link footer--link_external" href="https://github.com/Kotlin/dokka">
+                        Dokka
+                    </a>
+                    <div>© 2025 Vendelieu</div>
+                </div>
             </div>
         </div>
     </div>
+        </div>
+    </div>
+</div>
 </body>
 </html>

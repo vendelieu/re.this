@@ -1,22 +1,22 @@
 <!doctype html>
-<html class="no-js">
+<html class="no-js" lang="en">
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
     <title>client</title>
-<link href="../images/logo-icon.svg" rel="icon" type="image/svg">    <script>var pathToRoot = "../";</script>
-    <script>document.documentElement.classList.replace("no-js","js");</script>
+<link href="../images/logo-icon.svg" rel="icon" type="image/svg"><script>var pathToRoot = "../";</script>
+    <script>document.documentElement.classList.replace("no-js", "js");</script>
     <script>const storage = localStorage.getItem("dokka-dark-mode")
-    if (storage == null) {
+      if (storage == null) {
         const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
         if (osDarkSchemePreferred === true) {
-            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
         }
-    } else {
+      } else {
         const savedDarkMode = JSON.parse(storage)
-        if(savedDarkMode === true) {
-            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        if (savedDarkMode === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
         }
-    }
+      }
     </script>
 <script type="text/javascript" src="https://unpkg.com/kotlin-playground@1/dist/playground.min.js" async></script>
 <script type="text/javascript" src="../scripts/sourceset_dependencies.js" async></script>
@@ -24,38 +24,36 @@
 <link href="../styles/main.css" rel="Stylesheet">
 <link href="../styles/prism.css" rel="Stylesheet">
 <link href="../styles/logo-styles.css" rel="Stylesheet">
-<link href="../styles/font-jb-sans-auto.css" rel="Stylesheet">
 <link href="../ui-kit/ui-kit.min.css" rel="Stylesheet">
-<script type="text/javascript" src="../scripts/clipboard.js" async></script>
+<script type="text/javascript" src="../scripts/safe-local-storage_blocking.js"></script>
 <script type="text/javascript" src="../scripts/navigation-loader.js" async></script>
 <script type="text/javascript" src="../scripts/platform-content-handler.js" async></script>
 <script type="text/javascript" src="../scripts/main.js" defer></script>
 <script type="text/javascript" src="../scripts/prism.js" async></script>
 <script type="text/javascript" src="../ui-kit/ui-kit.min.js" defer></script>
-<script type="text/javascript" src="../scripts/symbol-parameters-wrapper_deferred.js" defer></script>
 <link href="../images/logo-icon.svg"></head>
 <body>
-    <div class="root">
-    <nav class="navigation theme-dark" id="navigation-wrapper">
-<a class="library-name--link" href="../index.html">
+<div class="root">
+    <header class="navigation theme-dark" id="navigation-wrapper" role="banner">
+<a class="library-name--link" href="../index.html" tabindex="1">
                     re.this
             </a>        <button class="navigation-controls--btn navigation-controls--btn_toc ui-kit_mobile-only" id="toc-toggle" type="button">Toggle table of contents
         </button>
         <div class="navigation-controls--break ui-kit_mobile-only"></div>
-        <div class="library-version" id="library-version">0.3.6
+        <div class="library-version" id="library-version">0.3.7
         </div>
         <div class="navigation-controls">
-        <div class="filter-section filter-section_loading" id="filter-section">
-                <button class="platform-tag platform-selector common-like" data-active="" data-filter=":client/commonMain">common</button>
-                <button class="platform-tag platform-selector js-like" data-active="" data-filter=":client/jsMain">js</button>
-                <button class="platform-tag platform-selector jvm-like" data-active="" data-filter=":client/jvmMain">jvm</button>
-                <button class="platform-tag platform-selector common-like" data-active="" data-filter=":client/nativeMain">native</button>
-                <button class="platform-tag platform-selector wasm-like" data-active="" data-filter=":client/wasmJsMain">wasmJs</button>
+        <ul class="filter-section filter-section_loading" id="filter-section" aria-label="Target filter">
+                <button class="platform-tag platform-selector common-like" data-active="" aria-pressed="true" data-filter=":client/commonMain">common</button>
+                <button class="platform-tag platform-selector js-like" data-active="" aria-pressed="true" data-filter=":client/jsMain">js</button>
+                <button class="platform-tag platform-selector jvm-like" data-active="" aria-pressed="true" data-filter=":client/jvmMain">jvm</button>
+                <button class="platform-tag platform-selector common-like" data-active="" aria-pressed="true" data-filter=":client/nativeMain">native</button>
+                <button class="platform-tag platform-selector wasm-like" data-active="" aria-pressed="true" data-filter=":client/wasmJsMain">wasmJs</button>
             <div class="dropdown filter-section--dropdown" data-role="dropdown" id="filter-section-dropdown">
                 <button class="button button_dropdown filter-section--dropdown-toggle" role="combobox" data-role="dropdown-toggle" aria-controls="platform-tags-listbox" aria-haspopup="listbox" aria-expanded="false" aria-label="Toggle source sets"></button>
-                <ul role="listbox" id="platform-tags-listbox" class="dropdown--list" data-role="dropdown-listbox">
-                    <div class="dropdown--header"><span>Platform filter</span>
-                        <button class="button" data-role="dropdown-toggle" aria-label="Close platform filter">
+                <ul role="listbox" id="platform-tags-listbox" class="dropdown--list" data-role="dropdown-listbox" aria-label="Target filter">
+                    <div class="dropdown--header"><span>Target filter</span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close target filter">
                             <i class="ui-kit-icon ui-kit-icon_cross"></i>
                         </button>
                     </div>
@@ -97,7 +95,7 @@
                 </ul>
                 <div class="dropdown--overlay"></div>
             </div>
-        </div>
+        </ul>
                 <a class="navigation-controls--btn navigation-controls--btn_homepage" id="homepage-link" href="https://github.com/vendelieu/re.this"></a>
             <button class="navigation-controls--btn navigation-controls--btn_theme" id="theme-toggle-button" type="button">Switch theme
             </button>
@@ -105,25 +103,27 @@
                 API
             </div>
         </div>
-    </nav>
-        <div id="container">
-            <div class="sidebar" id="leftColumn">
-                <div class="dropdown theme-dark_mobile" data-role="dropdown" id="toc-dropdown">
-                    <ul role="listbox" id="toc-listbox" class="dropdown--list dropdown--list_toc-list" data-role="dropdown-listbox">
-                        <div class="dropdown--header">
+    </header>
+    <div id="container">
+        <nav id="leftColumn" class="sidebar" data-item-type="SECTION" data-item-config="{&quot;defaultSize&quot;: 280, &quot;minSize&quot;: 200, &quot;maxSize&quot;: 400}">
+            <a class="toc--skip-link" href="#main">Skip to content</a>
+            <div class="dropdown theme-dark_mobile" data-role="dropdown" id="toc-dropdown">
+                <ul role="listbox" id="toc-listbox" class="dropdown--list dropdown--list_toc-list" data-role="dropdown-listbox" aria-label="Table of contents">
+                    <div class="dropdown--header">
                             <span>
                                     re.this
                             </span>
-                            <button class="button" data-role="dropdown-toggle" aria-label="Close table of contents">
-                                <i class="ui-kit-icon ui-kit-icon_cross"></i>
-                            </button>
-                        </div>
-                        <div class="sidebar--inner" id="sideMenu"></div>
-                    </ul>
-                    <div class="dropdown--overlay"></div>
-                </div>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close table of contents">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                    <div class="sidebar--inner" id="sideMenu"></div>
+                </ul>
+                <div class="dropdown--overlay"></div>
             </div>
-            <div id="main">
+        </nav>
+        <div id="resizer" class="resizer" data-item-type="BAR"></div>
+        <div id="main" data-item-type="SECTION" role="main">
 <div class="main-content" id="content" pageids="client::////PointingToDeclaration//1324303909">
   <div class="breadcrumbs"></div>
   <div class="cover ">
@@ -131,7 +131,7 @@
   </div>
   <h2 class="">Packages</h2>
   <div class="table"><a data-name="104906338%2FPackages%2F121649622" anchor-label="eu.vendeli.rethis" id="104906338%2FPackages%2F121649622" data-filterable-set=":client/commonMain"></a>
-    <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
       <div>
         <div class="main-subrow ">
           <div class=""><span class="inline-flex">
@@ -139,7 +139,7 @@
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="104906338%2FPackages%2F121649622"></span>
                 <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
               </span></span></div>
-          <div class="pull-right">
+          <div class="pull-right platform-tags--wrapper">
             <div class="platform-tags no-gutters">
               <div class="platform-tag common-like">common</div>
             </div>
@@ -149,7 +149,7 @@
       </div>
     </div>
 <a data-name="-1486046952%2FPackages%2F121649622" anchor-label="eu.vendeli.rethis.annotations" id="-1486046952%2FPackages%2F121649622" data-filterable-set=":client/commonMain"></a>
-    <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
       <div>
         <div class="main-subrow ">
           <div class=""><span class="inline-flex">
@@ -157,7 +157,7 @@
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1486046952%2FPackages%2F121649622"></span>
                 <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
               </span></span></div>
-          <div class="pull-right">
+          <div class="pull-right platform-tags--wrapper">
             <div class="platform-tags no-gutters">
               <div class="platform-tag common-like">common</div>
             </div>
@@ -167,7 +167,7 @@
       </div>
     </div>
 <a data-name="1277073300%2FPackages%2F121649622" anchor-label="eu.vendeli.rethis.codecs.bitmap" id="1277073300%2FPackages%2F121649622" data-filterable-set=":client/commonMain"></a>
-    <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
       <div>
         <div class="main-subrow ">
           <div class=""><span class="inline-flex">
@@ -175,7 +175,7 @@
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1277073300%2FPackages%2F121649622"></span>
                 <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
               </span></span></div>
-          <div class="pull-right">
+          <div class="pull-right platform-tags--wrapper">
             <div class="platform-tags no-gutters">
               <div class="platform-tag common-like">common</div>
             </div>
@@ -185,7 +185,7 @@
       </div>
     </div>
 <a data-name="-1666460551%2FPackages%2F121649622" anchor-label="eu.vendeli.rethis.codecs.cluster" id="-1666460551%2FPackages%2F121649622" data-filterable-set=":client/commonMain"></a>
-    <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
       <div>
         <div class="main-subrow ">
           <div class=""><span class="inline-flex">
@@ -193,7 +193,7 @@
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1666460551%2FPackages%2F121649622"></span>
                 <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
               </span></span></div>
-          <div class="pull-right">
+          <div class="pull-right platform-tags--wrapper">
             <div class="platform-tags no-gutters">
               <div class="platform-tag common-like">common</div>
             </div>
@@ -203,7 +203,7 @@
       </div>
     </div>
 <a data-name="730955523%2FPackages%2F121649622" anchor-label="eu.vendeli.rethis.codecs.connection" id="730955523%2FPackages%2F121649622" data-filterable-set=":client/commonMain"></a>
-    <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
       <div>
         <div class="main-subrow ">
           <div class=""><span class="inline-flex">
@@ -211,7 +211,7 @@
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="730955523%2FPackages%2F121649622"></span>
                 <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
               </span></span></div>
-          <div class="pull-right">
+          <div class="pull-right platform-tags--wrapper">
             <div class="platform-tags no-gutters">
               <div class="platform-tag common-like">common</div>
             </div>
@@ -221,7 +221,7 @@
       </div>
     </div>
 <a data-name="1406042646%2FPackages%2F121649622" anchor-label="eu.vendeli.rethis.codecs.generic" id="1406042646%2FPackages%2F121649622" data-filterable-set=":client/commonMain"></a>
-    <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
       <div>
         <div class="main-subrow ">
           <div class=""><span class="inline-flex">
@@ -229,7 +229,7 @@
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1406042646%2FPackages%2F121649622"></span>
                 <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
               </span></span></div>
-          <div class="pull-right">
+          <div class="pull-right platform-tags--wrapper">
             <div class="platform-tags no-gutters">
               <div class="platform-tag common-like">common</div>
             </div>
@@ -239,7 +239,7 @@
       </div>
     </div>
 <a data-name="-1130497928%2FPackages%2F121649622" anchor-label="eu.vendeli.rethis.codecs.geospatial" id="-1130497928%2FPackages%2F121649622" data-filterable-set=":client/commonMain"></a>
-    <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
       <div>
         <div class="main-subrow ">
           <div class=""><span class="inline-flex">
@@ -247,7 +247,7 @@
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1130497928%2FPackages%2F121649622"></span>
                 <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
               </span></span></div>
-          <div class="pull-right">
+          <div class="pull-right platform-tags--wrapper">
             <div class="platform-tags no-gutters">
               <div class="platform-tag common-like">common</div>
             </div>
@@ -257,7 +257,7 @@
       </div>
     </div>
 <a data-name="1446966131%2FPackages%2F121649622" anchor-label="eu.vendeli.rethis.codecs.hash" id="1446966131%2FPackages%2F121649622" data-filterable-set=":client/commonMain"></a>
-    <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
       <div>
         <div class="main-subrow ">
           <div class=""><span class="inline-flex">
@@ -265,7 +265,7 @@
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1446966131%2FPackages%2F121649622"></span>
                 <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
               </span></span></div>
-          <div class="pull-right">
+          <div class="pull-right platform-tags--wrapper">
             <div class="platform-tags no-gutters">
               <div class="platform-tag common-like">common</div>
             </div>
@@ -275,7 +275,7 @@
       </div>
     </div>
 <a data-name="448792683%2FPackages%2F121649622" anchor-label="eu.vendeli.rethis.codecs.hyperloglog" id="448792683%2FPackages%2F121649622" data-filterable-set=":client/commonMain"></a>
-    <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
       <div>
         <div class="main-subrow ">
           <div class=""><span class="inline-flex">
@@ -283,7 +283,7 @@
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="448792683%2FPackages%2F121649622"></span>
                 <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
               </span></span></div>
-          <div class="pull-right">
+          <div class="pull-right platform-tags--wrapper">
             <div class="platform-tags no-gutters">
               <div class="platform-tag common-like">common</div>
             </div>
@@ -293,7 +293,7 @@
       </div>
     </div>
 <a data-name="-740777267%2FPackages%2F121649622" anchor-label="eu.vendeli.rethis.codecs.json" id="-740777267%2FPackages%2F121649622" data-filterable-set=":client/commonMain"></a>
-    <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
       <div>
         <div class="main-subrow ">
           <div class=""><span class="inline-flex">
@@ -301,7 +301,7 @@
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-740777267%2FPackages%2F121649622"></span>
                 <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
               </span></span></div>
-          <div class="pull-right">
+          <div class="pull-right platform-tags--wrapper">
             <div class="platform-tags no-gutters">
               <div class="platform-tag common-like">common</div>
             </div>
@@ -311,7 +311,7 @@
       </div>
     </div>
 <a data-name="1396543235%2FPackages%2F121649622" anchor-label="eu.vendeli.rethis.codecs.list" id="1396543235%2FPackages%2F121649622" data-filterable-set=":client/commonMain"></a>
-    <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
       <div>
         <div class="main-subrow ">
           <div class=""><span class="inline-flex">
@@ -319,7 +319,7 @@
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1396543235%2FPackages%2F121649622"></span>
                 <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
               </span></span></div>
-          <div class="pull-right">
+          <div class="pull-right platform-tags--wrapper">
             <div class="platform-tags no-gutters">
               <div class="platform-tag common-like">common</div>
             </div>
@@ -329,7 +329,7 @@
       </div>
     </div>
 <a data-name="1397517192%2FPackages%2F121649622" anchor-label="eu.vendeli.rethis.codecs.pubsub" id="1397517192%2FPackages%2F121649622" data-filterable-set=":client/commonMain"></a>
-    <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
       <div>
         <div class="main-subrow ">
           <div class=""><span class="inline-flex">
@@ -337,7 +337,7 @@
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1397517192%2FPackages%2F121649622"></span>
                 <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
               </span></span></div>
-          <div class="pull-right">
+          <div class="pull-right platform-tags--wrapper">
             <div class="platform-tags no-gutters">
               <div class="platform-tag common-like">common</div>
             </div>
@@ -347,7 +347,7 @@
       </div>
     </div>
 <a data-name="1525316662%2FPackages%2F121649622" anchor-label="eu.vendeli.rethis.codecs.scripting" id="1525316662%2FPackages%2F121649622" data-filterable-set=":client/commonMain"></a>
-    <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
       <div>
         <div class="main-subrow ">
           <div class=""><span class="inline-flex">
@@ -355,7 +355,7 @@
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1525316662%2FPackages%2F121649622"></span>
                 <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
               </span></span></div>
-          <div class="pull-right">
+          <div class="pull-right platform-tags--wrapper">
             <div class="platform-tags no-gutters">
               <div class="platform-tag common-like">common</div>
             </div>
@@ -365,7 +365,7 @@
       </div>
     </div>
 <a data-name="218321289%2FPackages%2F121649622" anchor-label="eu.vendeli.rethis.codecs.sentinel" id="218321289%2FPackages%2F121649622" data-filterable-set=":client/commonMain"></a>
-    <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
       <div>
         <div class="main-subrow ">
           <div class=""><span class="inline-flex">
@@ -373,7 +373,7 @@
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="218321289%2FPackages%2F121649622"></span>
                 <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
               </span></span></div>
-          <div class="pull-right">
+          <div class="pull-right platform-tags--wrapper">
             <div class="platform-tags no-gutters">
               <div class="platform-tag common-like">common</div>
             </div>
@@ -383,7 +383,7 @@
       </div>
     </div>
 <a data-name="-1408523096%2FPackages%2F121649622" anchor-label="eu.vendeli.rethis.codecs.server" id="-1408523096%2FPackages%2F121649622" data-filterable-set=":client/commonMain"></a>
-    <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
       <div>
         <div class="main-subrow ">
           <div class=""><span class="inline-flex">
@@ -391,7 +391,7 @@
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1408523096%2FPackages%2F121649622"></span>
                 <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
               </span></span></div>
-          <div class="pull-right">
+          <div class="pull-right platform-tags--wrapper">
             <div class="platform-tags no-gutters">
               <div class="platform-tag common-like">common</div>
             </div>
@@ -401,7 +401,7 @@
       </div>
     </div>
 <a data-name="512648033%2FPackages%2F121649622" anchor-label="eu.vendeli.rethis.codecs.set" id="512648033%2FPackages%2F121649622" data-filterable-set=":client/commonMain"></a>
-    <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
       <div>
         <div class="main-subrow ">
           <div class=""><span class="inline-flex">
@@ -409,7 +409,7 @@
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="512648033%2FPackages%2F121649622"></span>
                 <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
               </span></span></div>
-          <div class="pull-right">
+          <div class="pull-right platform-tags--wrapper">
             <div class="platform-tags no-gutters">
               <div class="platform-tag common-like">common</div>
             </div>
@@ -419,7 +419,7 @@
       </div>
     </div>
 <a data-name="814914564%2FPackages%2F121649622" anchor-label="eu.vendeli.rethis.codecs.sortedset" id="814914564%2FPackages%2F121649622" data-filterable-set=":client/commonMain"></a>
-    <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
       <div>
         <div class="main-subrow ">
           <div class=""><span class="inline-flex">
@@ -427,7 +427,7 @@
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="814914564%2FPackages%2F121649622"></span>
                 <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
               </span></span></div>
-          <div class="pull-right">
+          <div class="pull-right platform-tags--wrapper">
             <div class="platform-tags no-gutters">
               <div class="platform-tag common-like">common</div>
             </div>
@@ -437,7 +437,7 @@
       </div>
     </div>
 <a data-name="1166525093%2FPackages%2F121649622" anchor-label="eu.vendeli.rethis.codecs.stream" id="1166525093%2FPackages%2F121649622" data-filterable-set=":client/commonMain"></a>
-    <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
       <div>
         <div class="main-subrow ">
           <div class=""><span class="inline-flex">
@@ -445,7 +445,7 @@
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1166525093%2FPackages%2F121649622"></span>
                 <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
               </span></span></div>
-          <div class="pull-right">
+          <div class="pull-right platform-tags--wrapper">
             <div class="platform-tags no-gutters">
               <div class="platform-tag common-like">common</div>
             </div>
@@ -455,7 +455,7 @@
       </div>
     </div>
 <a data-name="-847360010%2FPackages%2F121649622" anchor-label="eu.vendeli.rethis.codecs.string" id="-847360010%2FPackages%2F121649622" data-filterable-set=":client/commonMain"></a>
-    <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
       <div>
         <div class="main-subrow ">
           <div class=""><span class="inline-flex">
@@ -463,7 +463,7 @@
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-847360010%2FPackages%2F121649622"></span>
                 <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
               </span></span></div>
-          <div class="pull-right">
+          <div class="pull-right platform-tags--wrapper">
             <div class="platform-tags no-gutters">
               <div class="platform-tag common-like">common</div>
             </div>
@@ -473,7 +473,7 @@
       </div>
     </div>
 <a data-name="-1086969379%2FPackages%2F121649622" anchor-label="eu.vendeli.rethis.codecs.transaction" id="-1086969379%2FPackages%2F121649622" data-filterable-set=":client/commonMain"></a>
-    <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
       <div>
         <div class="main-subrow ">
           <div class=""><span class="inline-flex">
@@ -481,7 +481,7 @@
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1086969379%2FPackages%2F121649622"></span>
                 <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
               </span></span></div>
-          <div class="pull-right">
+          <div class="pull-right platform-tags--wrapper">
             <div class="platform-tags no-gutters">
               <div class="platform-tag common-like">common</div>
             </div>
@@ -491,7 +491,7 @@
       </div>
     </div>
 <a data-name="-286490558%2FPackages%2F121649622" anchor-label="eu.vendeli.rethis.command.bitmap" id="-286490558%2FPackages%2F121649622" data-filterable-set=":client/commonMain"></a>
-    <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
       <div>
         <div class="main-subrow ">
           <div class=""><span class="inline-flex">
@@ -499,7 +499,7 @@
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-286490558%2FPackages%2F121649622"></span>
                 <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
               </span></span></div>
-          <div class="pull-right">
+          <div class="pull-right platform-tags--wrapper">
             <div class="platform-tags no-gutters">
               <div class="platform-tag common-like">common</div>
             </div>
@@ -509,7 +509,7 @@
       </div>
     </div>
 <a data-name="1402667403%2FPackages%2F121649622" anchor-label="eu.vendeli.rethis.command.cluster" id="1402667403%2FPackages%2F121649622" data-filterable-set=":client/commonMain"></a>
-    <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
       <div>
         <div class="main-subrow ">
           <div class=""><span class="inline-flex">
@@ -517,7 +517,7 @@
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1402667403%2FPackages%2F121649622"></span>
                 <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
               </span></span></div>
-          <div class="pull-right">
+          <div class="pull-right platform-tags--wrapper">
             <div class="platform-tags no-gutters">
               <div class="platform-tag common-like">common</div>
             </div>
@@ -527,7 +527,7 @@
       </div>
     </div>
 <a data-name="1858035889%2FPackages%2F121649622" anchor-label="eu.vendeli.rethis.command.connection" id="1858035889%2FPackages%2F121649622" data-filterable-set=":client/commonMain"></a>
-    <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
       <div>
         <div class="main-subrow ">
           <div class=""><span class="inline-flex">
@@ -535,7 +535,7 @@
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1858035889%2FPackages%2F121649622"></span>
                 <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
               </span></span></div>
-          <div class="pull-right">
+          <div class="pull-right platform-tags--wrapper">
             <div class="platform-tags no-gutters">
               <div class="platform-tag common-like">common</div>
             </div>
@@ -545,7 +545,7 @@
       </div>
     </div>
 <a data-name="180203304%2FPackages%2F121649622" anchor-label="eu.vendeli.rethis.command.generic" id="180203304%2FPackages%2F121649622" data-filterable-set=":client/commonMain"></a>
-    <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
       <div>
         <div class="main-subrow ">
           <div class=""><span class="inline-flex">
@@ -553,7 +553,7 @@
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="180203304%2FPackages%2F121649622"></span>
                 <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
               </span></span></div>
-          <div class="pull-right">
+          <div class="pull-right platform-tags--wrapper">
             <div class="platform-tags no-gutters">
               <div class="platform-tag common-like">common</div>
             </div>
@@ -563,7 +563,7 @@
       </div>
     </div>
 <a data-name="-3417562%2FPackages%2F121649622" anchor-label="eu.vendeli.rethis.command.geospatial" id="-3417562%2FPackages%2F121649622" data-filterable-set=":client/commonMain"></a>
-    <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
       <div>
         <div class="main-subrow ">
           <div class=""><span class="inline-flex">
@@ -571,7 +571,7 @@
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-3417562%2FPackages%2F121649622"></span>
                 <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
               </span></span></div>
-          <div class="pull-right">
+          <div class="pull-right platform-tags--wrapper">
             <div class="platform-tags no-gutters">
               <div class="platform-tag common-like">common</div>
             </div>
@@ -581,7 +581,7 @@
       </div>
     </div>
 <a data-name="-2094321759%2FPackages%2F121649622" anchor-label="eu.vendeli.rethis.command.hash" id="-2094321759%2FPackages%2F121649622" data-filterable-set=":client/commonMain"></a>
-    <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
       <div>
         <div class="main-subrow ">
           <div class=""><span class="inline-flex">
@@ -589,7 +589,7 @@
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2094321759%2FPackages%2F121649622"></span>
                 <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
               </span></span></div>
-          <div class="pull-right">
+          <div class="pull-right platform-tags--wrapper">
             <div class="platform-tags no-gutters">
               <div class="platform-tag common-like">common</div>
             </div>
@@ -599,7 +599,7 @@
       </div>
     </div>
 <a data-name="1028545661%2FPackages%2F121649622" anchor-label="eu.vendeli.rethis.command.hyperloglog" id="1028545661%2FPackages%2F121649622" data-filterable-set=":client/commonMain"></a>
-    <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
       <div>
         <div class="main-subrow ">
           <div class=""><span class="inline-flex">
@@ -607,7 +607,7 @@
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1028545661%2FPackages%2F121649622"></span>
                 <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
               </span></span></div>
-          <div class="pull-right">
+          <div class="pull-right platform-tags--wrapper">
             <div class="platform-tags no-gutters">
               <div class="platform-tag common-like">common</div>
             </div>
@@ -617,7 +617,7 @@
       </div>
     </div>
 <a data-name="12902139%2FPackages%2F121649622" anchor-label="eu.vendeli.rethis.command.json" id="12902139%2FPackages%2F121649622" data-filterable-set=":client/commonMain"></a>
-    <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
       <div>
         <div class="main-subrow ">
           <div class=""><span class="inline-flex">
@@ -625,7 +625,7 @@
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="12902139%2FPackages%2F121649622"></span>
                 <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
               </span></span></div>
-          <div class="pull-right">
+          <div class="pull-right platform-tags--wrapper">
             <div class="platform-tags no-gutters">
               <div class="platform-tag common-like">common</div>
             </div>
@@ -635,7 +635,7 @@
       </div>
     </div>
 <a data-name="-2144744655%2FPackages%2F121649622" anchor-label="eu.vendeli.rethis.command.list" id="-2144744655%2FPackages%2F121649622" data-filterable-set=":client/commonMain"></a>
-    <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
       <div>
         <div class="main-subrow ">
           <div class=""><span class="inline-flex">
@@ -643,7 +643,7 @@
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2144744655%2FPackages%2F121649622"></span>
                 <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
               </span></span></div>
-          <div class="pull-right">
+          <div class="pull-right platform-tags--wrapper">
             <div class="platform-tags no-gutters">
               <div class="platform-tag common-like">common</div>
             </div>
@@ -653,7 +653,7 @@
       </div>
     </div>
 <a data-name="-166046666%2FPackages%2F121649622" anchor-label="eu.vendeli.rethis.command.pubsub" id="-166046666%2FPackages%2F121649622" data-filterable-set=":client/commonMain"></a>
-    <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
       <div>
         <div class="main-subrow ">
           <div class=""><span class="inline-flex">
@@ -661,7 +661,7 @@
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-166046666%2FPackages%2F121649622"></span>
                 <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
               </span></span></div>
-          <div class="pull-right">
+          <div class="pull-right platform-tags--wrapper">
             <div class="platform-tags no-gutters">
               <div class="platform-tag common-like">common</div>
             </div>
@@ -671,7 +671,7 @@
       </div>
     </div>
 <a data-name="314748104%2FPackages%2F121649622" anchor-label="eu.vendeli.rethis.command.scripting" id="314748104%2FPackages%2F121649622" data-filterable-set=":client/commonMain"></a>
-    <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
       <div>
         <div class="main-subrow ">
           <div class=""><span class="inline-flex">
@@ -679,7 +679,7 @@
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="314748104%2FPackages%2F121649622"></span>
                 <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
               </span></span></div>
-          <div class="pull-right">
+          <div class="pull-right platform-tags--wrapper">
             <div class="platform-tags no-gutters">
               <div class="platform-tag common-like">common</div>
             </div>
@@ -689,7 +689,7 @@
       </div>
     </div>
 <a data-name="872007351%2FPackages%2F121649622" anchor-label="eu.vendeli.rethis.command.sentinel" id="872007351%2FPackages%2F121649622" data-filterable-set=":client/commonMain"></a>
-    <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
       <div>
         <div class="main-subrow ">
           <div class=""><span class="inline-flex">
@@ -697,7 +697,7 @@
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="872007351%2FPackages%2F121649622"></span>
                 <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
               </span></span></div>
-          <div class="pull-right">
+          <div class="pull-right platform-tags--wrapper">
             <div class="platform-tags no-gutters">
               <div class="platform-tag common-like">common</div>
             </div>
@@ -707,7 +707,7 @@
       </div>
     </div>
 <a data-name="1927527794%2FPackages%2F121649622" anchor-label="eu.vendeli.rethis.command.serde" id="1927527794%2FPackages%2F121649622" data-filterable-set=":client/commonMain"></a>
-    <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
       <div>
         <div class="main-subrow ">
           <div class=""><span class="inline-flex">
@@ -715,7 +715,7 @@
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1927527794%2FPackages%2F121649622"></span>
                 <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
               </span></span></div>
-          <div class="pull-right">
+          <div class="pull-right platform-tags--wrapper">
             <div class="platform-tags no-gutters">
               <div class="platform-tag common-like">common</div>
             </div>
@@ -725,7 +725,7 @@
       </div>
     </div>
 <a data-name="1322880342%2FPackages%2F121649622" anchor-label="eu.vendeli.rethis.command.server" id="1322880342%2FPackages%2F121649622" data-filterable-set=":client/commonMain"></a>
-    <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
       <div>
         <div class="main-subrow ">
           <div class=""><span class="inline-flex">
@@ -733,7 +733,7 @@
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1322880342%2FPackages%2F121649622"></span>
                 <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
               </span></span></div>
-          <div class="pull-right">
+          <div class="pull-right platform-tags--wrapper">
             <div class="platform-tags no-gutters">
               <div class="platform-tag common-like">common</div>
             </div>
@@ -743,7 +743,7 @@
       </div>
     </div>
 <a data-name="-432871053%2FPackages%2F121649622" anchor-label="eu.vendeli.rethis.command.set" id="-432871053%2FPackages%2F121649622" data-filterable-set=":client/commonMain"></a>
-    <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
       <div>
         <div class="main-subrow ">
           <div class=""><span class="inline-flex">
@@ -751,7 +751,7 @@
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-432871053%2FPackages%2F121649622"></span>
                 <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
               </span></span></div>
-          <div class="pull-right">
+          <div class="pull-right platform-tags--wrapper">
             <div class="platform-tags no-gutters">
               <div class="platform-tag common-like">common</div>
             </div>
@@ -761,7 +761,7 @@
       </div>
     </div>
 <a data-name="-395653994%2FPackages%2F121649622" anchor-label="eu.vendeli.rethis.command.sortedset" id="-395653994%2FPackages%2F121649622" data-filterable-set=":client/commonMain"></a>
-    <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
       <div>
         <div class="main-subrow ">
           <div class=""><span class="inline-flex">
@@ -769,7 +769,7 @@
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-395653994%2FPackages%2F121649622"></span>
                 <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
               </span></span></div>
-          <div class="pull-right">
+          <div class="pull-right platform-tags--wrapper">
             <div class="platform-tags no-gutters">
               <div class="platform-tag common-like">common</div>
             </div>
@@ -779,7 +779,7 @@
       </div>
     </div>
 <a data-name="-397038765%2FPackages%2F121649622" anchor-label="eu.vendeli.rethis.command.stream" id="-397038765%2FPackages%2F121649622" data-filterable-set=":client/commonMain"></a>
-    <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
       <div>
         <div class="main-subrow ">
           <div class=""><span class="inline-flex">
@@ -787,7 +787,7 @@
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-397038765%2FPackages%2F121649622"></span>
                 <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
               </span></span></div>
-          <div class="pull-right">
+          <div class="pull-right platform-tags--wrapper">
             <div class="platform-tags no-gutters">
               <div class="platform-tag common-like">common</div>
             </div>
@@ -797,7 +797,7 @@
       </div>
     </div>
 <a data-name="1884043428%2FPackages%2F121649622" anchor-label="eu.vendeli.rethis.command.string" id="1884043428%2FPackages%2F121649622" data-filterable-set=":client/commonMain"></a>
-    <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
       <div>
         <div class="main-subrow ">
           <div class=""><span class="inline-flex">
@@ -805,7 +805,7 @@
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1884043428%2FPackages%2F121649622"></span>
                 <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
               </span></span></div>
-          <div class="pull-right">
+          <div class="pull-right platform-tags--wrapper">
             <div class="platform-tags no-gutters">
               <div class="platform-tag common-like">common</div>
             </div>
@@ -815,7 +815,7 @@
       </div>
     </div>
 <a data-name="-507216401%2FPackages%2F121649622" anchor-label="eu.vendeli.rethis.command.transaction" id="-507216401%2FPackages%2F121649622" data-filterable-set=":client/commonMain"></a>
-    <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
       <div>
         <div class="main-subrow ">
           <div class=""><span class="inline-flex">
@@ -823,7 +823,7 @@
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-507216401%2FPackages%2F121649622"></span>
                 <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
               </span></span></div>
-          <div class="pull-right">
+          <div class="pull-right platform-tags--wrapper">
             <div class="platform-tags no-gutters">
               <div class="platform-tag common-like">common</div>
             </div>
@@ -833,7 +833,7 @@
       </div>
     </div>
 <a data-name="-425528342%2FPackages%2F121649622" anchor-label="eu.vendeli.rethis.configuration" id="-425528342%2FPackages%2F121649622" data-filterable-set=":client/commonMain"></a>
-    <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
       <div>
         <div class="main-subrow ">
           <div class=""><span class="inline-flex">
@@ -841,7 +841,7 @@
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-425528342%2FPackages%2F121649622"></span>
                 <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
               </span></span></div>
-          <div class="pull-right">
+          <div class="pull-right platform-tags--wrapper">
             <div class="platform-tags no-gutters">
               <div class="platform-tag common-like">common</div>
             </div>
@@ -851,7 +851,7 @@
       </div>
     </div>
 <a data-name="-1217710609%2FPackages%2F121649622" anchor-label="eu.vendeli.rethis.core" id="-1217710609%2FPackages%2F121649622" data-filterable-set=":client/commonMain"></a>
-    <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
       <div>
         <div class="main-subrow ">
           <div class=""><span class="inline-flex">
@@ -859,7 +859,7 @@
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1217710609%2FPackages%2F121649622"></span>
                 <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
               </span></span></div>
-          <div class="pull-right">
+          <div class="pull-right platform-tags--wrapper">
             <div class="platform-tags no-gutters">
               <div class="platform-tag common-like">common</div>
             </div>
@@ -869,7 +869,7 @@
       </div>
     </div>
 <a data-name="192893334%2FPackages%2F121649622" anchor-label="eu.vendeli.rethis.providers" id="192893334%2FPackages%2F121649622" data-filterable-set=":client/commonMain"></a>
-    <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
       <div>
         <div class="main-subrow ">
           <div class=""><span class="inline-flex">
@@ -877,7 +877,7 @@
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="192893334%2FPackages%2F121649622"></span>
                 <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
               </span></span></div>
-          <div class="pull-right">
+          <div class="pull-right platform-tags--wrapper">
             <div class="platform-tags no-gutters">
               <div class="platform-tag common-like">common</div>
             </div>
@@ -887,7 +887,7 @@
       </div>
     </div>
 <a data-name="2101779903%2FPackages%2F121649622" anchor-label="eu.vendeli.rethis.topology" id="2101779903%2FPackages%2F121649622" data-filterable-set=":client/commonMain"></a>
-    <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
       <div>
         <div class="main-subrow ">
           <div class=""><span class="inline-flex">
@@ -895,7 +895,7 @@
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2101779903%2FPackages%2F121649622"></span>
                 <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
               </span></span></div>
-          <div class="pull-right">
+          <div class="pull-right platform-tags--wrapper">
             <div class="platform-tags no-gutters">
               <div class="platform-tag common-like">common</div>
             </div>
@@ -905,7 +905,7 @@
       </div>
     </div>
 <a data-name="153435664%2FPackages%2F121649622" anchor-label="eu.vendeli.rethis.types.common" id="153435664%2FPackages%2F121649622" data-filterable-set=":client/commonMain"></a>
-    <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
       <div>
         <div class="main-subrow ">
           <div class=""><span class="inline-flex">
@@ -913,7 +913,7 @@
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="153435664%2FPackages%2F121649622"></span>
                 <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
               </span></span></div>
-          <div class="pull-right">
+          <div class="pull-right platform-tags--wrapper">
             <div class="platform-tags no-gutters">
               <div class="platform-tag common-like">common</div>
             </div>
@@ -923,7 +923,7 @@
       </div>
     </div>
 <a data-name="-720021441%2FPackages%2F121649622" anchor-label="eu.vendeli.rethis.types.interfaces" id="-720021441%2FPackages%2F121649622" data-filterable-set=":client/commonMain"></a>
-    <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
       <div>
         <div class="main-subrow ">
           <div class=""><span class="inline-flex">
@@ -931,7 +931,7 @@
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-720021441%2FPackages%2F121649622"></span>
                 <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
               </span></span></div>
-          <div class="pull-right">
+          <div class="pull-right platform-tags--wrapper">
             <div class="platform-tags no-gutters">
               <div class="platform-tag common-like">common</div>
             </div>
@@ -941,7 +941,7 @@
       </div>
     </div>
 <a data-name="-1969635867%2FPackages%2F1324303909" anchor-label="eu.vendeli.rethis.utils" id="-1969635867%2FPackages%2F1324303909" data-filterable-set=":client/commonMain,:client/jsMain,:client/jvmMain,:client/nativeMain,:client/wasmJsMain"></a>
-    <div class="table-row" data-filterable-current=":client/commonMain,:client/jsMain,:client/jvmMain,:client/nativeMain,:client/wasmJsMain" data-filterable-set=":client/commonMain,:client/jsMain,:client/jvmMain,:client/nativeMain,:client/wasmJsMain">
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":client/commonMain,:client/jsMain,:client/jvmMain,:client/nativeMain,:client/wasmJsMain" data-filterable-set=":client/commonMain,:client/jsMain,:client/jvmMain,:client/nativeMain,:client/wasmJsMain">
       <div>
         <div class="main-subrow ">
           <div class=""><span class="inline-flex">
@@ -949,7 +949,7 @@
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1969635867%2FPackages%2F1324303909"></span>
                 <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
               </span></span></div>
-          <div class="pull-right">
+          <div class="pull-right platform-tags--wrapper">
             <div class="platform-tags no-gutters">
               <div class="platform-tag common-like">common</div>
               <div class="platform-tag js-like">js</div>
@@ -963,7 +963,7 @@
       </div>
     </div>
 <a data-name="787142224%2FPackages%2F121649622" anchor-label="eu.vendeli.rethis.wrappers" id="787142224%2FPackages%2F121649622" data-filterable-set=":client/commonMain"></a>
-    <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
       <div>
         <div class="main-subrow ">
           <div class=""><span class="inline-flex">
@@ -971,7 +971,7 @@
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="787142224%2FPackages%2F121649622"></span>
                 <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
               </span></span></div>
-          <div class="pull-right">
+          <div class="pull-right platform-tags--wrapper">
             <div class="platform-tags no-gutters">
               <div class="platform-tag common-like">common</div>
             </div>
@@ -983,17 +983,21 @@
   </div>
 </div>
     <div class="footer">
-        <a href="#content" id="go-to-top-link" class="footer--button footer--button_go-to-top"></a>
-        <span>© 2025 Vendelieu</span>
-        <span class="pull-right">
-            <span>Generated by </span>
-            <a class="footer--link footer--link_external" href="https://github.com/Kotlin/dokka">
-                <span>dokka</span>
-            </a>
-        </span>
-    </div>
+        <div class="footer--container">
+            <a href="#content" id="go-to-top-link" class="footer--button footer--button_go-to-top"></a>
+            <div class="footer--content">
+                <div>
+                    <span>Generated by </span>
+                    <a class="footer--link footer--link_external" href="https://github.com/Kotlin/dokka">
+                        Dokka
+                    </a>
+                    <div>© 2025 Vendelieu</div>
+                </div>
             </div>
         </div>
     </div>
+        </div>
+    </div>
+</div>
 </body>
 </html>

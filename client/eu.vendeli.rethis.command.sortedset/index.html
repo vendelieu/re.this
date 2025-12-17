@@ -1,22 +1,22 @@
 <!doctype html>
-<html class="no-js">
+<html class="no-js" lang="en">
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
     <title>eu.vendeli.rethis.command.sortedset</title>
-<link href="../../images/logo-icon.svg" rel="icon" type="image/svg">    <script>var pathToRoot = "../../";</script>
-    <script>document.documentElement.classList.replace("no-js","js");</script>
+<link href="../../images/logo-icon.svg" rel="icon" type="image/svg"><script>var pathToRoot = "../../";</script>
+    <script>document.documentElement.classList.replace("no-js", "js");</script>
     <script>const storage = localStorage.getItem("dokka-dark-mode")
-    if (storage == null) {
+      if (storage == null) {
         const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
         if (osDarkSchemePreferred === true) {
-            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
         }
-    } else {
+      } else {
         const savedDarkMode = JSON.parse(storage)
-        if(savedDarkMode === true) {
-            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        if (savedDarkMode === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
         }
-    }
+      }
     </script>
 <script type="text/javascript" src="https://unpkg.com/kotlin-playground@1/dist/playground.min.js" async></script>
 <script type="text/javascript" src="../../scripts/sourceset_dependencies.js" async></script>
@@ -24,34 +24,32 @@
 <link href="../../styles/main.css" rel="Stylesheet">
 <link href="../../styles/prism.css" rel="Stylesheet">
 <link href="../../styles/logo-styles.css" rel="Stylesheet">
-<link href="../../styles/font-jb-sans-auto.css" rel="Stylesheet">
 <link href="../../ui-kit/ui-kit.min.css" rel="Stylesheet">
-<script type="text/javascript" src="../../scripts/clipboard.js" async></script>
+<script type="text/javascript" src="../../scripts/safe-local-storage_blocking.js"></script>
 <script type="text/javascript" src="../../scripts/navigation-loader.js" async></script>
 <script type="text/javascript" src="../../scripts/platform-content-handler.js" async></script>
 <script type="text/javascript" src="../../scripts/main.js" defer></script>
 <script type="text/javascript" src="../../scripts/prism.js" async></script>
 <script type="text/javascript" src="../../ui-kit/ui-kit.min.js" defer></script>
-<script type="text/javascript" src="../../scripts/symbol-parameters-wrapper_deferred.js" defer></script>
 <link href="../../images/logo-icon.svg"></head>
 <body>
-    <div class="root">
-    <nav class="navigation theme-dark" id="navigation-wrapper">
-<a class="library-name--link" href="../../index.html">
+<div class="root">
+    <header class="navigation theme-dark" id="navigation-wrapper" role="banner">
+<a class="library-name--link" href="../../index.html" tabindex="1">
                     re.this
             </a>        <button class="navigation-controls--btn navigation-controls--btn_toc ui-kit_mobile-only" id="toc-toggle" type="button">Toggle table of contents
         </button>
         <div class="navigation-controls--break ui-kit_mobile-only"></div>
-        <div class="library-version" id="library-version">0.3.6
+        <div class="library-version" id="library-version">0.3.7
         </div>
         <div class="navigation-controls">
-        <div class="filter-section filter-section_loading" id="filter-section">
-                <button class="platform-tag platform-selector common-like" data-active="" data-filter=":client/commonMain">common</button>
+        <ul class="filter-section filter-section_loading" id="filter-section" aria-label="Target filter">
+                <button class="platform-tag platform-selector common-like" data-active="" aria-pressed="true" data-filter=":client/commonMain">common</button>
             <div class="dropdown filter-section--dropdown" data-role="dropdown" id="filter-section-dropdown">
                 <button class="button button_dropdown filter-section--dropdown-toggle" role="combobox" data-role="dropdown-toggle" aria-controls="platform-tags-listbox" aria-haspopup="listbox" aria-expanded="false" aria-label="Toggle source sets"></button>
-                <ul role="listbox" id="platform-tags-listbox" class="dropdown--list" data-role="dropdown-listbox">
-                    <div class="dropdown--header"><span>Platform filter</span>
-                        <button class="button" data-role="dropdown-toggle" aria-label="Close platform filter">
+                <ul role="listbox" id="platform-tags-listbox" class="dropdown--list" data-role="dropdown-listbox" aria-label="Target filter">
+                    <div class="dropdown--header"><span>Target filter</span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close target filter">
                             <i class="ui-kit-icon ui-kit-icon_cross"></i>
                         </button>
                     </div>
@@ -65,7 +63,7 @@
                 </ul>
                 <div class="dropdown--overlay"></div>
             </div>
-        </div>
+        </ul>
                 <a class="navigation-controls--btn navigation-controls--btn_homepage" id="homepage-link" href="https://github.com/vendelieu/re.this"></a>
             <button class="navigation-controls--btn navigation-controls--btn_theme" id="theme-toggle-button" type="button">Switch theme
             </button>
@@ -73,25 +71,27 @@
                 API
             </div>
         </div>
-    </nav>
-        <div id="container">
-            <div class="sidebar" id="leftColumn">
-                <div class="dropdown theme-dark_mobile" data-role="dropdown" id="toc-dropdown">
-                    <ul role="listbox" id="toc-listbox" class="dropdown--list dropdown--list_toc-list" data-role="dropdown-listbox">
-                        <div class="dropdown--header">
+    </header>
+    <div id="container">
+        <nav id="leftColumn" class="sidebar" data-item-type="SECTION" data-item-config="{&quot;defaultSize&quot;: 280, &quot;minSize&quot;: 200, &quot;maxSize&quot;: 400}">
+            <a class="toc--skip-link" href="#main">Skip to content</a>
+            <div class="dropdown theme-dark_mobile" data-role="dropdown" id="toc-dropdown">
+                <ul role="listbox" id="toc-listbox" class="dropdown--list dropdown--list_toc-list" data-role="dropdown-listbox" aria-label="Table of contents">
+                    <div class="dropdown--header">
                             <span>
                                     re.this
                             </span>
-                            <button class="button" data-role="dropdown-toggle" aria-label="Close table of contents">
-                                <i class="ui-kit-icon ui-kit-icon_cross"></i>
-                            </button>
-                        </div>
-                        <div class="sidebar--inner" id="sideMenu"></div>
-                    </ul>
-                    <div class="dropdown--overlay"></div>
-                </div>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close table of contents">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                    <div class="sidebar--inner" id="sideMenu"></div>
+                </ul>
+                <div class="dropdown--overlay"></div>
             </div>
-            <div id="main">
+        </nav>
+        <div id="resizer" class="resizer" data-item-type="BAR"></div>
+        <div id="main" data-item-type="SECTION" role="main">
 <div class="main-content" data-page-type="package" id="content" pageids="client::eu.vendeli.rethis.command.sortedset////PointingToDeclaration//121649622">
   <div class="breadcrumbs"><a href="../index.html">client</a><span class="delimiter">/</span><span class="current">eu.vendeli.rethis.command.sortedset</span></div>
   <div class="cover ">
@@ -101,13 +101,13 @@
     <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="FUNCTION,EXTENSION_FUNCTION">Functions</button></div>
     <div class="tabs-section-body">
       <div data-togglable="EXTENSION_FUNCTION">
-        <h2 class="">Functions</h2>
-        <div class="table"><a data-name="-433353485%2FFunctions%2F121649622" anchor-label="bzMPop" id="-433353485%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+        <h2 class="tableheader">Functions</h2>
+        <div class="table"><a data-name="276968067%2FFunctions%2F121649622" anchor-label="bzMPop" id="276968067%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="bz-m-pop.html"><span>bz</span><wbr><span><span>MPop</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-433353485%2FFunctions%2F121649622"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="276968067%2FFunctions%2F121649622"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
@@ -117,12 +117,12 @@
               </div>
             </div>
           </div>
-<a data-name="553203740%2FFunctions%2F121649622" anchor-label="bzPopMax" id="553203740%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+<a data-name="-274068724%2FFunctions%2F121649622" anchor-label="bzPopMax" id="-274068724%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="bz-pop-max.html"><span>bz</span><wbr><span>Pop</span><wbr><span><span>Max</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="553203740%2FFunctions%2F121649622"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-274068724%2FFunctions%2F121649622"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
@@ -132,12 +132,12 @@
               </div>
             </div>
           </div>
-<a data-name="1552178058%2FFunctions%2F121649622" anchor-label="bzPopMin" id="1552178058%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+<a data-name="-1348229382%2FFunctions%2F121649622" anchor-label="bzPopMin" id="-1348229382%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="bz-pop-min.html"><span>bz</span><wbr><span>Pop</span><wbr><span><span>Min</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1552178058%2FFunctions%2F121649622"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1348229382%2FFunctions%2F121649622"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
@@ -147,12 +147,12 @@
               </div>
             </div>
           </div>
-<a data-name="432693380%2FFunctions%2F121649622" anchor-label="zAdd" id="432693380%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+<a data-name="2086002950%2FFunctions%2F121649622" anchor-label="zAdd" id="2086002950%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="z-add.html"><span>z</span><wbr><span><span>Add</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="432693380%2FFunctions%2F121649622"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2086002950%2FFunctions%2F121649622"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
@@ -162,12 +162,12 @@
               </div>
             </div>
           </div>
-<a data-name="76551676%2FFunctions%2F121649622" anchor-label="zAddExtended" id="76551676%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+<a data-name="-105504194%2FFunctions%2F121649622" anchor-label="zAddExtended" id="-105504194%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="z-add-extended.html"><span>z</span><wbr><span>Add</span><wbr><span><span>Extended</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="76551676%2FFunctions%2F121649622"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-105504194%2FFunctions%2F121649622"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
@@ -178,7 +178,7 @@
             </div>
           </div>
 <a data-name="1013378078%2FFunctions%2F121649622" anchor-label="zCard" id="1013378078%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="z-card.html"><span>z</span><wbr><span><span>Card</span></span></a></div>
@@ -193,7 +193,7 @@
             </div>
           </div>
 <a data-name="709136539%2FFunctions%2F121649622" anchor-label="zCount" id="709136539%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="z-count.html"><span>z</span><wbr><span><span>Count</span></span></a></div>
@@ -207,12 +207,12 @@
               </div>
             </div>
           </div>
-<a data-name="788513026%2FFunctions%2F121649622" anchor-label="zDiff" id="788513026%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+<a data-name="505084978%2FFunctions%2F121649622" anchor-label="zDiff" id="505084978%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="z-diff.html"><span>z</span><wbr><span><span>Diff</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="788513026%2FFunctions%2F121649622"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="505084978%2FFunctions%2F121649622"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
@@ -222,12 +222,12 @@
               </div>
             </div>
           </div>
-<a data-name="-1459243821%2FFunctions%2F121649622" anchor-label="zDiffStore" id="-1459243821%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+<a data-name="1469383683%2FFunctions%2F121649622" anchor-label="zDiffStore" id="1469383683%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="z-diff-store.html"><span>z</span><wbr><span>Diff</span><wbr><span><span>Store</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1459243821%2FFunctions%2F121649622"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1469383683%2FFunctions%2F121649622"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
@@ -238,7 +238,7 @@
             </div>
           </div>
 <a data-name="728649112%2FFunctions%2F121649622" anchor-label="zIncrBy" id="728649112%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="z-incr-by.html"><span>z</span><wbr><span>Incr</span><wbr><span><span>By</span></span></a></div>
@@ -252,12 +252,12 @@
               </div>
             </div>
           </div>
-<a data-name="-1606421878%2FFunctions%2F121649622" anchor-label="zInter" id="-1606421878%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+<a data-name="-818614758%2FFunctions%2F121649622" anchor-label="zInter" id="-818614758%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="z-inter.html"><span>z</span><wbr><span><span>Inter</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1606421878%2FFunctions%2F121649622"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-818614758%2FFunctions%2F121649622"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
@@ -267,12 +267,12 @@
               </div>
             </div>
           </div>
-<a data-name="-1873469397%2FFunctions%2F121649622" anchor-label="zInterCard" id="-1873469397%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+<a data-name="137709499%2FFunctions%2F121649622" anchor-label="zInterCard" id="137709499%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="z-inter-card.html"><span>z</span><wbr><span>Inter</span><wbr><span><span>Card</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1873469397%2FFunctions%2F121649622"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="137709499%2FFunctions%2F121649622"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
@@ -282,12 +282,12 @@
               </div>
             </div>
           </div>
-<a data-name="1301714737%2FFunctions%2F121649622" anchor-label="zInterStore" id="1301714737%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+<a data-name="1372910913%2FFunctions%2F121649622" anchor-label="zInterStore" id="1372910913%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="z-inter-store.html"><span>z</span><wbr><span>Inter</span><wbr><span><span>Store</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1301714737%2FFunctions%2F121649622"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1372910913%2FFunctions%2F121649622"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
@@ -298,7 +298,7 @@
             </div>
           </div>
 <a data-name="150316104%2FFunctions%2F121649622" anchor-label="zLexCount" id="150316104%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="z-lex-count.html"><span>z</span><wbr><span>Lex</span><wbr><span><span>Count</span></span></a></div>
@@ -312,12 +312,12 @@
               </div>
             </div>
           </div>
-<a data-name="1598277246%2FFunctions%2F121649622" anchor-label="zMPop" id="1598277246%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+<a data-name="-156292274%2FFunctions%2F121649622" anchor-label="zMPop" id="-156292274%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="z-m-pop.html"><span>z</span><wbr><span><span>MPop</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1598277246%2FFunctions%2F121649622"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-156292274%2FFunctions%2F121649622"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
@@ -327,12 +327,12 @@
               </div>
             </div>
           </div>
-<a data-name="-1188008280%2FFunctions%2F121649622" anchor-label="zMScore" id="-1188008280%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+<a data-name="1075734168%2FFunctions%2F121649622" anchor-label="zMScore" id="1075734168%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="z-m-score.html"><span>z</span><wbr><span><span>MScore</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1188008280%2FFunctions%2F121649622"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1075734168%2FFunctions%2F121649622"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
@@ -343,7 +343,7 @@
             </div>
           </div>
 <a data-name="892309192%2FFunctions%2F121649622" anchor-label="zPopMax" id="892309192%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="z-pop-max.html"><span>z</span><wbr><span>Pop</span><wbr><span><span>Max</span></span></a></div>
@@ -358,7 +358,7 @@
             </div>
           </div>
 <a data-name="-1497645798%2FFunctions%2F121649622" anchor-label="zPopMin" id="-1497645798%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="z-pop-min.html"><span>z</span><wbr><span>Pop</span><wbr><span><span>Min</span></span></a></div>
@@ -373,7 +373,7 @@
             </div>
           </div>
 <a data-name="-273094803%2FFunctions%2F121649622" anchor-label="zRandMember" id="-273094803%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="z-rand-member.html"><span>z</span><wbr><span>Rand</span><wbr><span><span>Member</span></span></a></div>
@@ -388,7 +388,7 @@
             </div>
           </div>
 <a data-name="-1962466645%2FFunctions%2F121649622" anchor-label="zRandMemberCount" id="-1962466645%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="z-rand-member-count.html"><span>z</span><wbr><span>Rand</span><wbr><span>Member</span><wbr><span><span>Count</span></span></a></div>
@@ -403,7 +403,7 @@
             </div>
           </div>
 <a data-name="2021695278%2FFunctions%2F121649622" anchor-label="zRange" id="2021695278%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="z-range.html"><span>z</span><wbr><span><span>Range</span></span></a></div>
@@ -418,7 +418,7 @@
             </div>
           </div>
 <a data-name="27473199%2FFunctions%2F121649622" anchor-label="zRangeStore" id="27473199%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="z-range-store.html"><span>z</span><wbr><span>Range</span><wbr><span><span>Store</span></span></a></div>
@@ -433,7 +433,7 @@
             </div>
           </div>
 <a data-name="-1823938657%2FFunctions%2F121649622" anchor-label="zRank" id="-1823938657%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="z-rank.html"><span>z</span><wbr><span><span>Rank</span></span></a></div>
@@ -448,7 +448,7 @@
             </div>
           </div>
 <a data-name="923238181%2FFunctions%2F121649622" anchor-label="zRankWithScores" id="923238181%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="z-rank-with-scores.html"><span>z</span><wbr><span>Rank</span><wbr><span>With</span><wbr><span><span>Scores</span></span></a></div>
@@ -462,12 +462,12 @@
               </div>
             </div>
           </div>
-<a data-name="-1678129263%2FFunctions%2F121649622" anchor-label="zRem" id="-1678129263%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+<a data-name="1790548801%2FFunctions%2F121649622" anchor-label="zRem" id="1790548801%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="z-rem.html"><span>z</span><wbr><span><span>Rem</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1678129263%2FFunctions%2F121649622"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1790548801%2FFunctions%2F121649622"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
@@ -478,7 +478,7 @@
             </div>
           </div>
 <a data-name="-492785455%2FFunctions%2F121649622" anchor-label="zRemRangeByLex" id="-492785455%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="z-rem-range-by-lex.html"><span>z</span><wbr><span>Rem</span><wbr><span>Range</span><wbr><span>By</span><wbr><span><span>Lex</span></span></a></div>
@@ -493,7 +493,7 @@
             </div>
           </div>
 <a data-name="561465992%2FFunctions%2F121649622" anchor-label="zRemRangeByRank" id="561465992%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="z-rem-range-by-rank.html"><span>z</span><wbr><span>Rem</span><wbr><span>Range</span><wbr><span>By</span><wbr><span><span>Rank</span></span></a></div>
@@ -508,7 +508,7 @@
             </div>
           </div>
 <a data-name="-503788540%2FFunctions%2F121649622" anchor-label="zRemRangeByScore" id="-503788540%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="z-rem-range-by-score.html"><span>z</span><wbr><span>Rem</span><wbr><span>Range</span><wbr><span>By</span><wbr><span><span>Score</span></span></a></div>
@@ -523,7 +523,7 @@
             </div>
           </div>
 <a data-name="-406313578%2FFunctions%2F121649622" anchor-label="zRevRank" id="-406313578%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="z-rev-rank.html"><span>z</span><wbr><span>Rev</span><wbr><span><span>Rank</span></span></a></div>
@@ -538,7 +538,7 @@
             </div>
           </div>
 <a data-name="996756948%2FFunctions%2F121649622" anchor-label="zRevRankWithScore" id="996756948%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="z-rev-rank-with-score.html"><span>z</span><wbr><span>Rev</span><wbr><span>Rank</span><wbr><span>With</span><wbr><span><span>Score</span></span></a></div>
@@ -553,7 +553,7 @@
             </div>
           </div>
 <a data-name="642585872%2FFunctions%2F121649622" anchor-label="zScan" id="642585872%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="z-scan.html"><span>z</span><wbr><span><span>Scan</span></span></a></div>
@@ -568,7 +568,7 @@
             </div>
           </div>
 <a data-name="-838818119%2FFunctions%2F121649622" anchor-label="zScore" id="-838818119%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="z-score.html"><span>z</span><wbr><span><span>Score</span></span></a></div>
@@ -582,12 +582,12 @@
               </div>
             </div>
           </div>
-<a data-name="-911916041%2FFunctions%2F121649622" anchor-label="zUnion" id="-911916041%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+<a data-name="-126381497%2FFunctions%2F121649622" anchor-label="zUnion" id="-126381497%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="z-union.html"><span>z</span><wbr><span><span>Union</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-911916041%2FFunctions%2F121649622"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-126381497%2FFunctions%2F121649622"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
@@ -597,12 +597,12 @@
               </div>
             </div>
           </div>
-<a data-name="-1827327324%2FFunctions%2F121649622" anchor-label="zUnionStore" id="-1827327324%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+<a data-name="-738966028%2FFunctions%2F121649622" anchor-label="zUnionStore" id="-738966028%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="z-union-store.html"><span>z</span><wbr><span>Union</span><wbr><span><span>Store</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1827327324%2FFunctions%2F121649622"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-738966028%2FFunctions%2F121649622"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
@@ -618,17 +618,21 @@
   </div>
 </div>
     <div class="footer">
-        <a href="#content" id="go-to-top-link" class="footer--button footer--button_go-to-top"></a>
-        <span>© 2025 Vendelieu</span>
-        <span class="pull-right">
-            <span>Generated by </span>
-            <a class="footer--link footer--link_external" href="https://github.com/Kotlin/dokka">
-                <span>dokka</span>
-            </a>
-        </span>
-    </div>
+        <div class="footer--container">
+            <a href="#content" id="go-to-top-link" class="footer--button footer--button_go-to-top"></a>
+            <div class="footer--content">
+                <div>
+                    <span>Generated by </span>
+                    <a class="footer--link footer--link_external" href="https://github.com/Kotlin/dokka">
+                        Dokka
+                    </a>
+                    <div>© 2025 Vendelieu</div>
+                </div>
             </div>
         </div>
     </div>
+        </div>
+    </div>
+</div>
 </body>
 </html>

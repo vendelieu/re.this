@@ -1,22 +1,22 @@
 <!doctype html>
-<html class="no-js">
+<html class="no-js" lang="en">
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
     <title>eu.vendeli.rethis.codecs.server</title>
-<link href="../../images/logo-icon.svg" rel="icon" type="image/svg">    <script>var pathToRoot = "../../";</script>
-    <script>document.documentElement.classList.replace("no-js","js");</script>
+<link href="../../images/logo-icon.svg" rel="icon" type="image/svg"><script>var pathToRoot = "../../";</script>
+    <script>document.documentElement.classList.replace("no-js", "js");</script>
     <script>const storage = localStorage.getItem("dokka-dark-mode")
-    if (storage == null) {
+      if (storage == null) {
         const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
         if (osDarkSchemePreferred === true) {
-            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
         }
-    } else {
+      } else {
         const savedDarkMode = JSON.parse(storage)
-        if(savedDarkMode === true) {
-            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        if (savedDarkMode === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
         }
-    }
+      }
     </script>
 <script type="text/javascript" src="https://unpkg.com/kotlin-playground@1/dist/playground.min.js" async></script>
 <script type="text/javascript" src="../../scripts/sourceset_dependencies.js" async></script>
@@ -24,34 +24,32 @@
 <link href="../../styles/main.css" rel="Stylesheet">
 <link href="../../styles/prism.css" rel="Stylesheet">
 <link href="../../styles/logo-styles.css" rel="Stylesheet">
-<link href="../../styles/font-jb-sans-auto.css" rel="Stylesheet">
 <link href="../../ui-kit/ui-kit.min.css" rel="Stylesheet">
-<script type="text/javascript" src="../../scripts/clipboard.js" async></script>
+<script type="text/javascript" src="../../scripts/safe-local-storage_blocking.js"></script>
 <script type="text/javascript" src="../../scripts/navigation-loader.js" async></script>
 <script type="text/javascript" src="../../scripts/platform-content-handler.js" async></script>
 <script type="text/javascript" src="../../scripts/main.js" defer></script>
 <script type="text/javascript" src="../../scripts/prism.js" async></script>
 <script type="text/javascript" src="../../ui-kit/ui-kit.min.js" defer></script>
-<script type="text/javascript" src="../../scripts/symbol-parameters-wrapper_deferred.js" defer></script>
 <link href="../../images/logo-icon.svg"></head>
 <body>
-    <div class="root">
-    <nav class="navigation theme-dark" id="navigation-wrapper">
-<a class="library-name--link" href="../../index.html">
+<div class="root">
+    <header class="navigation theme-dark" id="navigation-wrapper" role="banner">
+<a class="library-name--link" href="../../index.html" tabindex="1">
                     re.this
             </a>        <button class="navigation-controls--btn navigation-controls--btn_toc ui-kit_mobile-only" id="toc-toggle" type="button">Toggle table of contents
         </button>
         <div class="navigation-controls--break ui-kit_mobile-only"></div>
-        <div class="library-version" id="library-version">0.3.6
+        <div class="library-version" id="library-version">0.3.7
         </div>
         <div class="navigation-controls">
-        <div class="filter-section filter-section_loading" id="filter-section">
-                <button class="platform-tag platform-selector common-like" data-active="" data-filter=":client/commonMain">common</button>
+        <ul class="filter-section filter-section_loading" id="filter-section" aria-label="Target filter">
+                <button class="platform-tag platform-selector common-like" data-active="" aria-pressed="true" data-filter=":client/commonMain">common</button>
             <div class="dropdown filter-section--dropdown" data-role="dropdown" id="filter-section-dropdown">
                 <button class="button button_dropdown filter-section--dropdown-toggle" role="combobox" data-role="dropdown-toggle" aria-controls="platform-tags-listbox" aria-haspopup="listbox" aria-expanded="false" aria-label="Toggle source sets"></button>
-                <ul role="listbox" id="platform-tags-listbox" class="dropdown--list" data-role="dropdown-listbox">
-                    <div class="dropdown--header"><span>Platform filter</span>
-                        <button class="button" data-role="dropdown-toggle" aria-label="Close platform filter">
+                <ul role="listbox" id="platform-tags-listbox" class="dropdown--list" data-role="dropdown-listbox" aria-label="Target filter">
+                    <div class="dropdown--header"><span>Target filter</span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close target filter">
                             <i class="ui-kit-icon ui-kit-icon_cross"></i>
                         </button>
                     </div>
@@ -65,7 +63,7 @@
                 </ul>
                 <div class="dropdown--overlay"></div>
             </div>
-        </div>
+        </ul>
                 <a class="navigation-controls--btn navigation-controls--btn_homepage" id="homepage-link" href="https://github.com/vendelieu/re.this"></a>
             <button class="navigation-controls--btn navigation-controls--btn_theme" id="theme-toggle-button" type="button">Switch theme
             </button>
@@ -73,25 +71,27 @@
                 API
             </div>
         </div>
-    </nav>
-        <div id="container">
-            <div class="sidebar" id="leftColumn">
-                <div class="dropdown theme-dark_mobile" data-role="dropdown" id="toc-dropdown">
-                    <ul role="listbox" id="toc-listbox" class="dropdown--list dropdown--list_toc-list" data-role="dropdown-listbox">
-                        <div class="dropdown--header">
+    </header>
+    <div id="container">
+        <nav id="leftColumn" class="sidebar" data-item-type="SECTION" data-item-config="{&quot;defaultSize&quot;: 280, &quot;minSize&quot;: 200, &quot;maxSize&quot;: 400}">
+            <a class="toc--skip-link" href="#main">Skip to content</a>
+            <div class="dropdown theme-dark_mobile" data-role="dropdown" id="toc-dropdown">
+                <ul role="listbox" id="toc-listbox" class="dropdown--list dropdown--list_toc-list" data-role="dropdown-listbox" aria-label="Table of contents">
+                    <div class="dropdown--header">
                             <span>
                                     re.this
                             </span>
-                            <button class="button" data-role="dropdown-toggle" aria-label="Close table of contents">
-                                <i class="ui-kit-icon ui-kit-icon_cross"></i>
-                            </button>
-                        </div>
-                        <div class="sidebar--inner" id="sideMenu"></div>
-                    </ul>
-                    <div class="dropdown--overlay"></div>
-                </div>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close table of contents">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                    <div class="sidebar--inner" id="sideMenu"></div>
+                </ul>
+                <div class="dropdown--overlay"></div>
             </div>
-            <div id="main">
+        </nav>
+        <div id="resizer" class="resizer" data-item-type="BAR"></div>
+        <div id="main" data-item-type="SECTION" role="main">
 <div class="main-content" data-page-type="package" id="content" pageids="client::eu.vendeli.rethis.codecs.server////PointingToDeclaration//121649622">
   <div class="breadcrumbs"><a href="../index.html">client</a><span class="delimiter">/</span><span class="current">eu.vendeli.rethis.codecs.server</span></div>
   <div class="cover ">
@@ -101,9 +101,9 @@
     <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="TYPE">Types</button></div>
     <div class="tabs-section-body">
       <div data-togglable="TYPE">
-        <h2 class="">Types</h2>
+        <h2 class="tableheader">Types</h2>
         <div class="table"><a data-name="-154300399%2FClasslikes%2F121649622" anchor-label="AclCatCommandCodec" id="-154300399%2FClasslikes%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-acl-cat-command-codec/index.html"><span>Acl</span><wbr><span>Cat</span><wbr><span>Command</span><wbr><span><span>Codec</span></span></a></div>
@@ -118,7 +118,7 @@
             </div>
           </div>
 <a data-name="1481196785%2FClasslikes%2F121649622" anchor-label="AclDelUserCommandCodec" id="1481196785%2FClasslikes%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-acl-del-user-command-codec/index.html"><span>Acl</span><wbr><span>Del</span><wbr><span>User</span><wbr><span>Command</span><wbr><span><span>Codec</span></span></a></div>
@@ -133,7 +133,7 @@
             </div>
           </div>
 <a data-name="-479101147%2FClasslikes%2F121649622" anchor-label="AclDryRunCommandCodec" id="-479101147%2FClasslikes%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-acl-dry-run-command-codec/index.html"><span>Acl</span><wbr><span>Dry</span><wbr><span>Run</span><wbr><span>Command</span><wbr><span><span>Codec</span></span></a></div>
@@ -148,7 +148,7 @@
             </div>
           </div>
 <a data-name="805127878%2FClasslikes%2F121649622" anchor-label="AclGenPassCommandCodec" id="805127878%2FClasslikes%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-acl-gen-pass-command-codec/index.html"><span>Acl</span><wbr><span>Gen</span><wbr><span>Pass</span><wbr><span>Command</span><wbr><span><span>Codec</span></span></a></div>
@@ -163,7 +163,7 @@
             </div>
           </div>
 <a data-name="-600299002%2FClasslikes%2F121649622" anchor-label="AclGetUserCommandCodec" id="-600299002%2FClasslikes%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-acl-get-user-command-codec/index.html"><span>Acl</span><wbr><span>Get</span><wbr><span>User</span><wbr><span>Command</span><wbr><span><span>Codec</span></span></a></div>
@@ -178,7 +178,7 @@
             </div>
           </div>
 <a data-name="1920926183%2FClasslikes%2F121649622" anchor-label="AclListCommandCodec" id="1920926183%2FClasslikes%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-acl-list-command-codec/index.html"><span>Acl</span><wbr><span>List</span><wbr><span>Command</span><wbr><span><span>Codec</span></span></a></div>
@@ -193,7 +193,7 @@
             </div>
           </div>
 <a data-name="1173846687%2FClasslikes%2F121649622" anchor-label="AclLoadCommandCodec" id="1173846687%2FClasslikes%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-acl-load-command-codec/index.html"><span>Acl</span><wbr><span>Load</span><wbr><span>Command</span><wbr><span><span>Codec</span></span></a></div>
@@ -208,7 +208,7 @@
             </div>
           </div>
 <a data-name="330733923%2FClasslikes%2F121649622" anchor-label="AclLogCommandCodec" id="330733923%2FClasslikes%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-acl-log-command-codec/index.html"><span>Acl</span><wbr><span>Log</span><wbr><span>Command</span><wbr><span><span>Codec</span></span></a></div>
@@ -223,7 +223,7 @@
             </div>
           </div>
 <a data-name="958161000%2FClasslikes%2F121649622" anchor-label="AclSaveCommandCodec" id="958161000%2FClasslikes%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-acl-save-command-codec/index.html"><span>Acl</span><wbr><span>Save</span><wbr><span>Command</span><wbr><span><span>Codec</span></span></a></div>
@@ -238,7 +238,7 @@
             </div>
           </div>
 <a data-name="-11724166%2FClasslikes%2F121649622" anchor-label="AclSetUserCommandCodec" id="-11724166%2FClasslikes%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-acl-set-user-command-codec/index.html"><span>Acl</span><wbr><span>Set</span><wbr><span>User</span><wbr><span>Command</span><wbr><span><span>Codec</span></span></a></div>
@@ -253,7 +253,7 @@
             </div>
           </div>
 <a data-name="-1790669601%2FClasslikes%2F121649622" anchor-label="AclUsersCommandCodec" id="-1790669601%2FClasslikes%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-acl-users-command-codec/index.html"><span>Acl</span><wbr><span>Users</span><wbr><span>Command</span><wbr><span><span>Codec</span></span></a></div>
@@ -268,7 +268,7 @@
             </div>
           </div>
 <a data-name="-48129434%2FClasslikes%2F121649622" anchor-label="AclWhoAmICommandCodec" id="-48129434%2FClasslikes%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-acl-who-am-i-command-codec/index.html"><span>Acl</span><wbr><span>Who</span><wbr><span>Am</span><wbr><span>ICommand</span><wbr><span><span>Codec</span></span></a></div>
@@ -283,7 +283,7 @@
             </div>
           </div>
 <a data-name="-2111409684%2FClasslikes%2F121649622" anchor-label="BgRewriteAofCommandCodec" id="-2111409684%2FClasslikes%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-bg-rewrite-aof-command-codec/index.html"><span>Bg</span><wbr><span>Rewrite</span><wbr><span>Aof</span><wbr><span>Command</span><wbr><span><span>Codec</span></span></a></div>
@@ -298,7 +298,7 @@
             </div>
           </div>
 <a data-name="1019147611%2FClasslikes%2F121649622" anchor-label="BgSaveCommandCodec" id="1019147611%2FClasslikes%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-bg-save-command-codec/index.html"><span>Bg</span><wbr><span>Save</span><wbr><span>Command</span><wbr><span><span>Codec</span></span></a></div>
@@ -313,7 +313,7 @@
             </div>
           </div>
 <a data-name="-11201479%2FClasslikes%2F121649622" anchor-label="CommandCountCommandCodec" id="-11201479%2FClasslikes%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-command-count-command-codec/index.html"><span>Command</span><wbr><span>Count</span><wbr><span>Command</span><wbr><span><span>Codec</span></span></a></div>
@@ -328,7 +328,7 @@
             </div>
           </div>
 <a data-name="1821464649%2FClasslikes%2F121649622" anchor-label="CommandDocsCommandCodec" id="1821464649%2FClasslikes%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-command-docs-command-codec/index.html"><span>Command</span><wbr><span>Docs</span><wbr><span>Command</span><wbr><span><span>Codec</span></span></a></div>
@@ -343,7 +343,7 @@
             </div>
           </div>
 <a data-name="-472203730%2FClasslikes%2F121649622" anchor-label="CommandGetKeysAndFlagsCommandCodec" id="-472203730%2FClasslikes%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-command-get-keys-and-flags-command-codec/index.html"><span>Command</span><wbr><span>Get</span><wbr><span>Keys</span><wbr><span>And</span><wbr><span>Flags</span><wbr><span>Command</span><wbr><span><span>Codec</span></span></a></div>
@@ -358,7 +358,7 @@
             </div>
           </div>
 <a data-name="-2038832322%2FClasslikes%2F121649622" anchor-label="CommandGetKeysCommandCodec" id="-2038832322%2FClasslikes%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-command-get-keys-command-codec/index.html"><span>Command</span><wbr><span>Get</span><wbr><span>Keys</span><wbr><span>Command</span><wbr><span><span>Codec</span></span></a></div>
@@ -373,7 +373,7 @@
             </div>
           </div>
 <a data-name="437269701%2FClasslikes%2F121649622" anchor-label="ConfigRewriteCommandCodec" id="437269701%2FClasslikes%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-config-rewrite-command-codec/index.html"><span>Config</span><wbr><span>Rewrite</span><wbr><span>Command</span><wbr><span><span>Codec</span></span></a></div>
@@ -388,7 +388,7 @@
             </div>
           </div>
 <a data-name="251668491%2FClasslikes%2F121649622" anchor-label="FailoverCommandCodec" id="251668491%2FClasslikes%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-failover-command-codec/index.html"><span>Failover</span><wbr><span>Command</span><wbr><span><span>Codec</span></span></a></div>
@@ -403,7 +403,7 @@
             </div>
           </div>
 <a data-name="-1216258080%2FClasslikes%2F121649622" anchor-label="FlushAllCommandCodec" id="-1216258080%2FClasslikes%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-flush-all-command-codec/index.html"><span>Flush</span><wbr><span>All</span><wbr><span>Command</span><wbr><span><span>Codec</span></span></a></div>
@@ -418,7 +418,7 @@
             </div>
           </div>
 <a data-name="-381351987%2FClasslikes%2F121649622" anchor-label="FlushDbCommandCodec" id="-381351987%2FClasslikes%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-flush-db-command-codec/index.html"><span>Flush</span><wbr><span>Db</span><wbr><span>Command</span><wbr><span><span>Codec</span></span></a></div>
@@ -433,7 +433,7 @@
             </div>
           </div>
 <a data-name="-1084115862%2FClasslikes%2F121649622" anchor-label="LastSaveCommandCodec" id="-1084115862%2FClasslikes%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-last-save-command-codec/index.html"><span>Last</span><wbr><span>Save</span><wbr><span>Command</span><wbr><span><span>Codec</span></span></a></div>
@@ -448,7 +448,7 @@
             </div>
           </div>
 <a data-name="672665810%2FClasslikes%2F121649622" anchor-label="LatencyDoctorCommandCodec" id="672665810%2FClasslikes%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-latency-doctor-command-codec/index.html"><span>Latency</span><wbr><span>Doctor</span><wbr><span>Command</span><wbr><span><span>Codec</span></span></a></div>
@@ -463,7 +463,7 @@
             </div>
           </div>
 <a data-name="2085735757%2FClasslikes%2F121649622" anchor-label="LatencyGraphCommandCodec" id="2085735757%2FClasslikes%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-latency-graph-command-codec/index.html"><span>Latency</span><wbr><span>Graph</span><wbr><span>Command</span><wbr><span><span>Codec</span></span></a></div>
@@ -478,7 +478,7 @@
             </div>
           </div>
 <a data-name="111837303%2FClasslikes%2F121649622" anchor-label="LatencyHistogramCommandCodec" id="111837303%2FClasslikes%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-latency-histogram-command-codec/index.html"><span>Latency</span><wbr><span>Histogram</span><wbr><span>Command</span><wbr><span><span>Codec</span></span></a></div>
@@ -493,7 +493,7 @@
             </div>
           </div>
 <a data-name="-1844579193%2FClasslikes%2F121649622" anchor-label="LatencyHistoryCommandCodec" id="-1844579193%2FClasslikes%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-latency-history-command-codec/index.html"><span>Latency</span><wbr><span>History</span><wbr><span>Command</span><wbr><span><span>Codec</span></span></a></div>
@@ -508,7 +508,7 @@
             </div>
           </div>
 <a data-name="220558186%2FClasslikes%2F121649622" anchor-label="LatencyLatestCommandCodec" id="220558186%2FClasslikes%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-latency-latest-command-codec/index.html"><span>Latency</span><wbr><span>Latest</span><wbr><span>Command</span><wbr><span><span>Codec</span></span></a></div>
@@ -523,7 +523,7 @@
             </div>
           </div>
 <a data-name="-1233613332%2FClasslikes%2F121649622" anchor-label="LatencyResetCommandCodec" id="-1233613332%2FClasslikes%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-latency-reset-command-codec/index.html"><span>Latency</span><wbr><span>Reset</span><wbr><span>Command</span><wbr><span><span>Codec</span></span></a></div>
@@ -538,7 +538,7 @@
             </div>
           </div>
 <a data-name="-2055052099%2FClasslikes%2F121649622" anchor-label="MemoryDoctorCommandCodec" id="-2055052099%2FClasslikes%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-memory-doctor-command-codec/index.html"><span>Memory</span><wbr><span>Doctor</span><wbr><span>Command</span><wbr><span><span>Codec</span></span></a></div>
@@ -553,7 +553,7 @@
             </div>
           </div>
 <a data-name="2083220697%2FClasslikes%2F121649622" anchor-label="MemoryMallocStatsCommandCodec" id="2083220697%2FClasslikes%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-memory-malloc-stats-command-codec/index.html"><span>Memory</span><wbr><span>Malloc</span><wbr><span>Stats</span><wbr><span>Command</span><wbr><span><span>Codec</span></span></a></div>
@@ -568,7 +568,7 @@
             </div>
           </div>
 <a data-name="1175692997%2FClasslikes%2F121649622" anchor-label="MemoryPurgeCommandCodec" id="1175692997%2FClasslikes%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-memory-purge-command-codec/index.html"><span>Memory</span><wbr><span>Purge</span><wbr><span>Command</span><wbr><span><span>Codec</span></span></a></div>
@@ -583,7 +583,7 @@
             </div>
           </div>
 <a data-name="-1908982959%2FClasslikes%2F121649622" anchor-label="MemoryStatsCommandCodec" id="-1908982959%2FClasslikes%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-memory-stats-command-codec/index.html"><span>Memory</span><wbr><span>Stats</span><wbr><span>Command</span><wbr><span><span>Codec</span></span></a></div>
@@ -598,7 +598,7 @@
             </div>
           </div>
 <a data-name="-1999610993%2FClasslikes%2F121649622" anchor-label="MemoryUsageCommandCodec" id="-1999610993%2FClasslikes%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-memory-usage-command-codec/index.html"><span>Memory</span><wbr><span>Usage</span><wbr><span>Command</span><wbr><span><span>Codec</span></span></a></div>
@@ -613,7 +613,7 @@
             </div>
           </div>
 <a data-name="2126721299%2FClasslikes%2F121649622" anchor-label="ModuleListCommandCodec" id="2126721299%2FClasslikes%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-module-list-command-codec/index.html"><span>Module</span><wbr><span>List</span><wbr><span>Command</span><wbr><span><span>Codec</span></span></a></div>
@@ -628,7 +628,7 @@
             </div>
           </div>
 <a data-name="1379641803%2FClasslikes%2F121649622" anchor-label="ModuleLoadCommandCodec" id="1379641803%2FClasslikes%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-module-load-command-codec/index.html"><span>Module</span><wbr><span>Load</span><wbr><span>Command</span><wbr><span><span>Codec</span></span></a></div>
@@ -643,7 +643,7 @@
             </div>
           </div>
 <a data-name="291836824%2FClasslikes%2F121649622" anchor-label="ModuleLoadExCommandCodec" id="291836824%2FClasslikes%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-module-load-ex-command-codec/index.html"><span>Module</span><wbr><span>Load</span><wbr><span>Ex</span><wbr><span>Command</span><wbr><span><span>Codec</span></span></a></div>
@@ -658,7 +658,7 @@
             </div>
           </div>
 <a data-name="1142867090%2FClasslikes%2F121649622" anchor-label="ModuleUnloadCommandCodec" id="1142867090%2FClasslikes%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-module-unload-command-codec/index.html"><span>Module</span><wbr><span>Unload</span><wbr><span>Command</span><wbr><span><span>Codec</span></span></a></div>
@@ -673,7 +673,7 @@
             </div>
           </div>
 <a data-name="691318805%2FClasslikes%2F121649622" anchor-label="MonitorCommandCodec" id="691318805%2FClasslikes%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-monitor-command-codec/index.html"><span>Monitor</span><wbr><span>Command</span><wbr><span><span>Codec</span></span></a></div>
@@ -688,7 +688,7 @@
             </div>
           </div>
 <a data-name="692278176%2FClasslikes%2F121649622" anchor-label="ReplicaOfCommandCodec" id="692278176%2FClasslikes%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-replica-of-command-codec/index.html"><span>Replica</span><wbr><span>Of</span><wbr><span>Command</span><wbr><span><span>Codec</span></span></a></div>
@@ -703,7 +703,7 @@
             </div>
           </div>
 <a data-name="-973102457%2FClasslikes%2F121649622" anchor-label="RoleCommandCodec" id="-973102457%2FClasslikes%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-role-command-codec/index.html"><span>Role</span><wbr><span>Command</span><wbr><span><span>Codec</span></span></a></div>
@@ -718,7 +718,7 @@
             </div>
           </div>
 <a data-name="1762019808%2FClasslikes%2F121649622" anchor-label="SaveCommandCodec" id="1762019808%2FClasslikes%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-save-command-codec/index.html"><span>Save</span><wbr><span>Command</span><wbr><span><span>Codec</span></span></a></div>
@@ -733,7 +733,7 @@
             </div>
           </div>
 <a data-name="1743734055%2FClasslikes%2F121649622" anchor-label="ShutdownCommandCodec" id="1743734055%2FClasslikes%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-shutdown-command-codec/index.html"><span>Shutdown</span><wbr><span>Command</span><wbr><span><span>Codec</span></span></a></div>
@@ -748,7 +748,7 @@
             </div>
           </div>
 <a data-name="614325514%2FClasslikes%2F121649622" anchor-label="SlowLogGetCommandCodec" id="614325514%2FClasslikes%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-slow-log-get-command-codec/index.html"><span>Slow</span><wbr><span>Log</span><wbr><span>Get</span><wbr><span>Command</span><wbr><span><span>Codec</span></span></a></div>
@@ -763,7 +763,7 @@
             </div>
           </div>
 <a data-name="-1874598485%2FClasslikes%2F121649622" anchor-label="SlowLogLenCommandCodec" id="-1874598485%2FClasslikes%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-slow-log-len-command-codec/index.html"><span>Slow</span><wbr><span>Log</span><wbr><span>Len</span><wbr><span>Command</span><wbr><span><span>Codec</span></span></a></div>
@@ -778,7 +778,7 @@
             </div>
           </div>
 <a data-name="1763131441%2FClasslikes%2F121649622" anchor-label="SlowLogResetCommandCodec" id="1763131441%2FClasslikes%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-slow-log-reset-command-codec/index.html"><span>Slow</span><wbr><span>Log</span><wbr><span>Reset</span><wbr><span>Command</span><wbr><span><span>Codec</span></span></a></div>
@@ -793,7 +793,7 @@
             </div>
           </div>
 <a data-name="1371928748%2FClasslikes%2F121649622" anchor-label="SwapDbCommandCodec" id="1371928748%2FClasslikes%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-swap-db-command-codec/index.html"><span>Swap</span><wbr><span>Db</span><wbr><span>Command</span><wbr><span><span>Codec</span></span></a></div>
@@ -808,7 +808,7 @@
             </div>
           </div>
 <a data-name="-1651684720%2FClasslikes%2F121649622" anchor-label="TimeCommandCodec" id="-1651684720%2FClasslikes%2F121649622" data-filterable-set=":client/commonMain"></a>
-          <div class="table-row" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-time-command-codec/index.html"><span>Time</span><wbr><span>Command</span><wbr><span><span>Codec</span></span></a></div>
@@ -828,17 +828,21 @@
   </div>
 </div>
     <div class="footer">
-        <a href="#content" id="go-to-top-link" class="footer--button footer--button_go-to-top"></a>
-        <span>© 2025 Vendelieu</span>
-        <span class="pull-right">
-            <span>Generated by </span>
-            <a class="footer--link footer--link_external" href="https://github.com/Kotlin/dokka">
-                <span>dokka</span>
-            </a>
-        </span>
-    </div>
+        <div class="footer--container">
+            <a href="#content" id="go-to-top-link" class="footer--button footer--button_go-to-top"></a>
+            <div class="footer--content">
+                <div>
+                    <span>Generated by </span>
+                    <a class="footer--link footer--link_external" href="https://github.com/Kotlin/dokka">
+                        Dokka
+                    </a>
+                    <div>© 2025 Vendelieu</div>
+                </div>
             </div>
         </div>
     </div>
+        </div>
+    </div>
+</div>
 </body>
 </html>
