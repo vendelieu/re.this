@@ -1,5 +1,11 @@
 # Re.this Changelog
 
+## 0.3.7
+
+* Fixed freezes on native targets (#93).
+* Improved error handling in RType wrappers.
+* Bumped dependency versions.
+
 ## 0.3.6
 
 * Added experimental distributed lock, try with `client.reDistributedLock`.
