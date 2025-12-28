@@ -1,9 +1,11 @@
 package eu.vendeli.rethis.command.string
 
 import eu.vendeli.rethis.ReThis
+import eu.vendeli.rethis.codecs.string.GetExBSCommandCodec
 import eu.vendeli.rethis.codecs.string.GetExCommandCodec
 import eu.vendeli.rethis.shared.request.string.GetExOption
 import eu.vendeli.rethis.topology.handle
+import kotlinx.io.bytestring.ByteString
 
 public suspend fun ReThis.getEx(key: String, vararg expiration: GetExOption): String? {
     val request = if(cfg.withSlots) {
@@ -12,4 +14,13 @@ public suspend fun ReThis.getEx(key: String, vararg expiration: GetExOption): St
         GetExCommandCodec.encode(charset = cfg.charset, key = key, expiration = expiration)
     }
     return GetExCommandCodec.decode(topology.handle(request), cfg.charset)
+}
+
+public suspend fun ReThis.getExBS(key: String, vararg expiration: GetExOption): ByteString? {
+    val request = if(cfg.withSlots) {
+        GetExBSCommandCodec.encodeWithSlot(charset = cfg.charset, key = key, expiration = expiration)
+    } else {
+        GetExBSCommandCodec.encode(charset = cfg.charset, key = key, expiration = expiration)
+    }
+    return GetExBSCommandCodec.decode(topology.handle(request), cfg.charset)
 }

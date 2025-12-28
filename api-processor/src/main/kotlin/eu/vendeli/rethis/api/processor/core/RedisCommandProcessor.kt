@@ -26,20 +26,30 @@ class RedisCommandProcessor(
 
     @OptIn(KspExperimental::class)
     override fun process(resolver: Resolver): List<KSAnnotated> {
-        val resolvedCommands: Map<RCommandData, KSClassDeclaration> =
+        val resolvedCommands: Map<RCommandData, List<KSClassDeclaration>> =
             resolver.getSymbolsWithAnnotation(RedisCommand::class.qualifiedName!!)
                 .filterIsInstance<KSClassDeclaration>()
-                .associateBy { it.getCommandData() }
+                .groupBy { it.getCommandData() }
+
+        // DEBUG: Log ALL found command specs
+        logger.warn("=== KSP FOUND ${resolvedCommands.size} COMMAND SPECS ===")
+        resolvedCommands.forEach { (cmd, klass) ->
+            logger.warn("  - ${klass.joinToString { it.simpleName.toString() }} -> ${cmd.name}")
+        }
+        logger.warn("=== END OF FOUND SPECS ===")
+
+        if (resolvedCommands.isEmpty()) return emptyList()
 
         context += ResolvedSpecs(resolvedCommands)
         loadGlobalCtx()
 
-        context.resolvedSpecs.spec.forEach {
-            it.loadCommandCtx()
-
-            process(it.key)
-
-            context.clearPerCommand()
+        // Iterate over each command and ALL its specs
+        context.resolvedSpecs.spec.forEach { (commandData, klassList) ->
+            klassList.forEach { klass ->
+                (commandData to klass).loadCommandCtx()
+                process(commandData)
+                context.clearPerCommand()
+            }
         }
 
         context.proceedOnFinish()

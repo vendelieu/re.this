@@ -10,7 +10,7 @@ import eu.vendeli.rethis.shared.utils.EMPTY_BUFFER
 import eu.vendeli.rethis.types.coroutine.CoLocalConn
 import eu.vendeli.rethis.types.coroutine.CoPipelineCtx
 import eu.vendeli.rethis.utils.withRetry
-import io.ktor.util.logging.debug
+import io.ktor.util.logging.*
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.io.Buffer
 

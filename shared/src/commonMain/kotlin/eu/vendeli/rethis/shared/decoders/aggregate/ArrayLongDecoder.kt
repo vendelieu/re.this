@@ -40,8 +40,7 @@ object ArrayLongDecoder : ResponseDecoder<List<Long>> {
         if (size == 0) return emptyList()
 
         return buildList {
-            val code = RespCode.fromCode(input.readByte())
-            when (code) {
+            when (val code = RespCode.fromCode(input.readByte())) {
                 RespCode.NULL -> add(null)
 
                 RespCode.INTEGER -> add(IntegerDecoder.decode(input, charset))

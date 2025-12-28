@@ -10,7 +10,6 @@ import eu.vendeli.rethis.types.common.RConnection
 import eu.vendeli.rethis.types.common.RespVer
 import eu.vendeli.rethis.types.common.rConnection
 import eu.vendeli.rethis.utils.CLIENT_NAME
-import eu.vendeli.rethis.utils.IO_OR_UNCONFINED
 import io.ktor.network.selector.*
 import io.ktor.network.sockets.*
 import io.ktor.network.tls.*
@@ -18,7 +17,6 @@ import io.ktor.util.logging.*
 import io.ktor.utils.io.charsets.*
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.sync.Semaphore
 
@@ -40,7 +38,8 @@ internal class ConnectionFactory(
             logger.debug { "Creating connection attempt failed. Max connections reached." }
             return null
         }
-        val conn = try {
+        
+        return try {
             aSocket(selector)
                 .tcp()
                 .connect(address) {
@@ -57,11 +56,10 @@ internal class ConnectionFactory(
                 }.rConnection().also {
                     prepareConnection(it)
                 }
-        } finally {
-            connections.release()
+        } catch (e: Exception) {
+            connections.release() // Only release on failure
+            throw e
         }
-
-        return conn
     }
 
     suspend fun prepareConnection(conn: RConnection) {

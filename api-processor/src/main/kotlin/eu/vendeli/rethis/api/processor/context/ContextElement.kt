@@ -45,7 +45,7 @@ internal class Logger(val logger: KSPLogger) : ContextElement {
     companion object : ContextKey<Logger>
 }
 
-internal class ResolvedSpecs(val spec: Map<RCommandData, KSClassDeclaration>) : ContextElement {
+internal class ResolvedSpecs(val spec: Map<RCommandData, List<KSClassDeclaration>>) : ContextElement {
     override val key = ResolvedSpecs
 
     companion object : ContextKey<ResolvedSpecs>
@@ -84,11 +84,28 @@ internal class CommandFileSpec(
 ) : ContextElement {
     override val key = CommandFileSpec
 
-    fun getFor(command: String): FileSpec.Builder = commandFile.getOrPut(command) {
+    fun getFor(command: String): FileSpec.Builder {
+        val normalizedKey = command.uppercase().trim()
         val cmdPackagePart = "." + context.currentCommand.klass.packageName.asString().substringAfterLast(".")
-        FileSpec.builder(
-            context.meta.commandPackage + cmdPackagePart, context.currentCommand.command.name.toPascalCase(),
-        ).indent(" ".repeat(4))
+        val fullKey = "$normalizedKey|$cmdPackagePart"
+        
+        return commandFile.getOrPut(fullKey) {
+            val fileName = context.currentCommand.command.name.toPascalCase()
+            val targetFile = File(context.meta.clientDir)
+                .resolve(context.meta.commandPackage.replace('.', '/') + cmdPackagePart.replace('.', '/'))
+                .resolve("$fileName.kt")
+            
+            // If file already exists, we need to be careful not to overwrite it
+            // Log warning so you know this is happening
+            if (targetFile.exists()) {
+                context.logger.warn("Command file already exists: ${targetFile.absolutePath} - will append new function")
+            }
+            
+            FileSpec.builder(
+                context.meta.commandPackage + cmdPackagePart,
+                fileName,
+            ).indent(" ".repeat(4))
+        }
     }
 
     override fun onFinish() {

@@ -1,9 +1,26 @@
 package eu.vendeli.rethis.command.sortedset
 
 import eu.vendeli.rethis.ReThis
+import eu.vendeli.rethis.codecs.sortedset.ZRandMemberBSCommandCodec
 import eu.vendeli.rethis.codecs.sortedset.ZRandMemberCommandCodec
 import eu.vendeli.rethis.codecs.sortedset.ZRandMemberCountCommandCodec
+import eu.vendeli.rethis.codecs.sortedset.ZRandMemberWithScoresCommandCodec
+import eu.vendeli.rethis.shared.types.RType
 import eu.vendeli.rethis.topology.handle
+import kotlinx.io.bytestring.ByteString
+
+public suspend fun ReThis.zRandMemberWithScores(
+    key: String,
+    count: Long,
+    withScores: Boolean? = null,
+): List<RType> {
+    val request = if(cfg.withSlots) {
+        ZRandMemberWithScoresCommandCodec.encodeWithSlot(charset = cfg.charset, key = key, count = count, withScores = withScores)
+    } else {
+        ZRandMemberWithScoresCommandCodec.encode(charset = cfg.charset, key = key, count = count, withScores = withScores)
+    }
+    return ZRandMemberWithScoresCommandCodec.decode(topology.handle(request), cfg.charset)
+}
 
 public suspend fun ReThis.zRandMemberCount(
     key: String,
@@ -25,4 +42,13 @@ public suspend fun ReThis.zRandMember(key: String): String {
         ZRandMemberCommandCodec.encode(charset = cfg.charset, key = key)
     }
     return ZRandMemberCommandCodec.decode(topology.handle(request), cfg.charset)
+}
+
+public suspend fun ReThis.zRandMemberBS(key: String): ByteString {
+    val request = if(cfg.withSlots) {
+        ZRandMemberBSCommandCodec.encodeWithSlot(charset = cfg.charset, key = key)
+    } else {
+        ZRandMemberBSCommandCodec.encode(charset = cfg.charset, key = key)
+    }
+    return ZRandMemberBSCommandCodec.decode(topology.handle(request), cfg.charset)
 }

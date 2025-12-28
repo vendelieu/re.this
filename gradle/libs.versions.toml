@@ -15,7 +15,7 @@ binvalid = "0.18.1"
 kover = "0.9.4"
 
 kotest = "6.0.7"
-logback = "1.5.22"
+logback = "1.5.23"
 rtestcontainers = "2.2.4"
 
 ksp = "2.3.4"
@@ -25,6 +25,7 @@ autoservice-ksp = "1.2.0"
 
 [libraries]
 kotlinx-io-core = { module = "org.jetbrains.kotlinx:kotlinx-io-core", version.ref = "io" }
+kotlinx-io-bytestring = { module = "org.jetbrains.kotlinx:kotlinx-io-bytestring", version.ref = "io" }
 ktor-network = { module = "io.ktor:ktor-network", version.ref = "ktor" }
 ktor-network-tls = { module = "io.ktor:ktor-network-tls", version.ref = "ktor" }
 ktor-utils = { module = "io.ktor:ktor-utils", version.ref = "ktor" }
