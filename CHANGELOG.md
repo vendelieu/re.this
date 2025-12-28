@@ -1,5 +1,10 @@
 # Re.this Changelog
 
+## 0.3.8
+
+* Added `ByteString` support, implemented for `GET`, `SET`, `GETDEL`, `GETEX`, `GETRANGE`, `HGET`, `HGETALL`,
+  `HRANDFIELD`, `LPOP`, `RPUSH`, `LMOVE`, `BLMOVE`, `SPOP`, `SRANDMEMBER`, `ZADD`, `ZRANDMEMBER` commands.
+
 ## 0.3.7
 
 * Fixed freezes on native targets (#93).
@@ -25,7 +30,8 @@
 
 * Returned serialization support, with ability to use different serialization formats \
   (through configuration `serializationFormat` parameter, or by command function parameter), \
-  supported commands `get`, `hget`, `hmget`, `hset`, `hvals`, `json.get`, `json.mget`, `json.set`, `mget`, `mset`, `set`.
+  supported commands `get`, `hget`, `hmget`, `hset`, `hvals`, `json.get`, `json.mget`, `json.set`, `mget`, `mset`,
+  `set`.
 
 ## 0.3.2
 
