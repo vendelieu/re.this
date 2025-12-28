@@ -1,8 +1,10 @@
 package eu.vendeli.rethis.command.string
 
 import eu.vendeli.rethis.ReThis
+import eu.vendeli.rethis.codecs.string.GetRangeBSCommandCodec
 import eu.vendeli.rethis.codecs.string.GetRangeCommandCodec
 import eu.vendeli.rethis.topology.handle
+import kotlinx.io.bytestring.ByteString
 
 public suspend fun ReThis.getRange(
     key: String,
@@ -15,4 +17,17 @@ public suspend fun ReThis.getRange(
         GetRangeCommandCodec.encode(charset = cfg.charset, key = key, start = start, end = end)
     }
     return GetRangeCommandCodec.decode(topology.handle(request), cfg.charset)
+}
+
+public suspend fun ReThis.getRangeBS(
+    key: String,
+    start: Long,
+    end: Long,
+): ByteString {
+    val request = if(cfg.withSlots) {
+        GetRangeBSCommandCodec.encodeWithSlot(charset = cfg.charset, key = key, start = start, end = end)
+    } else {
+        GetRangeBSCommandCodec.encode(charset = cfg.charset, key = key, start = start, end = end)
+    }
+    return GetRangeBSCommandCodec.decode(topology.handle(request), cfg.charset)
 }

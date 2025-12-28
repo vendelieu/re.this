@@ -7,6 +7,7 @@ import com.squareup.kotlinpoet.ksp.toClassName
 import com.squareup.kotlinpoet.ksp.toTypeName
 import eu.vendeli.rethis.api.processor.core.RedisCommandProcessor.Companion.context
 import eu.vendeli.rethis.shared.decoders.aggregate.SetStringDecoder
+import eu.vendeli.rethis.shared.decoders.general.BulkByteStringDecoder
 import eu.vendeli.rethis.shared.types.ReThisException
 import eu.vendeli.rethis.shared.types.RespCode
 
@@ -58,9 +59,12 @@ internal fun CodeBlock.Builder.writePlainDecoder(code: RespCode) {
     val cType = baseType.copy(true)
     val isReturnBool = BOOLEAN.copy(true) == cType
     val isReturnDouble = DOUBLE.copy(true) == cType
+    val isReturnByteString = BYTESTRING.copy(true) == cType
 
-    val decoder =
-        plainDecoders[code] ?: throw ReThisException("Unsupported response type for plain decoder: ${code.name} [${currName()}]")
+    val decoder = when {
+        isReturnByteString && code == RespCode.BULK -> BulkByteStringDecoder::class.qualifiedName!!
+        else -> plainDecoders[code] ?: throw ReThisException("Unsupported response type for plain decoder: ${code.name} [${currName()}]")
+    }
     addImport(decoder)
 
     val statement = StringBuilder()
@@ -75,8 +79,12 @@ internal fun CodeBlock.Builder.writePlainDecoder(code: RespCode) {
     when {
         code.isString() && isReturnBool -> statement.append(" == \"OK\"")
         code == RespCode.INTEGER && isReturnBool -> statement.append(" == 1L")
+        code != RespCode.BULK && isReturnByteString -> {
+            context.fileSpec.addImport("kotlinx.io.bytestring", "encodeToByteString")
+            statement.append(".encodeToByteString()")
+        }
         code.isString() && isReturnDouble -> {
-            if (statement.get(10) == DECODE_STRING_N.get(10)) statement.append("?")
+            if (statement[10] == DECODE_STRING_N[10]) statement.append("?")
             statement.append(".toDouble()")
         }
     }

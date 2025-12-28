@@ -6,9 +6,11 @@ import eu.vendeli.rethis.shared.types.RespCode
 import eu.vendeli.rethis.shared.types.ResponseParsingException
 import io.ktor.utils.io.charsets.*
 import kotlinx.io.Buffer
+import kotlinx.io.bytestring.ByteString
 import kotlin.jvm.JvmName
 
 val EMPTY_BUFFER = Buffer()
+internal val EMPTY_BYTE_STRING = ByteString()
 
 @Suppress("UNCHECKED_CAST")
 internal inline fun <reified R> Any?.safeCast(): R? = this as? R
@@ -18,8 +20,7 @@ internal inline fun <reified R> Any?.cast(): R = this as R
 
 internal suspend inline fun MutableCollection<String>.parseStrings(size: Int, input: Buffer, charset: Charset) {
     repeat(size) {
-        val code = RespCode.fromCode(input.readByte())
-        when (code) {
+        when (val code = RespCode.fromCode(input.readByte())) {
             RespCode.BULK -> add(
                 BulkStringDecoder.decode(input, charset, code),
             )

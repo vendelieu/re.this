@@ -44,8 +44,8 @@ internal fun addProcessedResponses(cmd: String, responses: List<RespCode>) {
     context.responses.addProcessedResponses(cmd, responses)
 }
 
-internal fun Map.Entry<RCommandData, KSClassDeclaration>.loadCommandCtx() {
-    context += CurrentCommand(key, value)
+internal fun Pair<RCommandData, KSClassDeclaration>.loadCommandCtx() {
+    context += CurrentCommand(first, second)
     context += Imports()
 }
 

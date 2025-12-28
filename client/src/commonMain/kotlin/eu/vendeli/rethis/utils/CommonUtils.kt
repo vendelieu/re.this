@@ -10,11 +10,7 @@ import eu.vendeli.rethis.types.common.Address
 import eu.vendeli.rethis.types.coroutine.CoLocalConn
 import io.ktor.network.sockets.*
 import io.ktor.util.logging.*
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.currentCoroutineContext
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.*
 import kotlinx.io.Buffer
 
 internal val COMMON_LOGGER = KtorSimpleLogger("eu.vendeli.rethis.ReThisCommonLogger")
