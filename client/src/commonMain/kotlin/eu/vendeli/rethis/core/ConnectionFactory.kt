@@ -38,7 +38,8 @@ internal class ConnectionFactory(
             logger.debug { "Creating connection attempt failed. Max connections reached." }
             return null
         }
-        val conn = try {
+        
+        return try {
             aSocket(selector)
                 .tcp()
                 .connect(address) {
@@ -55,11 +56,10 @@ internal class ConnectionFactory(
                 }.rConnection().also {
                     prepareConnection(it)
                 }
-        } finally {
-            connections.release()
+        } catch (e: Exception) {
+            connections.release() // Only release on failure
+            throw e
         }
-
-        return conn
     }
 
     suspend fun prepareConnection(conn: RConnection) {
