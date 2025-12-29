@@ -147,11 +147,13 @@ class PubSubCommandTest : ReThisTestCtx() {
         }
         client.subscriptions.subscriptionsHandlers["testCh*"].shouldNotBeNull()
 
+        delay(300) // Allow time for pSubscribe to be fully established on the server
+
         client.unsubscribe("testChannel")
         client.subscriptions.subscriptionsHandlers["testChannel"].shouldBeNull()
         client.publish("testChannel", "test")
 
-        delay(100)
+        delay(300)
 
         onMessage shouldBeGreaterThan 0
         onUnsub shouldBe 0
