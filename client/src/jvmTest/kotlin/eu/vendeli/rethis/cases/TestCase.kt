@@ -16,6 +16,8 @@ import io.kotest.assertions.nondeterministic.eventually
 import io.kotest.matchers.shouldBe
 import io.ktor.util.collections.*
 import kotlinx.coroutines.*
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 
@@ -91,17 +93,18 @@ class TestCase : ReThisTestCtx() {
     }
 
     private val scriptsSha1Map = ConcurrentMap<String, String>()
-    internal suspend inline fun ReThis.fastEval(
+    private val scriptLoadMutex = Mutex()
+
+    internal suspend fun ReThis.fastEval(
         scriptId: String,
         script: String,
         vararg keys: String,
     ): RType {
-        var sha1 = scriptsSha1Map[scriptId]
-
-        if (sha1 == null) {
-            sha1 = scriptLoad(script)
-
-            scriptsSha1Map[scriptId] = sha1
+        val sha1 = scriptsSha1Map[scriptId] ?: scriptLoadMutex.withLock {
+            // Double-check inside the lock
+            scriptsSha1Map[scriptId] ?: scriptLoad(script).also {
+                scriptsSha1Map[scriptId] = it
+            }
         }
 
         return evalSha(sha1, *keys, arg = emptyList())
