@@ -1,5 +1,10 @@
 # Re.this Changelog
 
+## 0.3.9
+
+* Fixed correct encoding of `Instant` values to seconds (#98).
+* Changed `ByteString` serialization format to `ByteArray` for more flexibility.
+
 ## 0.3.8
 
 * Added `ByteString` support, implemented for `GET`, `SET`, `GETDEL`, `GETEX`, `GETRANGE`, `HGET`, `HGETALL`,

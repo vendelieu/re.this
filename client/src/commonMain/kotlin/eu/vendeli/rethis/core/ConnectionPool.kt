@@ -30,8 +30,9 @@ internal class ConnectionPool(
 ) {
     private val name = "$CLIENT_NAME|${cfg::class.simpleName}Pool@${this::class.hashCode()}"
     private val logger = cfg.loggerFactory.get("eu.vendeli.rethis.ConnectionPool")
+    private val poolJob = Job(rootJob)
     private val scope = CoroutineScope(
-        Dispatchers.IO_OR_UNCONFINED + CoroutineName(name) + Job(rootJob),
+        Dispatchers.IO_OR_UNCONFINED + CoroutineName(name) + poolJob,
     )
     private val idleConnectionsCount = AtomicInt(0)
     private val borrowCount = AtomicInt(0)
@@ -49,10 +50,10 @@ internal class ConnectionPool(
         runObserver()
     }
 
-    private fun populatePool() = scope.launch(Dispatchers.IO_OR_UNCONFINED + Job()) {
+    private fun populatePool() = scope.launch(Dispatchers.IO_OR_UNCONFINED + Job(poolJob)) {
         val populationJob = currentCoroutineContext()[Job]!!
         repeat(cfg.pool.minIdleConnections) {
-            launch(populationJob) {
+            launch(Job(populationJob)) {
                 val conn = connectionFactory.createConnOrNull(address) ?: return@launch
                 idleConnections.trySend(conn).onSuccess {
                     idleConnectionsCount.incrementAndFetch()
@@ -118,7 +119,7 @@ internal class ConnectionPool(
         }
     }
 
-    private fun runObserver() = scope.launch(SupervisorJob()) {
+    private fun runObserver() = scope.launch(SupervisorJob(poolJob)) {
         logger.debug { "Starting connection pool observer" }
         while (isActive) {
             delay(cfg.pool.checkInterval)

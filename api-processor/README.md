@@ -215,13 +215,13 @@ Yes, here are some specific details that new developers should know:
 
 ## Additional Details
 
-### 1. **Naming Convention for BS (ByteString) Commands**
+### 1. **Naming Convention for BA (ByteArray) Commands**
 
-Commands that work with `ByteString` instead of `String` follow a naming pattern:
-- Spec class: `SetBSCommand`, `GetBSCommand`
-- Generated function: `setBS()`, `getBS()`
+Commands that work with `ByteArray` instead of `String` follow a naming pattern:
+- Spec class: `SetBACommand`, `GetBACommand`
+- Generated function: `setBA()`, `getBA()`
 
-The `BS` suffix is automatically handled - the function name is derived from the codec name by removing `CommandCodec` and lowercasing the first letter.
+The `BA` suffix is automatically handled - the function name is derived from the codec name by removing `CommandCodec` and lowercasing the first letter.
 
 ### 2. **Redis Spec Fetching Happens at Compile Time**
 
@@ -308,7 +308,7 @@ Use `@RedisMeta.OutgoingTimeUnit` to override.
 
 Response decoding uses this priority:
 1. Check for `@RedisMeta.CustomCodec`
-2. Check if return type is `ByteString` → use `BulkByteStringDecoder`
+2. Check if return type is `ByteArray` → use `BulkByteArrayDecoder`
 3. Match against `plainDecoders`, `collectionDecoders`, or `mapDecoders` maps
 4. Generate `when` block for multiple possible response types
 

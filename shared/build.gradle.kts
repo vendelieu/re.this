@@ -7,7 +7,6 @@ plugins {
 configureKotlin {
     sourceSets.commonMain.dependencies {
         implementation(libs.kotlinx.io.core)
-        api(libs.kotlinx.io.bytestring)
         implementation(libs.ktor.utils)
         implementation(libs.bignum)
     }

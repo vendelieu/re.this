@@ -1,27 +1,27 @@
 package eu.vendeli.rethis.command.sortedset
 
 import eu.vendeli.rethis.ReThis
-import eu.vendeli.rethis.codecs.sortedset.ZAddBSCommandCodec
+import eu.vendeli.rethis.codecs.sortedset.ZAddBACommandCodec
 import eu.vendeli.rethis.codecs.sortedset.ZAddCommandCodec
 import eu.vendeli.rethis.codecs.sortedset.ZAddExtendedCommandCodec
 import eu.vendeli.rethis.shared.request.common.UpdateStrategyOption
 import eu.vendeli.rethis.shared.response.stream.ZMember
-import eu.vendeli.rethis.shared.response.stream.ZMemberBS
+import eu.vendeli.rethis.shared.response.stream.ZMemberBA
 import eu.vendeli.rethis.topology.handle
 
-public suspend fun ReThis.zAddBS(
+public suspend fun ReThis.zAddBA(
     key: String,
-    vararg `data`: ZMemberBS,
+    vararg `data`: ZMemberBA,
     condition: UpdateStrategyOption.ExistenceRule? = null,
     comparison: UpdateStrategyOption.ComparisonRule? = null,
     change: Boolean? = null,
 ): Long? {
     val request = if(cfg.withSlots) {
-        ZAddBSCommandCodec.encodeWithSlot(charset = cfg.charset, key = key, data = data, condition = condition, comparison = comparison, change = change)
+        ZAddBACommandCodec.encodeWithSlot(charset = cfg.charset, key = key, data = data, condition = condition, comparison = comparison, change = change)
     } else {
-        ZAddBSCommandCodec.encode(charset = cfg.charset, key = key, data = data, condition = condition, comparison = comparison, change = change)
+        ZAddBACommandCodec.encode(charset = cfg.charset, key = key, data = data, condition = condition, comparison = comparison, change = change)
     }
-    return ZAddBSCommandCodec.decode(topology.handle(request), cfg.charset)
+    return ZAddBACommandCodec.decode(topology.handle(request), cfg.charset)
 }
 
 public suspend fun ReThis.zAdd(

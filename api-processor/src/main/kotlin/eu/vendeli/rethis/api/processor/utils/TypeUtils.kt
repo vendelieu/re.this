@@ -12,12 +12,11 @@ import eu.vendeli.rethis.shared.decoders.general.*
 import eu.vendeli.rethis.shared.types.CommandRequest
 import eu.vendeli.rethis.shared.types.RType
 import eu.vendeli.rethis.shared.types.RespCode
-import kotlinx.io.bytestring.ByteString
 
 internal val charsetClassName = ClassName("io.ktor.utils.io.charsets", "Charset")
 internal val commandRequestClassName = CommandRequest::class.asClassName()
 internal val RTYPE = RType::class.asClassName()
-internal val BYTESTRING = ByteString::class.asClassName()
+internal val BYTE_ARRAY = ByteArray::class.asClassName()
 
 internal val plainDecoders = mapOf(
     RespCode.SIMPLE_STRING to SimpleStringDecoder::class.qualifiedName,
@@ -37,18 +36,18 @@ internal val collectionDecoders = mapOf(
         LONG to ArrayLongDecoder::class.qualifiedName,
         RTYPE to ArrayRTypeDecoder::class.qualifiedName,
         STRING to ArrayStringDecoder::class.qualifiedName,
-        BYTESTRING to ArrayByteStringDecoder::class.qualifiedName,
+        BYTE_ARRAY to ArrayByteArrayDecoder::class.qualifiedName,
     ),
     RespCode.SET to mapOf(
         STRING to SetStringDecoder::class.qualifiedName,
-        BYTESTRING to SetByteStringDecoder::class.qualifiedName,
+        BYTE_ARRAY to SetByteArrayDecoder::class.qualifiedName,
     ),
 )
 
 internal val mapDecoders = mapOf(
     STRING to MapStringDecoder::class.qualifiedName,
     RTYPE to MapRTypeDecoder::class.qualifiedName,
-    BYTESTRING to MapByteStringDecoder::class.qualifiedName,
+    BYTE_ARRAY to MapByteArrayDecoder::class.qualifiedName,
 )
 
 internal fun KSClassDeclaration.tokenName() = getAnnotation<RedisOption.Token>()?.get("name") ?: effectiveName()

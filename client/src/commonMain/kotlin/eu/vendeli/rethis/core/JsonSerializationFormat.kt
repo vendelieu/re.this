@@ -14,7 +14,7 @@ class JsonSerializationFormat(
     override fun <T> deserialize(serializer: KSerializer<T>, string: String): T {
         return if (serializer == String.serializer()) {
             @Suppress("UNCHECKED_CAST")
-            return string as T
+            string as T
         } else {
             json.decodeFromString(serializer, string)
         }
