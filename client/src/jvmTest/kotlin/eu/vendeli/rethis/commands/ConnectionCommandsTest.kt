@@ -16,17 +16,17 @@ import kotlinx.coroutines.test.runTest
 
 class ConnectionCommandsTest : ReThisTestCtx() {
     @Test
-    fun `test HELLO command with default parameters`() = runTest {
+    suspend fun `test HELLO command with default parameters`() {
         client.hello().shouldNotBeNull().size shouldBeGreaterThan 1
     }
 
     @Test
-    fun `test HELLO command with proto parameter`() = runTest {
+    suspend fun `test HELLO command with proto parameter`() {
         client.hello(protover = 2).shouldNotBeNull()["proto"] shouldBe Int64(2)
     }
 
     @Test
-    fun `test HELLO command with username and password parameters`() = runTest {
+    suspend fun `test HELLO command with username and password parameters`() {
         shouldThrow<ReThisException> {
             client.hello(
                 protover = 2,
@@ -39,25 +39,25 @@ class ConnectionCommandsTest : ReThisTestCtx() {
     }
 
     @Test
-    fun `test HELLO command with name parameter`() = runTest {
+    suspend fun `test HELLO command with name parameter`() {
         client.hello(protover = 2, clientname = "test").shouldNotBeNull().size shouldBeGreaterThan 1
     }
 
     @Test
-    fun `test PING command with default message`() = runTest {
+    suspend fun `test PING command with default message`() {
         val response = client.ping()
         response shouldBe "PONG"
     }
 
     @Test
-    fun `test PING command with custom message`() = runTest {
+    suspend fun `test PING command with custom message`() {
         val message = "Hello, Redis!"
         val response = client.ping(message)
         response shouldBe message
     }
 
     @Test
-    fun `test SELECT command with valid database index`() = runTest {
+    suspend fun `test SELECT command with valid database index`() {
         val response = client.select(0)
         response shouldBe true
     }

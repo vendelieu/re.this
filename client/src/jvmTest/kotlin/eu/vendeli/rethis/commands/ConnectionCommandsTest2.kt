@@ -18,14 +18,14 @@ import kotlin.time.Duration.Companion.milliseconds
 
 class ConnectionCommandsTest2 : ReThisTestCtx() {
     @Test
-    fun `test AUTH with wrong credentials throws`() = runTest {
+    suspend fun `test AUTH with wrong credentials throws`() {
         shouldThrow<ReThisException> {
             client.auth(username = "bad-user", password = "bad-pass".toCharArray())
         }.message.shouldNotBeNull()
     }
 
     @Test
-    fun `test CLIENT GETNAME when not set can be null`() = runTest {
+    suspend fun `test CLIENT GETNAME when not set can be null`() {
         // First ensure no name is set by setting to empty string
         client.clientSetName("").shouldBeTrue()
 
@@ -34,33 +34,33 @@ class ConnectionCommandsTest2 : ReThisTestCtx() {
     }
 
     @Test
-    fun `test CLIENT ID returns positive id`() = runTest {
+    suspend fun `test CLIENT ID returns positive id`() {
         val id = client.clientId()
         id shouldBeGreaterThan 0
     }
 
     @Test
-    fun `test CLIENT INFO returns non-empty info`() = runTest {
+    suspend fun `test CLIENT INFO returns non-empty info`() {
         val info = client.clientInfo()
         info.shouldNotBeBlank()
         info shouldContain "id="
     }
 
     @Test
-    fun `test CLIENT LIST returns non-empty list`() = runTest {
+    suspend fun `test CLIENT LIST returns non-empty list`() {
         val list = client.clientList()
         list.shouldNotBeBlank()
         list shouldContain "id="
     }
 
     @Test
-    fun `test CLIENT PAUSE with small timeout`() = runTest {
+    suspend fun `test CLIENT PAUSE with small timeout`() {
         // Use a very small timeout to avoid disrupting suite
         client.clientPause(timeout = 1L, mode = ClientPauseMode.ALL).shouldBeTrue()
     }
 
     @Test
-    fun `test CLIENT REPLY ON-OFF-ON`() = runTest {
+    suspend fun `test CLIENT REPLY ON-OFF-ON`() {
         // Toggle OFF then back ON, finally RESET to be conservative
         withTimeoutOrNull(200.milliseconds) {
             client.clientReply(ClientReplyMode.OFF).shouldBeTrue()
@@ -72,21 +72,21 @@ class ConnectionCommandsTest2 : ReThisTestCtx() {
     }
 
     @Test
-    fun `test CLIENT TRACKING ON and OFF`() = runTest {
+    suspend fun `test CLIENT TRACKING ON and OFF`() {
         // Turn ON without special modes, then OFF
         client.clientTracking(ClientStandby.ON, ClientTrackingMode.NOLOOP).shouldBeTrue()
         client.clientTracking(ClientStandby.OFF).shouldBeTrue()
     }
 
     @Test
-    fun `test CLIENT UNBLOCK current id is likely not blocked and returns false`() = runTest {
+    suspend fun `test CLIENT UNBLOCK current id is likely not blocked and returns false`() {
         val id = client.clientId()
         // Expect false because this connection isn't blocked
         client.clientUnblock(id, ClientUnblockType.TIMEOUT).shouldBeFalse()
     }
 
     @Test
-    fun `test QUIT on a separate client`() = runTest {
+    suspend fun `test QUIT on a separate client`() {
         // Use a temporary client so we don't close the shared test client
         val temp = createClient()
         temp.quit().shouldBeTrue()
