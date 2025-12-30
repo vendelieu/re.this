@@ -50,7 +50,7 @@ public object SetBSCommandCodec {
                             size += 1
                             buffer.writeStringArg("EX", charset)
                             size += 1
-                            buffer.writeDurationArg(it0.seconds, charset, TimeUnit.MILLISECONDS)
+                            buffer.writeDurationArg(it0.seconds, charset, TimeUnit.SECONDS)
                         }
                         is SetExpire.Px ->  {
                             size += 1
@@ -62,7 +62,7 @@ public object SetBSCommandCodec {
                             size += 1
                             buffer.writeStringArg("EXAT", charset)
                             size += 1
-                            buffer.writeInstantArg(it0.unixTimeSeconds, charset, TimeUnit.MILLISECONDS)
+                            buffer.writeInstantArg(it0.unixTimeSeconds, charset, TimeUnit.SECONDS)
                         }
                         is SetExpire.PxAt ->  {
                             size += 1

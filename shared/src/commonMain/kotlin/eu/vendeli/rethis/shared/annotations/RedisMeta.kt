@@ -5,32 +5,32 @@ import eu.vendeli.rethis.shared.types.TimeUnit
 import kotlin.reflect.KClass
 
 @Target(AnnotationTarget.ANNOTATION_CLASS)
-@Retention(AnnotationRetention.SOURCE)
+@Retention(AnnotationRetention.BINARY)
 annotation class RedisMeta {
     @Target(AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.CLASS)
-    @Retention(AnnotationRetention.SOURCE)
+    @Retention(AnnotationRetention.BINARY)
     annotation class CustomCodec(
         val decoder: KClass<out ResponseDecoder<*>> = ResponseDecoder::class,
         val encoder: KClass<*> = Unit::class,
     )
 
     @Target(AnnotationTarget.VALUE_PARAMETER)
-    @Retention(AnnotationRetention.SOURCE)
+    @Retention(AnnotationRetention.BINARY)
     annotation class WithSizeParam(val name: String)
 
     @Target(AnnotationTarget.VALUE_PARAMETER)
-    @Retention(AnnotationRetention.SOURCE)
+    @Retention(AnnotationRetention.BINARY)
     annotation class Weight(val value: Int)
 
     @Target(AnnotationTarget.TYPE)
-    @Retention(AnnotationRetention.SOURCE)
+    @Retention(AnnotationRetention.BINARY)
     annotation class OutgoingTimeUnit(val unit: TimeUnit)
 
     @Target(AnnotationTarget.CLASS)
-    @Retention(AnnotationRetention.SOURCE)
+    @Retention(AnnotationRetention.BINARY)
     annotation class SkipCommand
 
     @Target(AnnotationTarget.VALUE_PARAMETER)
-    @Retention(AnnotationRetention.SOURCE)
+    @Retention(AnnotationRetention.BINARY)
     annotation class Default(val value: String)
 }

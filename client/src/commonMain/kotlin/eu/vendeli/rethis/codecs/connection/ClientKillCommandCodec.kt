@@ -48,7 +48,7 @@ public object ClientKillCommandCodec {
                     size += 1
                     buffer.writeStringArg("MAXAGE", charset)
                     size += 1
-                    buffer.writeInstantArg(it0.instant, charset, TimeUnit.MILLISECONDS)
+                    buffer.writeInstantArg(it0.instant, charset, TimeUnit.SECONDS)
                 }
                 is ClientKillOptions.SkipMe ->  {
                     size += 1

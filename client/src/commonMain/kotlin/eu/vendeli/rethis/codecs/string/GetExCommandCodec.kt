@@ -38,13 +38,13 @@ public object GetExCommandCodec {
                     size += 1
                     buffer.writeStringArg("EX", charset)
                     size += 1
-                    buffer.writeDurationArg(it0.seconds, charset, TimeUnit.MILLISECONDS)
+                    buffer.writeDurationArg(it0.seconds, charset, TimeUnit.SECONDS)
                 }
                 is GetExOption.ExAt ->  {
                     size += 1
                     buffer.writeStringArg("EXAT", charset)
                     size += 1
-                    buffer.writeInstantArg(it0.unixTimeSeconds, charset, TimeUnit.MILLISECONDS)
+                    buffer.writeInstantArg(it0.unixTimeSeconds, charset, TimeUnit.SECONDS)
                 }
                 is GetExOption.Persist ->  {
                     size += 1

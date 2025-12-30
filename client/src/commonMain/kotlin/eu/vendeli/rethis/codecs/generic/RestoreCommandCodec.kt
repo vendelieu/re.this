@@ -51,7 +51,7 @@ public object RestoreCommandCodec {
                     size += 1
                     buffer.writeStringArg("IDLETIME", charset)
                     size += 1
-                    buffer.writeDurationArg(it0.seconds, charset, TimeUnit.MILLISECONDS)
+                    buffer.writeDurationArg(it0.seconds, charset, TimeUnit.SECONDS)
                 }
                 is RestoreOption.REPLACE ->  {
                     size += 1
