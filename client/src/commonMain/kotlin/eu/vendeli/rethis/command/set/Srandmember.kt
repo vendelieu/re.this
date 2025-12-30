@@ -1,19 +1,27 @@
 package eu.vendeli.rethis.command.`set`
 
 import eu.vendeli.rethis.ReThis
-import eu.vendeli.rethis.codecs.set.SRandMemberBSCommandCodec
+import eu.vendeli.rethis.codecs.set.SRandMemberBACommandCodec
 import eu.vendeli.rethis.codecs.set.SRandMemberCommandCodec
 import eu.vendeli.rethis.codecs.set.SRandMemberCountCommandCodec
 import eu.vendeli.rethis.topology.handle
-import kotlinx.io.bytestring.ByteString
 
-public suspend fun ReThis.sRandMemberBS(key: String): ByteString {
+public suspend fun ReThis.sRandMemberCount(key: String, count: Long? = null): List<String> {
     val request = if(cfg.withSlots) {
-        SRandMemberBSCommandCodec.encodeWithSlot(charset = cfg.charset, key = key)
+        SRandMemberCountCommandCodec.encodeWithSlot(charset = cfg.charset, key = key, count = count)
     } else {
-        SRandMemberBSCommandCodec.encode(charset = cfg.charset, key = key)
+        SRandMemberCountCommandCodec.encode(charset = cfg.charset, key = key, count = count)
     }
-    return SRandMemberBSCommandCodec.decode(topology.handle(request), cfg.charset)
+    return SRandMemberCountCommandCodec.decode(topology.handle(request), cfg.charset)
+}
+
+public suspend fun ReThis.sRandMemberBA(key: String): ByteArray {
+    val request = if(cfg.withSlots) {
+        SRandMemberBACommandCodec.encodeWithSlot(charset = cfg.charset, key = key)
+    } else {
+        SRandMemberBACommandCodec.encode(charset = cfg.charset, key = key)
+    }
+    return SRandMemberBACommandCodec.decode(topology.handle(request), cfg.charset)
 }
 
 public suspend fun ReThis.sRandMember(key: String): String {
@@ -23,13 +31,4 @@ public suspend fun ReThis.sRandMember(key: String): String {
         SRandMemberCommandCodec.encode(charset = cfg.charset, key = key)
     }
     return SRandMemberCommandCodec.decode(topology.handle(request), cfg.charset)
-}
-
-public suspend fun ReThis.sRandMemberCount(key: String, count: Long? = null): List<String> {
-    val request = if(cfg.withSlots) {
-        SRandMemberCountCommandCodec.encodeWithSlot(charset = cfg.charset, key = key, count = count)
-    } else {
-        SRandMemberCountCommandCodec.encode(charset = cfg.charset, key = key, count = count)
-    }
-    return SRandMemberCountCommandCodec.decode(topology.handle(request), cfg.charset)
 }

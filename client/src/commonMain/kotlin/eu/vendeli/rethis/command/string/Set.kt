@@ -1,11 +1,10 @@
 package eu.vendeli.rethis.command.string
 
 import eu.vendeli.rethis.ReThis
-import eu.vendeli.rethis.codecs.string.SetBSCommandCodec
+import eu.vendeli.rethis.codecs.string.SetBACommandCodec
 import eu.vendeli.rethis.codecs.string.SetCommandCodec
 import eu.vendeli.rethis.shared.request.string.SetOption
 import eu.vendeli.rethis.topology.handle
-import kotlinx.io.bytestring.ByteString
 
 public suspend fun ReThis.`set`(
     key: String,
@@ -20,15 +19,15 @@ public suspend fun ReThis.`set`(
     return SetCommandCodec.decode(topology.handle(request), cfg.charset)
 }
 
-public suspend fun ReThis.setBS(
+public suspend fun ReThis.setBA(
     key: String,
-    `value`: ByteString,
+    `value`: ByteArray,
     vararg options: SetOption,
-): ByteString? {
+): ByteArray? {
     val request = if(cfg.withSlots) {
-        SetBSCommandCodec.encodeWithSlot(charset = cfg.charset, key = key, value = value, options = options)
+        SetBACommandCodec.encodeWithSlot(charset = cfg.charset, key = key, value = value, options = options)
     } else {
-        SetBSCommandCodec.encode(charset = cfg.charset, key = key, value = value, options = options)
+        SetBACommandCodec.encode(charset = cfg.charset, key = key, value = value, options = options)
     }
-    return SetBSCommandCodec.decode(topology.handle(request), cfg.charset)
+    return SetBACommandCodec.decode(topology.handle(request), cfg.charset)
 }

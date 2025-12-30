@@ -1,19 +1,18 @@
 package eu.vendeli.rethis.command.list
 
 import eu.vendeli.rethis.ReThis
-import eu.vendeli.rethis.codecs.list.LPopBSCommandCodec
+import eu.vendeli.rethis.codecs.list.LPopBACommandCodec
 import eu.vendeli.rethis.codecs.list.LPopCommandCodec
 import eu.vendeli.rethis.codecs.list.LPopCountCommandCodec
 import eu.vendeli.rethis.topology.handle
-import kotlinx.io.bytestring.ByteString
 
-public suspend fun ReThis.lPopBS(key: String): ByteString? {
+public suspend fun ReThis.lPopCount(key: String, count: Long? = null): List<String> {
     val request = if(cfg.withSlots) {
-        LPopBSCommandCodec.encodeWithSlot(charset = cfg.charset, key = key)
+        LPopCountCommandCodec.encodeWithSlot(charset = cfg.charset, key = key, count = count)
     } else {
-        LPopBSCommandCodec.encode(charset = cfg.charset, key = key)
+        LPopCountCommandCodec.encode(charset = cfg.charset, key = key, count = count)
     }
-    return LPopBSCommandCodec.decode(topology.handle(request), cfg.charset)
+    return LPopCountCommandCodec.decode(topology.handle(request), cfg.charset)
 }
 
 public suspend fun ReThis.lPop(key: String): String? {
@@ -25,11 +24,11 @@ public suspend fun ReThis.lPop(key: String): String? {
     return LPopCommandCodec.decode(topology.handle(request), cfg.charset)
 }
 
-public suspend fun ReThis.lPopCount(key: String, count: Long? = null): List<String> {
+public suspend fun ReThis.lPopBA(key: String): ByteArray? {
     val request = if(cfg.withSlots) {
-        LPopCountCommandCodec.encodeWithSlot(charset = cfg.charset, key = key, count = count)
+        LPopBACommandCodec.encodeWithSlot(charset = cfg.charset, key = key)
     } else {
-        LPopCountCommandCodec.encode(charset = cfg.charset, key = key, count = count)
+        LPopBACommandCodec.encode(charset = cfg.charset, key = key)
     }
-    return LPopCountCommandCodec.decode(topology.handle(request), cfg.charset)
+    return LPopBACommandCodec.decode(topology.handle(request), cfg.charset)
 }

@@ -6,11 +6,10 @@ import eu.vendeli.rethis.shared.types.RespCode
 import eu.vendeli.rethis.shared.types.ResponseParsingException
 import io.ktor.utils.io.charsets.*
 import kotlinx.io.Buffer
-import kotlinx.io.bytestring.ByteString
 import kotlin.jvm.JvmName
 
 val EMPTY_BUFFER = Buffer()
-internal val EMPTY_BYTE_STRING = ByteString()
+internal val EMPTY_BYTE_ARRAY = ByteArray(0)
 
 @Suppress("UNCHECKED_CAST")
 internal inline fun <reified R> Any?.safeCast(): R? = this as? R

@@ -1,11 +1,10 @@
 package eu.vendeli.rethis.command.`set`
 
 import eu.vendeli.rethis.ReThis
-import eu.vendeli.rethis.codecs.set.SPopBSCommandCodec
+import eu.vendeli.rethis.codecs.set.SPopBACommandCodec
 import eu.vendeli.rethis.codecs.set.SPopCommandCodec
 import eu.vendeli.rethis.codecs.set.SPopCountCommandCodec
 import eu.vendeli.rethis.topology.handle
-import kotlinx.io.bytestring.ByteString
 
 public suspend fun ReThis.sPop(key: String): String? {
     val request = if(cfg.withSlots) {
@@ -16,13 +15,13 @@ public suspend fun ReThis.sPop(key: String): String? {
     return SPopCommandCodec.decode(topology.handle(request), cfg.charset)
 }
 
-public suspend fun ReThis.sPopBS(key: String): ByteString? {
+public suspend fun ReThis.sPopBA(key: String): ByteArray? {
     val request = if(cfg.withSlots) {
-        SPopBSCommandCodec.encodeWithSlot(charset = cfg.charset, key = key)
+        SPopBACommandCodec.encodeWithSlot(charset = cfg.charset, key = key)
     } else {
-        SPopBSCommandCodec.encode(charset = cfg.charset, key = key)
+        SPopBACommandCodec.encode(charset = cfg.charset, key = key)
     }
-    return SPopBSCommandCodec.decode(topology.handle(request), cfg.charset)
+    return SPopBACommandCodec.decode(topology.handle(request), cfg.charset)
 }
 
 public suspend fun ReThis.sPopCount(key: String, count: Long? = null): List<String> {

@@ -1,11 +1,10 @@
 package eu.vendeli.rethis.command.list
 
 import eu.vendeli.rethis.ReThis
-import eu.vendeli.rethis.codecs.list.LMoveBSCommandCodec
+import eu.vendeli.rethis.codecs.list.LMoveBACommandCodec
 import eu.vendeli.rethis.codecs.list.LMoveCommandCodec
 import eu.vendeli.rethis.shared.response.common.MoveDirection
 import eu.vendeli.rethis.topology.handle
-import kotlinx.io.bytestring.ByteString
 
 public suspend fun ReThis.lMove(
     source: String,
@@ -21,16 +20,16 @@ public suspend fun ReThis.lMove(
     return LMoveCommandCodec.decode(topology.handle(request), cfg.charset)
 }
 
-public suspend fun ReThis.lMoveBS(
+public suspend fun ReThis.lMoveBA(
     source: String,
     destination: String,
     whereFrom: MoveDirection,
     whereTo: MoveDirection,
-): ByteString {
+): ByteArray {
     val request = if(cfg.withSlots) {
-        LMoveBSCommandCodec.encodeWithSlot(charset = cfg.charset, source = source, destination = destination, whereFrom = whereFrom, whereTo = whereTo)
+        LMoveBACommandCodec.encodeWithSlot(charset = cfg.charset, source = source, destination = destination, whereFrom = whereFrom, whereTo = whereTo)
     } else {
-        LMoveBSCommandCodec.encode(charset = cfg.charset, source = source, destination = destination, whereFrom = whereFrom, whereTo = whereTo)
+        LMoveBACommandCodec.encode(charset = cfg.charset, source = source, destination = destination, whereFrom = whereFrom, whereTo = whereTo)
     }
-    return LMoveBSCommandCodec.decode(topology.handle(request), cfg.charset)
+    return LMoveBACommandCodec.decode(topology.handle(request), cfg.charset)
 }

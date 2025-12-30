@@ -1,18 +1,17 @@
 package eu.vendeli.rethis.command.string
 
 import eu.vendeli.rethis.ReThis
-import eu.vendeli.rethis.codecs.string.GetBSCommandCodec
+import eu.vendeli.rethis.codecs.string.GetBACommandCodec
 import eu.vendeli.rethis.codecs.string.GetCommandCodec
 import eu.vendeli.rethis.topology.handle
-import kotlinx.io.bytestring.ByteString
 
-public suspend fun ReThis.getBS(key: String): ByteString? {
+public suspend fun ReThis.getBA(key: String): ByteArray? {
     val request = if(cfg.withSlots) {
-        GetBSCommandCodec.encodeWithSlot(charset = cfg.charset, key = key)
+        GetBACommandCodec.encodeWithSlot(charset = cfg.charset, key = key)
     } else {
-        GetBSCommandCodec.encode(charset = cfg.charset, key = key)
+        GetBACommandCodec.encode(charset = cfg.charset, key = key)
     }
-    return GetBSCommandCodec.decode(topology.handle(request), cfg.charset)
+    return GetBACommandCodec.decode(topology.handle(request), cfg.charset)
 }
 
 public suspend fun ReThis.`get`(key: String): String? {

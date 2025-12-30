@@ -5,7 +5,6 @@ import eu.vendeli.rethis.shared.types.TimeUnit
 import io.ktor.utils.io.charsets.*
 import io.ktor.utils.io.core.*
 import kotlinx.io.Buffer
-import kotlinx.io.bytestring.ByteString
 import kotlinx.io.writeString
 import kotlin.time.Duration
 import kotlin.time.Instant
@@ -27,7 +26,6 @@ private fun Buffer.writeBA(value: ByteArray) {
 }
 
 fun Buffer.writeStringArg(value: String, charset: Charset) = writeBA(value.toByteArray(charset))
-fun Buffer.writeByteStringArg(value: ByteString, charset: Charset) = writeBA(value.toByteArray())
 fun Buffer.writeLongArg(value: Long, charset: Charset) = writeBA(value.toString().toByteArray(charset))
 fun Buffer.writeIntArg(value: Int, charset: Charset) = writeBA(value.toString().toByteArray(charset))
 fun Buffer.writeDoubleArg(value: Double, charset: Charset) = writeBA(value.toString().toByteArray(charset))

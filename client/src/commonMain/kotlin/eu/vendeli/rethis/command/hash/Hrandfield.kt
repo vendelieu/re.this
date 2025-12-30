@@ -1,12 +1,11 @@
 package eu.vendeli.rethis.command.hash
 
 import eu.vendeli.rethis.ReThis
-import eu.vendeli.rethis.codecs.hash.HRandFieldBSCommandCodec
+import eu.vendeli.rethis.codecs.hash.HRandFieldBACommandCodec
 import eu.vendeli.rethis.codecs.hash.HRandFieldCommandCodec
 import eu.vendeli.rethis.codecs.hash.HRandFieldCountCommandCodec
 import eu.vendeli.rethis.shared.types.RType
 import eu.vendeli.rethis.topology.handle
-import kotlinx.io.bytestring.ByteString
 
 public suspend fun ReThis.hRandField(key: String): String? {
     val request = if(cfg.withSlots) {
@@ -17,13 +16,13 @@ public suspend fun ReThis.hRandField(key: String): String? {
     return HRandFieldCommandCodec.decode(topology.handle(request), cfg.charset)
 }
 
-public suspend fun ReThis.hRandFieldBS(key: String): ByteString? {
+public suspend fun ReThis.hRandFieldBA(key: String): ByteArray? {
     val request = if(cfg.withSlots) {
-        HRandFieldBSCommandCodec.encodeWithSlot(charset = cfg.charset, key = key)
+        HRandFieldBACommandCodec.encodeWithSlot(charset = cfg.charset, key = key)
     } else {
-        HRandFieldBSCommandCodec.encode(charset = cfg.charset, key = key)
+        HRandFieldBACommandCodec.encode(charset = cfg.charset, key = key)
     }
-    return HRandFieldBSCommandCodec.decode(topology.handle(request), cfg.charset)
+    return HRandFieldBACommandCodec.decode(topology.handle(request), cfg.charset)
 }
 
 public suspend fun ReThis.hRandFieldCount(
