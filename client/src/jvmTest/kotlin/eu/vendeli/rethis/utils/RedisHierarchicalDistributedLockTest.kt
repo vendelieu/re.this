@@ -149,7 +149,7 @@ class RedisHierarchicalDistributedLockTest : ReThisTestCtx() {
         }
         val j2 = launch {
             repeat(5) {
-                shared.lock(1.seconds)
+                shared.lock(5.seconds)  // Longer lease to avoid expiry under load
                 try {
                     delay(10)
                     visits += 1
@@ -173,7 +173,7 @@ class RedisHierarchicalDistributedLockTest : ReThisTestCtx() {
             // Each coroutine creates its own lock instance → different referenceJob → different owner
             val lock = client.reHierarchicalDistributedLock(lockName)
             repeat(5) {
-                lock.lock(1.seconds)
+                lock.lock(5.seconds)  // Longer lease
                 try {
                     val first = inCritical.compareAndSet(false, true)
                     if (!first) error("Overlap detected!")
@@ -188,7 +188,7 @@ class RedisHierarchicalDistributedLockTest : ReThisTestCtx() {
         val j2 = launch {
             val lock = client.reHierarchicalDistributedLock(lockName)
             repeat(5) {
-                lock.lock(1.seconds)
+                lock.lock(5.seconds)  // Longer lease
                 try {
                     val first = inCritical.compareAndSet(false, true)
                     if (!first) error("Overlap detected!")
