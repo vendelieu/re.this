@@ -45,8 +45,12 @@ internal class ReThisReentrantLock(
     @OptIn(ExperimentalUuidApi::class)
     private val instanceId = "inst:${Uuid.random()}"
 
+    // Stable token for this lock instance - generated once, used for all acquisitions
+    @OptIn(ExperimentalUuidApi::class)
+    private val stableToken = "$instanceId:${deriveOwnerId(referenceJob)}:${Uuid.random()}"
+
     // stable owner token derived from referenceJob in-process; null when not currently owning
-    private val ownerIdLocal = AtomicReference<String?>(deriveOwnerId(referenceJob))
+    private val ownerIdLocal = AtomicReference<String?>(null)
 
     // local fast-path counter (keeps quick reentrant checks) — authoritative counter lives in Redis
     private val localDepth = AtomicInt(0)
@@ -88,7 +92,7 @@ internal class ReThisReentrantLock(
         }
 
         var lastBackoff = backoffBaseMs
-        val token = makeTokenForJob(job)
+        val token = stableToken  // Use the stable token instead of makeTokenForJob(job)
 
         while (true) {
             currentCoroutineContext().ensureActive()
