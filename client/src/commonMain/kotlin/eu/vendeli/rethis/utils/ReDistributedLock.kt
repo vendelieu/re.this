@@ -2,7 +2,8 @@ package eu.vendeli.rethis.utils
 
 import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.annotations.ReThisExperimental
-import eu.vendeli.rethis.types.common.ReThisReentrantLock
+import eu.vendeli.rethis.types.common.ReCtxReentrantLock
+import eu.vendeli.rethis.types.common.ReReentrantLock
 import eu.vendeli.rethis.types.interfaces.ReDistributedLock
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.NonCancellable
@@ -26,13 +27,27 @@ suspend inline fun <T> ReDistributedLock.withLock(
 }
 
 @ReThisExperimental
-suspend fun ReThis.reDistributedLock(
+fun ReThis.reDistributedLock(
+    key: String,
+    waitTime: Duration = 50.milliseconds,
+    leaseTime: Duration = 30.seconds,
+): ReDistributedLock {
+    return ReReentrantLock(
+        client = this,
+        key = key,
+        defaultLeaseMs = leaseTime.inWholeMilliseconds,
+        backoffBaseMs = waitTime.inWholeMilliseconds,
+    )
+}
+
+@ReThisExperimental
+suspend fun ReThis.reHierarchicalDistributedLock(
     key: String,
     waitTime: Duration = 50.milliseconds,
     leaseTime: Duration = 30.seconds,
 ): ReDistributedLock {
     val referenceJob = currentCoroutineContext()[Job] ?: error("No Job in context")
-    return ReThisReentrantLock(
+    return ReCtxReentrantLock(
         client = this,
         key = key,
         referenceJob = referenceJob,

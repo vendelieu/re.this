@@ -4,6 +4,7 @@
 
 * Fixed correct encoding of `Instant` values to seconds (#98).
 * Changed `ByteString` serialization format to `ByteArray` for more flexibility.
+* Changed `reDistributedLock` to wire to one coroutine Job, moved old implementation to `reHierarchicalDistributedLock`.
 
 ## 0.3.8
 

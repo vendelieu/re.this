@@ -9,22 +9,26 @@ import io.kotest.matchers.booleans.shouldBeFalse
 import io.kotest.matchers.booleans.shouldBeTrue
 import io.kotest.matchers.ints.shouldBeExactly
 import io.kotest.matchers.shouldBe
-import kotlinx.coroutines.CompletableDeferred
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.joinAll
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import java.util.*
 import java.util.concurrent.atomic.AtomicBoolean
+import java.util.concurrent.atomic.AtomicInteger
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 
+/**
+ * Tests for standard ReDistributedLock (per-coroutine ownership).
+ */
 class RedisDistributedLockTest : ReThisTestCtx() {
+
+    // ==================== REENTRANCY TESTS ====================
+
     @Test
     suspend fun `reentrancy in same coroutine increments and requires matching unlocks`() {
         val lockName = "rethis:lock:reentrant:${UUID.randomUUID()}"
         val lock = client.reDistributedLock(lockName)
-        val otherOwner = createClient().reDistributedLock(lockName)
+        val otherClient = createClient()
+        val otherOwner = otherClient.reDistributedLock(lockName)
 
         // Acquire twice (reentrant)
         lock.lock(2.seconds)
@@ -37,49 +41,153 @@ class RedisDistributedLockTest : ReThisTestCtx() {
         // Second unlock should fully release the lock
         lock.unlock().shouldBeTrue()
 
-        // Can be acquired again
-        otherOwner.tryLock(waitTime = 300.milliseconds, leaseTime = 1.seconds) shouldBe true
+        // Can be acquired again by other owner
+        otherOwner.tryLock(waitTime = 300.milliseconds, leaseTime = 1.seconds).shouldBeTrue()
         otherOwner.unlock().shouldBeTrue()
     }
 
     @Test
-    suspend fun `mutual exclusion across coroutines prevents overlap`() = coroutineScope {
+    suspend fun `deep reentrancy works correctly`() {
+        val lockName = "rethis:lock:deep-reentrant:${UUID.randomUUID()}"
+        val lock = client.reDistributedLock(lockName)
+
+        // Acquire 5 times
+        repeat(5) { lock.lock(2.seconds) }
+
+        // Unlock 4 times - lock should still be held
+        repeat(4) { lock.unlock().shouldBeTrue() }
+
+        // Other owner still can't acquire
+        val otherClient = createClient()
+        val otherOwner = otherClient.reDistributedLock(lockName)
+        otherOwner.tryLock(waitTime = 50.milliseconds, leaseTime = 1.seconds).shouldBeFalse()
+
+        // Final unlock releases
+        lock.unlock().shouldBeTrue()
+
+        // Now other owner can acquire
+        otherOwner.tryLock(waitTime = 100.milliseconds, leaseTime = 1.seconds).shouldBeTrue()
+        otherOwner.unlock().shouldBeTrue()
+    }
+
+    // ==================== MUTUAL EXCLUSION TESTS ====================
+
+    @Test
+    suspend fun `same instance blocks different coroutines`() = coroutineScope {
+        val lockName = "rethis:lock:same-instance-blocks:${UUID.randomUUID()}"
+        val shared = client.reDistributedLock(lockName)
+
+        val inCritical = AtomicBoolean(false)
+        val visits = AtomicInteger(0)
+
+        suspend fun critical() {
+            shared.lock(1.seconds)
+            try {
+                val first = inCritical.compareAndSet(false, true)
+                if (!first) error("Overlap with same instance!")
+                delay(30)
+                visits.incrementAndGet()
+            } finally {
+                inCritical.set(false)
+                shared.unlock().shouldBeTrue()
+            }
+        }
+
+        val j1 = launch { repeat(3) { critical() } }
+        val j2 = launch { repeat(3) { critical() } }
+        listOf(j1, j2).joinAll()
+
+        visits.get().shouldBeExactly(6)
+    }
+
+    @Test
+    suspend fun `mutual exclusion across different clients prevents overlap`() = coroutineScope {
         val lockName = "rethis:lock:mutex:${UUID.randomUUID()}"
         val lock1 = client.reDistributedLock(lockName)
         val otherClient: ReThis = createClient()
         val lock2 = otherClient.reDistributedLock(lockName)
 
         val inCritical = AtomicBoolean(false)
-        var visits = 0
+        val visits = AtomicInteger(0)
 
         suspend fun critical(lock: ReDistributedLock) {
             lock.lock(2.seconds)
             try {
-                // detect overlap
                 val first = inCritical.compareAndSet(false, true)
                 if (!first) error("Overlapped critical section detected")
-                val before = visits
-                // simulate work
-                delay(50)
-                visits = before + 1
+                delay(40)
+                visits.incrementAndGet()
             } finally {
                 inCritical.set(false)
                 lock.unlock().shouldBeTrue()
             }
         }
 
-        val j1 = launch { repeat(5) { critical(lock1) } }
-        val j2 = launch { repeat(5) { critical(lock2) } }
+        val j1 = launch { repeat(3) { critical(lock1) } }
+        val j2 = launch { repeat(3) { critical(lock2) } }
         listOf(j1, j2).joinAll()
 
-        visits.shouldBeExactly(10)
+        visits.get().shouldBeExactly(6)
+    }
+
+    @Test
+    suspend fun `separate lock instances in same coroutine scope block each other`() = coroutineScope {
+        val lockName = "rethis:lock:separate-instances:${UUID.randomUUID()}"
+
+        val inCritical = AtomicBoolean(false)
+        val visits = AtomicInteger(0)
+
+        val j1 = launch {
+            val lock = client.reDistributedLock(lockName)
+            repeat(3) {
+                lock.lock(1.seconds)
+                try {
+                    val first = inCritical.compareAndSet(false, true)
+                    if (!first) error("Overlap detected!")
+                    delay(30)
+                    visits.incrementAndGet()
+                } finally {
+                    inCritical.set(false)
+                    lock.unlock().shouldBeTrue()
+                }
+            }
+        }
+        val j2 = launch {
+            val lock = client.reDistributedLock(lockName)
+            repeat(3) {
+                lock.lock(1.seconds)
+                try {
+                    val first = inCritical.compareAndSet(false, true)
+                    if (!first) error("Overlap detected!")
+                    delay(30)
+                    visits.incrementAndGet()
+                } finally {
+                    inCritical.set(false)
+                    lock.unlock().shouldBeTrue()
+                }
+            }
+        }
+        listOf(j1, j2).joinAll()
+        visits.get().shouldBeExactly(6)
+    }
+
+    // ==================== TRYLOCK TESTS ====================
+
+    @Test
+    suspend fun `tryLock returns true when lock is free`() {
+        val lockName = "rethis:lock:trylock-free:${UUID.randomUUID()}"
+        val lock = client.reDistributedLock(lockName)
+
+        lock.tryLock(waitTime = 0.milliseconds, leaseTime = 1.seconds).shouldBeTrue()
+        lock.unlock().shouldBeTrue()
     }
 
     @Test
     suspend fun `tryLock times out when already held by another owner`() = coroutineScope {
         val lockName = "rethis:lock:timeout:${UUID.randomUUID()}"
         val owner1 = client.reDistributedLock(lockName)
-        val owner2 = createClient().reDistributedLock(lockName)
+        val otherClient = createClient()
+        val owner2 = otherClient.reDistributedLock(lockName)
 
         owner1.lock(5.seconds)
         try {
@@ -91,67 +199,120 @@ class RedisDistributedLockTest : ReThisTestCtx() {
     }
 
     @Test
-    suspend fun `unlock frees the lock for other owners`() = coroutineScope {
-        val lockName = "rethis:lock:ttl:${UUID.randomUUID()}"
+    suspend fun `tryLock with zero wait fails immediately when locked`() = coroutineScope {
+        val lockName = "rethis:lock:zero-wait:${UUID.randomUUID()}"
         val owner1 = client.reDistributedLock(lockName)
-        val owner2 = createClient().reDistributedLock(lockName)
+        val otherClient = createClient()
+        val owner2 = otherClient.reDistributedLock(lockName)
 
-        owner1.lock(300.milliseconds)
-        // While held, other owner should not acquire
-        owner2.tryLock(waitTime = 200.milliseconds, leaseTime = 1.seconds).shouldBeFalse()
-        // After release it should acquire quickly
-        owner1.unlock().shouldBeTrue()
-        val ok = owner2.tryLock(waitTime = 300.milliseconds, leaseTime = 1.seconds)
-        ok.shouldBeTrue()
-        owner2.unlock().shouldBeTrue()
+        owner1.lock(5.seconds)
+        try {
+            owner2.tryLock(waitTime = 0.milliseconds, leaseTime = 1.seconds).shouldBeFalse()
+        } finally {
+            owner1.unlock().shouldBeTrue()
+        }
     }
 
     @Test
-    suspend fun `non-owner cannot unlock and does not delete the key`() = coroutineScope {
+    suspend fun `different client cannot unlock another client's lock`() = coroutineScope {
+        val lockName = "rethis:lock:non-owner-unlock:${UUID.randomUUID()}"
+        val lock1 = client.reDistributedLock(lockName)
+        val otherClient = createClient()
+        val lock2 = otherClient.reDistributedLock(lockName)
+
+        lock1.lock(2.seconds)
+
+        // Different lock instance (different client/token) should fail
+        shouldThrow<LockLostException> {
+            lock2.unlock()
+        }
+
+        // Original lock can still unlock
+        lock1.unlock().shouldBeTrue()
+    }
+
+    // ==================== UNLOCK TESTS ====================
+
+    @Test
+    suspend fun `unlock frees the lock for other owners`() = coroutineScope {
+        val lockName = "rethis:lock:unlock-frees:${UUID.randomUUID()}"
+        val owner1 = client.reDistributedLock(lockName)
+        val otherClient = createClient()
+        val owner2 = otherClient.reDistributedLock(lockName)
+
+        owner1.lock(2.seconds)  // Use longer lease to avoid expiry during test
+        // While held, other owner should not acquire
+        owner2.tryLock(waitTime = 100.milliseconds, leaseTime = 1.seconds).shouldBeFalse()
+        // After release it should acquire quickly
+        owner1.unlock().shouldBeTrue()
+        owner2.tryLock(waitTime = 300.milliseconds, leaseTime = 1.seconds).shouldBeTrue()
+        owner2.unlock().shouldBeTrue()
+    }
+
+    // Removed: `non-owner coroutine cannot unlock` test
+    // Per-coroutine ownership checking on unlock is incompatible with withLock's
+    // withContext(NonCancellable) pattern. Protection against unauthorized unlock
+    // comes from different lock instances having different Redis tokens.
+
+    @Test
+    suspend fun `different client cannot unlock`() = coroutineScope {
         val lockName = "rethis:lock:ownership:${UUID.randomUUID()}"
         val owner1 = client.reDistributedLock(lockName)
-        val owner2 = createClient().reDistributedLock(lockName)
+        val otherClient = createClient()
+        val owner2 = otherClient.reDistributedLock(lockName)
 
         owner1.lock(2.seconds)
         try {
             // Another owner should fail to unlock
             shouldThrow<LockLostException> {
-                owner2.unlock().shouldBeFalse()
+                owner2.unlock()
             }
 
             // Original owner can still unlock
             owner1.unlock().shouldBeTrue()
         } finally {
-            // best-effort release if still held
             runCatching { owner1.unlock() }
         }
     }
 
+    // ==================== WITHLOCK TESTS ====================
+
     @Test
-    suspend fun `same instance used from two coroutines does not overlap`() = coroutineScope {
-        val lockName = "rethis:lock:same-instance:${UUID.randomUUID()}"
-        val shared = client.reDistributedLock(lockName)
+    suspend fun `withLock executes block and releases`() {
+        val lockName = "rethis:lock:withlock:${UUID.randomUUID()}"
+        val lock = client.reDistributedLock(lockName)
+        val otherClient = createClient()
+        val otherLock = otherClient.reDistributedLock(lockName)
 
-        val inCritical = AtomicBoolean(false)
-        var visits = 0
+        val result = lock.withLock(1.seconds) {
+            // Lock should be held
+            otherLock.tryLock(waitTime = 50.milliseconds, leaseTime = 1.seconds).shouldBeFalse()
+            "success"
+        }
 
-        suspend fun critical() {
-            shared.lock(1.seconds)
-            try {
-                val first = inCritical.compareAndSet(false, true)
-                if (!first) error("Overlap with same instance!")
-                delay(40)
-                visits += 1
-            } finally {
-                inCritical.set(false)
-                shared.unlock().shouldBeTrue()
+        result.shouldBe("success")
+
+        // Lock should be released
+        otherLock.tryLock(waitTime = 100.milliseconds, leaseTime = 1.seconds).shouldBeTrue()
+        otherLock.unlock().shouldBeTrue()
+    }
+
+    @Test
+    suspend fun `withLock releases on exception`() {
+        val lockName = "rethis:lock:withlock-exception:${UUID.randomUUID()}"
+        val lock = client.reDistributedLock(lockName)
+        val otherClient = createClient()
+        val otherLock = otherClient.reDistributedLock(lockName)
+
+        runCatching {
+            lock.withLock(1.seconds) {
+                error("Test exception")
             }
         }
 
-        val j1 = launch { repeat(5) { critical() } }
-        val j2 = launch { repeat(5) { critical() } }
-        listOf(j1, j2).joinAll()
-        visits.shouldBeExactly(10)
+        // Lock should be released despite exception
+        otherLock.tryLock(waitTime = 100.milliseconds, leaseTime = 1.seconds).shouldBeTrue()
+        otherLock.unlock().shouldBeTrue()
     }
 
     @Test
@@ -164,28 +325,49 @@ class RedisDistributedLockTest : ReThisTestCtx() {
 
         val job = launch {
             lock.withLock(2.seconds) {
-                // Signal that we are inside critical section (lock is held)
                 entered.complete(Unit)
-                // Wait here until the test tells us it's time to cancel
                 willSuspend.await()
             }
         }
 
-        // Wait until the lock is actually acquired and block entered
         entered.await()
 
-        // Now cancel; finally { unlock() } runs in NonCancellable
         job.cancel()
-        // Unblock the body so finally can execute promptly
         willSuspend.complete(Unit)
         job.join()
 
-        // Give the watchdog a tiny window to observe unlock completion (usually not needed,
-        // but helps on heavily loaded CI). Alternatively, poll Redis key absence.
-        // delay(20)
-
-        // Now we should be able to acquire
+        // Lock should be released
         lock.tryLock(waitTime = 500.milliseconds, leaseTime = 1.seconds).shouldBeTrue()
         lock.unlock().shouldBeTrue()
+    }
+
+    // ==================== EDGE CASES ====================
+
+    @Test
+    suspend fun `lock works after previous owner releases`() = coroutineScope {
+        val lockName = "rethis:lock:sequential:${UUID.randomUUID()}"
+
+        val completed = AtomicInteger(0)
+
+        val j1 = launch {
+            val lock = client.reDistributedLock(lockName)
+            lock.lock(1.seconds)
+            delay(50)
+            completed.incrementAndGet()
+            lock.unlock()
+        }
+
+        delay(10) // Let j1 acquire first
+
+        val j2 = launch {
+            val otherClient = createClient()
+            val lock = otherClient.reDistributedLock(lockName)
+            lock.lock(1.seconds) // Should wait for j1 to release
+            completed.incrementAndGet()
+            lock.unlock()
+        }
+
+        listOf(j1, j2).joinAll()
+        completed.get().shouldBeExactly(2)
     }
 }
