@@ -109,6 +109,7 @@ private fun Buffer.readSimpleResponseWrapped(
             readLineCRLF() // skip size
             RType.Error(readPartLine(charset))
         }
+
         RespCode.VERBATIM_STRING -> {
             val size = readLineStrict().toInt()
             if (size < 0) return RType.Null
@@ -125,8 +126,8 @@ private fun Buffer.readSimpleResponseWrapped(
 
 private fun Buffer.readPartLine(charset: Charset) = readLineCRLF().readText(charset)
 
-private const val CARRIAGE_RETURN_BYTE = '\r'.code.toByte()
-private const val NEWLINE_BYTE = '\n'.code.toByte()
+internal const val CARRIAGE_RETURN_BYTE = '\r'.code.toByte()
+internal const val NEWLINE_BYTE = '\n'.code.toByte()
 
 private inline fun Buffer.readLineCRLF(): Buffer {
     val buffer = Buffer()
