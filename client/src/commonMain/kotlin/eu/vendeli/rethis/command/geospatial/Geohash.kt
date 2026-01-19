@@ -5,7 +5,7 @@ import eu.vendeli.rethis.codecs.geospatial.GeoHashCommandCodec
 import eu.vendeli.rethis.topology.handle
 
 public suspend fun ReThis.geoHash(key: String, vararg member: String): List<String> {
-    val request = if(cfg.withSlots) {
+    val request = if (cfg.withSlots) {
         GeoHashCommandCodec.encodeWithSlot(charset = cfg.charset, key = key, member = member)
     } else {
         GeoHashCommandCodec.encode(charset = cfg.charset, key = key, member = member)

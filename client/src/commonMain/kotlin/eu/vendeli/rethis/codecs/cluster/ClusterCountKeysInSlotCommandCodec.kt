@@ -22,19 +22,23 @@ public object ClusterCountKeysInSlotCommandCodec {
     public suspend fun encode(charset: Charset, slot: Long): CommandRequest {
         val buffer = Buffer()
         COMMAND_HEADER.copyTo(buffer)
-        buffer.writeLongArg(slot, charset, )
+        buffer.writeLongArg(slot, charset)
 
         return CommandRequest(buffer, RedisOperation.READ, BLOCKING_STATUS)
     }
 
-    public suspend inline fun encodeWithSlot(charset: Charset, slot: Long): CommandRequest = encode(charset, slot = slot)
+    public suspend inline fun encodeWithSlot(charset: Charset, slot: Long): CommandRequest = encode(
+        charset,
+        slot = slot,
+    )
 
     public suspend fun decode(input: Buffer, charset: Charset): Long {
         val code = input.parseCode(RespCode.INTEGER)
-        return when(code) {
+        return when (code) {
             RespCode.INTEGER -> {
                 IntegerDecoder.decode(input, charset, code)
             }
+
             else -> {
                 throw UnexpectedResponseType("Expected [INTEGER] but got $code", input.tryInferCause(code))
             }

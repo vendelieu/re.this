@@ -31,25 +31,25 @@ public object XPendingCommandCodec {
         var size = 1
         COMMAND_HEADER.copyTo(buffer)
         size += 1
-        buffer.writeStringArg(key, charset, )
+        buffer.writeStringArg(key, charset)
         size += 1
-        buffer.writeStringArg(group, charset, )
+        buffer.writeStringArg(group, charset)
         filters?.let { it0 ->
             it0.minIdleTime?.let { it1 ->
                 size += 1
                 buffer.writeStringArg("IDLE", charset)
                 size += 1
-                buffer.writeLongArg(it1, charset, )
+                buffer.writeLongArg(it1, charset)
             }
             size += 1
-            buffer.writeStringArg(it0.start, charset, )
+            buffer.writeStringArg(it0.start, charset)
             size += 1
-            buffer.writeStringArg(it0.end, charset, )
+            buffer.writeStringArg(it0.end, charset)
             size += 1
-            buffer.writeLongArg(it0.count, charset, )
+            buffer.writeLongArg(it0.count, charset)
             it0.consumer?.let { it2 ->
                 size += 1
-                buffer.writeStringArg(it2, charset, )
+                buffer.writeStringArg(it2, charset)
             }
         }
 
@@ -74,10 +74,11 @@ public object XPendingCommandCodec {
 
     public suspend fun decode(input: Buffer, charset: Charset): List<RType> {
         val code = input.parseCode(RespCode.ARRAY)
-        return when(code) {
+        return when (code) {
             RespCode.ARRAY -> {
                 ArrayRTypeDecoder.decode(input, charset, code)
             }
+
             else -> {
                 throw UnexpectedResponseType("Expected [ARRAY] but got $code", input.tryInferCause(code))
             }

@@ -9,8 +9,13 @@ public suspend fun ReThis.xGroupDelConsumer(
     group: String,
     consumer: String,
 ): Long {
-    val request = if(cfg.withSlots) {
-        XGroupDelConsumerCommandCodec.encodeWithSlot(charset = cfg.charset, key = key, group = group, consumer = consumer)
+    val request = if (cfg.withSlots) {
+        XGroupDelConsumerCommandCodec.encodeWithSlot(
+            charset = cfg.charset,
+            key = key,
+            group = group,
+            consumer = consumer,
+        )
     } else {
         XGroupDelConsumerCommandCodec.encode(charset = cfg.charset, key = key, group = group, consumer = consumer)
     }

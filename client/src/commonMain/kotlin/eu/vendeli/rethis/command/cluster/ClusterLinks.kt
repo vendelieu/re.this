@@ -6,10 +6,10 @@ import eu.vendeli.rethis.shared.types.RType
 import eu.vendeli.rethis.topology.handle
 
 public suspend fun ReThis.clusterLinks(): List<RType> {
-    val request = if(cfg.withSlots) {
-        ClusterLinksCommandCodec.encodeWithSlot(charset = cfg.charset, )
+    val request = if (cfg.withSlots) {
+        ClusterLinksCommandCodec.encodeWithSlot(charset = cfg.charset)
     } else {
-        ClusterLinksCommandCodec.encode(charset = cfg.charset, )
+        ClusterLinksCommandCodec.encode(charset = cfg.charset)
     }
     return ClusterLinksCommandCodec.decode(topology.handle(request), cfg.charset)
 }

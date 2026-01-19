@@ -5,7 +5,7 @@ import eu.vendeli.rethis.codecs.generic.TouchCommandCodec
 import eu.vendeli.rethis.topology.handle
 
 public suspend fun ReThis.touch(vararg key: String): Long {
-    val request = if(cfg.withSlots) {
+    val request = if (cfg.withSlots) {
         TouchCommandCodec.encodeWithSlot(charset = cfg.charset, key = key)
     } else {
         TouchCommandCodec.encode(charset = cfg.charset, key = key)

@@ -11,10 +11,20 @@ public suspend fun ReThis.pExpireAt(
     unixTimeMilliseconds: Instant,
     condition: UpdateStrategyOption? = null,
 ): Boolean {
-    val request = if(cfg.withSlots) {
-        PExpireAtCommandCodec.encodeWithSlot(charset = cfg.charset, key = key, unixTimeMilliseconds = unixTimeMilliseconds, condition = condition)
+    val request = if (cfg.withSlots) {
+        PExpireAtCommandCodec.encodeWithSlot(
+            charset = cfg.charset,
+            key = key,
+            unixTimeMilliseconds = unixTimeMilliseconds,
+            condition = condition,
+        )
     } else {
-        PExpireAtCommandCodec.encode(charset = cfg.charset, key = key, unixTimeMilliseconds = unixTimeMilliseconds, condition = condition)
+        PExpireAtCommandCodec.encode(
+            charset = cfg.charset,
+            key = key,
+            unixTimeMilliseconds = unixTimeMilliseconds,
+            condition = condition,
+        )
     }
     return PExpireAtCommandCodec.decode(topology.handle(request), cfg.charset)
 }

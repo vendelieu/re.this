@@ -11,10 +11,24 @@ public suspend fun ReThis.jsonArrIndex(
     start: Long? = null,
     stop: Long? = null,
 ): Long {
-    val request = if(cfg.withSlots) {
-        JsonArrIndexCommandCodec.encodeWithSlot(charset = cfg.charset, key = key, path = path, value = value, start = start, stop = stop)
+    val request = if (cfg.withSlots) {
+        JsonArrIndexCommandCodec.encodeWithSlot(
+            charset = cfg.charset,
+            key = key,
+            path = path,
+            value = value,
+            start = start,
+            stop = stop,
+        )
     } else {
-        JsonArrIndexCommandCodec.encode(charset = cfg.charset, key = key, path = path, value = value, start = start, stop = stop)
+        JsonArrIndexCommandCodec.encode(
+            charset = cfg.charset,
+            key = key,
+            path = path,
+            value = value,
+            start = start,
+            stop = stop,
+        )
     }
     return JsonArrIndexCommandCodec.decode(topology.handle(request), cfg.charset)
 }

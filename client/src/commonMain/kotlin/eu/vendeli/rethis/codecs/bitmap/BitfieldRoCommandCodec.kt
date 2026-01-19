@@ -33,14 +33,14 @@ public object BitfieldRoCommandCodec {
         var size = 1
         COMMAND_HEADER.copyTo(buffer)
         size += 1
-        buffer.writeStringArg(key, charset, )
+        buffer.writeStringArg(key, charset)
         options.forEach { it0 ->
             size += 1
             buffer.writeStringArg("GET", charset)
             size += 1
-            buffer.writeStringArg(it0.encoding, charset, )
+            buffer.writeStringArg(it0.encoding, charset)
             size += 1
-            buffer.writeLongArg(it0.offset, charset, )
+            buffer.writeLongArg(it0.offset, charset)
         }
 
         buffer = Buffer().apply {
@@ -63,10 +63,11 @@ public object BitfieldRoCommandCodec {
 
     public suspend fun decode(input: Buffer, charset: Charset): List<Long> {
         val code = input.parseCode(RespCode.ARRAY)
-        return when(code) {
+        return when (code) {
             RespCode.ARRAY -> {
                 ArrayLongDecoder.decode(input, charset, code)
             }
+
             else -> {
                 throw UnexpectedResponseType("Expected [ARRAY] but got $code", input.tryInferCause(code))
             }

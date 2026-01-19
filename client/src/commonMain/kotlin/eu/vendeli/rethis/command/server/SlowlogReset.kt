@@ -5,10 +5,10 @@ import eu.vendeli.rethis.codecs.server.SlowLogResetCommandCodec
 import eu.vendeli.rethis.topology.handle
 
 public suspend fun ReThis.slowLogReset(): Boolean {
-    val request = if(cfg.withSlots) {
-        SlowLogResetCommandCodec.encodeWithSlot(charset = cfg.charset, )
+    val request = if (cfg.withSlots) {
+        SlowLogResetCommandCodec.encodeWithSlot(charset = cfg.charset)
     } else {
-        SlowLogResetCommandCodec.encode(charset = cfg.charset, )
+        SlowLogResetCommandCodec.encode(charset = cfg.charset)
     }
     return SlowLogResetCommandCodec.decode(topology.handle(request), cfg.charset)
 }

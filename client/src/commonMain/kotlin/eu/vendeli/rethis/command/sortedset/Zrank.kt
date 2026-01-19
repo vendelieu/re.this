@@ -11,8 +11,13 @@ public suspend fun ReThis.zRankWithScores(
     member: String,
     withScore: Boolean? = null,
 ): List<RType>? {
-    val request = if(cfg.withSlots) {
-        ZRankWithScoresCommandCodec.encodeWithSlot(charset = cfg.charset, key = key, member = member, withScore = withScore)
+    val request = if (cfg.withSlots) {
+        ZRankWithScoresCommandCodec.encodeWithSlot(
+            charset = cfg.charset,
+            key = key,
+            member = member,
+            withScore = withScore,
+        )
     } else {
         ZRankWithScoresCommandCodec.encode(charset = cfg.charset, key = key, member = member, withScore = withScore)
     }
@@ -20,7 +25,7 @@ public suspend fun ReThis.zRankWithScores(
 }
 
 public suspend fun ReThis.zRank(key: String, member: String): Long? {
-    val request = if(cfg.withSlots) {
+    val request = if (cfg.withSlots) {
         ZRankCommandCodec.encodeWithSlot(charset = cfg.charset, key = key, member = member)
     } else {
         ZRankCommandCodec.encode(charset = cfg.charset, key = key, member = member)

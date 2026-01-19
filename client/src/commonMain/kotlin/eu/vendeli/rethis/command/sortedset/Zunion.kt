@@ -11,10 +11,22 @@ public suspend fun ReThis.zUnion(
     aggregate: ZAggregate? = null,
     withScores: Boolean? = null,
 ): List<String> {
-    val request = if(cfg.withSlots) {
-        ZUnionCommandCodec.encodeWithSlot(charset = cfg.charset, key = key, weight = weight, aggregate = aggregate, withScores = withScores)
+    val request = if (cfg.withSlots) {
+        ZUnionCommandCodec.encodeWithSlot(
+            charset = cfg.charset,
+            key = key,
+            weight = weight,
+            aggregate = aggregate,
+            withScores = withScores,
+        )
     } else {
-        ZUnionCommandCodec.encode(charset = cfg.charset, key = key, weight = weight, aggregate = aggregate, withScores = withScores)
+        ZUnionCommandCodec.encode(
+            charset = cfg.charset,
+            key = key,
+            weight = weight,
+            aggregate = aggregate,
+            withScores = withScores,
+        )
     }
     return ZUnionCommandCodec.decode(topology.handle(request), cfg.charset)
 }

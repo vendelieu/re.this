@@ -27,11 +27,12 @@ public object ShutdownCommandCodec {
         COMMAND_HEADER.copyTo(buffer)
         saveSelector?.let { it0 ->
             when (it0) {
-                is SaveSelector.NOSAVE ->  {
+                is SaveSelector.NOSAVE -> {
                     size += 1
                     buffer.writeStringArg(it0.toString(), charset)
                 }
-                is SaveSelector.SAVE ->  {
+
+                is SaveSelector.SAVE -> {
                     size += 1
                     buffer.writeStringArg(it0.toString(), charset)
                 }
@@ -39,15 +40,17 @@ public object ShutdownCommandCodec {
         }
         options.forEach { it1 ->
             when (it1) {
-                is ShutdownOptions.ABORT ->  {
+                is ShutdownOptions.ABORT -> {
                     size += 1
                     buffer.writeStringArg(it1.toString(), charset)
                 }
-                is ShutdownOptions.FORCE ->  {
+
+                is ShutdownOptions.FORCE -> {
                     size += 1
                     buffer.writeStringArg(it1.toString(), charset)
                 }
-                is ShutdownOptions.NOW ->  {
+
+                is ShutdownOptions.NOW -> {
                     size += 1
                     buffer.writeStringArg(it1.toString(), charset)
                 }

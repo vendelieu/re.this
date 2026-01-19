@@ -11,8 +11,13 @@ public suspend fun ReThis.pExpire(
     milliseconds: Duration,
     condition: UpdateStrategyOption? = null,
 ): Boolean {
-    val request = if(cfg.withSlots) {
-        PExpireCommandCodec.encodeWithSlot(charset = cfg.charset, key = key, milliseconds = milliseconds, condition = condition)
+    val request = if (cfg.withSlots) {
+        PExpireCommandCodec.encodeWithSlot(
+            charset = cfg.charset,
+            key = key,
+            milliseconds = milliseconds,
+            condition = condition,
+        )
     } else {
         PExpireCommandCodec.encode(charset = cfg.charset, key = key, milliseconds = milliseconds, condition = condition)
     }

@@ -9,7 +9,7 @@ public suspend fun ReThis.lSet(
     index: Long,
     element: String,
 ): String {
-    val request = if(cfg.withSlots) {
+    val request = if (cfg.withSlots) {
         LSetCommandCodec.encodeWithSlot(charset = cfg.charset, key = key, index = index, element = element)
     } else {
         LSetCommandCodec.encode(charset = cfg.charset, key = key, index = index, element = element)

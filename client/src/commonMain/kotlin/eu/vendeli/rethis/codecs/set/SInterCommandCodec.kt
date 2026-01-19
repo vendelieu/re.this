@@ -25,7 +25,7 @@ public object SInterCommandCodec {
         COMMAND_HEADER.copyTo(buffer)
         key.forEach { it0 ->
             size += 1
-            buffer.writeStringArg(it0, charset, )
+            buffer.writeStringArg(it0, charset)
         }
 
         buffer = Buffer().apply {
@@ -47,13 +47,15 @@ public object SInterCommandCodec {
 
     public suspend fun decode(input: Buffer, charset: Charset): Set<String> {
         val code = input.parseCode(RespCode.ARRAY)
-        return when(code) {
+        return when (code) {
             RespCode.ARRAY -> {
                 SetStringDecoder.decode(input, charset, code)
             }
+
             RespCode.SET -> {
                 SetStringDecoder.decode(input, charset, code)
             }
+
             else -> {
                 throw UnexpectedResponseType("Expected [ARRAY, SET] but got $code", input.tryInferCause(code))
             }

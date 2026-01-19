@@ -6,7 +6,7 @@ import eu.vendeli.rethis.shared.request.cluster.ClusterResetMode
 import eu.vendeli.rethis.topology.handle
 
 public suspend fun ReThis.clusterReset(resetType: ClusterResetMode? = null): Boolean {
-    val request = if(cfg.withSlots) {
+    val request = if (cfg.withSlots) {
         ClusterResetCommandCodec.encodeWithSlot(charset = cfg.charset, resetType = resetType)
     } else {
         ClusterResetCommandCodec.encode(charset = cfg.charset, resetType = resetType)

@@ -26,7 +26,7 @@ public object PingCommandCodec {
         COMMAND_HEADER.copyTo(buffer)
         message?.let { it0 ->
             size += 1
-            buffer.writeStringArg(it0, charset, )
+            buffer.writeStringArg(it0, charset)
         }
 
         buffer = Buffer().apply {
@@ -36,17 +36,22 @@ public object PingCommandCodec {
         return CommandRequest(buffer, RedisOperation.READ, BLOCKING_STATUS)
     }
 
-    public suspend inline fun encodeWithSlot(charset: Charset, message: String?): CommandRequest = encode(charset, message = message)
+    public suspend inline fun encodeWithSlot(charset: Charset, message: String?): CommandRequest = encode(
+        charset,
+        message = message,
+    )
 
     public suspend fun decode(input: Buffer, charset: Charset): String {
         val code = input.parseCode(RespCode.SIMPLE_STRING)
-        return when(code) {
+        return when (code) {
             RespCode.SIMPLE_STRING -> {
                 SimpleStringDecoder.decode(input, charset, code)
             }
+
             RespCode.BULK -> {
                 BulkStringDecoder.decode(input, charset, code)
             }
+
             else -> {
                 throw UnexpectedResponseType("Expected [SIMPLE_STRING, BULK] but got $code", input.tryInferCause(code))
             }

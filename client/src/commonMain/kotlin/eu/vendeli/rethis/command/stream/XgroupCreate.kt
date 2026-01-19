@@ -12,10 +12,24 @@ public suspend fun ReThis.xGroupCreate(
     mkstream: Boolean? = null,
     entriesread: Long? = null,
 ): Boolean {
-    val request = if(cfg.withSlots) {
-        XGroupCreateCommandCodec.encodeWithSlot(charset = cfg.charset, key = key, group = group, idSelector = idSelector, mkstream = mkstream, entriesread = entriesread)
+    val request = if (cfg.withSlots) {
+        XGroupCreateCommandCodec.encodeWithSlot(
+            charset = cfg.charset,
+            key = key,
+            group = group,
+            idSelector = idSelector,
+            mkstream = mkstream,
+            entriesread = entriesread,
+        )
     } else {
-        XGroupCreateCommandCodec.encode(charset = cfg.charset, key = key, group = group, idSelector = idSelector, mkstream = mkstream, entriesread = entriesread)
+        XGroupCreateCommandCodec.encode(
+            charset = cfg.charset,
+            key = key,
+            group = group,
+            idSelector = idSelector,
+            mkstream = mkstream,
+            entriesread = entriesread,
+        )
     }
     return XGroupCreateCommandCodec.decode(topology.handle(request), cfg.charset)
 }

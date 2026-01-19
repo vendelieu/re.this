@@ -11,8 +11,14 @@ public suspend fun ReThis.lInsert(
     pivot: String,
     element: String,
 ): Long {
-    val request = if(cfg.withSlots) {
-        LInsertCommandCodec.encodeWithSlot(charset = cfg.charset, key = key, where = where, pivot = pivot, element = element)
+    val request = if (cfg.withSlots) {
+        LInsertCommandCodec.encodeWithSlot(
+            charset = cfg.charset,
+            key = key,
+            where = where,
+            pivot = pivot,
+            element = element,
+        )
     } else {
         LInsertCommandCodec.encode(charset = cfg.charset, key = key, where = where, pivot = pivot, element = element)
     }

@@ -5,7 +5,7 @@ import eu.vendeli.rethis.codecs.cluster.ClusterReplicasCommandCodec
 import eu.vendeli.rethis.topology.handle
 
 public suspend fun ReThis.clusterReplicas(nodeId: String): List<String> {
-    val request = if(cfg.withSlots) {
+    val request = if (cfg.withSlots) {
         ClusterReplicasCommandCodec.encodeWithSlot(charset = cfg.charset, nodeId = nodeId)
     } else {
         ClusterReplicasCommandCodec.encode(charset = cfg.charset, nodeId = nodeId)

@@ -42,7 +42,6 @@ fun List<Any?>.toRESPBuffer(charset: Charset = Charsets.UTF_8): Buffer {
             is ByteArray -> buffer.writeByteArrayArg(element, charset)
             is Boolean -> buffer.writeBooleanArg(element, charset)
             is Double -> buffer.writeDoubleArg(element, charset)
-
             null -> buffer.writeString("$-1\r\n")
             else -> throw IllegalArgumentException("Unsupported type: ${element::class}")
         }

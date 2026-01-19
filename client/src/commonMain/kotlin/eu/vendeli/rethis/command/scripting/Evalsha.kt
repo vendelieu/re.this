@@ -10,7 +10,7 @@ public suspend fun ReThis.evalSha(
     vararg key: String,
     arg: List<String>,
 ): RType {
-    val request = if(cfg.withSlots) {
+    val request = if (cfg.withSlots) {
         EvalShaCommandCodec.encodeWithSlot(charset = cfg.charset, sha1 = sha1, key = key, arg = arg)
     } else {
         EvalShaCommandCodec.encode(charset = cfg.charset, sha1 = sha1, key = key, arg = arg)

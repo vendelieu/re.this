@@ -34,11 +34,11 @@ public object GeoDistCommandCodec {
         var size = 1
         COMMAND_HEADER.copyTo(buffer)
         size += 1
-        buffer.writeStringArg(key, charset, )
+        buffer.writeStringArg(key, charset)
         size += 1
-        buffer.writeStringArg(member1, charset, )
+        buffer.writeStringArg(member1, charset)
         size += 1
-        buffer.writeStringArg(member2, charset, )
+        buffer.writeStringArg(member2, charset)
         unit?.let { it0 ->
             size += 1
             buffer.writeStringArg(it0.toString(), charset)
@@ -66,13 +66,15 @@ public object GeoDistCommandCodec {
 
     public suspend fun decode(input: Buffer, charset: Charset): Double? {
         val code = input.parseCode(RespCode.BULK)
-        return when(code) {
+        return when (code) {
             RespCode.BULK -> {
                 BulkStringDecoder.decodeNullable(input, charset, code)?.toDouble()
             }
+
             RespCode.NULL -> {
                 null
             }
+
             else -> {
                 throw UnexpectedResponseType("Expected [BULK, NULL] but got $code", input.tryInferCause(code))
             }

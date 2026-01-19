@@ -17,10 +17,30 @@ public suspend fun ReThis.geoSearchStore(
     any: Boolean? = null,
     storedist: Boolean? = null,
 ): Long {
-    val request = if(cfg.withSlots) {
-        GeoSearchStoreCommandCodec.encodeWithSlot(charset = cfg.charset, destination = destination, source = source, from = from, by = by, order = order, count = count, any = any, storedist = storedist)
+    val request = if (cfg.withSlots) {
+        GeoSearchStoreCommandCodec.encodeWithSlot(
+            charset = cfg.charset,
+            destination = destination,
+            source = source,
+            from = from,
+            by = by,
+            order = order,
+            count = count,
+            any = any,
+            storedist = storedist,
+        )
     } else {
-        GeoSearchStoreCommandCodec.encode(charset = cfg.charset, destination = destination, source = source, from = from, by = by, order = order, count = count, any = any, storedist = storedist)
+        GeoSearchStoreCommandCodec.encode(
+            charset = cfg.charset,
+            destination = destination,
+            source = source,
+            from = from,
+            by = by,
+            order = order,
+            count = count,
+            any = any,
+            storedist = storedist,
+        )
     }
     return GeoSearchStoreCommandCodec.decode(topology.handle(request), cfg.charset)
 }

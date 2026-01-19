@@ -36,7 +36,7 @@ public object LmPopCommandCodec {
         buffer.writeIntArg(key.size, charset)
         key.forEach { it0 ->
             size += 1
-            buffer.writeStringArg(it0, charset, )
+            buffer.writeStringArg(it0, charset)
         }
         size += 1
         buffer.writeStringArg(where.toString(), charset)
@@ -44,7 +44,7 @@ public object LmPopCommandCodec {
             size += 1
             buffer.writeStringArg("COUNT", charset)
             size += 1
-            buffer.writeLongArg(it1, charset, )
+            buffer.writeLongArg(it1, charset)
         }
 
         buffer = Buffer().apply {

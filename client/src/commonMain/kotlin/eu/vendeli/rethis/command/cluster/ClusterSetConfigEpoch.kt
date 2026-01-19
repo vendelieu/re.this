@@ -5,7 +5,7 @@ import eu.vendeli.rethis.codecs.cluster.ClusterSetConfigEpochCommandCodec
 import eu.vendeli.rethis.topology.handle
 
 public suspend fun ReThis.clusterSetConfigEpoch(configEpoch: Long): Boolean {
-    val request = if(cfg.withSlots) {
+    val request = if (cfg.withSlots) {
         ClusterSetConfigEpochCommandCodec.encodeWithSlot(charset = cfg.charset, configEpoch = configEpoch)
     } else {
         ClusterSetConfigEpochCommandCodec.encode(charset = cfg.charset, configEpoch = configEpoch)

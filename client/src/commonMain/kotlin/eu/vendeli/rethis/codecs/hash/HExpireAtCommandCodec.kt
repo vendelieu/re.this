@@ -35,30 +35,33 @@ public object HExpireAtCommandCodec {
         var size = 1
         COMMAND_HEADER.copyTo(buffer)
         size += 1
-        buffer.writeStringArg(key, charset, )
+        buffer.writeStringArg(key, charset)
         size += 1
         buffer.writeInstantArg(unixTimeSeconds, charset, TimeUnit.SECONDS)
         condition?.let { it0 ->
             when (it0) {
-                is UpdateStrategyOption.ComparisonRule ->  {
+                is UpdateStrategyOption.ComparisonRule -> {
                     when (it0) {
-                        is UpdateStrategyOption.GT ->  {
+                        is UpdateStrategyOption.GT -> {
                             size += 1
                             buffer.writeStringArg(it0.toString(), charset)
                         }
-                        is UpdateStrategyOption.LT ->  {
+
+                        is UpdateStrategyOption.LT -> {
                             size += 1
                             buffer.writeStringArg(it0.toString(), charset)
                         }
                     }
                 }
-                is UpdateStrategyOption.ExistenceRule ->  {
+
+                is UpdateStrategyOption.ExistenceRule -> {
                     when (it0) {
-                        is UpdateStrategyOption.NX ->  {
+                        is UpdateStrategyOption.NX -> {
                             size += 1
                             buffer.writeStringArg(it0.toString(), charset)
                         }
-                        is UpdateStrategyOption.XX ->  {
+
+                        is UpdateStrategyOption.XX -> {
                             size += 1
                             buffer.writeStringArg(it0.toString(), charset)
                         }
@@ -74,7 +77,7 @@ public object HExpireAtCommandCodec {
         }
         field.forEach { it1 ->
             size += 1
-            buffer.writeStringArg(it1, charset, )
+            buffer.writeStringArg(it1, charset)
         }
 
         buffer = Buffer().apply {
@@ -93,19 +96,22 @@ public object HExpireAtCommandCodec {
     ): CommandRequest {
         var slot: Int? = null
         slot = validateSlot(slot, CRC16.lookup(key.toByteArray(charset)))
-        val request = encode(charset, key = key, unixTimeSeconds = unixTimeSeconds, field = field, condition = condition)
+        val request =
+            encode(charset, key = key, unixTimeSeconds = unixTimeSeconds, field = field, condition = condition)
         return request.withSlot(slot % 16384)
     }
 
     public suspend fun decode(input: Buffer, charset: Charset): List<Long> {
         val code = input.parseCode(RespCode.ARRAY)
-        return when(code) {
+        return when (code) {
             RespCode.ARRAY -> {
                 ArrayLongDecoder.decode(input, charset, code)
             }
+
             RespCode.SIMPLE_ERROR -> {
                 SimpleErrorDecoder.decode(input, charset, code)
             }
+
             else -> {
                 throw UnexpectedResponseType("Expected [ARRAY, SIMPLE_ERROR] but got $code", input.tryInferCause(code))
             }

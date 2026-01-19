@@ -26,10 +26,10 @@ public object AclLogCommandCodec {
         COMMAND_HEADER.copyTo(buffer)
         count?.let { it0 ->
             size += 1
-            buffer.writeLongArg(it0, charset, )
+            buffer.writeLongArg(it0, charset)
         }
         reset?.let { it1 ->
-            if(it1) {
+            if (it1) {
                 size += 1
                 buffer.writeStringArg("RESET", charset)
             }

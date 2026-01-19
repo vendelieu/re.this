@@ -22,19 +22,23 @@ public object ClusterSetConfigEpochCommandCodec {
     public suspend fun encode(charset: Charset, configEpoch: Long): CommandRequest {
         val buffer = Buffer()
         COMMAND_HEADER.copyTo(buffer)
-        buffer.writeLongArg(configEpoch, charset, )
+        buffer.writeLongArg(configEpoch, charset)
 
         return CommandRequest(buffer, RedisOperation.WRITE, BLOCKING_STATUS)
     }
 
-    public suspend inline fun encodeWithSlot(charset: Charset, configEpoch: Long): CommandRequest = encode(charset, configEpoch = configEpoch)
+    public suspend inline fun encodeWithSlot(charset: Charset, configEpoch: Long): CommandRequest = encode(
+        charset,
+        configEpoch = configEpoch,
+    )
 
     public suspend fun decode(input: Buffer, charset: Charset): Boolean {
         val code = input.parseCode(RespCode.SIMPLE_STRING)
-        return when(code) {
+        return when (code) {
             RespCode.SIMPLE_STRING -> {
                 SimpleStringDecoder.decode(input, charset, code) == "OK"
             }
+
             else -> {
                 throw UnexpectedResponseType("Expected [SIMPLE_STRING] but got $code", input.tryInferCause(code))
             }

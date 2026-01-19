@@ -35,12 +35,12 @@ public object BitCountCommandCodec {
         var size = 1
         COMMAND_HEADER.copyTo(buffer)
         size += 1
-        buffer.writeStringArg(key, charset, )
+        buffer.writeStringArg(key, charset)
         range?.let { it0 ->
             size += 1
-            buffer.writeLongArg(it0.start, charset, )
+            buffer.writeLongArg(it0.start, charset)
             size += 1
-            buffer.writeLongArg(it0.end, charset, )
+            buffer.writeLongArg(it0.end, charset)
         }
         unit?.let { it1 ->
             size += 1
@@ -68,10 +68,11 @@ public object BitCountCommandCodec {
 
     public suspend fun decode(input: Buffer, charset: Charset): Long {
         val code = input.parseCode(RespCode.INTEGER)
-        return when(code) {
+        return when (code) {
             RespCode.INTEGER -> {
                 IntegerDecoder.decode(input, charset, code)
             }
+
             else -> {
                 throw UnexpectedResponseType("Expected [INTEGER] but got $code", input.tryInferCause(code))
             }

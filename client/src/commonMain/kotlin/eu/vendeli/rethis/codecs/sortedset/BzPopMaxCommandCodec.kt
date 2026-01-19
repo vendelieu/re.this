@@ -31,10 +31,10 @@ public object BzPopMaxCommandCodec {
         COMMAND_HEADER.copyTo(buffer)
         key.forEach { it0 ->
             size += 1
-            buffer.writeStringArg(it0, charset, )
+            buffer.writeStringArg(it0, charset)
         }
         size += 1
-        buffer.writeDoubleArg(timeout, charset, )
+        buffer.writeDoubleArg(timeout, charset)
 
         buffer = Buffer().apply {
             writeString("*$size")

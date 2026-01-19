@@ -5,7 +5,7 @@ import eu.vendeli.rethis.codecs.set.SMisMemberCommandCodec
 import eu.vendeli.rethis.topology.handle
 
 public suspend fun ReThis.sMisMember(key: String, vararg member: String): List<Boolean> {
-    val request = if(cfg.withSlots) {
+    val request = if (cfg.withSlots) {
         SMisMemberCommandCodec.encodeWithSlot(charset = cfg.charset, key = key, member = member)
     } else {
         SMisMemberCommandCodec.encode(charset = cfg.charset, key = key, member = member)

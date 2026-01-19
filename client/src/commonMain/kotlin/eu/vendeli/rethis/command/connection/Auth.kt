@@ -5,7 +5,7 @@ import eu.vendeli.rethis.codecs.connection.AuthCommandCodec
 import eu.vendeli.rethis.topology.handle
 
 public suspend fun ReThis.auth(username: String? = null, password: CharArray): Boolean {
-    val request = if(cfg.withSlots) {
+    val request = if (cfg.withSlots) {
         AuthCommandCodec.encodeWithSlot(charset = cfg.charset, username = username, password = password)
     } else {
         AuthCommandCodec.encode(charset = cfg.charset, username = username, password = password)

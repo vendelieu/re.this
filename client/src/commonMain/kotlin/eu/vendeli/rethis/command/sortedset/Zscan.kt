@@ -11,8 +11,14 @@ public suspend fun ReThis.zScan(
     pattern: String? = null,
     count: Long? = null,
 ): ScanResult<Pair<String, String>> {
-    val request = if(cfg.withSlots) {
-        ZScanCommandCodec.encodeWithSlot(charset = cfg.charset, key = key, cursor = cursor, pattern = pattern, count = count)
+    val request = if (cfg.withSlots) {
+        ZScanCommandCodec.encodeWithSlot(
+            charset = cfg.charset,
+            key = key,
+            cursor = cursor,
+            pattern = pattern,
+            count = count,
+        )
     } else {
         ZScanCommandCodec.encode(charset = cfg.charset, key = key, cursor = cursor, pattern = pattern, count = count)
     }

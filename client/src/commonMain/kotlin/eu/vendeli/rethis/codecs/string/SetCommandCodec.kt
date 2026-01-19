@@ -36,54 +36,61 @@ public object SetCommandCodec {
         var size = 1
         COMMAND_HEADER.copyTo(buffer)
         size += 1
-        buffer.writeStringArg(key, charset, )
+        buffer.writeStringArg(key, charset)
         size += 1
-        buffer.writeStringArg(value, charset, )
+        buffer.writeStringArg(value, charset)
         options.forEach { it0 ->
             when (it0) {
-                is GET ->  {
+                is GET -> {
                     size += 1
                     buffer.writeStringArg(it0.toString(), charset)
                 }
-                is SetExpire ->  {
+
+                is SetExpire -> {
                     when (it0) {
-                        is SetExpire.Ex ->  {
+                        is SetExpire.Ex -> {
                             size += 1
                             buffer.writeStringArg("EX", charset)
                             size += 1
                             buffer.writeDurationArg(it0.seconds, charset, TimeUnit.SECONDS)
                         }
-                        is SetExpire.Px ->  {
+
+                        is SetExpire.Px -> {
                             size += 1
                             buffer.writeStringArg("PX", charset)
                             size += 1
                             buffer.writeDurationArg(it0.milliseconds, charset, TimeUnit.MILLISECONDS)
                         }
-                        is SetExpire.ExAt ->  {
+
+                        is SetExpire.ExAt -> {
                             size += 1
                             buffer.writeStringArg("EXAT", charset)
                             size += 1
                             buffer.writeInstantArg(it0.unixTimeSeconds, charset, TimeUnit.SECONDS)
                         }
-                        is SetExpire.PxAt ->  {
+
+                        is SetExpire.PxAt -> {
                             size += 1
                             buffer.writeStringArg("PXAT", charset)
                             size += 1
                             buffer.writeInstantArg(it0.unixTimeMilliseconds, charset, TimeUnit.MILLISECONDS)
                         }
-                        is SetExpire.KEEPTTL ->  {
+
+                        is SetExpire.KEEPTTL -> {
                             size += 1
                             buffer.writeStringArg(it0.toString(), charset)
                         }
                     }
                 }
-                is UpsertMode ->  {
+
+                is UpsertMode -> {
                     when (it0) {
-                        is UpsertMode.NX ->  {
+                        is UpsertMode.NX -> {
                             size += 1
                             buffer.writeStringArg(it0.toString(), charset)
                         }
-                        is UpsertMode.XX ->  {
+
+                        is UpsertMode.XX -> {
                             size += 1
                             buffer.writeStringArg(it0.toString(), charset)
                         }
@@ -113,18 +120,24 @@ public object SetCommandCodec {
 
     public suspend fun decode(input: Buffer, charset: Charset): String? {
         val code = input.parseCode(RespCode.BULK)
-        return when(code) {
+        return when (code) {
             RespCode.BULK -> {
                 BulkStringDecoder.decodeNullable(input, charset, code)
             }
+
             RespCode.SIMPLE_STRING -> {
                 SimpleStringDecoder.decode(input, charset, code)
             }
+
             RespCode.NULL -> {
                 null
             }
+
             else -> {
-                throw UnexpectedResponseType("Expected [BULK, SIMPLE_STRING, NULL] but got $code", input.tryInferCause(code))
+                throw UnexpectedResponseType(
+                    "Expected [BULK, SIMPLE_STRING, NULL] but got $code",
+                    input.tryInferCause(code),
+                )
             }
         }
     }

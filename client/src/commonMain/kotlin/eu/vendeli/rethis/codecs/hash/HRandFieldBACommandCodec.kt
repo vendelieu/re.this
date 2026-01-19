@@ -25,7 +25,7 @@ public object HRandFieldBACommandCodec {
     public suspend fun encode(charset: Charset, key: String): CommandRequest {
         val buffer = Buffer()
         COMMAND_HEADER.copyTo(buffer)
-        buffer.writeStringArg(key, charset, )
+        buffer.writeStringArg(key, charset)
 
         return CommandRequest(buffer, RedisOperation.READ, BLOCKING_STATUS)
     }
@@ -39,13 +39,15 @@ public object HRandFieldBACommandCodec {
 
     public suspend fun decode(input: Buffer, charset: Charset): ByteArray? {
         val code = input.parseCode(RespCode.BULK)
-        return when(code) {
+        return when (code) {
             RespCode.BULK -> {
                 BulkByteArrayDecoder.decodeNullable(input, charset, code)
             }
+
             RespCode.NULL -> {
                 null
             }
+
             else -> {
                 throw UnexpectedResponseType("Expected [BULK, NULL] but got $code", input.tryInferCause(code))
             }

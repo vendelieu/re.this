@@ -11,7 +11,7 @@ public suspend fun ReThis.xRange(
     end: String,
     count: Long? = null,
 ): List<RType> {
-    val request = if(cfg.withSlots) {
+    val request = if (cfg.withSlots) {
         XRangeCommandCodec.encodeWithSlot(charset = cfg.charset, key = key, start = start, end = end, count = count)
     } else {
         XRangeCommandCodec.encode(charset = cfg.charset, key = key, start = start, end = end, count = count)

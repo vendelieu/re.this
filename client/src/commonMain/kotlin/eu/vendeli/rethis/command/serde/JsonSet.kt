@@ -25,10 +25,11 @@ suspend fun <T : Any> ReThis.jsonSet(
     format: SerializationFormat = cfg.serializationFormat,
 ): String {
     if (isInTx()) {
-        logger.warn("Be aware that in transaction commands return `QUEUED`" +
-            " which is for type safety substituted with default value, so serde operations will fail")
+        logger.warn(
+            "Be aware that in transaction commands return `QUEUED`" +
+                " which is for type safety substituted with default value, so serde operations will fail",
+        )
     }
     val serialized = format.serialize(serializer, value)
     return jsonSet(key, serialized, path, upsertMode)
 }
-

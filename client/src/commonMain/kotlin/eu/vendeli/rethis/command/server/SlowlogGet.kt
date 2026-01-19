@@ -6,7 +6,7 @@ import eu.vendeli.rethis.shared.types.RType
 import eu.vendeli.rethis.topology.handle
 
 public suspend fun ReThis.slowLogGet(count: Long? = null): List<RType> {
-    val request = if(cfg.withSlots) {
+    val request = if (cfg.withSlots) {
         SlowLogGetCommandCodec.encodeWithSlot(charset = cfg.charset, count = count)
     } else {
         SlowLogGetCommandCodec.encode(charset = cfg.charset, count = count)

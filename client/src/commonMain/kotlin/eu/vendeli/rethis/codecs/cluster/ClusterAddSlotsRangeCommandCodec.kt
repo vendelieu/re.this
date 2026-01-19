@@ -26,9 +26,9 @@ public object ClusterAddSlotsRangeCommandCodec {
         COMMAND_HEADER.copyTo(buffer)
         range.forEach { it0 ->
             size += 1
-            buffer.writeLongArg(it0.start, charset, )
+            buffer.writeLongArg(it0.start, charset)
             size += 1
-            buffer.writeLongArg(it0.end, charset, )
+            buffer.writeLongArg(it0.end, charset)
         }
 
         buffer = Buffer().apply {
@@ -38,14 +38,18 @@ public object ClusterAddSlotsRangeCommandCodec {
         return CommandRequest(buffer, RedisOperation.WRITE, BLOCKING_STATUS)
     }
 
-    public suspend inline fun encodeWithSlot(charset: Charset, vararg range: SlotRange): CommandRequest = encode(charset, range = range)
+    public suspend inline fun encodeWithSlot(charset: Charset, vararg range: SlotRange): CommandRequest = encode(
+        charset,
+        range = range,
+    )
 
     public suspend fun decode(input: Buffer, charset: Charset): Boolean {
         val code = input.parseCode(RespCode.SIMPLE_STRING)
-        return when(code) {
+        return when (code) {
             RespCode.SIMPLE_STRING -> {
                 SimpleStringDecoder.decode(input, charset, code) == "OK"
             }
+
             else -> {
                 throw UnexpectedResponseType("Expected [SIMPLE_STRING] but got $code", input.tryInferCause(code))
             }

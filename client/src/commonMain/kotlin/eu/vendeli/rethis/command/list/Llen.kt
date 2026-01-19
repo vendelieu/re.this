@@ -5,7 +5,7 @@ import eu.vendeli.rethis.codecs.list.LLenCommandCodec
 import eu.vendeli.rethis.topology.handle
 
 public suspend fun ReThis.lLen(key: String): Long {
-    val request = if(cfg.withSlots) {
+    val request = if (cfg.withSlots) {
         LLenCommandCodec.encodeWithSlot(charset = cfg.charset, key = key)
     } else {
         LLenCommandCodec.encode(charset = cfg.charset, key = key)

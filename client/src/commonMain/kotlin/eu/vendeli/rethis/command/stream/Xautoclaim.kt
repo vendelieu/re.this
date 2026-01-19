@@ -14,10 +14,28 @@ public suspend fun ReThis.xAutoClaim(
     count: Long? = null,
     justid: Boolean? = null,
 ): List<RType> {
-    val request = if(cfg.withSlots) {
-        XAutoClaimCommandCodec.encodeWithSlot(charset = cfg.charset, key = key, group = group, consumer = consumer, minIdleTime = minIdleTime, start = start, count = count, justid = justid)
+    val request = if (cfg.withSlots) {
+        XAutoClaimCommandCodec.encodeWithSlot(
+            charset = cfg.charset,
+            key = key,
+            group = group,
+            consumer = consumer,
+            minIdleTime = minIdleTime,
+            start = start,
+            count = count,
+            justid = justid,
+        )
     } else {
-        XAutoClaimCommandCodec.encode(charset = cfg.charset, key = key, group = group, consumer = consumer, minIdleTime = minIdleTime, start = start, count = count, justid = justid)
+        XAutoClaimCommandCodec.encode(
+            charset = cfg.charset,
+            key = key,
+            group = group,
+            consumer = consumer,
+            minIdleTime = minIdleTime,
+            start = start,
+            count = count,
+            justid = justid,
+        )
     }
     return XAutoClaimCommandCodec.decode(topology.handle(request), cfg.charset)
 }

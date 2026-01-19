@@ -9,8 +9,13 @@ public suspend fun ReThis.sMove(
     destination: String,
     member: String,
 ): Boolean {
-    val request = if(cfg.withSlots) {
-        SMoveCommandCodec.encodeWithSlot(charset = cfg.charset, source = source, destination = destination, member = member)
+    val request = if (cfg.withSlots) {
+        SMoveCommandCodec.encodeWithSlot(
+            charset = cfg.charset,
+            source = source,
+            destination = destination,
+            member = member,
+        )
     } else {
         SMoveCommandCodec.encode(charset = cfg.charset, source = source, destination = destination, member = member)
     }

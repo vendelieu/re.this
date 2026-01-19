@@ -5,7 +5,7 @@ import eu.vendeli.rethis.codecs.transaction.WatchCommandCodec
 import eu.vendeli.rethis.topology.handle
 
 public suspend fun ReThis.watch(vararg key: String): Boolean {
-    val request = if(cfg.withSlots) {
+    val request = if (cfg.withSlots) {
         WatchCommandCodec.encodeWithSlot(charset = cfg.charset, key = key)
     } else {
         WatchCommandCodec.encode(charset = cfg.charset, key = key)

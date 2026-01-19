@@ -11,7 +11,7 @@ public suspend fun ReThis.expire(
     seconds: Duration,
     condition: UpdateStrategyOption? = null,
 ): Boolean {
-    val request = if(cfg.withSlots) {
+    val request = if (cfg.withSlots) {
         ExpireCommandCodec.encodeWithSlot(charset = cfg.charset, key = key, seconds = seconds, condition = condition)
     } else {
         ExpireCommandCodec.encode(charset = cfg.charset, key = key, seconds = seconds, condition = condition)

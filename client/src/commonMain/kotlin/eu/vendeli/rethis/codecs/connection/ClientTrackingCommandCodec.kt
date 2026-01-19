@@ -31,58 +31,66 @@ public object ClientTrackingCommandCodec {
         var size = 2
         COMMAND_HEADER.copyTo(buffer)
         when (status) {
-            is ClientStandby.OFF ->  {
+            is ClientStandby.OFF -> {
                 size += 1
                 buffer.writeStringArg(status.toString(), charset)
             }
-            is ClientStandby.ON ->  {
+
+            is ClientStandby.ON -> {
                 size += 1
                 buffer.writeStringArg(status.toString(), charset)
             }
         }
         options.forEach { it0 ->
             when (it0) {
-                is ClientStandby ->  {
+                is ClientStandby -> {
                     when (it0) {
-                        is ClientStandby.ON ->  {
+                        is ClientStandby.ON -> {
                             size += 1
                             buffer.writeStringArg(it0.toString(), charset)
                         }
-                        is ClientStandby.OFF ->  {
+
+                        is ClientStandby.OFF -> {
                             size += 1
                             buffer.writeStringArg(it0.toString(), charset)
                         }
                     }
                 }
-                is ClientTrackingMode.BROADCAST ->  {
+
+                is ClientTrackingMode.BROADCAST -> {
                     size += 1
                     buffer.writeStringArg("BCAST", charset)
                 }
-                is ClientTrackingMode.NOLOOP ->  {
+
+                is ClientTrackingMode.NOLOOP -> {
                     size += 1
                     buffer.writeStringArg(it0.toString(), charset)
                 }
-                is ClientTrackingMode.OPTIN ->  {
+
+                is ClientTrackingMode.OPTIN -> {
                     size += 1
                     buffer.writeStringArg(it0.toString(), charset)
                 }
-                is ClientTrackingMode.OPTOUT ->  {
+
+                is ClientTrackingMode.OPTOUT -> {
                     size += 1
                     buffer.writeStringArg(it0.toString(), charset)
                 }
-                is ClientTrackingMode.Prefixes ->  {
+
+                is ClientTrackingMode.Prefixes -> {
                     it0.prefix.forEach { it1 ->
                         size += 1
                         buffer.writeStringArg("PREFIX", charset)
                         size += 1
-                        buffer.writeStringArg(it1, charset, )
+                        buffer.writeStringArg(it1, charset)
                     }
                 }
-                is ClientTrackingMode.Redirect ->  {
+
+                is ClientTrackingMode.Redirect -> {
                     size += 1
                     buffer.writeStringArg("REDIRECT", charset)
                     size += 1
-                    buffer.writeLongArg(it0.clientId, charset, )
+                    buffer.writeLongArg(it0.clientId, charset)
                 }
             }
         }
@@ -102,10 +110,11 @@ public object ClientTrackingCommandCodec {
 
     public suspend fun decode(input: Buffer, charset: Charset): Boolean {
         val code = input.parseCode(RespCode.SIMPLE_STRING)
-        return when(code) {
+        return when (code) {
             RespCode.SIMPLE_STRING -> {
                 SimpleStringDecoder.decode(input, charset, code) == "OK"
             }
+
             else -> {
                 throw UnexpectedResponseType("Expected [SIMPLE_STRING] but got $code", input.tryInferCause(code))
             }

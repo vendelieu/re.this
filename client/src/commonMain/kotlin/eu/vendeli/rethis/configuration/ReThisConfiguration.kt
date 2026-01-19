@@ -32,7 +32,9 @@ import kotlin.time.Duration.Companion.seconds
  * @property loggerFactory Factory for creating loggers. Defaults to [DefaultLoggerFactory].
  */
 @ConfigurationDSL
-sealed class ReThisConfiguration(internal val protocol: RespVer) {
+sealed class ReThisConfiguration(
+    internal val protocol: RespVer,
+) {
     internal var auth: AuthConfiguration? = null
     internal var tls: TLSConfig? = null
     internal var socket: SocketConfiguration = SocketConfiguration()
@@ -194,28 +196,29 @@ sealed class ReThisConfiguration(internal val protocol: RespVer) {
         socket.block()
     }
 
-    override fun toString(): String = StringBuilder().apply {
-        appendLine("${this@ReThisConfiguration::class.simpleName} {")
+    override fun toString(): String = StringBuilder()
+        .apply {
+            appendLine("${this@ReThisConfiguration::class.simpleName} {")
 
-        appendLine(
-            "\tauth=${
-                auth?.let {
-                    "{username=${auth?.username}, password=${auth?.password?.size?.let { "*".repeat(it) }}}"
-                }
-            }",
-        )
-        appendLine("\ttls=$tls")
-        appendLine("\t${socket}")
-        appendLine("\t$retry")
-        appendLine("\tusePooling=$usePooling")
-        if (usePooling) appendLine("\tpool=$pool")
-        appendLine("\tdb=${db ?: 0}")
-        appendLine("\tcharset=$charset")
-        appendLine("\tdispatcher=$dispatcher")
-        appendLine("\tmaxConnections=$maxConnections")
-        appendLine("\tconnectionAcquireTimeout=$connectionAcquireTimeout")
-        appendLine("\tloggerFactory=${loggerFactory::class.simpleName}")
+            appendLine(
+                "\tauth=${
+                    auth?.let {
+                        "{username=${auth?.username}, password=${auth?.password?.size?.let { "*".repeat(it) }}}"
+                    }
+                }",
+            )
+            appendLine("\ttls=$tls")
+            appendLine("\t$socket")
+            appendLine("\t$retry")
+            appendLine("\tusePooling=$usePooling")
+            if (usePooling) appendLine("\tpool=$pool")
+            appendLine("\tdb=${db ?: 0}")
+            appendLine("\tcharset=$charset")
+            appendLine("\tdispatcher=$dispatcher")
+            appendLine("\tmaxConnections=$maxConnections")
+            appendLine("\tconnectionAcquireTimeout=$connectionAcquireTimeout")
+            appendLine("\tloggerFactory=${loggerFactory::class.simpleName}")
 
-        appendLine("}")
-    }.toString()
+            appendLine("}")
+        }.toString()
 }

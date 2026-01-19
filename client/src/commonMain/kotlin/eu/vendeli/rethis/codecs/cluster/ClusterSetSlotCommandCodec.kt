@@ -28,21 +28,24 @@ public object ClusterSetSlotCommandCodec {
     ): CommandRequest {
         val buffer = Buffer()
         COMMAND_HEADER.copyTo(buffer)
-        buffer.writeLongArg(slot, charset, )
+        buffer.writeLongArg(slot, charset)
         when (subcommand) {
-            is ClusterSetSlotOption.Importing ->  {
+            is ClusterSetSlotOption.Importing -> {
                 buffer.writeStringArg("IMPORTING", charset)
-                buffer.writeStringArg(subcommand.nodeId, charset, )
+                buffer.writeStringArg(subcommand.nodeId, charset)
             }
-            is ClusterSetSlotOption.Migrating ->  {
+
+            is ClusterSetSlotOption.Migrating -> {
                 buffer.writeStringArg("MIGRATING", charset)
-                buffer.writeStringArg(subcommand.nodeId, charset, )
+                buffer.writeStringArg(subcommand.nodeId, charset)
             }
-            is ClusterSetSlotOption.Node ->  {
+
+            is ClusterSetSlotOption.Node -> {
                 buffer.writeStringArg("NODE", charset)
-                buffer.writeStringArg(subcommand.nodeId, charset, )
+                buffer.writeStringArg(subcommand.nodeId, charset)
             }
-            is ClusterSetSlotOption.STABLE ->  {
+
+            is ClusterSetSlotOption.STABLE -> {
                 buffer.writeStringArg(subcommand.toString(), charset)
             }
         }
@@ -58,10 +61,11 @@ public object ClusterSetSlotCommandCodec {
 
     public suspend fun decode(input: Buffer, charset: Charset): Boolean {
         val code = input.parseCode(RespCode.SIMPLE_STRING)
-        return when(code) {
+        return when (code) {
             RespCode.SIMPLE_STRING -> {
                 SimpleStringDecoder.decode(input, charset, code) == "OK"
             }
+
             else -> {
                 throw UnexpectedResponseType("Expected [SIMPLE_STRING] but got $code", input.tryInferCause(code))
             }

@@ -6,7 +6,7 @@ import eu.vendeli.rethis.codecs.list.RPopCountCommandCodec
 import eu.vendeli.rethis.topology.handle
 
 public suspend fun ReThis.rPopCount(key: String, count: Long? = null): List<String> {
-    val request = if(cfg.withSlots) {
+    val request = if (cfg.withSlots) {
         RPopCountCommandCodec.encodeWithSlot(charset = cfg.charset, key = key, count = count)
     } else {
         RPopCountCommandCodec.encode(charset = cfg.charset, key = key, count = count)
@@ -15,7 +15,7 @@ public suspend fun ReThis.rPopCount(key: String, count: Long? = null): List<Stri
 }
 
 public suspend fun ReThis.rPop(key: String): String? {
-    val request = if(cfg.withSlots) {
+    val request = if (cfg.withSlots) {
         RPopCommandCodec.encodeWithSlot(charset = cfg.charset, key = key)
     } else {
         RPopCommandCodec.encode(charset = cfg.charset, key = key)

@@ -32,12 +32,12 @@ public object HSetCommandCodec {
         var size = 1
         COMMAND_HEADER.copyTo(buffer)
         size += 1
-        buffer.writeStringArg(key, charset, )
+        buffer.writeStringArg(key, charset)
         data.forEach { it0 ->
             size += 1
-            buffer.writeStringArg(it0.field, charset, )
+            buffer.writeStringArg(it0.field, charset)
             size += 1
-            buffer.writeStringArg(it0.value, charset, )
+            buffer.writeStringArg(it0.value, charset)
         }
 
         buffer = Buffer().apply {
@@ -60,10 +60,11 @@ public object HSetCommandCodec {
 
     public suspend fun decode(input: Buffer, charset: Charset): Long {
         val code = input.parseCode(RespCode.INTEGER)
-        return when(code) {
+        return when (code) {
             RespCode.INTEGER -> {
                 IntegerDecoder.decode(input, charset, code)
             }
+
             else -> {
                 throw UnexpectedResponseType("Expected [INTEGER] but got $code", input.tryInferCause(code))
             }

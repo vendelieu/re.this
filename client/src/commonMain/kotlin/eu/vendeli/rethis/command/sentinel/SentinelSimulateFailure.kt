@@ -6,7 +6,7 @@ import eu.vendeli.rethis.shared.request.sentinel.SentinelSimulateFailureMode
 import eu.vendeli.rethis.topology.handle
 
 public suspend fun ReThis.sentinelSimulateFailure(type: SentinelSimulateFailureMode): Boolean {
-    val request = if(cfg.withSlots) {
+    val request = if (cfg.withSlots) {
         SentinelSimulateFailureCommandCodec.encodeWithSlot(charset = cfg.charset, type = type)
     } else {
         SentinelSimulateFailureCommandCodec.encode(charset = cfg.charset, type = type)

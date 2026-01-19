@@ -5,7 +5,7 @@ import eu.vendeli.rethis.codecs.server.AclSetUserCommandCodec
 import eu.vendeli.rethis.topology.handle
 
 public suspend fun ReThis.aclSetUser(username: String, vararg rule: String): Boolean {
-    val request = if(cfg.withSlots) {
+    val request = if (cfg.withSlots) {
         AclSetUserCommandCodec.encodeWithSlot(charset = cfg.charset, username = username, rule = rule)
     } else {
         AclSetUserCommandCodec.encode(charset = cfg.charset, username = username, rule = rule)

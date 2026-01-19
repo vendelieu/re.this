@@ -31,42 +31,47 @@ public object SortStoreCommandCodec {
         var size = 1
         COMMAND_HEADER.copyTo(buffer)
         size += 1
-        buffer.writeStringArg(key, charset, )
+        buffer.writeStringArg(key, charset)
         option.forEach { it0 ->
             when (it0) {
-                is SortOption.ALPHA ->  {
+                is SortOption.ALPHA -> {
                     size += 1
                     buffer.writeStringArg(it0.toString(), charset)
                 }
-                is SortOption.By ->  {
+
+                is SortOption.By -> {
                     size += 1
                     buffer.writeStringArg("BY", charset)
                     size += 1
-                    buffer.writeStringArg(it0.byPattern, charset, )
+                    buffer.writeStringArg(it0.byPattern, charset)
                 }
-                is SortOption.Get ->  {
+
+                is SortOption.Get -> {
                     size += 1
                     buffer.writeStringArg("GET", charset)
                     it0.getPattern.forEach { it1 ->
                         size += 1
-                        buffer.writeStringArg(it1, charset, )
+                        buffer.writeStringArg(it1, charset)
                     }
                 }
-                is SortOption.Limit ->  {
+
+                is SortOption.Limit -> {
                     size += 1
                     buffer.writeStringArg("LIMIT", charset)
                     size += 1
-                    buffer.writeLongArg(it0.offset, charset, )
+                    buffer.writeLongArg(it0.offset, charset)
                     size += 1
-                    buffer.writeLongArg(it0.count, charset, )
+                    buffer.writeLongArg(it0.count, charset)
                 }
-                is SortOption.Order ->  {
+
+                is SortOption.Order -> {
                     when (it0) {
-                        is SortOption.ASC ->  {
+                        is SortOption.ASC -> {
                             size += 1
                             buffer.writeStringArg(it0.toString(), charset)
                         }
-                        is SortOption.DESC ->  {
+
+                        is SortOption.DESC -> {
                             size += 1
                             buffer.writeStringArg(it0.toString(), charset)
                         }
@@ -77,7 +82,7 @@ public object SortStoreCommandCodec {
         size += 1
         buffer.writeStringArg("STORE", charset)
         size += 1
-        buffer.writeStringArg(storeDestination, charset, )
+        buffer.writeStringArg(storeDestination, charset)
 
         buffer = Buffer().apply {
             writeString("*$size")
@@ -96,14 +101,16 @@ public object SortStoreCommandCodec {
         slot = validateSlot(slot, CRC16.lookup(key.toByteArray(charset)))
         option.forEach { it0 ->
             when (it0) {
-                is SortOption.By ->  {
+                is SortOption.By -> {
                     slot = validateSlot(slot, CRC16.lookup(it0.byPattern.toByteArray(charset)))
                 }
-                is SortOption.Get ->  {
+
+                is SortOption.Get -> {
                     it0.getPattern.forEach { it1 ->
                         slot = validateSlot(slot, CRC16.lookup(it1.toByteArray(charset)))
                     }
                 }
+
                 else -> {}
             }
         }
@@ -115,10 +122,11 @@ public object SortStoreCommandCodec {
 
     public suspend fun decode(input: Buffer, charset: Charset): Long {
         val code = input.parseCode(RespCode.INTEGER)
-        return when(code) {
+        return when (code) {
             RespCode.INTEGER -> {
                 IntegerDecoder.decode(input, charset, code)
             }
+
             else -> {
                 throw UnexpectedResponseType("Expected [INTEGER] but got $code", input.tryInferCause(code))
             }

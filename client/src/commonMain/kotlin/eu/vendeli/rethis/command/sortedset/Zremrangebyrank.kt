@@ -9,7 +9,7 @@ public suspend fun ReThis.zRemRangeByRank(
     start: Long,
     stop: Long,
 ): Long {
-    val request = if(cfg.withSlots) {
+    val request = if (cfg.withSlots) {
         ZRemRangeByRankCommandCodec.encodeWithSlot(charset = cfg.charset, key = key, start = start, stop = stop)
     } else {
         ZRemRangeByRankCommandCodec.encode(charset = cfg.charset, key = key, start = start, stop = stop)

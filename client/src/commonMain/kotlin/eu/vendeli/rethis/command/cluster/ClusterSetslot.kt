@@ -6,7 +6,7 @@ import eu.vendeli.rethis.shared.request.cluster.ClusterSetSlotOption
 import eu.vendeli.rethis.topology.handle
 
 public suspend fun ReThis.clusterSetSlot(slot: Long, subcommand: ClusterSetSlotOption): Boolean {
-    val request = if(cfg.withSlots) {
+    val request = if (cfg.withSlots) {
         ClusterSetSlotCommandCodec.encodeWithSlot(charset = cfg.charset, slot = slot, subcommand = subcommand)
     } else {
         ClusterSetSlotCommandCodec.encode(charset = cfg.charset, slot = slot, subcommand = subcommand)

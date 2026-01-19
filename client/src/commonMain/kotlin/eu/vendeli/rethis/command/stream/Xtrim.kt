@@ -13,10 +13,24 @@ public suspend fun ReThis.xTrim(
     `operator`: Exactement? = null,
     count: Long? = null,
 ): Long {
-    val request = if(cfg.withSlots) {
-        XTrimCommandCodec.encodeWithSlot(charset = cfg.charset, key = key, threshold = threshold, strategy = strategy, operator = operator, count = count)
+    val request = if (cfg.withSlots) {
+        XTrimCommandCodec.encodeWithSlot(
+            charset = cfg.charset,
+            key = key,
+            threshold = threshold,
+            strategy = strategy,
+            operator = operator,
+            count = count,
+        )
     } else {
-        XTrimCommandCodec.encode(charset = cfg.charset, key = key, threshold = threshold, strategy = strategy, operator = operator, count = count)
+        XTrimCommandCodec.encode(
+            charset = cfg.charset,
+            key = key,
+            threshold = threshold,
+            strategy = strategy,
+            operator = operator,
+            count = count,
+        )
     }
     return XTrimCommandCodec.decode(topology.handle(request), cfg.charset)
 }

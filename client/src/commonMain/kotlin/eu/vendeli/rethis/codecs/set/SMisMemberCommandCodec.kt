@@ -27,10 +27,10 @@ public object SMisMemberCommandCodec {
         var size = 1
         COMMAND_HEADER.copyTo(buffer)
         size += 1
-        buffer.writeStringArg(key, charset, )
+        buffer.writeStringArg(key, charset)
         member.forEach { it0 ->
             size += 1
-            buffer.writeStringArg(it0, charset, )
+            buffer.writeStringArg(it0, charset)
         }
 
         buffer = Buffer().apply {
@@ -51,5 +51,8 @@ public object SMisMemberCommandCodec {
         return request.withSlot(slot % 16384)
     }
 
-    public suspend fun decode(input: Buffer, charset: Charset): List<Boolean> = ArrayIntBooleanDecoder.decode(input, charset)
+    public suspend fun decode(input: Buffer, charset: Charset): List<Boolean> = ArrayIntBooleanDecoder.decode(
+        input,
+        charset,
+    )
 }

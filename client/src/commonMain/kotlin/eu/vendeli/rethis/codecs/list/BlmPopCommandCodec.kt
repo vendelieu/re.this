@@ -35,12 +35,12 @@ public object BlmPopCommandCodec {
         var size = 1
         COMMAND_HEADER.copyTo(buffer)
         size += 1
-        buffer.writeDoubleArg(timeout, charset, )
+        buffer.writeDoubleArg(timeout, charset)
         size += 1
         buffer.writeIntArg(key.size, charset)
         key.forEach { it0 ->
             size += 1
-            buffer.writeStringArg(it0, charset, )
+            buffer.writeStringArg(it0, charset)
         }
         size += 1
         buffer.writeStringArg(where.toString(), charset)
@@ -48,7 +48,7 @@ public object BlmPopCommandCodec {
             size += 1
             buffer.writeStringArg("COUNT", charset)
             size += 1
-            buffer.writeLongArg(it1, charset, )
+            buffer.writeLongArg(it1, charset)
         }
 
         buffer = Buffer().apply {

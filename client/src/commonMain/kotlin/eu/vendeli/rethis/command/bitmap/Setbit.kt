@@ -9,7 +9,7 @@ public suspend fun ReThis.setBit(
     offset: Long,
     `value`: Long,
 ): Long {
-    val request = if(cfg.withSlots) {
+    val request = if (cfg.withSlots) {
         SetBitCommandCodec.encodeWithSlot(charset = cfg.charset, key = key, offset = offset, value = value)
     } else {
         SetBitCommandCodec.encode(charset = cfg.charset, key = key, offset = offset, value = value)

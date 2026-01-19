@@ -29,12 +29,12 @@ public object SentinelSetCommandCodec {
         var size = 2
         COMMAND_HEADER.copyTo(buffer)
         size += 1
-        buffer.writeStringArg(name, charset, )
+        buffer.writeStringArg(name, charset)
         optionValue.forEach { it0 ->
             size += 1
-            buffer.writeStringArg(it0.field, charset, )
+            buffer.writeStringArg(it0.field, charset)
             size += 1
-            buffer.writeStringArg(it0.value, charset, )
+            buffer.writeStringArg(it0.value, charset)
         }
 
         buffer = Buffer().apply {
@@ -52,10 +52,11 @@ public object SentinelSetCommandCodec {
 
     public suspend fun decode(input: Buffer, charset: Charset): Boolean {
         val code = input.parseCode(RespCode.SIMPLE_STRING)
-        return when(code) {
+        return when (code) {
             RespCode.SIMPLE_STRING -> {
                 SimpleStringDecoder.decode(input, charset, code) == "OK"
             }
+
             else -> {
                 throw UnexpectedResponseType("Expected [SIMPLE_STRING] but got $code", input.tryInferCause(code))
             }

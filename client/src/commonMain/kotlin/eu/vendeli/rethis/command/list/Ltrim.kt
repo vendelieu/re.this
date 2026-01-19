@@ -9,7 +9,7 @@ public suspend fun ReThis.lTrim(
     start: Long,
     stop: Long,
 ): String {
-    val request = if(cfg.withSlots) {
+    val request = if (cfg.withSlots) {
         LTrimCommandCodec.encodeWithSlot(charset = cfg.charset, key = key, start = start, stop = stop)
     } else {
         LTrimCommandCodec.encode(charset = cfg.charset, key = key, start = start, stop = stop)

@@ -18,11 +18,14 @@ suspend fun <T : Any> ReThis.mSet(
     format: SerializationFormat = cfg.serializationFormat,
 ): Boolean {
     if (isInTx()) {
-        logger.warn("Be aware that in transaction commands return `QUEUED`" +
-            " which is for type safety substituted with default value, so serde operations will fail")
+        logger.warn(
+            "Be aware that in transaction commands return `QUEUED`" +
+                " which is for type safety substituted with default value, so serde operations will fail",
+        )
     }
-    val serializedPairs = kvPair.map { (k, v) ->
-        KeyValue(k, format.serialize(serializer, v))
-    }.toTypedArray()
+    val serializedPairs = kvPair
+        .map { (k, v) ->
+            KeyValue(k, format.serialize(serializer, v))
+        }.toTypedArray()
     return mSet(*serializedPairs)
 }

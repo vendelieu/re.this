@@ -6,7 +6,7 @@ import eu.vendeli.rethis.shared.request.common.FieldValue
 import eu.vendeli.rethis.topology.handle
 
 public suspend fun ReThis.sentinelSet(name: String, vararg optionValue: FieldValue): Boolean {
-    val request = if(cfg.withSlots) {
+    val request = if (cfg.withSlots) {
         SentinelSetCommandCodec.encodeWithSlot(charset = cfg.charset, name = name, optionValue = optionValue)
     } else {
         SentinelSetCommandCodec.encode(charset = cfg.charset, name = name, optionValue = optionValue)

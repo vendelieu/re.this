@@ -31,8 +31,8 @@ public object LcsLengthCommandCodec {
     ): CommandRequest {
         val buffer = Buffer()
         COMMAND_HEADER.copyTo(buffer)
-        buffer.writeStringArg(key1, charset, )
-        buffer.writeStringArg(key2, charset, )
+        buffer.writeStringArg(key1, charset)
+        buffer.writeStringArg(key2, charset)
         buffer.writeStringArg(mode.toString(), charset)
 
         return CommandRequest(buffer, RedisOperation.READ, BLOCKING_STATUS)
@@ -53,10 +53,11 @@ public object LcsLengthCommandCodec {
 
     public suspend fun decode(input: Buffer, charset: Charset): Long {
         val code = input.parseCode(RespCode.INTEGER)
-        return when(code) {
+        return when (code) {
             RespCode.INTEGER -> {
                 IntegerDecoder.decode(input, charset, code)
             }
+
             else -> {
                 throw UnexpectedResponseType("Expected [INTEGER] but got $code", input.tryInferCause(code))
             }

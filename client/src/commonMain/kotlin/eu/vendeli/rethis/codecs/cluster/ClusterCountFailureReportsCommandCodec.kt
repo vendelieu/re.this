@@ -22,19 +22,23 @@ public object ClusterCountFailureReportsCommandCodec {
     public suspend fun encode(charset: Charset, nodeId: String): CommandRequest {
         val buffer = Buffer()
         COMMAND_HEADER.copyTo(buffer)
-        buffer.writeStringArg(nodeId, charset, )
+        buffer.writeStringArg(nodeId, charset)
 
         return CommandRequest(buffer, RedisOperation.READ, BLOCKING_STATUS)
     }
 
-    public suspend inline fun encodeWithSlot(charset: Charset, nodeId: String): CommandRequest = encode(charset, nodeId = nodeId)
+    public suspend inline fun encodeWithSlot(charset: Charset, nodeId: String): CommandRequest = encode(
+        charset,
+        nodeId = nodeId,
+    )
 
     public suspend fun decode(input: Buffer, charset: Charset): Long {
         val code = input.parseCode(RespCode.INTEGER)
-        return when(code) {
+        return when (code) {
             RespCode.INTEGER -> {
                 IntegerDecoder.decode(input, charset, code)
             }
+
             else -> {
                 throw UnexpectedResponseType("Expected [INTEGER] but got $code", input.tryInferCause(code))
             }

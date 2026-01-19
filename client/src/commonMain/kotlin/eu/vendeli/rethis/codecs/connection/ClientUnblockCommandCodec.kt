@@ -30,7 +30,7 @@ public object ClientUnblockCommandCodec {
         var size = 2
         COMMAND_HEADER.copyTo(buffer)
         size += 1
-        buffer.writeLongArg(clientId, charset, )
+        buffer.writeLongArg(clientId, charset)
         unblockType?.let { it0 ->
             size += 1
             buffer.writeStringArg(it0.toString(), charset)
@@ -51,10 +51,11 @@ public object ClientUnblockCommandCodec {
 
     public suspend fun decode(input: Buffer, charset: Charset): Boolean {
         val code = input.parseCode(RespCode.INTEGER)
-        return when(code) {
+        return when (code) {
             RespCode.INTEGER -> {
                 IntegerDecoder.decode(input, charset, code) == 1L
             }
+
             else -> {
                 throw UnexpectedResponseType("Expected [INTEGER] but got $code", input.tryInferCause(code))
             }

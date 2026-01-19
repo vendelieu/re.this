@@ -5,7 +5,7 @@ import eu.vendeli.rethis.codecs.sortedset.ZDiffCommandCodec
 import eu.vendeli.rethis.topology.handle
 
 public suspend fun ReThis.zDiff(vararg key: String, withscores: Boolean? = null): List<String> {
-    val request = if(cfg.withSlots) {
+    val request = if (cfg.withSlots) {
         ZDiffCommandCodec.encodeWithSlot(charset = cfg.charset, key = key, withscores = withscores)
     } else {
         ZDiffCommandCodec.encode(charset = cfg.charset, key = key, withscores = withscores)

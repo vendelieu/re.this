@@ -9,7 +9,7 @@ public suspend fun ReThis.lRem(
     count: Long,
     element: String,
 ): Long {
-    val request = if(cfg.withSlots) {
+    val request = if (cfg.withSlots) {
         LRemCommandCodec.encodeWithSlot(charset = cfg.charset, key = key, count = count, element = element)
     } else {
         LRemCommandCodec.encode(charset = cfg.charset, key = key, count = count, element = element)

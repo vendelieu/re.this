@@ -5,7 +5,7 @@ import eu.vendeli.rethis.codecs.string.AppendCommandCodec
 import eu.vendeli.rethis.topology.handle
 
 public suspend fun ReThis.append(key: String, `value`: String): Long {
-    val request = if(cfg.withSlots) {
+    val request = if (cfg.withSlots) {
         AppendCommandCodec.encodeWithSlot(charset = cfg.charset, key = key, value = value)
     } else {
         AppendCommandCodec.encode(charset = cfg.charset, key = key, value = value)
