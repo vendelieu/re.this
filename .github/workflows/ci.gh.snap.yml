@@ -16,7 +16,7 @@ jobs:
     strategy:
       matrix:
         module: [
-          ":rethis",
+          ":client",
           ":shared",
         ]
     steps:
