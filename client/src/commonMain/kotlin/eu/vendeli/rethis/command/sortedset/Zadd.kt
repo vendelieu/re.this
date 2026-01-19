@@ -16,10 +16,24 @@ public suspend fun ReThis.zAddBA(
     comparison: UpdateStrategyOption.ComparisonRule? = null,
     change: Boolean? = null,
 ): Long? {
-    val request = if(cfg.withSlots) {
-        ZAddBACommandCodec.encodeWithSlot(charset = cfg.charset, key = key, data = data, condition = condition, comparison = comparison, change = change)
+    val request = if (cfg.withSlots) {
+        ZAddBACommandCodec.encodeWithSlot(
+            charset = cfg.charset,
+            key = key,
+            data = data,
+            condition = condition,
+            comparison = comparison,
+            change = change,
+        )
     } else {
-        ZAddBACommandCodec.encode(charset = cfg.charset, key = key, data = data, condition = condition, comparison = comparison, change = change)
+        ZAddBACommandCodec.encode(
+            charset = cfg.charset,
+            key = key,
+            data = data,
+            condition = condition,
+            comparison = comparison,
+            change = change,
+        )
     }
     return ZAddBACommandCodec.decode(topology.handle(request), cfg.charset)
 }
@@ -31,10 +45,24 @@ public suspend fun ReThis.zAdd(
     comparison: UpdateStrategyOption.ComparisonRule? = null,
     change: Boolean? = null,
 ): Long? {
-    val request = if(cfg.withSlots) {
-        ZAddCommandCodec.encodeWithSlot(charset = cfg.charset, key = key, data = data, condition = condition, comparison = comparison, change = change)
+    val request = if (cfg.withSlots) {
+        ZAddCommandCodec.encodeWithSlot(
+            charset = cfg.charset,
+            key = key,
+            data = data,
+            condition = condition,
+            comparison = comparison,
+            change = change,
+        )
     } else {
-        ZAddCommandCodec.encode(charset = cfg.charset, key = key, data = data, condition = condition, comparison = comparison, change = change)
+        ZAddCommandCodec.encode(
+            charset = cfg.charset,
+            key = key,
+            data = data,
+            condition = condition,
+            comparison = comparison,
+            change = change,
+        )
     }
     return ZAddCommandCodec.decode(topology.handle(request), cfg.charset)
 }
@@ -47,10 +75,26 @@ public suspend fun ReThis.zAddExtended(
     change: Boolean? = null,
     increment: Boolean? = null,
 ): Double? {
-    val request = if(cfg.withSlots) {
-        ZAddExtendedCommandCodec.encodeWithSlot(charset = cfg.charset, key = key, data = data, condition = condition, comparison = comparison, change = change, increment = increment)
+    val request = if (cfg.withSlots) {
+        ZAddExtendedCommandCodec.encodeWithSlot(
+            charset = cfg.charset,
+            key = key,
+            data = data,
+            condition = condition,
+            comparison = comparison,
+            change = change,
+            increment = increment,
+        )
     } else {
-        ZAddExtendedCommandCodec.encode(charset = cfg.charset, key = key, data = data, condition = condition, comparison = comparison, change = change, increment = increment)
+        ZAddExtendedCommandCodec.encode(
+            charset = cfg.charset,
+            key = key,
+            data = data,
+            condition = condition,
+            comparison = comparison,
+            change = change,
+            increment = increment,
+        )
     }
     return ZAddExtendedCommandCodec.decode(topology.handle(request), cfg.charset)
 }

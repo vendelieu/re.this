@@ -35,19 +35,20 @@ public object BzMPopCommandCodec {
         var size = 1
         COMMAND_HEADER.copyTo(buffer)
         size += 1
-        buffer.writeDoubleArg(timeout, charset, )
+        buffer.writeDoubleArg(timeout, charset)
         size += 1
         buffer.writeIntArg(key.size, charset)
         key.forEach { it0 ->
             size += 1
-            buffer.writeStringArg(it0, charset, )
+            buffer.writeStringArg(it0, charset)
         }
         when (where) {
-            is ZPopCommonOption.MAX ->  {
+            is ZPopCommonOption.MAX -> {
                 size += 1
                 buffer.writeStringArg(where.toString(), charset)
             }
-            is ZPopCommonOption.MIN ->  {
+
+            is ZPopCommonOption.MIN -> {
                 size += 1
                 buffer.writeStringArg(where.toString(), charset)
             }
@@ -56,7 +57,7 @@ public object BzMPopCommandCodec {
             size += 1
             buffer.writeStringArg("COUNT", charset)
             size += 1
-            buffer.writeLongArg(it1, charset, )
+            buffer.writeLongArg(it1, charset)
         }
 
         buffer = Buffer().apply {

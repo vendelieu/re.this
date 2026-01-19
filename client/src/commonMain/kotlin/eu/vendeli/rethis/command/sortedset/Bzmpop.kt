@@ -12,8 +12,14 @@ public suspend fun ReThis.bzMPop(
     vararg key: String,
     count: Long? = null,
 ): List<MPopResult>? {
-    val request = if(cfg.withSlots) {
-        BzMPopCommandCodec.encodeWithSlot(charset = cfg.charset, timeout = timeout, where = where, key = key, count = count)
+    val request = if (cfg.withSlots) {
+        BzMPopCommandCodec.encodeWithSlot(
+            charset = cfg.charset,
+            timeout = timeout,
+            where = where,
+            key = key,
+            count = count,
+        )
     } else {
         BzMPopCommandCodec.encode(charset = cfg.charset, timeout = timeout, where = where, key = key, count = count)
     }

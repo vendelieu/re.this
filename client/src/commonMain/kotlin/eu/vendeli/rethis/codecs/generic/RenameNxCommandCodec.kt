@@ -29,8 +29,8 @@ public object RenameNxCommandCodec {
     ): CommandRequest {
         val buffer = Buffer()
         COMMAND_HEADER.copyTo(buffer)
-        buffer.writeStringArg(key, charset, )
-        buffer.writeStringArg(newkey, charset, )
+        buffer.writeStringArg(key, charset)
+        buffer.writeStringArg(newkey, charset)
 
         return CommandRequest(buffer, RedisOperation.WRITE, BLOCKING_STATUS)
     }
@@ -49,10 +49,11 @@ public object RenameNxCommandCodec {
 
     public suspend fun decode(input: Buffer, charset: Charset): Boolean {
         val code = input.parseCode(RespCode.INTEGER)
-        return when(code) {
+        return when (code) {
             RespCode.INTEGER -> {
                 IntegerDecoder.decode(input, charset, code) == 1L
             }
+
             else -> {
                 throw UnexpectedResponseType("Expected [INTEGER] but got $code", input.tryInferCause(code))
             }

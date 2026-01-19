@@ -30,12 +30,12 @@ public object AclDryRunCommandCodec {
         var size = 2
         COMMAND_HEADER.copyTo(buffer)
         size += 1
-        buffer.writeStringArg(username, charset, )
+        buffer.writeStringArg(username, charset)
         size += 1
-        buffer.writeStringArg(command, charset, )
+        buffer.writeStringArg(command, charset)
         arg.forEach { it0 ->
             size += 1
-            buffer.writeStringArg(it0, charset, )
+            buffer.writeStringArg(it0, charset)
         }
 
         buffer = Buffer().apply {
@@ -54,13 +54,15 @@ public object AclDryRunCommandCodec {
 
     public suspend fun decode(input: Buffer, charset: Charset): String {
         val code = input.parseCode(RespCode.BULK)
-        return when(code) {
+        return when (code) {
             RespCode.BULK -> {
                 BulkStringDecoder.decode(input, charset, code)
             }
+
             RespCode.SIMPLE_STRING -> {
                 SimpleStringDecoder.decode(input, charset, code)
             }
+
             else -> {
                 throw UnexpectedResponseType("Expected [BULK, SIMPLE_STRING] but got $code", input.tryInferCause(code))
             }

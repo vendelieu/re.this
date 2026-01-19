@@ -29,24 +29,25 @@ public object ModuleLoadExCommandCodec {
         var size = 2
         COMMAND_HEADER.copyTo(buffer)
         size += 1
-        buffer.writeStringArg(path, charset, )
+        buffer.writeStringArg(path, charset)
         options.forEach { it0 ->
             when (it0) {
-                is ModuleOption.Arguments ->  {
+                is ModuleOption.Arguments -> {
                     size += 1
                     buffer.writeStringArg("ARGS", charset)
                     it0.args.forEach { it1 ->
                         size += 1
-                        buffer.writeStringArg(it1, charset, )
+                        buffer.writeStringArg(it1, charset)
                     }
                 }
-                is ModuleOption.Configs ->  {
+
+                is ModuleOption.Configs -> {
                     size += 1
                     buffer.writeStringArg("CONFIG", charset)
                     size += 1
-                    buffer.writeStringArg(it0.name, charset, )
+                    buffer.writeStringArg(it0.name, charset)
                     size += 1
-                    buffer.writeStringArg(it0.value, charset, )
+                    buffer.writeStringArg(it0.value, charset)
                 }
             }
         }
@@ -66,10 +67,11 @@ public object ModuleLoadExCommandCodec {
 
     public suspend fun decode(input: Buffer, charset: Charset): Boolean {
         val code = input.parseCode(RespCode.SIMPLE_STRING)
-        return when(code) {
+        return when (code) {
             RespCode.SIMPLE_STRING -> {
                 SimpleStringDecoder.decode(input, charset, code) == "OK"
             }
+
             else -> {
                 throw UnexpectedResponseType("Expected [SIMPLE_STRING] but got $code", input.tryInferCause(code))
             }

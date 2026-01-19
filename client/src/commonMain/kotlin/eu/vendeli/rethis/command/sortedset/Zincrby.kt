@@ -9,7 +9,7 @@ public suspend fun ReThis.zIncrBy(
     member: String,
     increment: Long,
 ): Double {
-    val request = if(cfg.withSlots) {
+    val request = if (cfg.withSlots) {
         ZIncrByCommandCodec.encodeWithSlot(charset = cfg.charset, key = key, member = member, increment = increment)
     } else {
         ZIncrByCommandCodec.encode(charset = cfg.charset, key = key, member = member, increment = increment)

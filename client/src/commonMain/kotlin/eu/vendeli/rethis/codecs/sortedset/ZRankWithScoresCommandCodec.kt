@@ -29,11 +29,11 @@ public object ZRankWithScoresCommandCodec {
         var size = 1
         COMMAND_HEADER.copyTo(buffer)
         size += 1
-        buffer.writeStringArg(key, charset, )
+        buffer.writeStringArg(key, charset)
         size += 1
-        buffer.writeStringArg(member, charset, )
+        buffer.writeStringArg(member, charset)
         withScore?.let { it0 ->
-            if(it0) {
+            if (it0) {
                 size += 1
                 buffer.writeStringArg("WITHSCORE", charset)
             }
@@ -60,13 +60,15 @@ public object ZRankWithScoresCommandCodec {
 
     public suspend fun decode(input: Buffer, charset: Charset): List<RType>? {
         val code = input.parseCode(RespCode.ARRAY)
-        return when(code) {
+        return when (code) {
             RespCode.ARRAY -> {
                 ArrayRTypeDecoder.decode(input, charset, code)
             }
+
             RespCode.NULL -> {
                 null
             }
+
             else -> {
                 throw UnexpectedResponseType("Expected [ARRAY, NULL] but got $code", input.tryInferCause(code))
             }

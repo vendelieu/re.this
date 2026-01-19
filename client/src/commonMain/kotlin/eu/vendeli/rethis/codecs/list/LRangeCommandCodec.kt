@@ -31,9 +31,9 @@ public object LRangeCommandCodec {
     ): CommandRequest {
         val buffer = Buffer()
         COMMAND_HEADER.copyTo(buffer)
-        buffer.writeStringArg(key, charset, )
-        buffer.writeLongArg(start, charset, )
-        buffer.writeLongArg(stop, charset, )
+        buffer.writeStringArg(key, charset)
+        buffer.writeLongArg(start, charset)
+        buffer.writeLongArg(stop, charset)
 
         return CommandRequest(buffer, RedisOperation.READ, BLOCKING_STATUS)
     }
@@ -52,10 +52,11 @@ public object LRangeCommandCodec {
 
     public suspend fun decode(input: Buffer, charset: Charset): List<String> {
         val code = input.parseCode(RespCode.ARRAY)
-        return when(code) {
+        return when (code) {
             RespCode.ARRAY -> {
                 ArrayStringDecoder.decode(input, charset, code)
             }
+
             else -> {
                 throw UnexpectedResponseType("Expected [ARRAY] but got $code", input.tryInferCause(code))
             }

@@ -6,7 +6,7 @@ import eu.vendeli.rethis.shared.response.common.MPopResult
 import eu.vendeli.rethis.topology.handle
 
 public suspend fun ReThis.zPopMax(key: String, count: Long? = null): List<MPopResult> {
-    val request = if(cfg.withSlots) {
+    val request = if (cfg.withSlots) {
         ZPopMaxCommandCodec.encodeWithSlot(charset = cfg.charset, key = key, count = count)
     } else {
         ZPopMaxCommandCodec.encode(charset = cfg.charset, key = key, count = count)

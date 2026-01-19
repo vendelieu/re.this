@@ -55,11 +55,13 @@ internal class ConnectionPool(
         repeat(cfg.pool.minIdleConnections) {
             launch(Job(populationJob)) {
                 val conn = connectionFactory.createConnOrNull(address) ?: return@launch
-                idleConnections.trySend(conn).onSuccess {
-                    idleConnectionsCount.incrementAndFetch()
-                }.onFailure {
-                    connectionFactory.dispose(conn)
-                }
+                idleConnections
+                    .trySend(conn)
+                    .onSuccess {
+                        idleConnectionsCount.incrementAndFetch()
+                    }.onFailure {
+                        connectionFactory.dispose(conn)
+                    }
             }
         }
         populationJob.invokeOnCompletion { logger.info("Connection pool initialized") }
@@ -129,7 +131,10 @@ internal class ConnectionPool(
 
     // borrows per second
     private fun getBurstRate(): Float =
-        borrowCount.load().toFloat() / (cfg.pool.checkInterval.inWholeSeconds.toFloat())
+        borrowCount.load().toFloat() / (
+            cfg.pool.checkInterval.inWholeSeconds
+                .toFloat()
+        )
 
     private suspend fun adjustPoolSize() {
         val burstRate = getBurstRate()
@@ -143,13 +148,15 @@ internal class ConnectionPool(
     }
 
     private suspend fun expandPool(by: Int) {
-        if (!connectionFactory.isReachedLimit()) repeat(by) {
-            val conn = connectionFactory.createConnOrNull(address) ?: return
-            pending.tryReceive().onSuccess {
-                it.complete(conn)
-                return
+        if (!connectionFactory.isReachedLimit()) {
+            repeat(by) {
+                val conn = connectionFactory.createConnOrNull(address) ?: return
+                pending.tryReceive().onSuccess {
+                    it.complete(conn)
+                    return
+                }
+                conn.fillPool()
             }
-            conn.fillPool()
         } else {
             logger.debug { "Pool expanding attempt failed. Max connections reached." }
         }
@@ -170,11 +177,13 @@ internal class ConnectionPool(
     }
 
     private fun RConnection.fillPool() {
-        idleConnections.trySend(this).onSuccess {
-            idleConnectionsCount.incrementAndFetch()
-        }.onFailure {
-            connectionFactory.dispose(this)
-        }
+        idleConnections
+            .trySend(this)
+            .onSuccess {
+                idleConnectionsCount.incrementAndFetch()
+            }.onFailure {
+                connectionFactory.dispose(this)
+            }
     }
 
     private suspend inline fun RConnection.healthyOrNull(): RConnection? {

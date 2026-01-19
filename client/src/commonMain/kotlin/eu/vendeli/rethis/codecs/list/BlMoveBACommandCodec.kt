@@ -34,11 +34,11 @@ public object BlMoveBACommandCodec {
     ): CommandRequest {
         val buffer = Buffer()
         COMMAND_HEADER.copyTo(buffer)
-        buffer.writeStringArg(source, charset, )
-        buffer.writeStringArg(destination, charset, )
+        buffer.writeStringArg(source, charset)
+        buffer.writeStringArg(destination, charset)
         buffer.writeStringArg(whereFrom.toString(), charset)
         buffer.writeStringArg(whereTo.toString(), charset)
-        buffer.writeDoubleArg(timeout, charset, )
+        buffer.writeDoubleArg(timeout, charset)
 
         return CommandRequest(buffer, RedisOperation.WRITE, BLOCKING_STATUS)
     }
@@ -54,19 +54,29 @@ public object BlMoveBACommandCodec {
         var slot: Int? = null
         slot = validateSlot(slot, CRC16.lookup(source.toByteArray(charset)))
         slot = validateSlot(slot, CRC16.lookup(destination.toByteArray(charset)))
-        val request = encode(charset, source = source, destination = destination, whereFrom = whereFrom, whereTo = whereTo, timeout = timeout)
+        val request =
+            encode(
+                charset,
+                source = source,
+                destination = destination,
+                whereFrom = whereFrom,
+                whereTo = whereTo,
+                timeout = timeout,
+            )
         return request.withSlot(slot % 16384)
     }
 
     public suspend fun decode(input: Buffer, charset: Charset): ByteArray? {
         val code = input.parseCode(RespCode.BULK)
-        return when(code) {
+        return when (code) {
             RespCode.BULK -> {
                 BulkByteArrayDecoder.decodeNullable(input, charset, code)
             }
+
             RespCode.NULL -> {
                 null
             }
+
             else -> {
                 throw UnexpectedResponseType("Expected [BULK, NULL] but got $code", input.tryInferCause(code))
             }

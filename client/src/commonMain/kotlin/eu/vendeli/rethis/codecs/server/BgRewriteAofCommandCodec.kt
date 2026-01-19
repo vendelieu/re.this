@@ -26,17 +26,19 @@ public object BgRewriteAofCommandCodec {
         return CommandRequest(buffer, RedisOperation.WRITE, BLOCKING_STATUS)
     }
 
-    public suspend inline fun encodeWithSlot(charset: Charset): CommandRequest = encode(charset, )
+    public suspend inline fun encodeWithSlot(charset: Charset): CommandRequest = encode(charset)
 
     public suspend fun decode(input: Buffer, charset: Charset): Boolean {
         val code = input.parseCode(RespCode.SIMPLE_STRING)
-        return when(code) {
+        return when (code) {
             RespCode.SIMPLE_STRING -> {
                 SimpleStringDecoder.decode(input, charset, code) == "OK"
             }
+
             RespCode.BULK -> {
                 BulkStringDecoder.decode(input, charset, code) == "OK"
             }
+
             else -> {
                 throw UnexpectedResponseType("Expected [SIMPLE_STRING, BULK] but got $code", input.tryInferCause(code))
             }

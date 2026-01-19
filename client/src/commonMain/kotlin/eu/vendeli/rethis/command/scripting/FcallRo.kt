@@ -10,7 +10,7 @@ public suspend fun ReThis.fcallRo(
     vararg key: String,
     arg: List<String>,
 ): RType {
-    val request = if(cfg.withSlots) {
+    val request = if (cfg.withSlots) {
         FcallRoCommandCodec.encodeWithSlot(charset = cfg.charset, function = function, key = key, arg = arg)
     } else {
         FcallRoCommandCodec.encode(charset = cfg.charset, function = function, key = key, arg = arg)

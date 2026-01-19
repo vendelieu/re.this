@@ -5,7 +5,7 @@ import eu.vendeli.rethis.codecs.json.JsonObjKeysCommandCodec
 import eu.vendeli.rethis.topology.handle
 
 public suspend fun ReThis.jsonObjKeys(key: String, path: String? = null): List<String> {
-    val request = if(cfg.withSlots) {
+    val request = if (cfg.withSlots) {
         JsonObjKeysCommandCodec.encodeWithSlot(charset = cfg.charset, key = key, path = path)
     } else {
         JsonObjKeysCommandCodec.encode(charset = cfg.charset, key = key, path = path)

@@ -11,10 +11,22 @@ public suspend fun ReThis.zInter(
     aggregate: ZAggregate? = null,
     withScores: Boolean? = null,
 ): List<String> {
-    val request = if(cfg.withSlots) {
-        ZInterCommandCodec.encodeWithSlot(charset = cfg.charset, key = key, weight = weight, aggregate = aggregate, withScores = withScores)
+    val request = if (cfg.withSlots) {
+        ZInterCommandCodec.encodeWithSlot(
+            charset = cfg.charset,
+            key = key,
+            weight = weight,
+            aggregate = aggregate,
+            withScores = withScores,
+        )
     } else {
-        ZInterCommandCodec.encode(charset = cfg.charset, key = key, weight = weight, aggregate = aggregate, withScores = withScores)
+        ZInterCommandCodec.encode(
+            charset = cfg.charset,
+            key = key,
+            weight = weight,
+            aggregate = aggregate,
+            withScores = withScores,
+        )
     }
     return ZInterCommandCodec.decode(topology.handle(request), cfg.charset)
 }

@@ -6,7 +6,7 @@ import eu.vendeli.rethis.shared.types.RType
 import eu.vendeli.rethis.topology.handle
 
 public suspend fun ReThis.commandGetKeysAndFlags(command: String, vararg arg: String): List<RType> {
-    val request = if(cfg.withSlots) {
+    val request = if (cfg.withSlots) {
         CommandGetKeysAndFlagsCommandCodec.encodeWithSlot(charset = cfg.charset, command = command, arg = arg)
     } else {
         CommandGetKeysAndFlagsCommandCodec.encode(charset = cfg.charset, command = command, arg = arg)

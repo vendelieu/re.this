@@ -32,8 +32,8 @@ public object LMoveCommandCodec {
     ): CommandRequest {
         val buffer = Buffer()
         COMMAND_HEADER.copyTo(buffer)
-        buffer.writeStringArg(source, charset, )
-        buffer.writeStringArg(destination, charset, )
+        buffer.writeStringArg(source, charset)
+        buffer.writeStringArg(destination, charset)
         buffer.writeStringArg(whereFrom.toString(), charset)
         buffer.writeStringArg(whereTo.toString(), charset)
 
@@ -50,16 +50,18 @@ public object LMoveCommandCodec {
         var slot: Int? = null
         slot = validateSlot(slot, CRC16.lookup(source.toByteArray(charset)))
         slot = validateSlot(slot, CRC16.lookup(destination.toByteArray(charset)))
-        val request = encode(charset, source = source, destination = destination, whereFrom = whereFrom, whereTo = whereTo)
+        val request =
+            encode(charset, source = source, destination = destination, whereFrom = whereFrom, whereTo = whereTo)
         return request.withSlot(slot % 16384)
     }
 
     public suspend fun decode(input: Buffer, charset: Charset): String {
         val code = input.parseCode(RespCode.BULK)
-        return when(code) {
+        return when (code) {
             RespCode.BULK -> {
                 BulkStringDecoder.decode(input, charset, code)
             }
+
             else -> {
                 throw UnexpectedResponseType("Expected [BULK] but got $code", input.tryInferCause(code))
             }

@@ -10,7 +10,7 @@ public suspend fun ReThis.jsonNumIncrBy(
     path: String,
     `value`: Double,
 ): RType {
-    val request = if(cfg.withSlots) {
+    val request = if (cfg.withSlots) {
         JsonNumIncrByCommandCodec.encodeWithSlot(charset = cfg.charset, key = key, path = path, value = value)
     } else {
         JsonNumIncrByCommandCodec.encode(charset = cfg.charset, key = key, path = path, value = value)

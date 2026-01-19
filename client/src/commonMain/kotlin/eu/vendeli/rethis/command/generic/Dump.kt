@@ -5,7 +5,7 @@ import eu.vendeli.rethis.codecs.generic.DumpCommandCodec
 import eu.vendeli.rethis.topology.handle
 
 public suspend fun ReThis.dump(key: String): ByteArray? {
-    val request = if(cfg.withSlots) {
+    val request = if (cfg.withSlots) {
         DumpCommandCodec.encodeWithSlot(charset = cfg.charset, key = key)
     } else {
         DumpCommandCodec.encode(charset = cfg.charset, key = key)

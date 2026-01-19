@@ -35,7 +35,8 @@ internal suspend fun ReThis.registerSubscription(
             while (isActive) {
                 conn.input.awaitContent()
                 val payload = Buffer()
-                conn.input.readBuffer.buffer.transferTo(payload)
+                conn.input.readBuffer.buffer
+                    .transferTo(payload)
                 val event = SubEventDecoder.decode(payload, cfg.charset)
                 logger.debug { "Handling event in $target channel subscription" }
 
@@ -60,7 +61,7 @@ internal suspend fun ReThis.registerSubscription(
                 delay(1)
             }
         } catch (e: CancellationException) {
-            throw e //Cancellation exceptions are normal part of coroutines, and should not be catched or spam logs
+            throw e // Cancellation exceptions are normal part of coroutines, and should not be catched or spam logs
         } catch (e: Exception) {
             logger.error("Caught exception in $target channel handler", e)
             subscriptions.eventHandler?.onException(target, e)

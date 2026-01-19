@@ -37,14 +37,15 @@ public object ZAddCommandCodec {
         var size = 1
         COMMAND_HEADER.copyTo(buffer)
         size += 1
-        buffer.writeStringArg(key, charset, )
+        buffer.writeStringArg(key, charset)
         condition?.let { it0 ->
             when (it0) {
-                is UpdateStrategyOption.NX ->  {
+                is UpdateStrategyOption.NX -> {
                     size += 1
                     buffer.writeStringArg(it0.toString(), charset)
                 }
-                is UpdateStrategyOption.XX ->  {
+
+                is UpdateStrategyOption.XX -> {
                     size += 1
                     buffer.writeStringArg(it0.toString(), charset)
                 }
@@ -52,27 +53,28 @@ public object ZAddCommandCodec {
         }
         comparison?.let { it1 ->
             when (it1) {
-                is UpdateStrategyOption.GT ->  {
+                is UpdateStrategyOption.GT -> {
                     size += 1
                     buffer.writeStringArg(it1.toString(), charset)
                 }
-                is UpdateStrategyOption.LT ->  {
+
+                is UpdateStrategyOption.LT -> {
                     size += 1
                     buffer.writeStringArg(it1.toString(), charset)
                 }
             }
         }
         change?.let { it2 ->
-            if(it2) {
+            if (it2) {
                 size += 1
                 buffer.writeStringArg("CH", charset)
             }
         }
         data.forEach { it3 ->
             size += 1
-            buffer.writeDoubleArg(it3.score, charset, )
+            buffer.writeDoubleArg(it3.score, charset)
             size += 1
-            buffer.writeStringArg(it3.member, charset, )
+            buffer.writeStringArg(it3.member, charset)
         }
 
         buffer = Buffer().apply {
@@ -92,19 +94,22 @@ public object ZAddCommandCodec {
     ): CommandRequest {
         var slot: Int? = null
         slot = validateSlot(slot, CRC16.lookup(key.toByteArray(charset)))
-        val request = encode(charset, key = key, data = data, condition = condition, comparison = comparison, change = change)
+        val request =
+            encode(charset, key = key, data = data, condition = condition, comparison = comparison, change = change)
         return request.withSlot(slot % 16384)
     }
 
     public suspend fun decode(input: Buffer, charset: Charset): Long? {
         val code = input.parseCode(RespCode.INTEGER)
-        return when(code) {
+        return when (code) {
             RespCode.INTEGER -> {
                 IntegerDecoder.decode(input, charset, code)
             }
+
             RespCode.NULL -> {
                 null
             }
+
             else -> {
                 throw UnexpectedResponseType("Expected [INTEGER, NULL] but got $code", input.tryInferCause(code))
             }

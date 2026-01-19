@@ -19,25 +19,31 @@ public object AclGetUserCommandCodec {
     public suspend fun encode(charset: Charset, username: String): CommandRequest {
         val buffer = Buffer()
         COMMAND_HEADER.copyTo(buffer)
-        buffer.writeStringArg(username, charset, )
+        buffer.writeStringArg(username, charset)
 
         return CommandRequest(buffer, RedisOperation.READ, BLOCKING_STATUS)
     }
 
-    public suspend inline fun encodeWithSlot(charset: Charset, username: String): CommandRequest = encode(charset, username = username)
+    public suspend inline fun encodeWithSlot(charset: Charset, username: String): CommandRequest = encode(
+        charset,
+        username = username,
+    )
 
     public suspend fun decode(input: Buffer, charset: Charset): Map<String, RType>? {
         val code = input.parseCode(RespCode.ARRAY)
-        return when(code) {
+        return when (code) {
             RespCode.ARRAY -> {
                 MapRTypeDecoder.decode(input, charset, code)
             }
+
             RespCode.MAP -> {
                 MapRTypeDecoder.decode(input, charset, code)
             }
+
             RespCode.NULL -> {
                 null
             }
+
             else -> {
                 throw UnexpectedResponseType("Expected [ARRAY, MAP, NULL] but got $code", input.tryInferCause(code))
             }

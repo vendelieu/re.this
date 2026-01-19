@@ -34,13 +34,13 @@ public object XReadCommandCodec {
             size += 1
             buffer.writeStringArg("COUNT", charset)
             size += 1
-            buffer.writeLongArg(it0, charset, )
+            buffer.writeLongArg(it0, charset)
         }
         milliseconds?.let { it1 ->
             size += 1
             buffer.writeStringArg("BLOCK", charset)
             size += 1
-            buffer.writeLongArg(it1, charset, )
+            buffer.writeLongArg(it1, charset)
         }
         if (key.isNotEmpty()) {
             size += 1
@@ -48,11 +48,11 @@ public object XReadCommandCodec {
         }
         key.forEach { it2 ->
             size += 1
-            buffer.writeStringArg(it2, charset, )
+            buffer.writeStringArg(it2, charset)
         }
         id.forEach { it3 ->
             size += 1
-            buffer.writeStringArg(it3, charset, )
+            buffer.writeStringArg(it3, charset)
         }
 
         buffer = Buffer().apply {
@@ -80,16 +80,19 @@ public object XReadCommandCodec {
 
     public suspend fun decode(input: Buffer, charset: Charset): Map<String, RType>? {
         val code = input.parseCode(RespCode.ARRAY)
-        return when(code) {
+        return when (code) {
             RespCode.ARRAY -> {
                 MapRTypeDecoder.decode(input, charset, code)
             }
+
             RespCode.MAP -> {
                 MapRTypeDecoder.decode(input, charset, code)
             }
+
             RespCode.NULL -> {
                 null
             }
+
             else -> {
                 throw UnexpectedResponseType("Expected [ARRAY, MAP, NULL] but got $code", input.tryInferCause(code))
             }

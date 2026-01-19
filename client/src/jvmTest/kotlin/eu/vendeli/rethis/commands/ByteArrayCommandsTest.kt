@@ -21,7 +21,6 @@ import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 
 class ByteArrayCommandsTest : ReThisTestCtx() {
-
     private fun String.toBA(): ByteArray = this.encodeToByteArray()
     private infix fun ByteArray?.shouldDecodeToString(expected: String) {
         this.shouldNotBeNull().decodeToString() shouldBe expected
@@ -101,7 +100,8 @@ class ByteArrayCommandsTest : ReThisTestCtx() {
     @Test
     suspend fun `test LMOVE BA command`() {
         client.lPush("baListKey3", "listValue3")
-        client.lMoveBA("baListKey3", "baListKey4", MoveDirection.LEFT, MoveDirection.LEFT)
+        client
+            .lMoveBA("baListKey3", "baListKey4", MoveDirection.LEFT, MoveDirection.LEFT)
             .decodeToString() shouldBe "listValue3"
     }
 

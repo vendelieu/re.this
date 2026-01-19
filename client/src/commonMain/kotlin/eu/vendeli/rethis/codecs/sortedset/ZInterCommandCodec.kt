@@ -36,7 +36,7 @@ public object ZInterCommandCodec {
         buffer.writeIntArg(key.size, charset)
         key.forEach { it0 ->
             size += 1
-            buffer.writeStringArg(it0, charset, )
+            buffer.writeStringArg(it0, charset)
         }
         weight?.let { it1 ->
             if (it1.isNotEmpty()) {
@@ -45,7 +45,7 @@ public object ZInterCommandCodec {
             }
             it1.forEach { it2 ->
                 size += 1
-                buffer.writeLongArg(it2, charset, )
+                buffer.writeLongArg(it2, charset)
             }
         }
         aggregate?.let { it3 ->
@@ -53,7 +53,7 @@ public object ZInterCommandCodec {
             buffer.writeStringArg(it3.toString(), charset)
         }
         withScores?.let { it4 ->
-            if(it4) {
+            if (it4) {
                 size += 1
                 buffer.writeStringArg("WITHSCORES", charset)
             }
@@ -84,10 +84,11 @@ public object ZInterCommandCodec {
 
     public suspend fun decode(input: Buffer, charset: Charset): List<String> {
         val code = input.parseCode(RespCode.ARRAY)
-        return when(code) {
+        return when (code) {
             RespCode.ARRAY -> {
                 ArrayStringDecoder.decode(input, charset, code)
             }
+
             else -> {
                 throw UnexpectedResponseType("Expected [ARRAY] but got $code", input.tryInferCause(code))
             }

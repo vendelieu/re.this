@@ -10,7 +10,7 @@ public suspend fun ReThis.bitOp(
     destkey: String,
     vararg key: String,
 ): Long {
-    val request = if(cfg.withSlots) {
+    val request = if (cfg.withSlots) {
         BitOpCommandCodec.encodeWithSlot(charset = cfg.charset, operation = operation, destkey = destkey, key = key)
     } else {
         BitOpCommandCodec.encode(charset = cfg.charset, operation = operation, destkey = destkey, key = key)

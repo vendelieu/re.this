@@ -14,7 +14,7 @@ public suspend fun ReThis.lcsLength(
     key2: String,
     mode: LcsMode.LEN,
 ): Long {
-    val request = if(cfg.withSlots) {
+    val request = if (cfg.withSlots) {
         LcsLengthCommandCodec.encodeWithSlot(charset = cfg.charset, key1 = key1, key2 = key2, mode = mode)
     } else {
         LcsLengthCommandCodec.encode(charset = cfg.charset, key1 = key1, key2 = key2, mode = mode)
@@ -29,16 +29,30 @@ public suspend fun ReThis.lcsDetailed(
     minMatchLen: MinMatchLen? = null,
     withMatchLen: Boolean? = null,
 ): LcsResult {
-    val request = if(cfg.withSlots) {
-        LcsDetailedCommandCodec.encodeWithSlot(charset = cfg.charset, key1 = key1, key2 = key2, mode = mode, minMatchLen = minMatchLen, withMatchLen = withMatchLen)
+    val request = if (cfg.withSlots) {
+        LcsDetailedCommandCodec.encodeWithSlot(
+            charset = cfg.charset,
+            key1 = key1,
+            key2 = key2,
+            mode = mode,
+            minMatchLen = minMatchLen,
+            withMatchLen = withMatchLen,
+        )
     } else {
-        LcsDetailedCommandCodec.encode(charset = cfg.charset, key1 = key1, key2 = key2, mode = mode, minMatchLen = minMatchLen, withMatchLen = withMatchLen)
+        LcsDetailedCommandCodec.encode(
+            charset = cfg.charset,
+            key1 = key1,
+            key2 = key2,
+            mode = mode,
+            minMatchLen = minMatchLen,
+            withMatchLen = withMatchLen,
+        )
     }
     return LcsDetailedCommandCodec.decode(topology.handle(request), cfg.charset)
 }
 
 public suspend fun ReThis.lcs(key1: String, key2: String): String {
-    val request = if(cfg.withSlots) {
+    val request = if (cfg.withSlots) {
         LcsCommandCodec.encodeWithSlot(charset = cfg.charset, key1 = key1, key2 = key2)
     } else {
         LcsCommandCodec.encode(charset = cfg.charset, key1 = key1, key2 = key2)

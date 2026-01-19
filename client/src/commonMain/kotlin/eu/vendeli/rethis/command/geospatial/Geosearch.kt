@@ -19,10 +19,32 @@ public suspend fun ReThis.geoSearch(
     any: Boolean? = null,
     order: GeoSort? = null,
 ): List<RType> {
-    val request = if(cfg.withSlots) {
-        GeoSearchCommandCodec.encodeWithSlot(charset = cfg.charset, key = key, from = from, by = by, withCoord = withCoord, withDist = withDist, withHash = withHash, count = count, any = any, order = order)
+    val request = if (cfg.withSlots) {
+        GeoSearchCommandCodec.encodeWithSlot(
+            charset = cfg.charset,
+            key = key,
+            from = from,
+            by = by,
+            withCoord = withCoord,
+            withDist = withDist,
+            withHash = withHash,
+            count = count,
+            any = any,
+            order = order,
+        )
     } else {
-        GeoSearchCommandCodec.encode(charset = cfg.charset, key = key, from = from, by = by, withCoord = withCoord, withDist = withDist, withHash = withHash, count = count, any = any, order = order)
+        GeoSearchCommandCodec.encode(
+            charset = cfg.charset,
+            key = key,
+            from = from,
+            by = by,
+            withCoord = withCoord,
+            withDist = withDist,
+            withHash = withHash,
+            count = count,
+            any = any,
+            order = order,
+        )
     }
     return GeoSearchCommandCodec.decode(topology.handle(request), cfg.charset)
 }

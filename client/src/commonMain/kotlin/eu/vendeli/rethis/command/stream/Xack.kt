@@ -9,7 +9,7 @@ public suspend fun ReThis.xAck(
     group: String,
     vararg id: String,
 ): Long {
-    val request = if(cfg.withSlots) {
+    val request = if (cfg.withSlots) {
         XAckCommandCodec.encodeWithSlot(charset = cfg.charset, key = key, group = group, id = id)
     } else {
         XAckCommandCodec.encode(charset = cfg.charset, key = key, group = group, id = id)

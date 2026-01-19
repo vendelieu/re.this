@@ -34,18 +34,19 @@ public object CopyCommandCodec {
         var size = 1
         COMMAND_HEADER.copyTo(buffer)
         size += 1
-        buffer.writeStringArg(source, charset, )
+        buffer.writeStringArg(source, charset)
         size += 1
-        buffer.writeStringArg(destination, charset, )
+        buffer.writeStringArg(destination, charset)
         option.forEach { it0 ->
             when (it0) {
-                is CopyOption.DB ->  {
+                is CopyOption.DB -> {
                     size += 1
                     buffer.writeStringArg("DB", charset)
                     size += 1
-                    buffer.writeLongArg(it0.destinationDb, charset, )
+                    buffer.writeLongArg(it0.destinationDb, charset)
                 }
-                is CopyOption.REPLACE ->  {
+
+                is CopyOption.REPLACE -> {
                     size += 1
                     buffer.writeStringArg(it0.toString(), charset)
                 }
@@ -74,10 +75,11 @@ public object CopyCommandCodec {
 
     public suspend fun decode(input: Buffer, charset: Charset): Boolean {
         val code = input.parseCode(RespCode.INTEGER)
-        return when(code) {
+        return when (code) {
             RespCode.INTEGER -> {
                 IntegerDecoder.decode(input, charset, code) == 1L
             }
+
             else -> {
                 throw UnexpectedResponseType("Expected [INTEGER] but got $code", input.tryInferCause(code))
             }

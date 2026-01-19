@@ -22,19 +22,23 @@ public object ScriptLoadCommandCodec {
     public suspend fun encode(charset: Charset, script: String): CommandRequest {
         val buffer = Buffer()
         COMMAND_HEADER.copyTo(buffer)
-        buffer.writeStringArg(script, charset, )
+        buffer.writeStringArg(script, charset)
 
         return CommandRequest(buffer, RedisOperation.WRITE, BLOCKING_STATUS)
     }
 
-    public suspend inline fun encodeWithSlot(charset: Charset, script: String): CommandRequest = encode(charset, script = script)
+    public suspend inline fun encodeWithSlot(charset: Charset, script: String): CommandRequest = encode(
+        charset,
+        script = script,
+    )
 
     public suspend fun decode(input: Buffer, charset: Charset): String {
         val code = input.parseCode(RespCode.BULK)
-        return when(code) {
+        return when (code) {
             RespCode.BULK -> {
                 BulkStringDecoder.decode(input, charset, code)
             }
+
             else -> {
                 throw UnexpectedResponseType("Expected [BULK] but got $code", input.tryInferCause(code))
             }

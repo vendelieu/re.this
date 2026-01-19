@@ -27,10 +27,8 @@ data class PoolConfiguration(
     var maxPendingConnections: Int = 1000,
     var shrinkRatio: Double = 0.5,
     var maxShrinkSize: Int = 5,
-
     var checkInterval: Duration = 1.seconds,
     var gracefulClosePeriod: Duration = 30.seconds,
-
     var connectionHealthCheck: Boolean = false,
     var setClientName: Boolean = false,
     var closeGracefully: Boolean = false,

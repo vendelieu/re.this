@@ -9,7 +9,7 @@ public suspend fun ReThis.zRemRangeByLex(
     min: String,
     max: String,
 ): Long {
-    val request = if(cfg.withSlots) {
+    val request = if (cfg.withSlots) {
         ZRemRangeByLexCommandCodec.encodeWithSlot(charset = cfg.charset, key = key, min = min, max = max)
     } else {
         ZRemRangeByLexCommandCodec.encode(charset = cfg.charset, key = key, min = min, max = max)

@@ -11,7 +11,7 @@ public suspend fun ReThis.`set`(
     `value`: String,
     vararg options: SetOption,
 ): String? {
-    val request = if(cfg.withSlots) {
+    val request = if (cfg.withSlots) {
         SetCommandCodec.encodeWithSlot(charset = cfg.charset, key = key, value = value, options = options)
     } else {
         SetCommandCodec.encode(charset = cfg.charset, key = key, value = value, options = options)
@@ -24,7 +24,7 @@ public suspend fun ReThis.setBA(
     `value`: ByteArray,
     vararg options: SetOption,
 ): ByteArray? {
-    val request = if(cfg.withSlots) {
+    val request = if (cfg.withSlots) {
         SetBACommandCodec.encodeWithSlot(charset = cfg.charset, key = key, value = value, options = options)
     } else {
         SetBACommandCodec.encode(charset = cfg.charset, key = key, value = value, options = options)

@@ -10,7 +10,7 @@ public suspend fun ReThis.getRangeBA(
     start: Long,
     end: Long,
 ): ByteArray {
-    val request = if(cfg.withSlots) {
+    val request = if (cfg.withSlots) {
         GetRangeBACommandCodec.encodeWithSlot(charset = cfg.charset, key = key, start = start, end = end)
     } else {
         GetRangeBACommandCodec.encode(charset = cfg.charset, key = key, start = start, end = end)
@@ -23,7 +23,7 @@ public suspend fun ReThis.getRange(
     start: Long,
     end: Long,
 ): String {
-    val request = if(cfg.withSlots) {
+    val request = if (cfg.withSlots) {
         GetRangeCommandCodec.encodeWithSlot(charset = cfg.charset, key = key, start = start, end = end)
     } else {
         GetRangeCommandCodec.encode(charset = cfg.charset, key = key, start = start, end = end)

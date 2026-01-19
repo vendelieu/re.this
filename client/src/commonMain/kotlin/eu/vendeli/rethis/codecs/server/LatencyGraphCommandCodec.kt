@@ -22,19 +22,23 @@ public object LatencyGraphCommandCodec {
     public suspend fun encode(charset: Charset, event: String): CommandRequest {
         val buffer = Buffer()
         COMMAND_HEADER.copyTo(buffer)
-        buffer.writeStringArg(event, charset, )
+        buffer.writeStringArg(event, charset)
 
         return CommandRequest(buffer, RedisOperation.READ, BLOCKING_STATUS)
     }
 
-    public suspend inline fun encodeWithSlot(charset: Charset, event: String): CommandRequest = encode(charset, event = event)
+    public suspend inline fun encodeWithSlot(charset: Charset, event: String): CommandRequest = encode(
+        charset,
+        event = event,
+    )
 
     public suspend fun decode(input: Buffer, charset: Charset): String {
         val code = input.parseCode(RespCode.BULK)
-        return when(code) {
+        return when (code) {
             RespCode.BULK -> {
                 BulkStringDecoder.decode(input, charset, code)
             }
+
             else -> {
                 throw UnexpectedResponseType("Expected [BULK] but got $code", input.tryInferCause(code))
             }

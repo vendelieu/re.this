@@ -30,9 +30,9 @@ public object ZRemRangeByLexCommandCodec {
     ): CommandRequest {
         val buffer = Buffer()
         COMMAND_HEADER.copyTo(buffer)
-        buffer.writeStringArg(key, charset, )
-        buffer.writeStringArg(min, charset, )
-        buffer.writeStringArg(max, charset, )
+        buffer.writeStringArg(key, charset)
+        buffer.writeStringArg(min, charset)
+        buffer.writeStringArg(max, charset)
 
         return CommandRequest(buffer, RedisOperation.WRITE, BLOCKING_STATUS)
     }
@@ -51,10 +51,11 @@ public object ZRemRangeByLexCommandCodec {
 
     public suspend fun decode(input: Buffer, charset: Charset): Long {
         val code = input.parseCode(RespCode.INTEGER)
-        return when(code) {
+        return when (code) {
             RespCode.INTEGER -> {
                 IntegerDecoder.decode(input, charset, code)
             }
+
             else -> {
                 throw UnexpectedResponseType("Expected [INTEGER] but got $code", input.tryInferCause(code))
             }

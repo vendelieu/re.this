@@ -9,7 +9,7 @@ public suspend fun ReThis.lRange(
     start: Long,
     stop: Long,
 ): List<String> {
-    val request = if(cfg.withSlots) {
+    val request = if (cfg.withSlots) {
         LRangeCommandCodec.encodeWithSlot(charset = cfg.charset, key = key, start = start, stop = stop)
     } else {
         LRangeCommandCodec.encode(charset = cfg.charset, key = key, start = start, stop = stop)

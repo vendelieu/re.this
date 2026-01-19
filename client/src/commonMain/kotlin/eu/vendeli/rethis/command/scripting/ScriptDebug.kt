@@ -6,7 +6,7 @@ import eu.vendeli.rethis.shared.request.scripting.ScriptDebugMode
 import eu.vendeli.rethis.topology.handle
 
 public suspend fun ReThis.scriptDebug(mode: ScriptDebugMode): Boolean {
-    val request = if(cfg.withSlots) {
+    val request = if (cfg.withSlots) {
         ScriptDebugCommandCodec.encodeWithSlot(charset = cfg.charset, mode = mode)
     } else {
         ScriptDebugCommandCodec.encode(charset = cfg.charset, mode = mode)

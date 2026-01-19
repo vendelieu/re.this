@@ -29,8 +29,8 @@ public object ZRevRankCommandCodec {
     ): CommandRequest {
         val buffer = Buffer()
         COMMAND_HEADER.copyTo(buffer)
-        buffer.writeStringArg(key, charset, )
-        buffer.writeStringArg(member, charset, )
+        buffer.writeStringArg(key, charset)
+        buffer.writeStringArg(member, charset)
 
         return CommandRequest(buffer, RedisOperation.READ, BLOCKING_STATUS)
     }
@@ -48,13 +48,15 @@ public object ZRevRankCommandCodec {
 
     public suspend fun decode(input: Buffer, charset: Charset): Long? {
         val code = input.parseCode(RespCode.INTEGER)
-        return when(code) {
+        return when (code) {
             RespCode.INTEGER -> {
                 IntegerDecoder.decode(input, charset, code)
             }
+
             RespCode.NULL -> {
                 null
             }
+
             else -> {
                 throw UnexpectedResponseType("Expected [INTEGER, NULL] but got $code", input.tryInferCause(code))
             }

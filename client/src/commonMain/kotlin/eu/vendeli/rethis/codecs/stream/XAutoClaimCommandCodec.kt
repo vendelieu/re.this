@@ -34,23 +34,23 @@ public object XAutoClaimCommandCodec {
         var size = 1
         COMMAND_HEADER.copyTo(buffer)
         size += 1
-        buffer.writeStringArg(key, charset, )
+        buffer.writeStringArg(key, charset)
         size += 1
-        buffer.writeStringArg(group, charset, )
+        buffer.writeStringArg(group, charset)
         size += 1
-        buffer.writeStringArg(consumer, charset, )
+        buffer.writeStringArg(consumer, charset)
         size += 1
-        buffer.writeStringArg(minIdleTime, charset, )
+        buffer.writeStringArg(minIdleTime, charset)
         size += 1
-        buffer.writeStringArg(start, charset, )
+        buffer.writeStringArg(start, charset)
         count?.let { it0 ->
             size += 1
             buffer.writeStringArg("COUNT", charset)
             size += 1
-            buffer.writeLongArg(it0, charset, )
+            buffer.writeLongArg(it0, charset)
         }
         justid?.let { it1 ->
-            if(it1) {
+            if (it1) {
                 size += 1
                 buffer.writeStringArg("JUSTID", charset)
             }
@@ -75,16 +75,27 @@ public object XAutoClaimCommandCodec {
     ): CommandRequest {
         var slot: Int? = null
         slot = validateSlot(slot, CRC16.lookup(key.toByteArray(charset)))
-        val request = encode(charset, key = key, group = group, consumer = consumer, minIdleTime = minIdleTime, start = start, count = count, justid = justid)
+        val request =
+            encode(
+                charset,
+                key = key,
+                group = group,
+                consumer = consumer,
+                minIdleTime = minIdleTime,
+                start = start,
+                count = count,
+                justid = justid,
+            )
         return request.withSlot(slot % 16384)
     }
 
     public suspend fun decode(input: Buffer, charset: Charset): List<RType> {
         val code = input.parseCode(RespCode.ARRAY)
-        return when(code) {
+        return when (code) {
             RespCode.ARRAY -> {
                 ArrayRTypeDecoder.decode(input, charset, code)
             }
+
             else -> {
                 throw UnexpectedResponseType("Expected [ARRAY] but got $code", input.tryInferCause(code))
             }

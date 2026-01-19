@@ -6,7 +6,7 @@ import eu.vendeli.rethis.shared.types.RType
 import eu.vendeli.rethis.topology.handle
 
 public suspend fun ReThis.commandDocs(vararg commandName: String): Map<String, RType> {
-    val request = if(cfg.withSlots) {
+    val request = if (cfg.withSlots) {
         CommandDocsCommandCodec.encodeWithSlot(charset = cfg.charset, commandName = commandName)
     } else {
         CommandDocsCommandCodec.encode(charset = cfg.charset, commandName = commandName)

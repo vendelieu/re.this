@@ -30,10 +30,10 @@ public object AuthCommandCodec {
         COMMAND_HEADER.copyTo(buffer)
         username?.let { it0 ->
             size += 1
-            buffer.writeStringArg(it0, charset, )
+            buffer.writeStringArg(it0, charset)
         }
         size += 1
-        buffer.writeCharArrayArg(password, charset, )
+        buffer.writeCharArrayArg(password, charset)
 
         buffer = Buffer().apply {
             writeString("*$size")
@@ -50,10 +50,11 @@ public object AuthCommandCodec {
 
     public suspend fun decode(input: Buffer, charset: Charset): Boolean {
         val code = input.parseCode(RespCode.SIMPLE_STRING)
-        return when(code) {
+        return when (code) {
             RespCode.SIMPLE_STRING -> {
                 SimpleStringDecoder.decode(input, charset, code) == "OK"
             }
+
             else -> {
                 throw UnexpectedResponseType("Expected [SIMPLE_STRING] but got $code", input.tryInferCause(code))
             }

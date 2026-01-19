@@ -22,17 +22,19 @@ public object MemoryStatsCommandCodec {
         return CommandRequest(buffer, RedisOperation.READ, BLOCKING_STATUS)
     }
 
-    public suspend inline fun encodeWithSlot(charset: Charset): CommandRequest = encode(charset, )
+    public suspend inline fun encodeWithSlot(charset: Charset): CommandRequest = encode(charset)
 
     public suspend fun decode(input: Buffer, charset: Charset): Map<String, RType> {
         val code = input.parseCode(RespCode.ARRAY)
-        return when(code) {
+        return when (code) {
             RespCode.ARRAY -> {
                 MapRTypeDecoder.decode(input, charset, code)
             }
+
             RespCode.MAP -> {
                 MapRTypeDecoder.decode(input, charset, code)
             }
+
             else -> {
                 throw UnexpectedResponseType("Expected [ARRAY, MAP] but got $code", input.tryInferCause(code))
             }

@@ -5,7 +5,7 @@ import eu.vendeli.rethis.codecs.generic.RenameCommandCodec
 import eu.vendeli.rethis.topology.handle
 
 public suspend fun ReThis.rename(key: String, newkey: String): Boolean {
-    val request = if(cfg.withSlots) {
+    val request = if (cfg.withSlots) {
         RenameCommandCodec.encodeWithSlot(charset = cfg.charset, key = key, newkey = newkey)
     } else {
         RenameCommandCodec.encode(charset = cfg.charset, key = key, newkey = newkey)

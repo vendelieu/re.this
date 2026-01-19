@@ -5,7 +5,7 @@ import eu.vendeli.rethis.codecs.hyperloglog.PfAddCommandCodec
 import eu.vendeli.rethis.topology.handle
 
 public suspend fun ReThis.pfAdd(key: String, vararg element: String): Boolean {
-    val request = if(cfg.withSlots) {
+    val request = if (cfg.withSlots) {
         PfAddCommandCodec.encodeWithSlot(charset = cfg.charset, key = key, element = element)
     } else {
         PfAddCommandCodec.encode(charset = cfg.charset, key = key, element = element)

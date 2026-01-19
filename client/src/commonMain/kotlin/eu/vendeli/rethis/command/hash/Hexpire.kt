@@ -12,10 +12,22 @@ public suspend fun ReThis.hExpire(
     vararg `field`: String,
     condition: UpdateStrategyOption? = null,
 ): List<Long> {
-    val request = if(cfg.withSlots) {
-        HExpireCommandCodec.encodeWithSlot(charset = cfg.charset, key = key, seconds = seconds, field = field, condition = condition)
+    val request = if (cfg.withSlots) {
+        HExpireCommandCodec.encodeWithSlot(
+            charset = cfg.charset,
+            key = key,
+            seconds = seconds,
+            field = field,
+            condition = condition,
+        )
     } else {
-        HExpireCommandCodec.encode(charset = cfg.charset, key = key, seconds = seconds, field = field, condition = condition)
+        HExpireCommandCodec.encode(
+            charset = cfg.charset,
+            key = key,
+            seconds = seconds,
+            field = field,
+            condition = condition,
+        )
     }
     return HExpireCommandCodec.decode(topology.handle(request), cfg.charset)
 }

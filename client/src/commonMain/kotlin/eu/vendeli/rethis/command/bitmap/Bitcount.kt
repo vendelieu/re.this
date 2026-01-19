@@ -11,7 +11,7 @@ public suspend fun ReThis.bitCount(
     range: Range? = null,
     unit: BitmapUnit? = null,
 ): Long {
-    val request = if(cfg.withSlots) {
+    val request = if (cfg.withSlots) {
         BitCountCommandCodec.encodeWithSlot(charset = cfg.charset, key = key, range = range, unit = unit)
     } else {
         BitCountCommandCodec.encode(charset = cfg.charset, key = key, range = range, unit = unit)

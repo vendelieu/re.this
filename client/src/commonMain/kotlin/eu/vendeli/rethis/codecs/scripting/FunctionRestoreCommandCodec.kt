@@ -30,18 +30,20 @@ public object FunctionRestoreCommandCodec {
         var size = 2
         COMMAND_HEADER.copyTo(buffer)
         size += 1
-        buffer.writeByteArrayArg(serializedValue, charset, )
+        buffer.writeByteArrayArg(serializedValue, charset)
         policy?.let { it0 ->
             when (it0) {
-                is FunctionRestoreOption.APPEND ->  {
+                is FunctionRestoreOption.APPEND -> {
                     size += 1
                     buffer.writeStringArg(it0.toString(), charset)
                 }
-                is FunctionRestoreOption.FLUSH ->  {
+
+                is FunctionRestoreOption.FLUSH -> {
                     size += 1
                     buffer.writeStringArg(it0.toString(), charset)
                 }
-                is FunctionRestoreOption.REPLACE ->  {
+
+                is FunctionRestoreOption.REPLACE -> {
                     size += 1
                     buffer.writeStringArg(it0.toString(), charset)
                 }
@@ -63,10 +65,11 @@ public object FunctionRestoreCommandCodec {
 
     public suspend fun decode(input: Buffer, charset: Charset): Boolean {
         val code = input.parseCode(RespCode.SIMPLE_STRING)
-        return when(code) {
+        return when (code) {
             RespCode.SIMPLE_STRING -> {
                 SimpleStringDecoder.decode(input, charset, code) == "OK"
             }
+
             else -> {
                 throw UnexpectedResponseType("Expected [SIMPLE_STRING] but got $code", input.tryInferCause(code))
             }

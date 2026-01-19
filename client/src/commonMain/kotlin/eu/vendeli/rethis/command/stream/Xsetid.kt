@@ -10,10 +10,22 @@ public suspend fun ReThis.xSetId(
     entriesAdded: Long? = null,
     maxDeletedId: String? = null,
 ): Boolean {
-    val request = if(cfg.withSlots) {
-        XSetIdCommandCodec.encodeWithSlot(charset = cfg.charset, key = key, lastId = lastId, entriesAdded = entriesAdded, maxDeletedId = maxDeletedId)
+    val request = if (cfg.withSlots) {
+        XSetIdCommandCodec.encodeWithSlot(
+            charset = cfg.charset,
+            key = key,
+            lastId = lastId,
+            entriesAdded = entriesAdded,
+            maxDeletedId = maxDeletedId,
+        )
     } else {
-        XSetIdCommandCodec.encode(charset = cfg.charset, key = key, lastId = lastId, entriesAdded = entriesAdded, maxDeletedId = maxDeletedId)
+        XSetIdCommandCodec.encode(
+            charset = cfg.charset,
+            key = key,
+            lastId = lastId,
+            entriesAdded = entriesAdded,
+            maxDeletedId = maxDeletedId,
+        )
     }
     return XSetIdCommandCodec.decode(topology.handle(request), cfg.charset)
 }

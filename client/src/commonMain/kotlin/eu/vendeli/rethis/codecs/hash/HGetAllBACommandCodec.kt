@@ -25,7 +25,7 @@ public object HGetAllBACommandCodec {
     public suspend fun encode(charset: Charset, key: String): CommandRequest {
         val buffer = Buffer()
         COMMAND_HEADER.copyTo(buffer)
-        buffer.writeStringArg(key, charset, )
+        buffer.writeStringArg(key, charset)
 
         return CommandRequest(buffer, RedisOperation.READ, BLOCKING_STATUS)
     }
@@ -39,13 +39,15 @@ public object HGetAllBACommandCodec {
 
     public suspend fun decode(input: Buffer, charset: Charset): Map<String, ByteArray?> {
         val code = input.parseCode(RespCode.ARRAY)
-        return when(code) {
+        return when (code) {
             RespCode.ARRAY -> {
                 MapByteArrayDecoder.decodeNullable(input, charset, code)
             }
+
             RespCode.MAP -> {
                 MapByteArrayDecoder.decodeNullable(input, charset, code)
             }
+
             else -> {
                 throw UnexpectedResponseType("Expected [ARRAY, MAP] but got $code", input.tryInferCause(code))
             }

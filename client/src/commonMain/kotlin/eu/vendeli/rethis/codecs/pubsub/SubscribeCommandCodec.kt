@@ -20,7 +20,7 @@ public object SubscribeCommandCodec {
         COMMAND_HEADER.copyTo(buffer)
         channel.forEach { it0 ->
             size += 1
-            buffer.writeStringArg(it0, charset, )
+            buffer.writeStringArg(it0, charset)
         }
 
         buffer = Buffer().apply {
@@ -30,7 +30,10 @@ public object SubscribeCommandCodec {
         return CommandRequest(buffer, RedisOperation.READ, BLOCKING_STATUS)
     }
 
-    public suspend inline fun encodeWithSlot(charset: Charset, vararg channel: String): CommandRequest = encode(charset, channel = channel)
+    public suspend inline fun encodeWithSlot(charset: Charset, vararg channel: String): CommandRequest = encode(
+        charset,
+        channel = channel,
+    )
 
     public suspend fun decode(input: Buffer, charset: Charset) {
     }

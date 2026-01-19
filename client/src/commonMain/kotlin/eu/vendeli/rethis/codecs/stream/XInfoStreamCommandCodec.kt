@@ -30,9 +30,9 @@ public object XInfoStreamCommandCodec {
         var size = 2
         COMMAND_HEADER.copyTo(buffer)
         size += 1
-        buffer.writeStringArg(key, charset, )
+        buffer.writeStringArg(key, charset)
         full?.let { it0 ->
-            if(it0) {
+            if (it0) {
                 size += 1
                 buffer.writeStringArg("FULL", charset)
             }
@@ -41,7 +41,7 @@ public object XInfoStreamCommandCodec {
             size += 1
             buffer.writeStringArg("COUNT", charset)
             size += 1
-            buffer.writeLongArg(it1, charset, )
+            buffer.writeLongArg(it1, charset)
         }
 
         buffer = Buffer().apply {
@@ -65,13 +65,15 @@ public object XInfoStreamCommandCodec {
 
     public suspend fun decode(input: Buffer, charset: Charset): Map<String, RType> {
         val code = input.parseCode(RespCode.MAP)
-        return when(code) {
+        return when (code) {
             RespCode.MAP -> {
                 MapRTypeDecoder.decode(input, charset, code)
             }
+
             RespCode.ARRAY -> {
                 MapRTypeDecoder.decode(input, charset, code)
             }
+
             else -> {
                 throw UnexpectedResponseType("Expected [MAP, ARRAY] but got $code", input.tryInferCause(code))
             }

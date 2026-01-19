@@ -31,9 +31,9 @@ public object GetRangeBACommandCodec {
     ): CommandRequest {
         val buffer = Buffer()
         COMMAND_HEADER.copyTo(buffer)
-        buffer.writeStringArg(key, charset, )
-        buffer.writeLongArg(start, charset, )
-        buffer.writeLongArg(end, charset, )
+        buffer.writeStringArg(key, charset)
+        buffer.writeLongArg(start, charset)
+        buffer.writeLongArg(end, charset)
 
         return CommandRequest(buffer, RedisOperation.READ, BLOCKING_STATUS)
     }
@@ -52,10 +52,11 @@ public object GetRangeBACommandCodec {
 
     public suspend fun decode(input: Buffer, charset: Charset): ByteArray {
         val code = input.parseCode(RespCode.BULK)
-        return when(code) {
+        return when (code) {
             RespCode.BULK -> {
                 BulkByteArrayDecoder.decode(input, charset, code)
             }
+
             else -> {
                 throw UnexpectedResponseType("Expected [BULK] but got $code", input.tryInferCause(code))
             }

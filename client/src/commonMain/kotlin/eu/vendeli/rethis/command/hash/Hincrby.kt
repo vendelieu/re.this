@@ -9,7 +9,7 @@ public suspend fun ReThis.hIncrBy(
     `field`: String,
     increment: Long,
 ): Long {
-    val request = if(cfg.withSlots) {
+    val request = if (cfg.withSlots) {
         HIncrByCommandCodec.encodeWithSlot(charset = cfg.charset, key = key, field = field, increment = increment)
     } else {
         HIncrByCommandCodec.encode(charset = cfg.charset, key = key, field = field, increment = increment)

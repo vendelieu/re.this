@@ -5,7 +5,7 @@ import eu.vendeli.rethis.codecs.scripting.FunctionDeleteCommandCodec
 import eu.vendeli.rethis.topology.handle
 
 public suspend fun ReThis.functionDelete(libraryName: String): Boolean {
-    val request = if(cfg.withSlots) {
+    val request = if (cfg.withSlots) {
         FunctionDeleteCommandCodec.encodeWithSlot(charset = cfg.charset, libraryName = libraryName)
     } else {
         FunctionDeleteCommandCodec.encode(charset = cfg.charset, libraryName = libraryName)

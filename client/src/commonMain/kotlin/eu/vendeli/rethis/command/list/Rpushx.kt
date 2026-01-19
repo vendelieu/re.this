@@ -5,7 +5,7 @@ import eu.vendeli.rethis.codecs.list.RPushxCommandCodec
 import eu.vendeli.rethis.topology.handle
 
 public suspend fun ReThis.rPushx(key: String, vararg element: String): Long {
-    val request = if(cfg.withSlots) {
+    val request = if (cfg.withSlots) {
         RPushxCommandCodec.encodeWithSlot(charset = cfg.charset, key = key, element = element)
     } else {
         RPushxCommandCodec.encode(charset = cfg.charset, key = key, element = element)

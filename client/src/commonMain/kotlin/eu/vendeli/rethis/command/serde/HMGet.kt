@@ -8,7 +8,6 @@ import eu.vendeli.rethis.utils.isInTx
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.serializer
 
-
 suspend inline fun <reified T : Any> ReThis.hMGet(
     key: String,
     vararg field: String,
@@ -21,8 +20,10 @@ suspend fun <T : Any> ReThis.hMGet(
     format: SerializationFormat = cfg.serializationFormat,
 ): List<T?> {
     if (isInTx()) {
-        logger.warn("Be aware that in transaction commands return `QUEUED`" +
-            " which is for type safety substituted with default value, so serde operations will fail")
+        logger.warn(
+            "Be aware that in transaction commands return `QUEUED`" +
+                " which is for type safety substituted with default value, so serde operations will fail",
+        )
     }
     val raw: List<String?> = hMGet(key, *field)
     return raw.map { string ->

@@ -5,7 +5,7 @@ import eu.vendeli.rethis.codecs.cluster.ClusterKeySlotCommandCodec
 import eu.vendeli.rethis.topology.handle
 
 public suspend fun ReThis.clusterKeySlot(key: String): Long {
-    val request = if(cfg.withSlots) {
+    val request = if (cfg.withSlots) {
         ClusterKeySlotCommandCodec.encodeWithSlot(charset = cfg.charset, key = key)
     } else {
         ClusterKeySlotCommandCodec.encode(charset = cfg.charset, key = key)

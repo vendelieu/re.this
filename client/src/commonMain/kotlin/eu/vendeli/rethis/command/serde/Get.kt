@@ -10,9 +10,7 @@ import kotlinx.serialization.serializer
 
 suspend inline fun <reified T> ReThis.get(
     key: String,
-): T? where T : Any {
-    return get(key, serializer<T>())
-}
+): T? where T : Any = get(key, serializer<T>())
 
 suspend fun <T> ReThis.get(
     key: String,
@@ -20,8 +18,10 @@ suspend fun <T> ReThis.get(
     format: SerializationFormat = cfg.serializationFormat,
 ): T? {
     if (isInTx()) {
-        logger.warn("Be aware that in transaction commands return `QUEUED`" +
-            " which is for type safety substituted with default value, so serde operations will fail")
+        logger.warn(
+            "Be aware that in transaction commands return `QUEUED`" +
+                " which is for type safety substituted with default value, so serde operations will fail",
+        )
     }
     val s: String = get(key) ?: return null
     return try {

@@ -6,7 +6,7 @@ import eu.vendeli.rethis.shared.response.common.PubSubNumEntry
 import eu.vendeli.rethis.topology.handle
 
 public suspend fun ReThis.pubSubNumSub(vararg channel: String): List<PubSubNumEntry> {
-    val request = if(cfg.withSlots) {
+    val request = if (cfg.withSlots) {
         PubSubNumSubCommandCodec.encodeWithSlot(charset = cfg.charset, channel = channel)
     } else {
         PubSubNumSubCommandCodec.encode(charset = cfg.charset, channel = channel)

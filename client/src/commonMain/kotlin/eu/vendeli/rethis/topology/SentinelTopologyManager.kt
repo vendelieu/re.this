@@ -73,17 +73,19 @@ class SentinelTopologyManager(
         val idxMap = oldProviders.mapIndexed { i, p -> p.node to i }.toMap()
 
         val allAddrs = listOf(masterNode) + replicaNodes
-        val newProviders = allAddrs.mapIndexed { idx, addr ->
-            idxMap[addr]?.let { oldProviders[it] }
-                ?: client.connectionProviderFactory.create(addr)
-        }.toTypedArray()
+        val newProviders = allAddrs
+            .mapIndexed { idx, addr ->
+                idxMap[addr]?.let { oldProviders[it] }
+                    ?: client.connectionProviderFactory.create(addr)
+            }.toTypedArray()
 
         // schedule closing old unused
-        oldProviders.filter {
-            it.node !in allAddrs
-        }.forEach {
-            scope.launch { it.close() }
-        }
+        oldProviders
+            .filter {
+                it.node !in allAddrs
+            }.forEach {
+                scope.launch { it.close() }
+            }
 
         val snap = SentinelSnapshot(
             masterIdx = 0,

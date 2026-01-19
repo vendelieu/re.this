@@ -58,18 +58,20 @@ class ClusterTopologyManager(
         val oldProviders = oldSnap?.providers.orEmpty()
         val oldNodeToIdx = oldProviders.mapIndexed { i, p -> p.node to i }.toMap()
         val allNodes = entries.flatMap { listOf(it.master) + it.replicas }.distinct()
-        val newProviders = allNodes.mapIndexed { _, node ->
-            oldNodeToIdx[node.toAddress()]?.let {
-                oldProviders[it]
-            } ?: client.connectionProviderFactory.create(node.toAddress())
-        }.toTypedArray()
+        val newProviders = allNodes
+            .mapIndexed { _, node ->
+                oldNodeToIdx[node.toAddress()]?.let {
+                    oldProviders[it]
+                } ?: client.connectionProviderFactory.create(node.toAddress())
+            }.toTypedArray()
 
         // cool-down old orphans
-        oldProviders.filter { c ->
-            c.node.toHostAndPort()?.let { it !in allNodes } ?: false
-        }.forEach {
-            scope.launch { it.close() }
-        }
+        oldProviders
+            .filter { c ->
+                c.node.toHostAndPort()?.let { it !in allNodes } ?: false
+            }.forEach {
+                scope.launch { it.close() }
+            }
 
         // 3) Dense slotOwner
         val slotOwner = IntArray(16_384)
@@ -99,8 +101,10 @@ class ClusterTopologyManager(
     }
 
     override suspend fun handleFailure(request: CommandRequest, exception: Throwable): Buffer = when (exception) {
-        is RedirectAskException -> route(request).withConnection { conn ->
-            conn.doBatchRequest(listOf(AskingCommandCodec.encode(cfg.charset).buffer, request.buffer))
+        is RedirectAskException -> {
+            route(request).withConnection { conn ->
+                conn.doBatchRequest(listOf(AskingCommandCodec.encode(cfg.charset).buffer, request.buffer))
+            }
         }
 
         is RedirectMovedException -> {

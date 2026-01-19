@@ -34,20 +34,20 @@ public object XSetIdCommandCodec {
         var size = 1
         COMMAND_HEADER.copyTo(buffer)
         size += 1
-        buffer.writeStringArg(key, charset, )
+        buffer.writeStringArg(key, charset)
         size += 1
-        buffer.writeStringArg(lastId, charset, )
+        buffer.writeStringArg(lastId, charset)
         entriesAdded?.let { it0 ->
             size += 1
             buffer.writeStringArg("ENTRIESADDED", charset)
             size += 1
-            buffer.writeLongArg(it0, charset, )
+            buffer.writeLongArg(it0, charset)
         }
         maxDeletedId?.let { it1 ->
             size += 1
             buffer.writeStringArg("MAXDELETEDID", charset)
             size += 1
-            buffer.writeStringArg(it1, charset, )
+            buffer.writeStringArg(it1, charset)
         }
 
         buffer = Buffer().apply {
@@ -66,16 +66,18 @@ public object XSetIdCommandCodec {
     ): CommandRequest {
         var slot: Int? = null
         slot = validateSlot(slot, CRC16.lookup(key.toByteArray(charset)))
-        val request = encode(charset, key = key, lastId = lastId, entriesAdded = entriesAdded, maxDeletedId = maxDeletedId)
+        val request =
+            encode(charset, key = key, lastId = lastId, entriesAdded = entriesAdded, maxDeletedId = maxDeletedId)
         return request.withSlot(slot % 16384)
     }
 
     public suspend fun decode(input: Buffer, charset: Charset): Boolean {
         val code = input.parseCode(RespCode.SIMPLE_STRING)
-        return when(code) {
+        return when (code) {
             RespCode.SIMPLE_STRING -> {
                 SimpleStringDecoder.decode(input, charset, code) == "OK"
             }
+
             else -> {
                 throw UnexpectedResponseType("Expected [SIMPLE_STRING] but got $code", input.tryInferCause(code))
             }

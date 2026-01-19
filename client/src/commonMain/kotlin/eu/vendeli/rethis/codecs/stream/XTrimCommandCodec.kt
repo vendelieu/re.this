@@ -36,36 +36,38 @@ public object XTrimCommandCodec {
         var size = 1
         COMMAND_HEADER.copyTo(buffer)
         size += 1
-        buffer.writeStringArg(key, charset, )
+        buffer.writeStringArg(key, charset)
         when (strategy) {
-            is MAXLEN ->  {
+            is MAXLEN -> {
                 size += 1
                 buffer.writeStringArg(strategy.toString(), charset)
             }
-            is MINID ->  {
+
+            is MINID -> {
                 size += 1
                 buffer.writeStringArg(strategy.toString(), charset)
             }
         }
         operator?.let { it0 ->
             when (it0) {
-                is Approximate ->  {
+                is Approximate -> {
                     size += 1
                     buffer.writeStringArg("~", charset)
                 }
-                is Equal ->  {
+
+                is Equal -> {
                     size += 1
                     buffer.writeStringArg("=", charset)
                 }
             }
         }
         size += 1
-        buffer.writeStringArg(threshold, charset, )
+        buffer.writeStringArg(threshold, charset)
         count?.let { it1 ->
             size += 1
             buffer.writeStringArg("LIMIT", charset)
             size += 1
-            buffer.writeLongArg(it1, charset, )
+            buffer.writeLongArg(it1, charset)
         }
 
         buffer = Buffer().apply {
@@ -85,16 +87,18 @@ public object XTrimCommandCodec {
     ): CommandRequest {
         var slot: Int? = null
         slot = validateSlot(slot, CRC16.lookup(key.toByteArray(charset)))
-        val request = encode(charset, key = key, threshold = threshold, strategy = strategy, operator = operator, count = count)
+        val request =
+            encode(charset, key = key, threshold = threshold, strategy = strategy, operator = operator, count = count)
         return request.withSlot(slot % 16384)
     }
 
     public suspend fun decode(input: Buffer, charset: Charset): Long {
         val code = input.parseCode(RespCode.INTEGER)
-        return when(code) {
+        return when (code) {
             RespCode.INTEGER -> {
                 IntegerDecoder.decode(input, charset, code)
             }
+
             else -> {
                 throw UnexpectedResponseType("Expected [INTEGER] but got $code", input.tryInferCause(code))
             }

@@ -5,7 +5,7 @@ import eu.vendeli.rethis.codecs.sortedset.ZCardCommandCodec
 import eu.vendeli.rethis.topology.handle
 
 public suspend fun ReThis.zCard(key: String): Long {
-    val request = if(cfg.withSlots) {
+    val request = if (cfg.withSlots) {
         ZCardCommandCodec.encodeWithSlot(charset = cfg.charset, key = key)
     } else {
         ZCardCommandCodec.encode(charset = cfg.charset, key = key)

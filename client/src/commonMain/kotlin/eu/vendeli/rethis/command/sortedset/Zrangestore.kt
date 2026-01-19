@@ -15,10 +15,28 @@ public suspend fun ReThis.zRangeStore(
     rev: Boolean? = null,
     limit: ZRangeStoreLimit? = null,
 ): Long {
-    val request = if(cfg.withSlots) {
-        ZRangeStoreCommandCodec.encodeWithSlot(charset = cfg.charset, dst = dst, src = src, min = min, max = max, sortBy = sortBy, rev = rev, limit = limit)
+    val request = if (cfg.withSlots) {
+        ZRangeStoreCommandCodec.encodeWithSlot(
+            charset = cfg.charset,
+            dst = dst,
+            src = src,
+            min = min,
+            max = max,
+            sortBy = sortBy,
+            rev = rev,
+            limit = limit,
+        )
     } else {
-        ZRangeStoreCommandCodec.encode(charset = cfg.charset, dst = dst, src = src, min = min, max = max, sortBy = sortBy, rev = rev, limit = limit)
+        ZRangeStoreCommandCodec.encode(
+            charset = cfg.charset,
+            dst = dst,
+            src = src,
+            min = min,
+            max = max,
+            sortBy = sortBy,
+            rev = rev,
+            limit = limit,
+        )
     }
     return ZRangeStoreCommandCodec.decode(topology.handle(request), cfg.charset)
 }

@@ -7,7 +7,7 @@ import eu.vendeli.rethis.shared.request.string.GetExOption
 import eu.vendeli.rethis.topology.handle
 
 public suspend fun ReThis.getEx(key: String, vararg expiration: GetExOption): String? {
-    val request = if(cfg.withSlots) {
+    val request = if (cfg.withSlots) {
         GetExCommandCodec.encodeWithSlot(charset = cfg.charset, key = key, expiration = expiration)
     } else {
         GetExCommandCodec.encode(charset = cfg.charset, key = key, expiration = expiration)
@@ -16,7 +16,7 @@ public suspend fun ReThis.getEx(key: String, vararg expiration: GetExOption): St
 }
 
 public suspend fun ReThis.getExBA(key: String, vararg expiration: GetExOption): ByteArray? {
-    val request = if(cfg.withSlots) {
+    val request = if (cfg.withSlots) {
         GetExBACommandCodec.encodeWithSlot(charset = cfg.charset, key = key, expiration = expiration)
     } else {
         GetExBACommandCodec.encode(charset = cfg.charset, key = key, expiration = expiration)

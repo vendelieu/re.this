@@ -5,7 +5,7 @@ import eu.vendeli.rethis.codecs.generic.PExpireTimeCommandCodec
 import eu.vendeli.rethis.topology.handle
 
 public suspend fun ReThis.pExpireTime(key: String): Long {
-    val request = if(cfg.withSlots) {
+    val request = if (cfg.withSlots) {
         PExpireTimeCommandCodec.encodeWithSlot(charset = cfg.charset, key = key)
     } else {
         PExpireTimeCommandCodec.encode(charset = cfg.charset, key = key)

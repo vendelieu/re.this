@@ -39,14 +39,15 @@ public object ZAddExtendedCommandCodec {
         var size = 1
         COMMAND_HEADER.copyTo(buffer)
         size += 1
-        buffer.writeStringArg(key, charset, )
+        buffer.writeStringArg(key, charset)
         condition?.let { it0 ->
             when (it0) {
-                is UpdateStrategyOption.NX ->  {
+                is UpdateStrategyOption.NX -> {
                     size += 1
                     buffer.writeStringArg(it0.toString(), charset)
                 }
-                is UpdateStrategyOption.XX ->  {
+
+                is UpdateStrategyOption.XX -> {
                     size += 1
                     buffer.writeStringArg(it0.toString(), charset)
                 }
@@ -54,33 +55,34 @@ public object ZAddExtendedCommandCodec {
         }
         comparison?.let { it1 ->
             when (it1) {
-                is UpdateStrategyOption.GT ->  {
+                is UpdateStrategyOption.GT -> {
                     size += 1
                     buffer.writeStringArg(it1.toString(), charset)
                 }
-                is UpdateStrategyOption.LT ->  {
+
+                is UpdateStrategyOption.LT -> {
                     size += 1
                     buffer.writeStringArg(it1.toString(), charset)
                 }
             }
         }
         change?.let { it2 ->
-            if(it2) {
+            if (it2) {
                 size += 1
                 buffer.writeStringArg("CH", charset)
             }
         }
         increment?.let { it3 ->
-            if(it3) {
+            if (it3) {
                 size += 1
                 buffer.writeStringArg("INCR", charset)
             }
         }
         data.forEach { it4 ->
             size += 1
-            buffer.writeDoubleArg(it4.score, charset, )
+            buffer.writeDoubleArg(it4.score, charset)
             size += 1
-            buffer.writeStringArg(it4.member, charset, )
+            buffer.writeStringArg(it4.member, charset)
         }
 
         buffer = Buffer().apply {
@@ -101,22 +103,34 @@ public object ZAddExtendedCommandCodec {
     ): CommandRequest {
         var slot: Int? = null
         slot = validateSlot(slot, CRC16.lookup(key.toByteArray(charset)))
-        val request = encode(charset, key = key, data = data, condition = condition, comparison = comparison, change = change, increment = increment)
+        val request =
+            encode(
+                charset,
+                key = key,
+                data = data,
+                condition = condition,
+                comparison = comparison,
+                change = change,
+                increment = increment,
+            )
         return request.withSlot(slot % 16384)
     }
 
     public suspend fun decode(input: Buffer, charset: Charset): Double? {
         val code = input.parseCode(RespCode.DOUBLE)
-        return when(code) {
+        return when (code) {
             RespCode.DOUBLE -> {
                 DoubleDecoder.decode(input, charset, code)
             }
+
             RespCode.BULK -> {
                 BulkStringDecoder.decodeNullable(input, charset, code)?.toDouble()
             }
+
             RespCode.NULL -> {
                 null
             }
+
             else -> {
                 throw UnexpectedResponseType("Expected [DOUBLE, BULK, NULL] but got $code", input.tryInferCause(code))
             }

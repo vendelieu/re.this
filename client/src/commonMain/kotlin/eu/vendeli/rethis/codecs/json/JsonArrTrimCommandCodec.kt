@@ -29,10 +29,10 @@ public object JsonArrTrimCommandCodec {
     ): CommandRequest {
         val buffer = Buffer()
         COMMAND_HEADER.copyTo(buffer)
-        buffer.writeStringArg(key, charset, )
-        buffer.writeStringArg(path, charset, )
-        buffer.writeLongArg(start, charset, )
-        buffer.writeLongArg(stop, charset, )
+        buffer.writeStringArg(key, charset)
+        buffer.writeStringArg(path, charset)
+        buffer.writeLongArg(start, charset)
+        buffer.writeLongArg(stop, charset)
 
         return CommandRequest(buffer, RedisOperation.WRITE, BLOCKING_STATUS)
     }
@@ -47,10 +47,11 @@ public object JsonArrTrimCommandCodec {
 
     public suspend fun decode(input: Buffer, charset: Charset): Long {
         val code = input.parseCode(RespCode.INTEGER)
-        return when(code) {
+        return when (code) {
             RespCode.INTEGER -> {
                 IntegerDecoder.decode(input, charset, code)
             }
+
             else -> {
                 throw UnexpectedResponseType("Expected [INTEGER] but got $code", input.tryInferCause(code))
             }

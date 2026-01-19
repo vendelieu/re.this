@@ -22,7 +22,7 @@ public object PubSubShardNumSubCommandCodec {
         COMMAND_HEADER.copyTo(buffer)
         shardchannel.forEach { it0 ->
             size += 1
-            buffer.writeStringArg(it0, charset, )
+            buffer.writeStringArg(it0, charset)
         }
 
         buffer = Buffer().apply {
@@ -32,7 +32,13 @@ public object PubSubShardNumSubCommandCodec {
         return CommandRequest(buffer, RedisOperation.READ, BLOCKING_STATUS)
     }
 
-    public suspend inline fun encodeWithSlot(charset: Charset, vararg shardchannel: String): CommandRequest = encode(charset, shardchannel = shardchannel)
+    public suspend inline fun encodeWithSlot(charset: Charset, vararg shardchannel: String): CommandRequest = encode(
+        charset,
+        shardchannel = shardchannel,
+    )
 
-    public suspend fun decode(input: Buffer, charset: Charset): List<PubSubNumEntry> = PubSubNumSubDecoder.decode(input, charset)
+    public suspend fun decode(input: Buffer, charset: Charset): List<PubSubNumEntry> = PubSubNumSubDecoder.decode(
+        input,
+        charset,
+    )
 }

@@ -11,7 +11,7 @@ public suspend fun ReThis.xPending(
     group: String,
     filters: XPendingMainFilter? = null,
 ): List<RType> {
-    val request = if(cfg.withSlots) {
+    val request = if (cfg.withSlots) {
         XPendingCommandCodec.encodeWithSlot(charset = cfg.charset, key = key, group = group, filters = filters)
     } else {
         XPendingCommandCodec.encode(charset = cfg.charset, key = key, group = group, filters = filters)

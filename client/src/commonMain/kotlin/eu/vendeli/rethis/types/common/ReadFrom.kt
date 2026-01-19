@@ -26,15 +26,21 @@ sealed class ReadFrom : ReadFromStrategy {
 
     object Replica : ReadFromStrategy {
         override fun pick(request: CommandRequest, snapshot: Snapshot) = when (snapshot) {
-            is SentinelSnapshot -> snapshot.providers.withIndex().first {
-                it.index != snapshot.masterIdx
-            }.value
+            is SentinelSnapshot -> {
+                snapshot.providers
+                    .withIndex()
+                    .first {
+                        it.index != snapshot.masterIdx
+                    }.value
+            }
 
-            is ClusterSnapshot -> request.computedSlot?.let {
-                val repIndices = snapshot.replicaIndices[it]
-                val idx = repIndices.random()
-                snapshot.providers[idx]
-            } ?: snapshot.providers.first()
+            is ClusterSnapshot -> {
+                request.computedSlot?.let {
+                    val repIndices = snapshot.replicaIndices[it]
+                    val idx = repIndices.random()
+                    snapshot.providers[idx]
+                } ?: snapshot.providers.first()
+            }
         }
     }
 
@@ -49,14 +55,16 @@ sealed class ReadFrom : ReadFromStrategy {
                     snapshot.providers[idx]
                 }
 
-                is ClusterSnapshot -> request.computedSlot?.let { slot ->
-                    val replicas = snapshot.replicaIndices[slot]
-                    if (replicas.isNotEmpty()) {
-                        snapshot.providers[replicas.random()]
-                    } else {
-                        snapshot.providers[snapshot.slotOwner[slot]]
-                    }
-                } ?: snapshot.providers.first()
+                is ClusterSnapshot -> {
+                    request.computedSlot?.let { slot ->
+                        val replicas = snapshot.replicaIndices[slot]
+                        if (replicas.isNotEmpty()) {
+                            snapshot.providers[replicas.random()]
+                        } else {
+                            snapshot.providers[snapshot.slotOwner[slot]]
+                        }
+                    } ?: snapshot.providers.first()
+                }
             }
     }
 
@@ -81,7 +89,7 @@ sealed class ReadFrom : ReadFromStrategy {
                     val idx = if (replicaIndices.isNotEmpty())
                         replicaIndices.random()
                     else
-                    // fallback: pick some master if no replica
+                        // fallback: pick some master if no replica
                         snapshot.slotOwner[request.computedSlot ?: 0]
                     return snapshot.providers[idx]
                 }
@@ -94,7 +102,8 @@ sealed class ReadFrom : ReadFromStrategy {
             snapshot.latencies
                 .entries
                 .minByOrNull { it.value }
-                ?.key?.let {
+                ?.key
+                ?.let {
                     snapshot.providers[it]
                 } ?: snapshot.providers.first()
     }

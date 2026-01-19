@@ -6,7 +6,7 @@ import eu.vendeli.rethis.shared.request.server.ModuleOption
 import eu.vendeli.rethis.topology.handle
 
 public suspend fun ReThis.moduleLoadEx(path: String, vararg options: ModuleOption): Boolean {
-    val request = if(cfg.withSlots) {
+    val request = if (cfg.withSlots) {
         ModuleLoadExCommandCodec.encodeWithSlot(charset = cfg.charset, path = path, options = options)
     } else {
         ModuleLoadExCommandCodec.encode(charset = cfg.charset, path = path, options = options)

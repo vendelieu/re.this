@@ -19,10 +19,36 @@ public suspend fun ReThis.xClaim(
     justId: Boolean? = null,
     lastId: XClaimOption.LastId? = null,
 ): List<RType> {
-    val request = if(cfg.withSlots) {
-        XClaimCommandCodec.encodeWithSlot(charset = cfg.charset, key = key, group = group, consumer = consumer, minIdleTime = minIdleTime, id = id, idle = idle, time = time, retryCount = retryCount, force = force, justId = justId, lastId = lastId)
+    val request = if (cfg.withSlots) {
+        XClaimCommandCodec.encodeWithSlot(
+            charset = cfg.charset,
+            key = key,
+            group = group,
+            consumer = consumer,
+            minIdleTime = minIdleTime,
+            id = id,
+            idle = idle,
+            time = time,
+            retryCount = retryCount,
+            force = force,
+            justId = justId,
+            lastId = lastId,
+        )
     } else {
-        XClaimCommandCodec.encode(charset = cfg.charset, key = key, group = group, consumer = consumer, minIdleTime = minIdleTime, id = id, idle = idle, time = time, retryCount = retryCount, force = force, justId = justId, lastId = lastId)
+        XClaimCommandCodec.encode(
+            charset = cfg.charset,
+            key = key,
+            group = group,
+            consumer = consumer,
+            minIdleTime = minIdleTime,
+            id = id,
+            idle = idle,
+            time = time,
+            retryCount = retryCount,
+            force = force,
+            justId = justId,
+            lastId = lastId,
+        )
     }
     return XClaimCommandCodec.decode(topology.handle(request), cfg.charset)
 }

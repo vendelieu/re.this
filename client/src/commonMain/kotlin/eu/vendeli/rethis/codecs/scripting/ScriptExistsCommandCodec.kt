@@ -21,7 +21,7 @@ public object ScriptExistsCommandCodec {
         COMMAND_HEADER.copyTo(buffer)
         sha1.forEach { it0 ->
             size += 1
-            buffer.writeStringArg(it0, charset, )
+            buffer.writeStringArg(it0, charset)
         }
 
         buffer = Buffer().apply {
@@ -31,7 +31,13 @@ public object ScriptExistsCommandCodec {
         return CommandRequest(buffer, RedisOperation.READ, BLOCKING_STATUS)
     }
 
-    public suspend inline fun encodeWithSlot(charset: Charset, vararg sha1: String): CommandRequest = encode(charset, sha1 = sha1)
+    public suspend inline fun encodeWithSlot(charset: Charset, vararg sha1: String): CommandRequest = encode(
+        charset,
+        sha1 = sha1,
+    )
 
-    public suspend fun decode(input: Buffer, charset: Charset): List<Boolean> = ArrayIntBooleanDecoder.decode(input, charset)
+    public suspend fun decode(input: Buffer, charset: Charset): List<Boolean> = ArrayIntBooleanDecoder.decode(
+        input,
+        charset,
+    )
 }

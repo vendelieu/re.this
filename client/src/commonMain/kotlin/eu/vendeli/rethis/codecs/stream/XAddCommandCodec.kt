@@ -37,60 +37,63 @@ public object XAddCommandCodec {
         var size = 1
         COMMAND_HEADER.copyTo(buffer)
         size += 1
-        buffer.writeStringArg(key, charset, )
+        buffer.writeStringArg(key, charset)
         nomkstream?.let { it0 ->
-            if(it0) {
+            if (it0) {
                 size += 1
                 buffer.writeStringArg("NOMKSTREAM", charset)
             }
         }
         trim?.let { it1 ->
             when (it1.strategy) {
-                is MAXLEN ->  {
+                is MAXLEN -> {
                     size += 1
                     buffer.writeStringArg(it1.toString(), charset)
                 }
-                is MINID ->  {
+
+                is MINID -> {
                     size += 1
                     buffer.writeStringArg(it1.toString(), charset)
                 }
             }
             it1.operator?.let { it2 ->
                 when (it2) {
-                    is Approximate ->  {
+                    is Approximate -> {
                         size += 1
                         buffer.writeStringArg("~", charset)
                     }
-                    is Equal ->  {
+
+                    is Equal -> {
                         size += 1
                         buffer.writeStringArg("=", charset)
                     }
                 }
             }
             size += 1
-            buffer.writeStringArg(it1.threshold, charset, )
+            buffer.writeStringArg(it1.threshold, charset)
             it1.count?.let { it3 ->
                 size += 1
                 buffer.writeStringArg("LIMIT", charset)
                 size += 1
-                buffer.writeLongArg(it3, charset, )
+                buffer.writeLongArg(it3, charset)
             }
         }
         when (idSelector) {
-            is XAddOption.Asterisk ->  {
+            is XAddOption.Asterisk -> {
                 size += 1
                 buffer.writeStringArg("*", charset)
             }
-            is XAddOption.Id ->  {
+
+            is XAddOption.Id -> {
                 size += 1
-                buffer.writeStringArg(idSelector.id, charset, )
+                buffer.writeStringArg(idSelector.id, charset)
             }
         }
         data.forEach { it4 ->
             size += 1
-            buffer.writeStringArg(it4.field, charset, )
+            buffer.writeStringArg(it4.field, charset)
             size += 1
-            buffer.writeStringArg(it4.value, charset, )
+            buffer.writeStringArg(it4.value, charset)
         }
 
         buffer = Buffer().apply {
@@ -110,19 +113,22 @@ public object XAddCommandCodec {
     ): CommandRequest {
         var slot: Int? = null
         slot = validateSlot(slot, CRC16.lookup(key.toByteArray(charset)))
-        val request = encode(charset, key = key, nomkstream = nomkstream, trim = trim, idSelector = idSelector, data = data)
+        val request =
+            encode(charset, key = key, nomkstream = nomkstream, trim = trim, idSelector = idSelector, data = data)
         return request.withSlot(slot % 16384)
     }
 
     public suspend fun decode(input: Buffer, charset: Charset): String? {
         val code = input.parseCode(RespCode.BULK)
-        return when(code) {
+        return when (code) {
             RespCode.BULK -> {
                 BulkStringDecoder.decodeNullable(input, charset, code)
             }
+
             RespCode.NULL -> {
                 null
             }
+
             else -> {
                 throw UnexpectedResponseType("Expected [BULK, NULL] but got $code", input.tryInferCause(code))
             }

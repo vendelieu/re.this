@@ -10,8 +10,14 @@ public suspend fun ReThis.jsonArrInsert(
     index: Long,
     vararg `value`: String,
 ): Long {
-    val request = if(cfg.withSlots) {
-        JsonArrInsertCommandCodec.encodeWithSlot(charset = cfg.charset, key = key, path = path, index = index, value = value)
+    val request = if (cfg.withSlots) {
+        JsonArrInsertCommandCodec.encodeWithSlot(
+            charset = cfg.charset,
+            key = key,
+            path = path,
+            index = index,
+            value = value,
+        )
     } else {
         JsonArrInsertCommandCodec.encode(charset = cfg.charset, key = key, path = path, index = index, value = value)
     }

@@ -39,12 +39,13 @@ fun ReThis.StreamFlow(
     }.toTypedArray()
 
     // we use ">" so we only get new messages after the last delivered ID for this consumer
-    scope.launch(Dispatchers.IO_OR_UNCONFINED) {
-        while (isActive) {
-            // XREADGROUP GROUP <group> <consumer> BLOCK <blockMs> COUNT <batchSize> STREAMS <key> >
-            val msgs = xReadGroup(group, consumer, XReadGroupKeyIds(listOf(key), listOf(">")), *options).orEmpty()
+    scope
+        .launch(Dispatchers.IO_OR_UNCONFINED) {
+            while (isActive) {
+                // XREADGROUP GROUP <group> <consumer> BLOCK <blockMs> COUNT <batchSize> STREAMS <key> >
+                val msgs = xReadGroup(group, consumer, XReadGroupKeyIds(listOf(key), listOf(">")), *options).orEmpty()
 
-            emit(msgs)
-        }
-    }.join()
+                emit(msgs)
+            }
+        }.join()
 }

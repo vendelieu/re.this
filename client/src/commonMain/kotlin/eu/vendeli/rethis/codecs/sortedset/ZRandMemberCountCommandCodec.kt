@@ -33,11 +33,11 @@ public object ZRandMemberCountCommandCodec {
         var size = 1
         COMMAND_HEADER.copyTo(buffer)
         size += 1
-        buffer.writeStringArg(key, charset, )
+        buffer.writeStringArg(key, charset)
         size += 1
-        buffer.writeLongArg(count, charset, )
+        buffer.writeLongArg(count, charset)
         withScores?.let { it0 ->
-            if(it0) {
+            if (it0) {
                 size += 1
                 buffer.writeStringArg("WITHSCORES", charset)
             }
@@ -64,10 +64,11 @@ public object ZRandMemberCountCommandCodec {
 
     public suspend fun decode(input: Buffer, charset: Charset): List<String> {
         val code = input.parseCode(RespCode.ARRAY)
-        return when(code) {
+        return when (code) {
             RespCode.ARRAY -> {
                 ArrayStringDecoder.decode(input, charset, code)
             }
+
             else -> {
                 throw UnexpectedResponseType("Expected [ARRAY] but got $code", input.tryInferCause(code))
             }

@@ -6,7 +6,7 @@ import eu.vendeli.rethis.shared.request.cluster.SlotRange
 import eu.vendeli.rethis.topology.handle
 
 public suspend fun ReThis.clusterAddSlotsRange(vararg range: SlotRange): Boolean {
-    val request = if(cfg.withSlots) {
+    val request = if (cfg.withSlots) {
         ClusterAddSlotsRangeCommandCodec.encodeWithSlot(charset = cfg.charset, range = range)
     } else {
         ClusterAddSlotsRangeCommandCodec.encode(charset = cfg.charset, range = range)

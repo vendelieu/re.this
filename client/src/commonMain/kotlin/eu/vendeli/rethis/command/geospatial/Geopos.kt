@@ -6,7 +6,7 @@ import eu.vendeli.rethis.shared.response.geospatial.GeoPosition
 import eu.vendeli.rethis.topology.handle
 
 public suspend fun ReThis.geoPos(key: String, vararg member: String): List<List<GeoPosition>?> {
-    val request = if(cfg.withSlots) {
+    val request = if (cfg.withSlots) {
         GeoPosCommandCodec.encodeWithSlot(charset = cfg.charset, key = key, member = member)
     } else {
         GeoPosCommandCodec.encode(charset = cfg.charset, key = key, member = member)

@@ -7,7 +7,7 @@ import eu.vendeli.rethis.codecs.set.SRandMemberCountCommandCodec
 import eu.vendeli.rethis.topology.handle
 
 public suspend fun ReThis.sRandMemberCount(key: String, count: Long? = null): List<String> {
-    val request = if(cfg.withSlots) {
+    val request = if (cfg.withSlots) {
         SRandMemberCountCommandCodec.encodeWithSlot(charset = cfg.charset, key = key, count = count)
     } else {
         SRandMemberCountCommandCodec.encode(charset = cfg.charset, key = key, count = count)
@@ -16,7 +16,7 @@ public suspend fun ReThis.sRandMemberCount(key: String, count: Long? = null): Li
 }
 
 public suspend fun ReThis.sRandMemberBA(key: String): ByteArray {
-    val request = if(cfg.withSlots) {
+    val request = if (cfg.withSlots) {
         SRandMemberBACommandCodec.encodeWithSlot(charset = cfg.charset, key = key)
     } else {
         SRandMemberBACommandCodec.encode(charset = cfg.charset, key = key)
@@ -25,7 +25,7 @@ public suspend fun ReThis.sRandMemberBA(key: String): ByteArray {
 }
 
 public suspend fun ReThis.sRandMember(key: String): String {
-    val request = if(cfg.withSlots) {
+    val request = if (cfg.withSlots) {
         SRandMemberCommandCodec.encodeWithSlot(charset = cfg.charset, key = key)
     } else {
         SRandMemberCommandCodec.encode(charset = cfg.charset, key = key)

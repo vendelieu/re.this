@@ -10,7 +10,7 @@ public suspend fun ReThis.eval(
     vararg key: String,
     arg: List<String>,
 ): RType {
-    val request = if(cfg.withSlots) {
+    val request = if (cfg.withSlots) {
         EvalCommandCodec.encodeWithSlot(charset = cfg.charset, script = script, key = key, arg = arg)
     } else {
         EvalCommandCodec.encode(charset = cfg.charset, script = script, key = key, arg = arg)

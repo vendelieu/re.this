@@ -31,32 +31,36 @@ public object GetExBACommandCodec {
         var size = 1
         COMMAND_HEADER.copyTo(buffer)
         size += 1
-        buffer.writeStringArg(key, charset, )
+        buffer.writeStringArg(key, charset)
         expiration.forEach { it0 ->
             when (it0) {
-                is GetExOption.Ex ->  {
+                is GetExOption.Ex -> {
                     size += 1
                     buffer.writeStringArg("EX", charset)
                     size += 1
                     buffer.writeDurationArg(it0.seconds, charset, TimeUnit.SECONDS)
                 }
-                is GetExOption.ExAt ->  {
+
+                is GetExOption.ExAt -> {
                     size += 1
                     buffer.writeStringArg("EXAT", charset)
                     size += 1
                     buffer.writeInstantArg(it0.unixTimeSeconds, charset, TimeUnit.SECONDS)
                 }
-                is GetExOption.Persist ->  {
+
+                is GetExOption.Persist -> {
                     size += 1
                     buffer.writeStringArg("PERSIST", charset)
                 }
-                is GetExOption.Px ->  {
+
+                is GetExOption.Px -> {
                     size += 1
                     buffer.writeStringArg("PX", charset)
                     size += 1
                     buffer.writeDurationArg(it0.milliseconds, charset, TimeUnit.MILLISECONDS)
                 }
-                is GetExOption.PxAt ->  {
+
+                is GetExOption.PxAt -> {
                     size += 1
                     buffer.writeStringArg("PXAT", charset)
                     size += 1
@@ -85,13 +89,15 @@ public object GetExBACommandCodec {
 
     public suspend fun decode(input: Buffer, charset: Charset): ByteArray? {
         val code = input.parseCode(RespCode.BULK)
-        return when(code) {
+        return when (code) {
             RespCode.BULK -> {
                 BulkByteArrayDecoder.decodeNullable(input, charset, code)
             }
+
             RespCode.NULL -> {
                 null
             }
+
             else -> {
                 throw UnexpectedResponseType("Expected [BULK, NULL] but got $code", input.tryInferCause(code))
             }

@@ -25,7 +25,7 @@ public object AclGenPassCommandCodec {
         COMMAND_HEADER.copyTo(buffer)
         bits?.let { it0 ->
             size += 1
-            buffer.writeLongArg(it0, charset, )
+            buffer.writeLongArg(it0, charset)
         }
 
         buffer = Buffer().apply {
@@ -35,14 +35,18 @@ public object AclGenPassCommandCodec {
         return CommandRequest(buffer, RedisOperation.READ, BLOCKING_STATUS)
     }
 
-    public suspend inline fun encodeWithSlot(charset: Charset, bits: Long?): CommandRequest = encode(charset, bits = bits)
+    public suspend inline fun encodeWithSlot(charset: Charset, bits: Long?): CommandRequest = encode(
+        charset,
+        bits = bits,
+    )
 
     public suspend fun decode(input: Buffer, charset: Charset): String {
         val code = input.parseCode(RespCode.BULK)
-        return when(code) {
+        return when (code) {
             RespCode.BULK -> {
                 BulkStringDecoder.decode(input, charset, code)
             }
+
             else -> {
                 throw UnexpectedResponseType("Expected [BULK] but got $code", input.tryInferCause(code))
             }

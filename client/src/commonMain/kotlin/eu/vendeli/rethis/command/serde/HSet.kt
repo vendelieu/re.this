@@ -20,13 +20,14 @@ suspend fun <T : Any> ReThis.hSet(
     format: SerializationFormat = cfg.serializationFormat,
 ): Long {
     if (isInTx()) {
-        logger.warn("Be aware that in transaction commands return `QUEUED`" +
-            " which is for type safety substituted with default value, so serde operations will fail")
+        logger.warn(
+            "Be aware that in transaction commands return `QUEUED`" +
+                " which is for type safety substituted with default value, so serde operations will fail",
+        )
     }
-    val serializedPairs = fieldValue.map { (f, v) ->
-        FieldValue(f, format.serialize(serializer, v))
-    }.toTypedArray()
+    val serializedPairs = fieldValue
+        .map { (f, v) ->
+            FieldValue(f, format.serialize(serializer, v))
+        }.toTypedArray()
     return hSet(key = key, data = serializedPairs)
 }
-
-

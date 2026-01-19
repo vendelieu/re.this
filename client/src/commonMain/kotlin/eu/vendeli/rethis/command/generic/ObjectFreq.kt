@@ -6,7 +6,7 @@ import eu.vendeli.rethis.shared.types.RType
 import eu.vendeli.rethis.topology.handle
 
 public suspend fun ReThis.objectFreq(key: String): RType? {
-    val request = if(cfg.withSlots) {
+    val request = if (cfg.withSlots) {
         ObjectFreqCommandCodec.encodeWithSlot(charset = cfg.charset, key = key)
     } else {
         ObjectFreqCommandCodec.encode(charset = cfg.charset, key = key)

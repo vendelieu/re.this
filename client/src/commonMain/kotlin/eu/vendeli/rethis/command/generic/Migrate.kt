@@ -15,10 +15,26 @@ public suspend fun ReThis.migrate(
     timeout: Duration,
     vararg option: MigrateOption,
 ): String {
-    val request = if(cfg.withSlots) {
-        MigrateCommandCodec.encodeWithSlot(charset = cfg.charset, host = host, port = port, keySelector = keySelector, destinationDb = destinationDb, timeout = timeout, option = option)
+    val request = if (cfg.withSlots) {
+        MigrateCommandCodec.encodeWithSlot(
+            charset = cfg.charset,
+            host = host,
+            port = port,
+            keySelector = keySelector,
+            destinationDb = destinationDb,
+            timeout = timeout,
+            option = option,
+        )
     } else {
-        MigrateCommandCodec.encode(charset = cfg.charset, host = host, port = port, keySelector = keySelector, destinationDb = destinationDb, timeout = timeout, option = option)
+        MigrateCommandCodec.encode(
+            charset = cfg.charset,
+            host = host,
+            port = port,
+            keySelector = keySelector,
+            destinationDb = destinationDb,
+            timeout = timeout,
+            option = option,
+        )
     }
     return MigrateCommandCodec.decode(topology.handle(request), cfg.charset)
 }

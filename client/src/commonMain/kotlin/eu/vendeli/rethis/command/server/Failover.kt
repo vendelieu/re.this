@@ -6,7 +6,7 @@ import eu.vendeli.rethis.shared.request.server.FailoverOptions
 import eu.vendeli.rethis.topology.handle
 
 public suspend fun ReThis.failover(vararg option: FailoverOptions): Boolean {
-    val request = if(cfg.withSlots) {
+    val request = if (cfg.withSlots) {
         FailoverCommandCodec.encodeWithSlot(charset = cfg.charset, option = option)
     } else {
         FailoverCommandCodec.encode(charset = cfg.charset, option = option)

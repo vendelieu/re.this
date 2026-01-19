@@ -29,10 +29,10 @@ public object ZPopMinCommandCodec {
         var size = 1
         COMMAND_HEADER.copyTo(buffer)
         size += 1
-        buffer.writeStringArg(key, charset, )
+        buffer.writeStringArg(key, charset)
         count?.let { it0 ->
             size += 1
-            buffer.writeLongArg(it0, charset, )
+            buffer.writeLongArg(it0, charset)
         }
 
         buffer = Buffer().apply {
@@ -55,10 +55,11 @@ public object ZPopMinCommandCodec {
 
     public suspend fun decode(input: Buffer, charset: Charset): List<RType> {
         val code = input.parseCode(RespCode.ARRAY)
-        return when(code) {
+        return when (code) {
             RespCode.ARRAY -> {
                 ArrayRTypeDecoder.decode(input, charset, code)
             }
+
             else -> {
                 throw UnexpectedResponseType("Expected [ARRAY] but got $code", input.tryInferCause(code))
             }

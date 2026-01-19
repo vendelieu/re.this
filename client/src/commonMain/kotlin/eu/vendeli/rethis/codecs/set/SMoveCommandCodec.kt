@@ -30,9 +30,9 @@ public object SMoveCommandCodec {
     ): CommandRequest {
         val buffer = Buffer()
         COMMAND_HEADER.copyTo(buffer)
-        buffer.writeStringArg(source, charset, )
-        buffer.writeStringArg(destination, charset, )
-        buffer.writeStringArg(member, charset, )
+        buffer.writeStringArg(source, charset)
+        buffer.writeStringArg(destination, charset)
+        buffer.writeStringArg(member, charset)
 
         return CommandRequest(buffer, RedisOperation.WRITE, BLOCKING_STATUS)
     }
@@ -52,10 +52,11 @@ public object SMoveCommandCodec {
 
     public suspend fun decode(input: Buffer, charset: Charset): Boolean {
         val code = input.parseCode(RespCode.INTEGER)
-        return when(code) {
+        return when (code) {
             RespCode.INTEGER -> {
                 IntegerDecoder.decode(input, charset, code) == 1L
             }
+
             else -> {
                 throw UnexpectedResponseType("Expected [INTEGER] but got $code", input.tryInferCause(code))
             }

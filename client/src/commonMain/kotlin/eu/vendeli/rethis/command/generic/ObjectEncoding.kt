@@ -5,7 +5,7 @@ import eu.vendeli.rethis.codecs.generic.ObjectEncodingCommandCodec
 import eu.vendeli.rethis.topology.handle
 
 public suspend fun ReThis.objectEncoding(key: String): String? {
-    val request = if(cfg.withSlots) {
+    val request = if (cfg.withSlots) {
         ObjectEncodingCommandCodec.encodeWithSlot(charset = cfg.charset, key = key)
     } else {
         ObjectEncodingCommandCodec.encode(charset = cfg.charset, key = key)

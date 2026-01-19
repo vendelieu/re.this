@@ -33,42 +33,45 @@ public object BitfieldCommandCodec {
         var size = 1
         COMMAND_HEADER.copyTo(buffer)
         size += 1
-        buffer.writeStringArg(key, charset, )
+        buffer.writeStringArg(key, charset)
         operation.forEach { it0 ->
             when (it0) {
-                is BitfieldOption.Get ->  {
+                is BitfieldOption.Get -> {
                     size += 1
                     buffer.writeStringArg("GET", charset)
                     size += 1
-                    buffer.writeStringArg(it0.encoding, charset, )
+                    buffer.writeStringArg(it0.encoding, charset)
                     size += 1
-                    buffer.writeLongArg(it0.offset, charset, )
+                    buffer.writeLongArg(it0.offset, charset)
                 }
-                is BitfieldOption.IncreaseBy ->  {
+
+                is BitfieldOption.IncreaseBy -> {
                     size += 1
                     buffer.writeStringArg("INCRBY", charset)
                     size += 1
-                    buffer.writeStringArg(it0.encoding, charset, )
+                    buffer.writeStringArg(it0.encoding, charset)
                     size += 1
-                    buffer.writeLongArg(it0.offset, charset, )
+                    buffer.writeLongArg(it0.offset, charset)
                     size += 1
-                    buffer.writeLongArg(it0.increment, charset, )
+                    buffer.writeLongArg(it0.increment, charset)
                 }
-                is BitfieldOption.Overflow ->  {
+
+                is BitfieldOption.Overflow -> {
                     size += 1
                     buffer.writeStringArg("OVERFLOW", charset)
                     size += 1
                     buffer.writeStringArg(it0.type.toString(), charset)
                 }
-                is BitfieldOption.Set ->  {
+
+                is BitfieldOption.Set -> {
                     size += 1
                     buffer.writeStringArg("SET", charset)
                     size += 1
-                    buffer.writeStringArg(it0.encoding, charset, )
+                    buffer.writeStringArg(it0.encoding, charset)
                     size += 1
-                    buffer.writeLongArg(it0.offset, charset, )
+                    buffer.writeLongArg(it0.offset, charset)
                     size += 1
-                    buffer.writeLongArg(it0.value, charset, )
+                    buffer.writeLongArg(it0.value, charset)
                 }
             }
         }
@@ -93,13 +96,15 @@ public object BitfieldCommandCodec {
 
     public suspend fun decode(input: Buffer, charset: Charset): List<Long>? {
         val code = input.parseCode(RespCode.ARRAY)
-        return when(code) {
+        return when (code) {
             RespCode.ARRAY -> {
                 ArrayLongDecoder.decode(input, charset, code)
             }
+
             RespCode.NULL -> {
                 null
             }
+
             else -> {
                 throw UnexpectedResponseType("Expected [ARRAY, NULL] but got $code", input.tryInferCause(code))
             }

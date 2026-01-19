@@ -6,7 +6,7 @@ import eu.vendeli.rethis.shared.request.connection.ClientType
 import eu.vendeli.rethis.topology.handle
 
 public suspend fun ReThis.clientList(clientType: ClientType? = null, vararg clientId: Long): String {
-    val request = if(cfg.withSlots) {
+    val request = if (cfg.withSlots) {
         ClientListCommandCodec.encodeWithSlot(charset = cfg.charset, clientType = clientType, clientId = clientId)
     } else {
         ClientListCommandCodec.encode(charset = cfg.charset, clientType = clientType, clientId = clientId)

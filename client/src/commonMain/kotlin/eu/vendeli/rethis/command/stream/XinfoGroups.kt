@@ -6,7 +6,7 @@ import eu.vendeli.rethis.shared.types.RType
 import eu.vendeli.rethis.topology.handle
 
 public suspend fun ReThis.xInfoGroups(key: String): List<RType> {
-    val request = if(cfg.withSlots) {
+    val request = if (cfg.withSlots) {
         XInfoGroupsCommandCodec.encodeWithSlot(charset = cfg.charset, key = key)
     } else {
         XInfoGroupsCommandCodec.encode(charset = cfg.charset, key = key)

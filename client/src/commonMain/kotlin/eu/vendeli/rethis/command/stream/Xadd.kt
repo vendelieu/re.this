@@ -13,10 +13,24 @@ public suspend fun ReThis.xAdd(
     idSelector: XAddOption.Identifier,
     vararg `data`: FieldValue,
 ): String? {
-    val request = if(cfg.withSlots) {
-        XAddCommandCodec.encodeWithSlot(charset = cfg.charset, key = key, nomkstream = nomkstream, trim = trim, idSelector = idSelector, data = data)
+    val request = if (cfg.withSlots) {
+        XAddCommandCodec.encodeWithSlot(
+            charset = cfg.charset,
+            key = key,
+            nomkstream = nomkstream,
+            trim = trim,
+            idSelector = idSelector,
+            data = data,
+        )
     } else {
-        XAddCommandCodec.encode(charset = cfg.charset, key = key, nomkstream = nomkstream, trim = trim, idSelector = idSelector, data = data)
+        XAddCommandCodec.encode(
+            charset = cfg.charset,
+            key = key,
+            nomkstream = nomkstream,
+            trim = trim,
+            idSelector = idSelector,
+            data = data,
+        )
     }
     return XAddCommandCodec.decode(topology.handle(request), cfg.charset)
 }

@@ -25,24 +25,26 @@ public object FailoverCommandCodec {
         COMMAND_HEADER.copyTo(buffer)
         option.forEach { it0 ->
             when (it0) {
-                is FailoverOptions.ABORT ->  {
+                is FailoverOptions.ABORT -> {
                     size += 1
                     buffer.writeStringArg(it0.toString(), charset)
                 }
-                is FailoverOptions.Timeout ->  {
+
+                is FailoverOptions.Timeout -> {
                     size += 1
                     buffer.writeStringArg("TIMEOUT", charset)
                     size += 1
                     buffer.writeDurationArg(it0.milliseconds, charset, TimeUnit.MILLISECONDS)
                 }
-                is FailoverOptions.To ->  {
+
+                is FailoverOptions.To -> {
                     size += 1
                     buffer.writeStringArg("TO", charset)
                     size += 1
-                    buffer.writeStringArg(it0.host, charset, )
+                    buffer.writeStringArg(it0.host, charset)
                     size += 1
-                    buffer.writeLongArg(it0.port, charset, )
-                    if(it0.force) {
+                    buffer.writeLongArg(it0.port, charset)
+                    if (it0.force) {
                         size += 1
                         buffer.writeStringArg("FORCE", charset)
                     }
@@ -57,14 +59,18 @@ public object FailoverCommandCodec {
         return CommandRequest(buffer, RedisOperation.WRITE, BLOCKING_STATUS)
     }
 
-    public suspend inline fun encodeWithSlot(charset: Charset, vararg option: FailoverOptions): CommandRequest = encode(charset, option = option)
+    public suspend inline fun encodeWithSlot(charset: Charset, vararg option: FailoverOptions): CommandRequest = encode(
+        charset,
+        option = option,
+    )
 
     public suspend fun decode(input: Buffer, charset: Charset): Boolean {
         val code = input.parseCode(RespCode.SIMPLE_STRING)
-        return when(code) {
+        return when (code) {
             RespCode.SIMPLE_STRING -> {
                 SimpleStringDecoder.decode(input, charset, code) == "OK"
             }
+
             else -> {
                 throw UnexpectedResponseType("Expected [SIMPLE_STRING] but got $code", input.tryInferCause(code))
             }

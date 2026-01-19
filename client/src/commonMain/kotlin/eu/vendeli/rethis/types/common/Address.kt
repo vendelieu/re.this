@@ -6,7 +6,9 @@ import io.ktor.network.sockets.*
 import kotlin.jvm.JvmInline
 
 @JvmInline
-value class Address(val socket: SocketAddress)
+value class Address(
+    val socket: SocketAddress,
+)
 
 inline fun Address(host: String, port: Int) = Address(InetSocketAddress(host, port))
 inline fun Address(socketPath: String) = Address(UnixSocketAddress(socketPath))
@@ -36,7 +38,12 @@ internal class UrlAddress(
         ?.get(6)
         ?.value
         ?.toIntOrNull() ?: 0
-    internal val parameters = urlMatch?.groups?.get(8)?.value?.split('&')?.associate { entry ->
-        entry.split('&').let { it.first() to it.last() }
-    }.orEmpty()
+    internal val parameters = urlMatch
+        ?.groups
+        ?.get(8)
+        ?.value
+        ?.split('&')
+        ?.associate { entry ->
+            entry.split('&').let { it.first() to it.last() }
+        }.orEmpty()
 }

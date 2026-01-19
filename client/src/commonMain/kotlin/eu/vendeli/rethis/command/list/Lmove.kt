@@ -12,10 +12,22 @@ public suspend fun ReThis.lMove(
     whereFrom: MoveDirection,
     whereTo: MoveDirection,
 ): String {
-    val request = if(cfg.withSlots) {
-        LMoveCommandCodec.encodeWithSlot(charset = cfg.charset, source = source, destination = destination, whereFrom = whereFrom, whereTo = whereTo)
+    val request = if (cfg.withSlots) {
+        LMoveCommandCodec.encodeWithSlot(
+            charset = cfg.charset,
+            source = source,
+            destination = destination,
+            whereFrom = whereFrom,
+            whereTo = whereTo,
+        )
     } else {
-        LMoveCommandCodec.encode(charset = cfg.charset, source = source, destination = destination, whereFrom = whereFrom, whereTo = whereTo)
+        LMoveCommandCodec.encode(
+            charset = cfg.charset,
+            source = source,
+            destination = destination,
+            whereFrom = whereFrom,
+            whereTo = whereTo,
+        )
     }
     return LMoveCommandCodec.decode(topology.handle(request), cfg.charset)
 }
@@ -26,10 +38,22 @@ public suspend fun ReThis.lMoveBA(
     whereFrom: MoveDirection,
     whereTo: MoveDirection,
 ): ByteArray {
-    val request = if(cfg.withSlots) {
-        LMoveBACommandCodec.encodeWithSlot(charset = cfg.charset, source = source, destination = destination, whereFrom = whereFrom, whereTo = whereTo)
+    val request = if (cfg.withSlots) {
+        LMoveBACommandCodec.encodeWithSlot(
+            charset = cfg.charset,
+            source = source,
+            destination = destination,
+            whereFrom = whereFrom,
+            whereTo = whereTo,
+        )
     } else {
-        LMoveBACommandCodec.encode(charset = cfg.charset, source = source, destination = destination, whereFrom = whereFrom, whereTo = whereTo)
+        LMoveBACommandCodec.encode(
+            charset = cfg.charset,
+            source = source,
+            destination = destination,
+            whereFrom = whereFrom,
+            whereTo = whereTo,
+        )
     }
     return LMoveBACommandCodec.decode(topology.handle(request), cfg.charset)
 }

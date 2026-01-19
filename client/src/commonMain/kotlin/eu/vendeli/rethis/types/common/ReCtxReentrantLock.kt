@@ -34,7 +34,6 @@ internal class ReCtxReentrantLock(
     private val backoffBaseMs: Long = 50L,
     private val backoffCapMs: Long = 1000L,
 ) : ReDistributedLock {
-
     @OptIn(ExperimentalUuidApi::class)
     private val instanceId = "inst:${Uuid.random()}"
 
@@ -64,12 +63,19 @@ internal class ReCtxReentrantLock(
                     state.store(currentState.copy(depth = currentState.depth + 1))
                     return true
                 }
+
                 0 -> {
                     stopWatchdog()
                     state.store(null)
                 }
-                -1 -> throw LockLostException("Token mismatch during optimistic reenter for key=$key")
-                -2 -> throw LockLostException("Corrupted lock state during optimistic reenter for key=$key")
+
+                -1 -> {
+                    throw LockLostException("Token mismatch during optimistic reenter for key=$key")
+                }
+
+                -2 -> {
+                    throw LockLostException("Corrupted lock state during optimistic reenter for key=$key")
+                }
             }
         }
 
@@ -84,9 +90,16 @@ internal class ReCtxReentrantLock(
                     startWatchdog(stableToken, leaseMs)
                     return true
                 }
+
                 0 -> { /* someone else holds it */ }
-                -1 -> throw LockLostException("Lock currently held by another owner for key=$key")
-                -2 -> throw LockLostException("Corrupted lock state for key=$key")
+
+                -1 -> {
+                    throw LockLostException("Lock currently held by another owner for key=$key")
+                }
+
+                -2 -> {
+                    throw LockLostException("Corrupted lock state for key=$key")
+                }
             }
 
             if (waitMs == 0L || start.elapsedNow().inWholeMilliseconds >= waitMs) return false
@@ -128,10 +141,22 @@ internal class ReCtxReentrantLock(
                 }
                 return true
             }
-            0 -> throw LockLostException("Lock already missing/expired for key=$key during unlock")
-            -1 -> throw LockLostException("Unlock attempted by non-owner for key=$key")
-            -2 -> throw LockLostException("Corrupted lock state for key=$key during unlock")
-            else -> throw IllegalStateException("Unexpected unlock script response: $r for key=$key")
+
+            0 -> {
+                throw LockLostException("Lock already missing/expired for key=$key during unlock")
+            }
+
+            -1 -> {
+                throw LockLostException("Unlock attempted by non-owner for key=$key")
+            }
+
+            -2 -> {
+                throw LockLostException("Corrupted lock state for key=$key during unlock")
+            }
+
+            else -> {
+                throw IllegalStateException("Unexpected unlock script response: $r for key=$key")
+            }
         }
     }
 

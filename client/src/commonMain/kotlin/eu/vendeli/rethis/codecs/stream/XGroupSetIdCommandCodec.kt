@@ -35,15 +35,16 @@ public object XGroupSetIdCommandCodec {
         var size = 2
         COMMAND_HEADER.copyTo(buffer)
         size += 1
-        buffer.writeStringArg(key, charset, )
+        buffer.writeStringArg(key, charset)
         size += 1
-        buffer.writeStringArg(group, charset, )
+        buffer.writeStringArg(group, charset)
         when (idSelector) {
-            is XId.Id ->  {
+            is XId.Id -> {
                 size += 1
-                buffer.writeStringArg(idSelector.id, charset, )
+                buffer.writeStringArg(idSelector.id, charset)
             }
-            is XId.LastEntry ->  {
+
+            is XId.LastEntry -> {
                 size += 1
                 buffer.writeStringArg("$", charset)
             }
@@ -52,7 +53,7 @@ public object XGroupSetIdCommandCodec {
             size += 1
             buffer.writeStringArg("ENTRIESREAD", charset)
             size += 1
-            buffer.writeLongArg(it0, charset, )
+            buffer.writeLongArg(it0, charset)
         }
 
         buffer = Buffer().apply {
@@ -77,10 +78,11 @@ public object XGroupSetIdCommandCodec {
 
     public suspend fun decode(input: Buffer, charset: Charset): Boolean {
         val code = input.parseCode(RespCode.SIMPLE_STRING)
-        return when(code) {
+        return when (code) {
             RespCode.SIMPLE_STRING -> {
                 SimpleStringDecoder.decode(input, charset, code) == "OK"
             }
+
             else -> {
                 throw UnexpectedResponseType("Expected [SIMPLE_STRING] but got $code", input.tryInferCause(code))
             }

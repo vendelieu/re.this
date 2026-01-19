@@ -5,7 +5,7 @@ import eu.vendeli.rethis.codecs.hash.HExpireTimeCommandCodec
 import eu.vendeli.rethis.topology.handle
 
 public suspend fun ReThis.hExpireTime(key: String, vararg `field`: String): List<Long> {
-    val request = if(cfg.withSlots) {
+    val request = if (cfg.withSlots) {
         HExpireTimeCommandCodec.encodeWithSlot(charset = cfg.charset, key = key, field = field)
     } else {
         HExpireTimeCommandCodec.encode(charset = cfg.charset, key = key, field = field)

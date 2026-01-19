@@ -31,9 +31,9 @@ public object HIncrByFloatCommandCodec {
     ): CommandRequest {
         val buffer = Buffer()
         COMMAND_HEADER.copyTo(buffer)
-        buffer.writeStringArg(key, charset, )
-        buffer.writeStringArg(field, charset, )
-        buffer.writeDoubleArg(increment, charset, )
+        buffer.writeStringArg(key, charset)
+        buffer.writeStringArg(field, charset)
+        buffer.writeDoubleArg(increment, charset)
 
         return CommandRequest(buffer, RedisOperation.WRITE, BLOCKING_STATUS)
     }
@@ -52,10 +52,11 @@ public object HIncrByFloatCommandCodec {
 
     public suspend fun decode(input: Buffer, charset: Charset): Double {
         val code = input.parseCode(RespCode.BULK)
-        return when(code) {
+        return when (code) {
             RespCode.BULK -> {
                 BulkStringDecoder.decode(input, charset, code).toDouble()
             }
+
             else -> {
                 throw UnexpectedResponseType("Expected [BULK] but got $code", input.tryInferCause(code))
             }

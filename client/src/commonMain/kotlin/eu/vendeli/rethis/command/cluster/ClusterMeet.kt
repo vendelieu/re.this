@@ -9,8 +9,13 @@ public suspend fun ReThis.clusterMeet(
     port: Long,
     clusterBusPort: Long? = null,
 ): Boolean {
-    val request = if(cfg.withSlots) {
-        ClusterMeetCommandCodec.encodeWithSlot(charset = cfg.charset, ip = ip, port = port, clusterBusPort = clusterBusPort)
+    val request = if (cfg.withSlots) {
+        ClusterMeetCommandCodec.encodeWithSlot(
+            charset = cfg.charset,
+            ip = ip,
+            port = port,
+            clusterBusPort = clusterBusPort,
+        )
     } else {
         ClusterMeetCommandCodec.encode(charset = cfg.charset, ip = ip, port = port, clusterBusPort = clusterBusPort)
     }

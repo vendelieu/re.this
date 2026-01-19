@@ -7,7 +7,7 @@ import eu.vendeli.rethis.shared.request.connection.ClientKillOptions
 import eu.vendeli.rethis.topology.handle
 
 public suspend fun ReThis.clientKill(vararg filter: ClientKillOptions): Long {
-    val request = if(cfg.withSlots) {
+    val request = if (cfg.withSlots) {
         ClientKillCommandCodec.encodeWithSlot(charset = cfg.charset, filter = filter)
     } else {
         ClientKillCommandCodec.encode(charset = cfg.charset, filter = filter)
@@ -16,7 +16,7 @@ public suspend fun ReThis.clientKill(vararg filter: ClientKillOptions): Long {
 }
 
 public suspend fun ReThis.clientKillString(ipPort: String): Boolean {
-    val request = if(cfg.withSlots) {
+    val request = if (cfg.withSlots) {
         ClientKillStringCommandCodec.encodeWithSlot(charset = cfg.charset, ipPort = ipPort)
     } else {
         ClientKillStringCommandCodec.encode(charset = cfg.charset, ipPort = ipPort)

@@ -25,7 +25,7 @@ public object LatencyResetCommandCodec {
         COMMAND_HEADER.copyTo(buffer)
         event.forEach { it0 ->
             size += 1
-            buffer.writeStringArg(it0, charset, )
+            buffer.writeStringArg(it0, charset)
         }
 
         buffer = Buffer().apply {
@@ -35,14 +35,18 @@ public object LatencyResetCommandCodec {
         return CommandRequest(buffer, RedisOperation.WRITE, BLOCKING_STATUS)
     }
 
-    public suspend inline fun encodeWithSlot(charset: Charset, vararg event: String): CommandRequest = encode(charset, event = event)
+    public suspend inline fun encodeWithSlot(charset: Charset, vararg event: String): CommandRequest = encode(
+        charset,
+        event = event,
+    )
 
     public suspend fun decode(input: Buffer, charset: Charset): Long {
         val code = input.parseCode(RespCode.INTEGER)
-        return when(code) {
+        return when (code) {
             RespCode.INTEGER -> {
                 IntegerDecoder.decode(input, charset, code)
             }
+
             else -> {
                 throw UnexpectedResponseType("Expected [INTEGER] but got $code", input.tryInferCause(code))
             }

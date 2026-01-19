@@ -5,7 +5,7 @@ import eu.vendeli.rethis.codecs.hash.HKeysCommandCodec
 import eu.vendeli.rethis.topology.handle
 
 public suspend fun ReThis.hKeys(key: String): List<String> {
-    val request = if(cfg.withSlots) {
+    val request = if (cfg.withSlots) {
         HKeysCommandCodec.encodeWithSlot(charset = cfg.charset, key = key)
     } else {
         HKeysCommandCodec.encode(charset = cfg.charset, key = key)

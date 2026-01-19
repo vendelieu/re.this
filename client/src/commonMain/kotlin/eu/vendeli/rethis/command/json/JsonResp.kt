@@ -6,7 +6,7 @@ import eu.vendeli.rethis.shared.types.RType
 import eu.vendeli.rethis.topology.handle
 
 public suspend fun ReThis.jsonResp(key: String, path: String? = null): List<RType> {
-    val request = if(cfg.withSlots) {
+    val request = if (cfg.withSlots) {
         JsonRespCommandCodec.encodeWithSlot(charset = cfg.charset, key = key, path = path)
     } else {
         JsonRespCommandCodec.encode(charset = cfg.charset, key = key, path = path)

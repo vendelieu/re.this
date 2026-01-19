@@ -5,7 +5,7 @@ import eu.vendeli.rethis.codecs.sentinel.SentinelFailoverCommandCodec
 import eu.vendeli.rethis.topology.handle
 
 public suspend fun ReThis.sentinelFailover(masterName: String): Boolean {
-    val request = if(cfg.withSlots) {
+    val request = if (cfg.withSlots) {
         SentinelFailoverCommandCodec.encodeWithSlot(charset = cfg.charset, masterName = masterName)
     } else {
         SentinelFailoverCommandCodec.encode(charset = cfg.charset, masterName = masterName)

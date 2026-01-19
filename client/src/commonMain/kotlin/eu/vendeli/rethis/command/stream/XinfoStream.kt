@@ -10,7 +10,7 @@ public suspend fun ReThis.xInfoStream(
     full: Boolean? = null,
     count: Long? = null,
 ): Map<String, RType> {
-    val request = if(cfg.withSlots) {
+    val request = if (cfg.withSlots) {
         XInfoStreamCommandCodec.encodeWithSlot(charset = cfg.charset, key = key, full = full, count = count)
     } else {
         XInfoStreamCommandCodec.encode(charset = cfg.charset, key = key, full = full, count = count)

@@ -5,7 +5,7 @@ import eu.vendeli.rethis.codecs.generic.TypeCommandCodec
 import eu.vendeli.rethis.topology.handle
 
 public suspend fun ReThis.type(key: String): String {
-    val request = if(cfg.withSlots) {
+    val request = if (cfg.withSlots) {
         TypeCommandCodec.encodeWithSlot(charset = cfg.charset, key = key)
     } else {
         TypeCommandCodec.encode(charset = cfg.charset, key = key)

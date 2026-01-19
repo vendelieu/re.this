@@ -5,10 +5,10 @@ import eu.vendeli.rethis.codecs.connection.ClientIdCommandCodec
 import eu.vendeli.rethis.topology.handle
 
 public suspend fun ReThis.clientId(): Long {
-    val request = if(cfg.withSlots) {
-        ClientIdCommandCodec.encodeWithSlot(charset = cfg.charset, )
+    val request = if (cfg.withSlots) {
+        ClientIdCommandCodec.encodeWithSlot(charset = cfg.charset)
     } else {
-        ClientIdCommandCodec.encode(charset = cfg.charset, )
+        ClientIdCommandCodec.encode(charset = cfg.charset)
     }
     return ClientIdCommandCodec.decode(topology.handle(request), cfg.charset)
 }

@@ -32,9 +32,9 @@ public object ZIncrByCommandCodec {
     ): CommandRequest {
         val buffer = Buffer()
         COMMAND_HEADER.copyTo(buffer)
-        buffer.writeStringArg(key, charset, )
-        buffer.writeLongArg(increment, charset, )
-        buffer.writeStringArg(member, charset, )
+        buffer.writeStringArg(key, charset)
+        buffer.writeLongArg(increment, charset)
+        buffer.writeStringArg(member, charset)
 
         return CommandRequest(buffer, RedisOperation.WRITE, BLOCKING_STATUS)
     }
@@ -53,13 +53,15 @@ public object ZIncrByCommandCodec {
 
     public suspend fun decode(input: Buffer, charset: Charset): Double {
         val code = input.parseCode(RespCode.BULK)
-        return when(code) {
+        return when (code) {
             RespCode.BULK -> {
                 BulkStringDecoder.decode(input, charset, code).toDouble()
             }
+
             RespCode.DOUBLE -> {
                 DoubleDecoder.decode(input, charset, code)
             }
+
             else -> {
                 throw UnexpectedResponseType("Expected [BULK, DOUBLE] but got $code", input.tryInferCause(code))
             }

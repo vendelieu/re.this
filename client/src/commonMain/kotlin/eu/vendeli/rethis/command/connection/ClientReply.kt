@@ -6,7 +6,7 @@ import eu.vendeli.rethis.shared.request.connection.ClientReplyMode
 import eu.vendeli.rethis.topology.handle
 
 public suspend fun ReThis.clientReply(action: ClientReplyMode): Boolean {
-    val request = if(cfg.withSlots) {
+    val request = if (cfg.withSlots) {
         ClientReplyCommandCodec.encodeWithSlot(charset = cfg.charset, action = action)
     } else {
         ClientReplyCommandCodec.encode(charset = cfg.charset, action = action)

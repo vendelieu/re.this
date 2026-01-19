@@ -6,8 +6,12 @@ import eu.vendeli.rethis.shared.request.scripting.FunctionRestoreOption
 import eu.vendeli.rethis.topology.handle
 
 public suspend fun ReThis.functionRestore(serializedValue: ByteArray, policy: FunctionRestoreOption? = null): Boolean {
-    val request = if(cfg.withSlots) {
-        FunctionRestoreCommandCodec.encodeWithSlot(charset = cfg.charset, serializedValue = serializedValue, policy = policy)
+    val request = if (cfg.withSlots) {
+        FunctionRestoreCommandCodec.encodeWithSlot(
+            charset = cfg.charset,
+            serializedValue = serializedValue,
+            policy = policy,
+        )
     } else {
         FunctionRestoreCommandCodec.encode(charset = cfg.charset, serializedValue = serializedValue, policy = policy)
     }

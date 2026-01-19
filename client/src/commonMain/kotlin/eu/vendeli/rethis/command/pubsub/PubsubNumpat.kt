@@ -5,10 +5,10 @@ import eu.vendeli.rethis.codecs.pubsub.PubSubNumPatCommandCodec
 import eu.vendeli.rethis.topology.handle
 
 public suspend fun ReThis.pubSubNumPat(): Long {
-    val request = if(cfg.withSlots) {
-        PubSubNumPatCommandCodec.encodeWithSlot(charset = cfg.charset, )
+    val request = if (cfg.withSlots) {
+        PubSubNumPatCommandCodec.encodeWithSlot(charset = cfg.charset)
     } else {
-        PubSubNumPatCommandCodec.encode(charset = cfg.charset, )
+        PubSubNumPatCommandCodec.encode(charset = cfg.charset)
     }
     return PubSubNumPatCommandCodec.decode(topology.handle(request), cfg.charset)
 }

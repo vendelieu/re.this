@@ -40,22 +40,22 @@ public object XClaimCommandCodec {
         var size = 1
         COMMAND_HEADER.copyTo(buffer)
         size += 1
-        buffer.writeStringArg(key, charset, )
+        buffer.writeStringArg(key, charset)
         size += 1
-        buffer.writeStringArg(group, charset, )
+        buffer.writeStringArg(group, charset)
         size += 1
-        buffer.writeStringArg(consumer, charset, )
+        buffer.writeStringArg(consumer, charset)
         size += 1
-        buffer.writeStringArg(minIdleTime, charset, )
+        buffer.writeStringArg(minIdleTime, charset)
         id.forEach { it0 ->
             size += 1
-            buffer.writeStringArg(it0, charset, )
+            buffer.writeStringArg(it0, charset)
         }
         idle?.let { it1 ->
             size += 1
             buffer.writeStringArg("IDLE", charset)
             size += 1
-            buffer.writeLongArg(it1.ms, charset, )
+            buffer.writeLongArg(it1.ms, charset)
         }
         time?.let { it2 ->
             size += 1
@@ -67,16 +67,16 @@ public object XClaimCommandCodec {
             size += 1
             buffer.writeStringArg("RETRYCOUNT", charset)
             size += 1
-            buffer.writeLongArg(it3.count, charset, )
+            buffer.writeLongArg(it3.count, charset)
         }
         force?.let { it4 ->
-            if(it4) {
+            if (it4) {
                 size += 1
                 buffer.writeStringArg("FORCE", charset)
             }
         }
         justId?.let { it5 ->
-            if(it5) {
+            if (it5) {
                 size += 1
                 buffer.writeStringArg("JUSTID", charset)
             }
@@ -85,7 +85,7 @@ public object XClaimCommandCodec {
             size += 1
             buffer.writeStringArg("LASTID", charset)
             size += 1
-            buffer.writeStringArg(it6.lastid, charset, )
+            buffer.writeStringArg(it6.lastid, charset)
         }
 
         buffer = Buffer().apply {
@@ -111,16 +111,31 @@ public object XClaimCommandCodec {
     ): CommandRequest {
         var slot: Int? = null
         slot = validateSlot(slot, CRC16.lookup(key.toByteArray(charset)))
-        val request = encode(charset, key = key, group = group, consumer = consumer, minIdleTime = minIdleTime, id = id, idle = idle, time = time, retryCount = retryCount, force = force, justId = justId, lastId = lastId)
+        val request =
+            encode(
+                charset,
+                key = key,
+                group = group,
+                consumer = consumer,
+                minIdleTime = minIdleTime,
+                id = id,
+                idle = idle,
+                time = time,
+                retryCount = retryCount,
+                force = force,
+                justId = justId,
+                lastId = lastId,
+            )
         return request.withSlot(slot % 16384)
     }
 
     public suspend fun decode(input: Buffer, charset: Charset): List<RType> {
         val code = input.parseCode(RespCode.ARRAY)
-        return when(code) {
+        return when (code) {
             RespCode.ARRAY -> {
                 ArrayRTypeDecoder.decode(input, charset, code)
             }
+
             else -> {
                 throw UnexpectedResponseType("Expected [ARRAY] but got $code", input.tryInferCause(code))
             }

@@ -31,21 +31,21 @@ public object HelloCommandCodec {
         COMMAND_HEADER.copyTo(buffer)
         protover?.let { it0 ->
             size += 1
-            buffer.writeLongArg(it0, charset, )
+            buffer.writeLongArg(it0, charset)
         }
         auth?.let { it1 ->
             size += 1
             buffer.writeStringArg("AUTH", charset)
             size += 1
-            buffer.writeStringArg(it1.username, charset, )
+            buffer.writeStringArg(it1.username, charset)
             size += 1
-            buffer.writeCharArrayArg(it1.password, charset, )
+            buffer.writeCharArrayArg(it1.password, charset)
         }
         clientname?.let { it2 ->
             size += 1
             buffer.writeStringArg("SETNAME", charset)
             size += 1
-            buffer.writeStringArg(it2, charset, )
+            buffer.writeStringArg(it2, charset)
         }
 
         buffer = Buffer().apply {
@@ -64,18 +64,24 @@ public object HelloCommandCodec {
 
     public suspend fun decode(input: Buffer, charset: Charset): Map<String, RType> {
         val code = input.parseCode(RespCode.MAP)
-        return when(code) {
+        return when (code) {
             RespCode.MAP -> {
                 MapRTypeDecoder.decode(input, charset, code)
             }
+
             RespCode.ARRAY -> {
                 MapRTypeDecoder.decode(input, charset, code)
             }
+
             RespCode.SIMPLE_ERROR -> {
                 SimpleErrorDecoder.decode(input, charset, code)
             }
+
             else -> {
-                throw UnexpectedResponseType("Expected [MAP, ARRAY, SIMPLE_ERROR] but got $code", input.tryInferCause(code))
+                throw UnexpectedResponseType(
+                    "Expected [MAP, ARRAY, SIMPLE_ERROR] but got $code",
+                    input.tryInferCause(code),
+                )
             }
         }
     }

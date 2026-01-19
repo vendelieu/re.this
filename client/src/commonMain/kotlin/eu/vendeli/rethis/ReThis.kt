@@ -68,10 +68,11 @@ class ReThis internal constructor(
         val requests = mutableListOf<CommandRequest>()
         logger.info("Pipeline started")
         try {
-            scope.launch(currentCoroutineContext() + CoPipelineCtx(requests)) {
-                block()
-                ctxConn = currentCoroutineContext()[CoLocalConn]?.connection
-            }.join()
+            scope
+                .launch(currentCoroutineContext() + CoPipelineCtx(requests)) {
+                    block()
+                    ctxConn = currentCoroutineContext()[CoLocalConn]?.connection
+                }.join()
         } catch (e: Throwable) {
             logger.error("Pipeline removed")
             requests.clear()
@@ -100,9 +101,10 @@ class ReThis internal constructor(
             logger.debug { "Started transaction" }
 
             var e: Throwable? = null
-            scope.launch(currentCoroutineContext() + CoLocalConn(conn, true)) {
-                runCatching { block() }.getOrElse { e = it }
-            }.join()
+            scope
+                .launch(currentCoroutineContext() + CoLocalConn(conn, true)) {
+                    runCatching { block() }.getOrElse { e = it }
+                }.join()
 
             if (e != null) {
                 conn.doRequest(DiscardCommandCodec.encode(cfg.charset).buffer)
@@ -171,7 +173,8 @@ fun ReThis(
     cfg.db = addr.db
     addr.credentials.takeIf { it.isNotEmpty() }?.also { credentials ->
         cfg.auth = AuthConfiguration(
-            credentials.first().toCharArray(), credentials.takeIf { it.size > 1 }?.last(),
+            credentials.first().toCharArray(),
+            credentials.takeIf { it.size > 1 }?.last(),
         )
     }
 

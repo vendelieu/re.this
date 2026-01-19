@@ -7,7 +7,7 @@ import eu.vendeli.rethis.shared.request.generic.SortOption
 import eu.vendeli.rethis.topology.handle
 
 public suspend fun ReThis.sort(key: String, vararg option: SortOption): List<String> {
-    val request = if(cfg.withSlots) {
+    val request = if (cfg.withSlots) {
         SortCommandCodec.encodeWithSlot(charset = cfg.charset, key = key, option = option)
     } else {
         SortCommandCodec.encode(charset = cfg.charset, key = key, option = option)
@@ -20,10 +20,20 @@ public suspend fun ReThis.sortStore(
     storeDestination: String,
     vararg option: SortOption,
 ): Long {
-    val request = if(cfg.withSlots) {
-        SortStoreCommandCodec.encodeWithSlot(charset = cfg.charset, key = key, storeDestination = storeDestination, option = option)
+    val request = if (cfg.withSlots) {
+        SortStoreCommandCodec.encodeWithSlot(
+            charset = cfg.charset,
+            key = key,
+            storeDestination = storeDestination,
+            option = option,
+        )
     } else {
-        SortStoreCommandCodec.encode(charset = cfg.charset, key = key, storeDestination = storeDestination, option = option)
+        SortStoreCommandCodec.encode(
+            charset = cfg.charset,
+            key = key,
+            storeDestination = storeDestination,
+            option = option,
+        )
     }
     return SortStoreCommandCodec.decode(topology.handle(request), cfg.charset)
 }

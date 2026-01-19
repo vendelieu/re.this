@@ -32,30 +32,33 @@ public object ExpireCommandCodec {
         var size = 1
         COMMAND_HEADER.copyTo(buffer)
         size += 1
-        buffer.writeStringArg(key, charset, )
+        buffer.writeStringArg(key, charset)
         size += 1
         buffer.writeDurationArg(seconds, charset, TimeUnit.SECONDS)
         condition?.let { it0 ->
             when (it0) {
-                is UpdateStrategyOption.ComparisonRule ->  {
+                is UpdateStrategyOption.ComparisonRule -> {
                     when (it0) {
-                        is UpdateStrategyOption.GT ->  {
+                        is UpdateStrategyOption.GT -> {
                             size += 1
                             buffer.writeStringArg(it0.toString(), charset)
                         }
-                        is UpdateStrategyOption.LT ->  {
+
+                        is UpdateStrategyOption.LT -> {
                             size += 1
                             buffer.writeStringArg(it0.toString(), charset)
                         }
                     }
                 }
-                is UpdateStrategyOption.ExistenceRule ->  {
+
+                is UpdateStrategyOption.ExistenceRule -> {
                     when (it0) {
-                        is UpdateStrategyOption.NX ->  {
+                        is UpdateStrategyOption.NX -> {
                             size += 1
                             buffer.writeStringArg(it0.toString(), charset)
                         }
-                        is UpdateStrategyOption.XX ->  {
+
+                        is UpdateStrategyOption.XX -> {
                             size += 1
                             buffer.writeStringArg(it0.toString(), charset)
                         }
@@ -85,10 +88,11 @@ public object ExpireCommandCodec {
 
     public suspend fun decode(input: Buffer, charset: Charset): Boolean {
         val code = input.parseCode(RespCode.INTEGER)
-        return when(code) {
+        return when (code) {
             RespCode.INTEGER -> {
                 IntegerDecoder.decode(input, charset, code) == 1L
             }
+
             else -> {
                 throw UnexpectedResponseType("Expected [INTEGER] but got $code", input.tryInferCause(code))
             }

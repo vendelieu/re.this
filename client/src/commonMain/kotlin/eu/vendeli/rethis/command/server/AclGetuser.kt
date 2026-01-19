@@ -6,7 +6,7 @@ import eu.vendeli.rethis.shared.types.RType
 import eu.vendeli.rethis.topology.handle
 
 public suspend fun ReThis.aclGetUser(username: String): Map<String, RType>? {
-    val request = if(cfg.withSlots) {
+    val request = if (cfg.withSlots) {
         AclGetUserCommandCodec.encodeWithSlot(charset = cfg.charset, username = username)
     } else {
         AclGetUserCommandCodec.encode(charset = cfg.charset, username = username)

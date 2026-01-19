@@ -5,7 +5,7 @@ import eu.vendeli.rethis.codecs.server.LatencyGraphCommandCodec
 import eu.vendeli.rethis.topology.handle
 
 public suspend fun ReThis.latencyGraph(event: String): String {
-    val request = if(cfg.withSlots) {
+    val request = if (cfg.withSlots) {
         LatencyGraphCommandCodec.encodeWithSlot(charset = cfg.charset, event = event)
     } else {
         LatencyGraphCommandCodec.encode(charset = cfg.charset, event = event)

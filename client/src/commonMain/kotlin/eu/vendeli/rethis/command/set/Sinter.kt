@@ -5,7 +5,7 @@ import eu.vendeli.rethis.codecs.set.SInterCommandCodec
 import eu.vendeli.rethis.topology.handle
 
 public suspend fun ReThis.sInter(vararg key: String): Set<String> {
-    val request = if(cfg.withSlots) {
+    val request = if (cfg.withSlots) {
         SInterCommandCodec.encodeWithSlot(charset = cfg.charset, key = key)
     } else {
         SInterCommandCodec.encode(charset = cfg.charset, key = key)

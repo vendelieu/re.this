@@ -31,18 +31,19 @@ public object JsonSetCommandCodec {
         var size = 1
         COMMAND_HEADER.copyTo(buffer)
         size += 1
-        buffer.writeStringArg(key, charset, )
+        buffer.writeStringArg(key, charset)
         size += 1
-        buffer.writeStringArg(path, charset, )
+        buffer.writeStringArg(path, charset)
         size += 1
-        buffer.writeStringArg(value, charset, )
+        buffer.writeStringArg(value, charset)
         condition?.let { it0 ->
             when (it0) {
-                is UpsertMode.NX ->  {
+                is UpsertMode.NX -> {
                     size += 1
                     buffer.writeStringArg(it0.toString(), charset)
                 }
-                is UpsertMode.XX ->  {
+
+                is UpsertMode.XX -> {
                     size += 1
                     buffer.writeStringArg(it0.toString(), charset)
                 }
@@ -66,10 +67,11 @@ public object JsonSetCommandCodec {
 
     public suspend fun decode(input: Buffer, charset: Charset): String {
         val code = input.parseCode(RespCode.SIMPLE_STRING)
-        return when(code) {
+        return when (code) {
             RespCode.SIMPLE_STRING -> {
                 SimpleStringDecoder.decode(input, charset, code)
             }
+
             else -> {
                 throw UnexpectedResponseType("Expected [SIMPLE_STRING] but got $code", input.tryInferCause(code))
             }

@@ -6,7 +6,7 @@ import eu.vendeli.rethis.codecs.sortedset.ZRevRankWithScoreCommandCodec
 import eu.vendeli.rethis.topology.handle
 
 public suspend fun ReThis.zRevRank(key: String, member: String): Long? {
-    val request = if(cfg.withSlots) {
+    val request = if (cfg.withSlots) {
         ZRevRankCommandCodec.encodeWithSlot(charset = cfg.charset, key = key, member = member)
     } else {
         ZRevRankCommandCodec.encode(charset = cfg.charset, key = key, member = member)
@@ -19,8 +19,13 @@ public suspend fun ReThis.zRevRankWithScore(
     member: String,
     withScore: Boolean,
 ): List<Long>? {
-    val request = if(cfg.withSlots) {
-        ZRevRankWithScoreCommandCodec.encodeWithSlot(charset = cfg.charset, key = key, member = member, withScore = withScore)
+    val request = if (cfg.withSlots) {
+        ZRevRankWithScoreCommandCodec.encodeWithSlot(
+            charset = cfg.charset,
+            key = key,
+            member = member,
+            withScore = withScore,
+        )
     } else {
         ZRevRankWithScoreCommandCodec.encode(charset = cfg.charset, key = key, member = member, withScore = withScore)
     }

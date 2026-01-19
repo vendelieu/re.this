@@ -11,7 +11,7 @@ public suspend fun ReThis.sScan(
     cursor: Long,
     vararg option: SScanOption,
 ): ScanResult<String> {
-    val request = if(cfg.withSlots) {
+    val request = if (cfg.withSlots) {
         SScanCommandCodec.encodeWithSlot(charset = cfg.charset, key = key, cursor = cursor, option = option)
     } else {
         SScanCommandCodec.encode(charset = cfg.charset, key = key, cursor = cursor, option = option)

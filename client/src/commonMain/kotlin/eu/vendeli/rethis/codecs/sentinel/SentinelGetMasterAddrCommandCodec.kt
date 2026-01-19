@@ -22,19 +22,23 @@ public object SentinelGetMasterAddrCommandCodec {
     public suspend fun encode(charset: Charset, masterName: String): CommandRequest {
         val buffer = Buffer()
         COMMAND_HEADER.copyTo(buffer)
-        buffer.writeStringArg(masterName, charset, )
+        buffer.writeStringArg(masterName, charset)
 
         return CommandRequest(buffer, RedisOperation.READ, BLOCKING_STATUS)
     }
 
-    public suspend inline fun encodeWithSlot(charset: Charset, masterName: String): CommandRequest = encode(charset, masterName = masterName)
+    public suspend inline fun encodeWithSlot(charset: Charset, masterName: String): CommandRequest = encode(
+        charset,
+        masterName = masterName,
+    )
 
     public suspend fun decode(input: Buffer, charset: Charset): List<String> {
         val code = input.parseCode(RespCode.ARRAY)
-        return when(code) {
+        return when (code) {
             RespCode.ARRAY -> {
                 ArrayStringDecoder.decode(input, charset, code)
             }
+
             else -> {
                 throw UnexpectedResponseType("Expected [ARRAY] but got $code", input.tryInferCause(code))
             }

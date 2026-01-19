@@ -5,10 +5,10 @@ import eu.vendeli.rethis.codecs.sentinel.SentinelMyIdCommandCodec
 import eu.vendeli.rethis.topology.handle
 
 public suspend fun ReThis.sentinelMyId(): String {
-    val request = if(cfg.withSlots) {
-        SentinelMyIdCommandCodec.encodeWithSlot(charset = cfg.charset, )
+    val request = if (cfg.withSlots) {
+        SentinelMyIdCommandCodec.encodeWithSlot(charset = cfg.charset)
     } else {
-        SentinelMyIdCommandCodec.encode(charset = cfg.charset, )
+        SentinelMyIdCommandCodec.encode(charset = cfg.charset)
     }
     return SentinelMyIdCommandCodec.decode(topology.handle(request), cfg.charset)
 }

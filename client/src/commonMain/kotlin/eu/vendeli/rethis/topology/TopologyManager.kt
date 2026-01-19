@@ -34,29 +34,36 @@ internal suspend inline fun TopologyManager.handle(request: CommandRequest): Buf
                 EMPTY_BUFFER
             }
 
-            coLocalConn != null -> coLocalConn.connection.doRequest(request.buffer)
-                .also {
-                    val peekedByte = it.readByte()
-                    when (val code = RespCode.fromCode(peekedByte)) {
-                        RespCode.SIMPLE_ERROR -> SimpleErrorDecoder.decode(it, cfg.charset, code)
-                        RespCode.BULK_ERROR -> BulkErrorDecoder.decode(it, cfg.charset, code)
-                        else -> it.writeByte(peekedByte)
-                    }
-                }.takeIf { !coLocalConn.isTx } ?: run {
+            coLocalConn != null -> {
+                coLocalConn.connection
+                    .doRequest(request.buffer)
+                    .also {
+                        val peekedByte = it.readByte()
+                        when (val code = RespCode.fromCode(peekedByte)) {
+                            RespCode.SIMPLE_ERROR -> SimpleErrorDecoder.decode(it, cfg.charset, code)
+                            RespCode.BULK_ERROR -> BulkErrorDecoder.decode(it, cfg.charset, code)
+                            else -> it.writeByte(peekedByte)
+                        }
+                    }.takeIf { !coLocalConn.isTx } ?: run {
                     warnOfSubstitution(cfg)
                     EMPTY_BUFFER
                 }
+            }
+
             // return empty buffer if transaction (to not break response contract since transaction return QUEUED)
 
-            else -> route(request).execute(request)
+            else -> {
+                route(request).execute(request)
+            }
         }
     }.getOrElse { handleFailure(request, it) }
 }
 
 private inline fun warnOfSubstitution(cfg: ReThisConfiguration) {
-    cfg.loggerFactory.get("eu.vendeli.rethis.topology.TopologyManager")
+    cfg.loggerFactory
+        .get("eu.vendeli.rethis.topology.TopologyManager")
         .debug {
             "Response substituted to EMPTY_BUFFER " +
-            "and will be handled as default response since it been executed in special construction"
+                "and will be handled as default response since it been executed in special construction"
         }
 }

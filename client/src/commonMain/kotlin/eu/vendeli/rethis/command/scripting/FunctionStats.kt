@@ -6,10 +6,10 @@ import eu.vendeli.rethis.shared.types.RType
 import eu.vendeli.rethis.topology.handle
 
 public suspend fun ReThis.functionStats(): Map<String, RType> {
-    val request = if(cfg.withSlots) {
-        FunctionStatsCommandCodec.encodeWithSlot(charset = cfg.charset, )
+    val request = if (cfg.withSlots) {
+        FunctionStatsCommandCodec.encodeWithSlot(charset = cfg.charset)
     } else {
-        FunctionStatsCommandCodec.encode(charset = cfg.charset, )
+        FunctionStatsCommandCodec.encode(charset = cfg.charset)
     }
     return FunctionStatsCommandCodec.decode(topology.handle(request), cfg.charset)
 }

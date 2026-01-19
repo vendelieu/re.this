@@ -31,25 +31,29 @@ public object ClientListCommandCodec {
         COMMAND_HEADER.copyTo(buffer)
         clientType?.let { it0 ->
             when (it0) {
-                is ClientType ->  {
+                is ClientType -> {
                     size += 1
                     buffer.writeStringArg("TYPE", charset)
                     when (it0) {
-                        is ClientType.Slave ->  {
+                        is ClientType.Slave -> {
                         }
-                        is ClientType.Normal ->  {
+
+                        is ClientType.Normal -> {
                             size += 1
                             buffer.writeStringArg("NORMAL", charset)
                         }
-                        is ClientType.Master ->  {
+
+                        is ClientType.Master -> {
                             size += 1
                             buffer.writeStringArg("MASTER", charset)
                         }
-                        is ClientType.Replica ->  {
+
+                        is ClientType.Replica -> {
                             size += 1
                             buffer.writeStringArg("REPLICA", charset)
                         }
-                        is ClientType.PubSub ->  {
+
+                        is ClientType.PubSub -> {
                             size += 1
                             buffer.writeStringArg("PUBSUB", charset)
                         }
@@ -63,7 +67,7 @@ public object ClientListCommandCodec {
         }
         clientId.forEach { it1 ->
             size += 1
-            buffer.writeLongArg(it1, charset, )
+            buffer.writeLongArg(it1, charset)
         }
 
         buffer = Buffer().apply {
@@ -81,10 +85,11 @@ public object ClientListCommandCodec {
 
     public suspend fun decode(input: Buffer, charset: Charset): String {
         val code = input.parseCode(RespCode.BULK)
-        return when(code) {
+        return when (code) {
             RespCode.BULK -> {
                 BulkStringDecoder.decode(input, charset, code)
             }
+
             else -> {
                 throw UnexpectedResponseType("Expected [BULK] but got $code", input.tryInferCause(code))
             }

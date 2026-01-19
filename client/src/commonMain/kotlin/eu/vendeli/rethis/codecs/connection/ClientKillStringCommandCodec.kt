@@ -22,19 +22,23 @@ public object ClientKillStringCommandCodec {
     public suspend fun encode(charset: Charset, ipPort: String): CommandRequest {
         val buffer = Buffer()
         COMMAND_HEADER.copyTo(buffer)
-        buffer.writeStringArg(ipPort, charset, )
+        buffer.writeStringArg(ipPort, charset)
 
         return CommandRequest(buffer, RedisOperation.WRITE, BLOCKING_STATUS)
     }
 
-    public suspend inline fun encodeWithSlot(charset: Charset, ipPort: String): CommandRequest = encode(charset, ipPort = ipPort)
+    public suspend inline fun encodeWithSlot(charset: Charset, ipPort: String): CommandRequest = encode(
+        charset,
+        ipPort = ipPort,
+    )
 
     public suspend fun decode(input: Buffer, charset: Charset): Boolean {
         val code = input.parseCode(RespCode.SIMPLE_STRING)
-        return when(code) {
+        return when (code) {
             RespCode.SIMPLE_STRING -> {
                 SimpleStringDecoder.decode(input, charset, code) == "OK"
             }
+
             else -> {
                 throw UnexpectedResponseType("Expected [SIMPLE_STRING] but got $code", input.tryInferCause(code))
             }

@@ -26,8 +26,8 @@ public object ClusterGetKeysInSlotCommandCodec {
     ): CommandRequest {
         val buffer = Buffer()
         COMMAND_HEADER.copyTo(buffer)
-        buffer.writeLongArg(slot, charset, )
-        buffer.writeLongArg(count, charset, )
+        buffer.writeLongArg(slot, charset)
+        buffer.writeLongArg(count, charset)
 
         return CommandRequest(buffer, RedisOperation.READ, BLOCKING_STATUS)
     }
@@ -40,10 +40,11 @@ public object ClusterGetKeysInSlotCommandCodec {
 
     public suspend fun decode(input: Buffer, charset: Charset): List<String> {
         val code = input.parseCode(RespCode.ARRAY)
-        return when(code) {
+        return when (code) {
             RespCode.ARRAY -> {
                 ArrayStringDecoder.decode(input, charset, code)
             }
+
             else -> {
                 throw UnexpectedResponseType("Expected [ARRAY] but got $code", input.tryInferCause(code))
             }

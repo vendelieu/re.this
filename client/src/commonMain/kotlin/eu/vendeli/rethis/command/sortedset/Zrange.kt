@@ -14,10 +14,28 @@ public suspend fun ReThis.zRange(
     limit: ZRangeOption.Limit? = null,
     withScores: Boolean? = null,
 ): List<String> {
-    val request = if(cfg.withSlots) {
-        ZRangeCommandCodec.encodeWithSlot(charset = cfg.charset, key = key, start = start, stop = stop, sortBy = sortBy, rev = rev, limit = limit, withScores = withScores)
+    val request = if (cfg.withSlots) {
+        ZRangeCommandCodec.encodeWithSlot(
+            charset = cfg.charset,
+            key = key,
+            start = start,
+            stop = stop,
+            sortBy = sortBy,
+            rev = rev,
+            limit = limit,
+            withScores = withScores,
+        )
     } else {
-        ZRangeCommandCodec.encode(charset = cfg.charset, key = key, start = start, stop = stop, sortBy = sortBy, rev = rev, limit = limit, withScores = withScores)
+        ZRangeCommandCodec.encode(
+            charset = cfg.charset,
+            key = key,
+            start = start,
+            stop = stop,
+            sortBy = sortBy,
+            rev = rev,
+            limit = limit,
+            withScores = withScores,
+        )
     }
     return ZRangeCommandCodec.decode(topology.handle(request), cfg.charset)
 }

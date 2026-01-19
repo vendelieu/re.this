@@ -22,19 +22,23 @@ public object KeysCommandCodec {
     public suspend fun encode(charset: Charset, pattern: String): CommandRequest {
         val buffer = Buffer()
         COMMAND_HEADER.copyTo(buffer)
-        buffer.writeStringArg(pattern, charset, )
+        buffer.writeStringArg(pattern, charset)
 
         return CommandRequest(buffer, RedisOperation.READ, BLOCKING_STATUS)
     }
 
-    public suspend inline fun encodeWithSlot(charset: Charset, pattern: String): CommandRequest = encode(charset, pattern = pattern)
+    public suspend inline fun encodeWithSlot(charset: Charset, pattern: String): CommandRequest = encode(
+        charset,
+        pattern = pattern,
+    )
 
     public suspend fun decode(input: Buffer, charset: Charset): List<String> {
         val code = input.parseCode(RespCode.ARRAY)
-        return when(code) {
+        return when (code) {
             RespCode.ARRAY -> {
                 ArrayStringDecoder.decode(input, charset, code)
             }
+
             else -> {
                 throw UnexpectedResponseType("Expected [ARRAY] but got $code", input.tryInferCause(code))
             }

@@ -6,7 +6,7 @@ import eu.vendeli.rethis.shared.request.server.ReplicaOfArgs
 import eu.vendeli.rethis.topology.handle
 
 public suspend fun ReThis.replicaOf(args: ReplicaOfArgs): Boolean {
-    val request = if(cfg.withSlots) {
+    val request = if (cfg.withSlots) {
         ReplicaOfCommandCodec.encodeWithSlot(charset = cfg.charset, args = args)
     } else {
         ReplicaOfCommandCodec.encode(charset = cfg.charset, args = args)

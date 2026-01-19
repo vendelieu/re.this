@@ -31,16 +31,16 @@ public object EvalShaRoCommandCodec {
         var size = 1
         COMMAND_HEADER.copyTo(buffer)
         size += 1
-        buffer.writeStringArg(sha1, charset, )
+        buffer.writeStringArg(sha1, charset)
         size += 1
         buffer.writeIntArg(key.size, charset)
         key.forEach { it0 ->
             size += 1
-            buffer.writeStringArg(it0, charset, )
+            buffer.writeStringArg(it0, charset)
         }
         arg.forEach { it1 ->
             size += 1
-            buffer.writeStringArg(it1, charset, )
+            buffer.writeStringArg(it1, charset)
         }
 
         buffer = Buffer().apply {

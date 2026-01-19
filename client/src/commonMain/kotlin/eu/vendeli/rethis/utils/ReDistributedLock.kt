@@ -31,14 +31,12 @@ fun ReThis.reDistributedLock(
     key: String,
     waitTime: Duration = 50.milliseconds,
     leaseTime: Duration = 30.seconds,
-): ReDistributedLock {
-    return ReReentrantLock(
-        client = this,
-        key = key,
-        defaultLeaseMs = leaseTime.inWholeMilliseconds,
-        backoffBaseMs = waitTime.inWholeMilliseconds,
-    )
-}
+): ReDistributedLock = ReReentrantLock(
+    client = this,
+    key = key,
+    defaultLeaseMs = leaseTime.inWholeMilliseconds,
+    backoffBaseMs = waitTime.inWholeMilliseconds,
+)
 
 @ReThisExperimental
 suspend fun ReThis.reHierarchicalDistributedLock(

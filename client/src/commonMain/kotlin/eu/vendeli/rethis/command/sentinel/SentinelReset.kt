@@ -5,7 +5,7 @@ import eu.vendeli.rethis.codecs.sentinel.SentinelResetCommandCodec
 import eu.vendeli.rethis.topology.handle
 
 public suspend fun ReThis.sentinelReset(pattern: String): Boolean {
-    val request = if(cfg.withSlots) {
+    val request = if (cfg.withSlots) {
         SentinelResetCommandCodec.encodeWithSlot(charset = cfg.charset, pattern = pattern)
     } else {
         SentinelResetCommandCodec.encode(charset = cfg.charset, pattern = pattern)

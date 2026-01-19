@@ -10,7 +10,7 @@ public suspend fun ReThis.jsonNumMultBy(
     path: String,
     `value`: Double,
 ): RType {
-    val request = if(cfg.withSlots) {
+    val request = if (cfg.withSlots) {
         JsonNumMultByCommandCodec.encodeWithSlot(charset = cfg.charset, key = key, path = path, value = value)
     } else {
         JsonNumMultByCommandCodec.encode(charset = cfg.charset, key = key, path = path, value = value)

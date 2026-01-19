@@ -9,7 +9,7 @@ public suspend fun ReThis.setRange(
     offset: Long,
     `value`: String,
 ): Long {
-    val request = if(cfg.withSlots) {
+    val request = if (cfg.withSlots) {
         SetRangeCommandCodec.encodeWithSlot(charset = cfg.charset, key = key, offset = offset, value = value)
     } else {
         SetRangeCommandCodec.encode(charset = cfg.charset, key = key, offset = offset, value = value)

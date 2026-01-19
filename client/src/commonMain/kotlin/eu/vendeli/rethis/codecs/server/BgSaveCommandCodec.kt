@@ -24,7 +24,7 @@ public object BgSaveCommandCodec {
         var size = 1
         COMMAND_HEADER.copyTo(buffer)
         schedule?.let { it0 ->
-            if(it0) {
+            if (it0) {
                 size += 1
                 buffer.writeStringArg("SCHEDULE", charset)
             }
@@ -37,14 +37,18 @@ public object BgSaveCommandCodec {
         return CommandRequest(buffer, RedisOperation.WRITE, BLOCKING_STATUS)
     }
 
-    public suspend inline fun encodeWithSlot(charset: Charset, schedule: Boolean?): CommandRequest = encode(charset, schedule = schedule)
+    public suspend inline fun encodeWithSlot(charset: Charset, schedule: Boolean?): CommandRequest = encode(
+        charset,
+        schedule = schedule,
+    )
 
     public suspend fun decode(input: Buffer, charset: Charset): Boolean {
         val code = input.parseCode(RespCode.SIMPLE_STRING)
-        return when(code) {
+        return when (code) {
             RespCode.SIMPLE_STRING -> {
                 SimpleStringDecoder.decode(input, charset, code) == "OK"
             }
+
             else -> {
                 throw UnexpectedResponseType("Expected [SIMPLE_STRING] but got $code", input.tryInferCause(code))
             }

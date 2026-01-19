@@ -11,8 +11,13 @@ public suspend fun ReThis.hello(
     auth: HelloAuth? = null,
     clientname: String? = null,
 ): Map<String, RType> {
-    val request = if(cfg.withSlots) {
-        HelloCommandCodec.encodeWithSlot(charset = cfg.charset, protover = protover, auth = auth, clientname = clientname)
+    val request = if (cfg.withSlots) {
+        HelloCommandCodec.encodeWithSlot(
+            charset = cfg.charset,
+            protover = protover,
+            auth = auth,
+            clientname = clientname,
+        )
     } else {
         HelloCommandCodec.encode(charset = cfg.charset, protover = protover, auth = auth, clientname = clientname)
     }

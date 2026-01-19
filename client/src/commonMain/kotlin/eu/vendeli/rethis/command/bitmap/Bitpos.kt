@@ -12,8 +12,15 @@ public suspend fun ReThis.bitPos(
     end: Long? = null,
     unit: BitmapUnit? = null,
 ): Long {
-    val request = if(cfg.withSlots) {
-        BitPosCommandCodec.encodeWithSlot(charset = cfg.charset, key = key, bit = bit, start = start, end = end, unit = unit)
+    val request = if (cfg.withSlots) {
+        BitPosCommandCodec.encodeWithSlot(
+            charset = cfg.charset,
+            key = key,
+            bit = bit,
+            start = start,
+            end = end,
+            unit = unit,
+        )
     } else {
         BitPosCommandCodec.encode(charset = cfg.charset, key = key, bit = bit, start = start, end = end, unit = unit)
     }

@@ -20,7 +20,6 @@ import kotlin.time.Duration.Companion.seconds
  * Tests for standard ReDistributedLock (per-coroutine ownership).
  */
 class RedisDistributedLockTest : ReThisTestCtx() {
-
     // ==================== REENTRANCY TESTS ====================
 
     @Test
@@ -240,7 +239,7 @@ class RedisDistributedLockTest : ReThisTestCtx() {
         val otherClient = createClient()
         val owner2 = otherClient.reDistributedLock(lockName)
 
-        owner1.lock(2.seconds)  // Use longer lease to avoid expiry during test
+        owner1.lock(2.seconds) // Use longer lease to avoid expiry during test
         // While held, other owner should not acquire
         owner2.tryLock(waitTime = 100.milliseconds, leaseTime = 1.seconds).shouldBeFalse()
         // After release it should acquire quickly

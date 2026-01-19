@@ -28,10 +28,10 @@ public object FunctionListCommandCodec {
             size += 1
             buffer.writeStringArg("LIBRARYNAME", charset)
             size += 1
-            buffer.writeStringArg(it0, charset, )
+            buffer.writeStringArg(it0, charset)
         }
         withCode?.let { it1 ->
-            if(it1) {
+            if (it1) {
                 size += 1
                 buffer.writeStringArg("WITHCODE", charset)
             }
@@ -52,10 +52,11 @@ public object FunctionListCommandCodec {
 
     public suspend fun decode(input: Buffer, charset: Charset): List<RType> {
         val code = input.parseCode(RespCode.ARRAY)
-        return when(code) {
+        return when (code) {
             RespCode.ARRAY -> {
                 ArrayRTypeDecoder.decode(input, charset, code)
             }
+
             else -> {
                 throw UnexpectedResponseType("Expected [ARRAY] but got $code", input.tryInferCause(code))
             }

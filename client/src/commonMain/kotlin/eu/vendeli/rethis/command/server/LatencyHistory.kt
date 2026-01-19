@@ -6,7 +6,7 @@ import eu.vendeli.rethis.shared.types.RType
 import eu.vendeli.rethis.topology.handle
 
 public suspend fun ReThis.latencyHistory(event: String): List<RType> {
-    val request = if(cfg.withSlots) {
+    val request = if (cfg.withSlots) {
         LatencyHistoryCommandCodec.encodeWithSlot(charset = cfg.charset, event = event)
     } else {
         LatencyHistoryCommandCodec.encode(charset = cfg.charset, event = event)

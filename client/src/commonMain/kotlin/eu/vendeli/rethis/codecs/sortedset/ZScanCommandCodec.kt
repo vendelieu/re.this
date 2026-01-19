@@ -31,20 +31,20 @@ public object ZScanCommandCodec {
         var size = 1
         COMMAND_HEADER.copyTo(buffer)
         size += 1
-        buffer.writeStringArg(key, charset, )
+        buffer.writeStringArg(key, charset)
         size += 1
-        buffer.writeLongArg(cursor, charset, )
+        buffer.writeLongArg(cursor, charset)
         pattern?.let { it0 ->
             size += 1
             buffer.writeStringArg("MATCH", charset)
             size += 1
-            buffer.writeStringArg(it0, charset, )
+            buffer.writeStringArg(it0, charset)
         }
         count?.let { it1 ->
             size += 1
             buffer.writeStringArg("COUNT", charset)
             size += 1
-            buffer.writeLongArg(it1, charset, )
+            buffer.writeLongArg(it1, charset)
         }
 
         buffer = Buffer().apply {
@@ -67,5 +67,9 @@ public object ZScanCommandCodec {
         return request.withSlot(slot % 16384)
     }
 
-    public suspend fun decode(input: Buffer, charset: Charset): ScanResult<Pair<String, String>> = PairScanDecoder.decode(input, charset)
+    public suspend fun decode(input: Buffer, charset: Charset): ScanResult<Pair<String, String>> = PairScanDecoder
+        .decode(
+            input,
+            charset,
+        )
 }

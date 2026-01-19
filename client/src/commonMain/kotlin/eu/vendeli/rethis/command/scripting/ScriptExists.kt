@@ -5,7 +5,7 @@ import eu.vendeli.rethis.codecs.scripting.ScriptExistsCommandCodec
 import eu.vendeli.rethis.topology.handle
 
 public suspend fun ReThis.scriptExists(vararg sha1: String): List<Boolean> {
-    val request = if(cfg.withSlots) {
+    val request = if (cfg.withSlots) {
         ScriptExistsCommandCodec.encodeWithSlot(charset = cfg.charset, sha1 = sha1)
     } else {
         ScriptExistsCommandCodec.encode(charset = cfg.charset, sha1 = sha1)

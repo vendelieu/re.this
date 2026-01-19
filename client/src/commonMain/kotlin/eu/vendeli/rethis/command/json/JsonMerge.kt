@@ -9,7 +9,7 @@ public suspend fun ReThis.jsonMerge(
     path: String,
     `value`: String,
 ): Boolean {
-    val request = if(cfg.withSlots) {
+    val request = if (cfg.withSlots) {
         JsonMergeCommandCodec.encodeWithSlot(charset = cfg.charset, key = key, path = path, value = value)
     } else {
         JsonMergeCommandCodec.encode(charset = cfg.charset, key = key, path = path, value = value)
