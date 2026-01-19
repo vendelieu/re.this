@@ -173,17 +173,6 @@ internal class ReReentrantLock(
         }
     }
 
-    /**
-     * Checks if currentJob is the ownerJob or a child/descendant of ownerJob.
-     * This allows unlock from withContext(NonCancellable) which creates a child job.
-     */
-    @OptIn(ExperimentalCoroutinesApi::class)
-    private fun isOwnerOrChild(currentJob: Job, ownerJob: Job): Boolean = when {
-        currentJob === ownerJob -> true
-        currentJob === NonCancellable && currentJob.parent == ownerJob -> true
-        else -> false
-    }
-
     private fun startWatchdog(token: String, leaseMs: Long) {
         stopWatchdog()
         watchdogJob.compareAndSet(
