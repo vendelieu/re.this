@@ -100,7 +100,7 @@ class ReThis internal constructor(
             logger.debug { "Started transaction" }
 
             var e: Throwable? = null
-            scope.launch(currentCoroutineContext() + CoLocalConn(conn)) {
+            scope.launch(currentCoroutineContext() + CoLocalConn(conn, true)) {
                 runCatching { block() }.getOrElse { e = it }
             }.join()
 

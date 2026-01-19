@@ -30,6 +30,9 @@ class UnexpectedResponseType(
     override val cause: Throwable? = null
 ) : ReThisException()
 
+open class RespProtocolException(message: String) : ReThisException(message)
+class RespUnexpectedEOF : RespProtocolException("Unexpected EOF while reading RESP frame")
+
 /**
  * Exception thrown when the lock is lost in Redis due to TTL expiry or token mismatch.
  */

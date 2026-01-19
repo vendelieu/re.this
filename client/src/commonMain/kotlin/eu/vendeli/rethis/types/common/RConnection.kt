@@ -1,14 +1,14 @@
 package eu.vendeli.rethis.types.common
 
 import eu.vendeli.rethis.annotations.ReThisInternal
+import eu.vendeli.rethis.shared.utils.readCompleteResponseInto
 import eu.vendeli.rethis.utils.COMMON_LOGGER
 import io.ktor.network.sockets.*
 import io.ktor.util.logging.*
 import io.ktor.utils.io.*
 import kotlinx.io.Buffer
 import kotlinx.io.InternalIoApi
-import kotlinx.io.bytestring.decodeToString
-import kotlinx.io.readByteString
+import kotlinx.io.readString
 
 data class RConnection(
     val socket: Socket,
@@ -18,9 +18,15 @@ data class RConnection(
     @ReThisInternal
     @OptIn(InternalAPI::class, InternalIoApi::class)
     suspend fun doRequest(payload: Buffer): Buffer {
-        COMMON_LOGGER.trace { "Request:\n${payload.copy().readByteString().decodeToString()}" }
-        val response = request { writeBuffer.transferFrom(payload) }
-        COMMON_LOGGER.trace { "Response:\n${response.copy().readByteString().decodeToString()}" }
+        COMMON_LOGGER.trace { "Request:\n${payload.copy().readString()}" }
+
+        output.writeBuffer.transferFrom(payload)
+        output.flush()
+
+        val response = Buffer()
+        input.readCompleteResponseInto(response)
+
+        COMMON_LOGGER.trace { "Response:\n${response.copy().readString()}" }
         return response
     }
 
@@ -28,33 +34,26 @@ data class RConnection(
     @OptIn(InternalAPI::class, InternalIoApi::class)
     suspend fun doBatchRequest(payload: List<Buffer>): Buffer {
         COMMON_LOGGER.trace {
-            "Request:\n${
-                payload.joinToString("\n") { it.copy().readByteString().decodeToString() }
-            }"
+            "Request:\n${payload.joinToString("\n") { it.copy().readString() }}"
         }
-        val response = request {
-            payload.forEach { writeBuffer.transferFrom(it) }
+        for (request in payload) {
+            output.writeBuffer.transferFrom(request)
         }
-        COMMON_LOGGER.trace { "Response:\n${response.copy().readByteString().decodeToString()}" }
-        return response
-    }
+        output.flush()
 
-    @OptIn(InternalAPI::class, InternalIoApi::class)
-    private suspend inline fun request(payloadBlock: ByteWriteChannel.() -> Unit): Buffer {
-        output.runCatching {
-            payloadBlock()
-            flush()
-        }.onFailure {
-            if (input.availableForRead > 0) input.readBuffer.buffer.clear()
-            if (output.availableForWrite > 0) output.writeBuffer.buffer.clear()
-            throw it
-        }
         val response = Buffer()
-        input.awaitContent()
-        input.readBuffer.transferTo(response)
+        repeat(payload.size) {
+            input.readCompleteResponseInto(response)
+        }
 
+        COMMON_LOGGER.trace { "Response:\n${response.copy().readString()}" }
         return response
     }
 }
 
-internal fun Socket.rConnection(): RConnection = RConnection(this, openReadChannel(), openWriteChannel())
+internal fun Socket.rConnection(): RConnection =
+    RConnection(
+        this,
+        openReadChannel(),
+        openWriteChannel(),
+    )

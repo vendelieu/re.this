@@ -43,13 +43,26 @@ mavenPublishing {
             }
         }
         scm {
-            connection = "scm:git:github.com/vendelieu/re.this.git"
-            developerConnection = "scm:git:ssh://github.com/vendelieu/re.this.git"
+            connection = REPO_URL.replace("https://", "scm:git:")
+            developerConnection = REPO_URL.replace("https://", "scm:git:ssh://")
             url = "$REPO_URL.git"
         }
         issueManagement {
             system = "Github"
             url = "$REPO_URL/issues"
+        }
+    }
+}
+
+publishing {
+    repositories {
+        maven {
+            name = "GHPackages"
+            url = uri(REPO_URL.replace("github.com", "maven.pkg.github.com"))
+            credentials {
+                username = System.getenv("GITHUB_ACTOR")
+                password = System.getenv("GITHUB_TOKEN")
+            }
         }
     }
 }

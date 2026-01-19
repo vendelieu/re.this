@@ -12,5 +12,5 @@ public suspend fun ReThis.shutdown(saveSelector: SaveSelector? = null, vararg op
     } else {
         ShutdownCommandCodec.encode(charset = cfg.charset, saveSelector = saveSelector, options = options)
     }
-    return ShutdownCommandCodec.decode(topology.handle(request), cfg.charset)
+    return ShutdownCommandCodec.runCatching { decode(topology.handle(request), cfg.charset) }.getOrNull()
 }

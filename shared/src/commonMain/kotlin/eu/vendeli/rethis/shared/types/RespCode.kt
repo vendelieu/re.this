@@ -16,7 +16,7 @@ enum class RespCode(
     BULK_ERROR('!'.code.toByte(), Type.SIMPLE_AGG),
     VERBATIM_STRING('='.code.toByte(), Type.SIMPLE_AGG),
     MAP('%'.code.toByte(), Type.AGGREGATE),
-    ATTRIBUTE('`'.code.toByte(), Type.AGGREGATE),
+    ATTRIBUTE('|'.code.toByte(), Type.AGGREGATE),
     SET('~'.code.toByte(), Type.AGGREGATE),
     PUSH('>'.code.toByte(), Type.AGGREGATE),
     ;

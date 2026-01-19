@@ -1,0 +1,55 @@
+name: GH Packages Autorelease
+
+on:
+  push:
+    paths:
+      - 'buildSrc/**'
+      - 'api-processor/**'
+      - 'api-spec/**'
+      - 'client/**'
+      - 'shared/**'
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref_type == 'branch' && github.ref != 'refs/heads/master' && !startsWith(github.ref, 'refs/heads/renovate/')
+    strategy:
+      matrix:
+        module: [
+          ":rethis",
+          ":shared",
+        ]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: 17
+
+      - name: Get build version
+        id: version
+        run: |
+          echo "git_branch=${GITHUB_REF#refs/heads/}" >> "$GITHUB_ENV"
+          echo "git_hash=$(git rev-parse --short "$GITHUB_SHA")" >> "$GITHUB_ENV"
+          echo "date=$(date +'%y%m%d')" >> "$GITHUB_ENV"
+
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3-beta
+        with:
+          gradle-version: current
+
+      - name: Cache konan dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.konan
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/libs.versions.toml')}}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: Publish to Gh
+        env:
+          GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+        run: ./gradlew ${{ matrix.module }}:publishAllPublicationsToGHPackagesRepository -PlibVersion=${{ env.git_branch }}-${{ env.date }}~${{ env.git_hash }}  --no-parallel
