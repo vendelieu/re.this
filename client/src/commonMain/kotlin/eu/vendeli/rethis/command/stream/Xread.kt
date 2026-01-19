@@ -11,8 +11,14 @@ public suspend fun ReThis.xRead(
     count: Long? = null,
     milliseconds: Long? = null,
 ): Map<String, RType>? {
-    val request = if(cfg.withSlots) {
-        XReadCommandCodec.encodeWithSlot(charset = cfg.charset, key = key, id = id, count = count, milliseconds = milliseconds)
+    val request = if (cfg.withSlots) {
+        XReadCommandCodec.encodeWithSlot(
+            charset = cfg.charset,
+            key = key,
+            id = id,
+            count = count,
+            milliseconds = milliseconds,
+        )
     } else {
         XReadCommandCodec.encode(charset = cfg.charset, key = key, id = id, count = count, milliseconds = milliseconds)
     }

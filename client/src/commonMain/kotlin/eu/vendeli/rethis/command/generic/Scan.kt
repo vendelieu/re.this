@@ -7,7 +7,7 @@ import eu.vendeli.rethis.shared.response.common.ScanResult
 import eu.vendeli.rethis.topology.handle
 
 public suspend fun ReThis.scan(cursor: Long, vararg option: ScanOption): ScanResult<String> {
-    val request = if(cfg.withSlots) {
+    val request = if (cfg.withSlots) {
         ScanCommandCodec.encodeWithSlot(charset = cfg.charset, cursor = cursor, option = option)
     } else {
         ScanCommandCodec.encode(charset = cfg.charset, cursor = cursor, option = option)

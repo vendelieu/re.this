@@ -12,8 +12,14 @@ public suspend fun ReThis.blmPop(
     `where`: MoveDirection,
     count: Long? = null,
 ): List<MPopResult>? {
-    val request = if(cfg.withSlots) {
-        BlmPopCommandCodec.encodeWithSlot(charset = cfg.charset, timeout = timeout, key = key, where = where, count = count)
+    val request = if (cfg.withSlots) {
+        BlmPopCommandCodec.encodeWithSlot(
+            charset = cfg.charset,
+            timeout = timeout,
+            key = key,
+            where = where,
+            count = count,
+        )
     } else {
         BlmPopCommandCodec.encode(charset = cfg.charset, timeout = timeout, key = key, where = where, count = count)
     }

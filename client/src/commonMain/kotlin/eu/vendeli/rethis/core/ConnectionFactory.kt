@@ -38,7 +38,7 @@ internal class ConnectionFactory(
             logger.debug { "Creating connection attempt failed. Max connections reached." }
             return null
         }
-        
+
         return try {
             aSocket(selector)
                 .tcp()
@@ -53,7 +53,8 @@ internal class ConnectionFactory(
                     cfg.tls?.let {
                         socket.tls(selector.coroutineContext, it)
                     } ?: socket
-                }.rConnection().also {
+                }.rConnection()
+                .also {
                     prepareConnection(it)
                 }
         } catch (e: Exception) {
@@ -67,12 +68,13 @@ internal class ConnectionFactory(
         val cfgDb = cfg.db
         if (cfg.protocol != RespVer.V3 && cfgAuth == null && (cfgDb == null || cfgDb <= 0)) return
 
-        val helloBuffer = HelloCommandCodec.encode(
-            Charsets.UTF_8,
-            cfg.protocol.literal.toLong(),
-            cfgAuth?.let { HelloAuth(it.username ?: "default", it.password) },
-            CLIENT_NAME.takeIf { cfg.pool.setClientName },
-        ).buffer
+        val helloBuffer = HelloCommandCodec
+            .encode(
+                Charsets.UTF_8,
+                cfg.protocol.literal.toLong(),
+                cfgAuth?.let { HelloAuth(it.username ?: "default", it.password) },
+                CLIENT_NAME.takeIf { cfg.pool.setClientName },
+            ).buffer
 
         if (cfgDb != null && cfgDb > 0) {
             val request = listOf(

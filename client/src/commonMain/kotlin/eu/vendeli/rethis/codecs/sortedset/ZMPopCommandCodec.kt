@@ -36,14 +36,15 @@ public object ZMPopCommandCodec {
         buffer.writeIntArg(key.size, charset)
         key.forEach { it0 ->
             size += 1
-            buffer.writeStringArg(it0, charset, )
+            buffer.writeStringArg(it0, charset)
         }
         when (where) {
-            is ZPopCommonOption.MAX ->  {
+            is ZPopCommonOption.MAX -> {
                 size += 1
                 buffer.writeStringArg(where.toString(), charset)
             }
-            is ZPopCommonOption.MIN ->  {
+
+            is ZPopCommonOption.MIN -> {
                 size += 1
                 buffer.writeStringArg(where.toString(), charset)
             }
@@ -52,7 +53,7 @@ public object ZMPopCommandCodec {
             size += 1
             buffer.writeStringArg("COUNT", charset)
             size += 1
-            buffer.writeLongArg(it1, charset, )
+            buffer.writeLongArg(it1, charset)
         }
 
         buffer = Buffer().apply {

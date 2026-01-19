@@ -5,10 +5,10 @@ import eu.vendeli.rethis.codecs.transaction.UnwatchCommandCodec
 import eu.vendeli.rethis.topology.handle
 
 public suspend fun ReThis.unwatch(): Boolean {
-    val request = if(cfg.withSlots) {
-        UnwatchCommandCodec.encodeWithSlot(charset = cfg.charset, )
+    val request = if (cfg.withSlots) {
+        UnwatchCommandCodec.encodeWithSlot(charset = cfg.charset)
     } else {
-        UnwatchCommandCodec.encode(charset = cfg.charset, )
+        UnwatchCommandCodec.encode(charset = cfg.charset)
     }
     return UnwatchCommandCodec.decode(topology.handle(request), cfg.charset)
 }

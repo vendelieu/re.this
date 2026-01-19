@@ -25,11 +25,12 @@ public object ReplicaOfCommandCodec {
         val buffer = Buffer()
         COMMAND_HEADER.copyTo(buffer)
         when (args) {
-            is ReplicaOfArgs.HostPort ->  {
-                buffer.writeStringArg(args.host, charset, )
-                buffer.writeLongArg(args.port, charset, )
+            is ReplicaOfArgs.HostPort -> {
+                buffer.writeStringArg(args.host, charset)
+                buffer.writeLongArg(args.port, charset)
             }
-            is ReplicaOfArgs.NoOne ->  {
+
+            is ReplicaOfArgs.NoOne -> {
                 buffer.writeStringArg("NO", charset)
                 buffer.writeStringArg("ONE", charset)
             }
@@ -38,14 +39,18 @@ public object ReplicaOfCommandCodec {
         return CommandRequest(buffer, RedisOperation.WRITE, BLOCKING_STATUS)
     }
 
-    public suspend inline fun encodeWithSlot(charset: Charset, args: ReplicaOfArgs): CommandRequest = encode(charset, args = args)
+    public suspend inline fun encodeWithSlot(charset: Charset, args: ReplicaOfArgs): CommandRequest = encode(
+        charset,
+        args = args,
+    )
 
     public suspend fun decode(input: Buffer, charset: Charset): Boolean {
         val code = input.parseCode(RespCode.SIMPLE_STRING)
-        return when(code) {
+        return when (code) {
             RespCode.SIMPLE_STRING -> {
                 SimpleStringDecoder.decode(input, charset, code) == "OK"
             }
+
             else -> {
                 throw UnexpectedResponseType("Expected [SIMPLE_STRING] but got $code", input.tryInferCause(code))
             }

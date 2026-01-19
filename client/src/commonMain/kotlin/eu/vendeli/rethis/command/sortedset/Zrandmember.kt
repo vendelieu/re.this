@@ -13,10 +13,20 @@ public suspend fun ReThis.zRandMemberWithScores(
     count: Long,
     withScores: Boolean? = null,
 ): List<RType> {
-    val request = if(cfg.withSlots) {
-        ZRandMemberWithScoresCommandCodec.encodeWithSlot(charset = cfg.charset, key = key, count = count, withScores = withScores)
+    val request = if (cfg.withSlots) {
+        ZRandMemberWithScoresCommandCodec.encodeWithSlot(
+            charset = cfg.charset,
+            key = key,
+            count = count,
+            withScores = withScores,
+        )
     } else {
-        ZRandMemberWithScoresCommandCodec.encode(charset = cfg.charset, key = key, count = count, withScores = withScores)
+        ZRandMemberWithScoresCommandCodec.encode(
+            charset = cfg.charset,
+            key = key,
+            count = count,
+            withScores = withScores,
+        )
     }
     return ZRandMemberWithScoresCommandCodec.decode(topology.handle(request), cfg.charset)
 }
@@ -26,8 +36,13 @@ public suspend fun ReThis.zRandMemberCount(
     count: Long,
     withScores: Boolean? = null,
 ): List<String> {
-    val request = if(cfg.withSlots) {
-        ZRandMemberCountCommandCodec.encodeWithSlot(charset = cfg.charset, key = key, count = count, withScores = withScores)
+    val request = if (cfg.withSlots) {
+        ZRandMemberCountCommandCodec.encodeWithSlot(
+            charset = cfg.charset,
+            key = key,
+            count = count,
+            withScores = withScores,
+        )
     } else {
         ZRandMemberCountCommandCodec.encode(charset = cfg.charset, key = key, count = count, withScores = withScores)
     }
@@ -35,7 +50,7 @@ public suspend fun ReThis.zRandMemberCount(
 }
 
 public suspend fun ReThis.zRandMember(key: String): String {
-    val request = if(cfg.withSlots) {
+    val request = if (cfg.withSlots) {
         ZRandMemberCommandCodec.encodeWithSlot(charset = cfg.charset, key = key)
     } else {
         ZRandMemberCommandCodec.encode(charset = cfg.charset, key = key)
@@ -44,7 +59,7 @@ public suspend fun ReThis.zRandMember(key: String): String {
 }
 
 public suspend fun ReThis.zRandMemberBA(key: String): ByteArray {
-    val request = if(cfg.withSlots) {
+    val request = if (cfg.withSlots) {
         ZRandMemberBACommandCodec.encodeWithSlot(charset = cfg.charset, key = key)
     } else {
         ZRandMemberBACommandCodec.encode(charset = cfg.charset, key = key)

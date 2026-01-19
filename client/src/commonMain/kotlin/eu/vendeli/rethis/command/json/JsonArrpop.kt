@@ -10,7 +10,7 @@ public suspend fun ReThis.jsonArrPop(
     path: String? = null,
     index: Long? = null,
 ): RType {
-    val request = if(cfg.withSlots) {
+    val request = if (cfg.withSlots) {
         JsonArrPopCommandCodec.encodeWithSlot(charset = cfg.charset, key = key, path = path, index = index)
     } else {
         JsonArrPopCommandCodec.encode(charset = cfg.charset, key = key, path = path, index = index)

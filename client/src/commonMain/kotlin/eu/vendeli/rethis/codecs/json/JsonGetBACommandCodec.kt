@@ -29,32 +29,35 @@ public object JsonGetBACommandCodec {
         var size = 1
         COMMAND_HEADER.copyTo(buffer)
         size += 1
-        buffer.writeStringArg(key, charset, )
+        buffer.writeStringArg(key, charset)
         options.forEach { it0 ->
             when (it0) {
-                is JsonGetOption.Indent ->  {
+                is JsonGetOption.Indent -> {
                     size += 1
                     buffer.writeStringArg("INDENT", charset)
                     size += 1
-                    buffer.writeStringArg(it0.indent, charset, )
+                    buffer.writeStringArg(it0.indent, charset)
                 }
-                is JsonGetOption.Newline ->  {
+
+                is JsonGetOption.Newline -> {
                     size += 1
                     buffer.writeStringArg("NEWLINE", charset)
                     size += 1
-                    buffer.writeStringArg(it0.newline, charset, )
+                    buffer.writeStringArg(it0.newline, charset)
                 }
-                is JsonGetOption.Paths ->  {
+
+                is JsonGetOption.Paths -> {
                     it0.path.forEach { it1 ->
                         size += 1
-                        buffer.writeStringArg(it1, charset, )
+                        buffer.writeStringArg(it1, charset)
                     }
                 }
-                is JsonGetOption.Space ->  {
+
+                is JsonGetOption.Space -> {
                     size += 1
                     buffer.writeStringArg("SPACE", charset)
                     size += 1
-                    buffer.writeStringArg(it0.space, charset, )
+                    buffer.writeStringArg(it0.space, charset)
                 }
             }
         }
@@ -74,13 +77,15 @@ public object JsonGetBACommandCodec {
 
     public suspend fun decode(input: Buffer, charset: Charset): ByteArray? {
         val code = input.parseCode(RespCode.BULK)
-        return when(code) {
+        return when (code) {
             RespCode.BULK -> {
                 BulkByteArrayDecoder.decodeNullable(input, charset, code)
             }
+
             RespCode.NULL -> {
                 null
             }
+
             else -> {
                 throw UnexpectedResponseType("Expected [BULK, NULL] but got $code", input.tryInferCause(code))
             }

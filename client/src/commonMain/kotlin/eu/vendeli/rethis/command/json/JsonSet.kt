@@ -11,8 +11,14 @@ public suspend fun ReThis.jsonSet(
     path: String = "$",
     condition: UpsertMode? = null,
 ): String {
-    val request = if(cfg.withSlots) {
-        JsonSetCommandCodec.encodeWithSlot(charset = cfg.charset, key = key, value = value, path = path, condition = condition)
+    val request = if (cfg.withSlots) {
+        JsonSetCommandCodec.encodeWithSlot(
+            charset = cfg.charset,
+            key = key,
+            value = value,
+            path = path,
+            condition = condition,
+        )
     } else {
         JsonSetCommandCodec.encode(charset = cfg.charset, key = key, value = value, path = path, condition = condition)
     }

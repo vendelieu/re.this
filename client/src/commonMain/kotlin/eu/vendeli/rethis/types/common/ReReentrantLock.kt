@@ -87,7 +87,9 @@ internal class ReReentrantLock(
                     return true
                 }
 
-                else -> throw LockLostException("Lock lost during reentrant acquire for key=$key, code=$r")
+                else -> {
+                    throw LockLostException("Lock lost during reentrant acquire for key=$key, code=$r")
+                }
             }
         }
 
@@ -118,10 +120,12 @@ internal class ReReentrantLock(
                         return@withLock true
                     }
 
-                    0 -> { /* someone else holds it in Redis */
+                    0 -> { // someone else holds it in Redis
                     }
 
-                    -1, -2 -> throw LockLostException("Lock error for key=$key, code=$r")
+                    -1, -2 -> {
+                        throw LockLostException("Lock error for key=$key, code=$r")
+                    }
                 }
 
                 if (waitMs == 0L || start.elapsedNow().inWholeMilliseconds >= waitMs) {
@@ -166,10 +170,21 @@ internal class ReReentrantLock(
                 return true
             }
 
-            0 -> throw LockLostException("Lock already missing/expired for key=$key during unlock")
-            -1 -> throw LockLostException("Unlock attempted by non-owner for key=$key")
-            -2 -> throw LockLostException("Corrupted lock state for key=$key during unlock")
-            else -> throw IllegalStateException("Unexpected unlock script response: $r for key=$key")
+            0 -> {
+                throw LockLostException("Lock already missing/expired for key=$key during unlock")
+            }
+
+            -1 -> {
+                throw LockLostException("Unlock attempted by non-owner for key=$key")
+            }
+
+            -2 -> {
+                throw LockLostException("Corrupted lock state for key=$key during unlock")
+            }
+
+            else -> {
+                throw IllegalStateException("Unexpected unlock script response: $r for key=$key")
+            }
         }
     }
 

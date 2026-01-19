@@ -11,7 +11,7 @@ public suspend fun ReThis.lmPop(
     vararg key: String,
     count: Long? = null,
 ): List<MPopResult>? {
-    val request = if(cfg.withSlots) {
+    val request = if (cfg.withSlots) {
         LmPopCommandCodec.encodeWithSlot(charset = cfg.charset, where = where, key = key, count = count)
     } else {
         LmPopCommandCodec.encode(charset = cfg.charset, where = where, key = key, count = count)

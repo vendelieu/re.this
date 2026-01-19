@@ -19,19 +19,23 @@ public object LatencyHistoryCommandCodec {
     public suspend fun encode(charset: Charset, event: String): CommandRequest {
         val buffer = Buffer()
         COMMAND_HEADER.copyTo(buffer)
-        buffer.writeStringArg(event, charset, )
+        buffer.writeStringArg(event, charset)
 
         return CommandRequest(buffer, RedisOperation.READ, BLOCKING_STATUS)
     }
 
-    public suspend inline fun encodeWithSlot(charset: Charset, event: String): CommandRequest = encode(charset, event = event)
+    public suspend inline fun encodeWithSlot(charset: Charset, event: String): CommandRequest = encode(
+        charset,
+        event = event,
+    )
 
     public suspend fun decode(input: Buffer, charset: Charset): List<RType> {
         val code = input.parseCode(RespCode.ARRAY)
-        return when(code) {
+        return when (code) {
             RespCode.ARRAY -> {
                 ArrayRTypeDecoder.decode(input, charset, code)
             }
+
             else -> {
                 throw UnexpectedResponseType("Expected [ARRAY] but got $code", input.tryInferCause(code))
             }

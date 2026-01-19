@@ -25,9 +25,9 @@ public object JsonNumIncrByCommandCodec {
     ): CommandRequest {
         val buffer = Buffer()
         COMMAND_HEADER.copyTo(buffer)
-        buffer.writeStringArg(key, charset, )
-        buffer.writeStringArg(path, charset, )
-        buffer.writeDoubleArg(value, charset, )
+        buffer.writeStringArg(key, charset)
+        buffer.writeStringArg(path, charset)
+        buffer.writeDoubleArg(value, charset)
 
         return CommandRequest(buffer, RedisOperation.WRITE, BLOCKING_STATUS)
     }

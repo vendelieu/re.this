@@ -20,11 +20,12 @@ class SecuredInstTest : TestCtx() {
     suspend fun `client disconnect test`() {
         val rootPath = File("").absolutePath
         val pathPrefix = "src/jvmTest/kotlin/${javaClass.packageName.replace('.', '/')}/"
-        val trustManager = loadTrustManagerFromCA(File(rootPath,"${pathPrefix}certs/ca.crt"))
+        val trustManager = loadTrustManagerFromCA(File(rootPath, "${pathPrefix}certs/ca.crt"))
 
-        val tlsConfig = TLSConfigBuilder().apply {
-            this.trustManager = trustManager
-        }.build()
+        val tlsConfig = TLSConfigBuilder()
+            .apply {
+                this.trustManager = trustManager
+            }.build()
 
         val client = ReThis {
             auth("yourStrongRedisPassword".toCharArray())

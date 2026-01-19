@@ -8,7 +8,7 @@ import eu.vendeli.rethis.shared.types.RType
 import eu.vendeli.rethis.topology.handle
 
 public suspend fun ReThis.hRandField(key: String): String? {
-    val request = if(cfg.withSlots) {
+    val request = if (cfg.withSlots) {
         HRandFieldCommandCodec.encodeWithSlot(charset = cfg.charset, key = key)
     } else {
         HRandFieldCommandCodec.encode(charset = cfg.charset, key = key)
@@ -17,7 +17,7 @@ public suspend fun ReThis.hRandField(key: String): String? {
 }
 
 public suspend fun ReThis.hRandFieldBA(key: String): ByteArray? {
-    val request = if(cfg.withSlots) {
+    val request = if (cfg.withSlots) {
         HRandFieldBACommandCodec.encodeWithSlot(charset = cfg.charset, key = key)
     } else {
         HRandFieldBACommandCodec.encode(charset = cfg.charset, key = key)
@@ -30,8 +30,13 @@ public suspend fun ReThis.hRandFieldCount(
     count: Long,
     withValues: Boolean? = null,
 ): List<RType> {
-    val request = if(cfg.withSlots) {
-        HRandFieldCountCommandCodec.encodeWithSlot(charset = cfg.charset, key = key, count = count, withValues = withValues)
+    val request = if (cfg.withSlots) {
+        HRandFieldCountCommandCodec.encodeWithSlot(
+            charset = cfg.charset,
+            key = key,
+            count = count,
+            withValues = withValues,
+        )
     } else {
         HRandFieldCountCommandCodec.encode(charset = cfg.charset, key = key, count = count, withValues = withValues)
     }

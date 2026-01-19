@@ -30,8 +30,8 @@ public object DecrByCommandCodec {
     ): CommandRequest {
         val buffer = Buffer()
         COMMAND_HEADER.copyTo(buffer)
-        buffer.writeStringArg(key, charset, )
-        buffer.writeLongArg(decrement, charset, )
+        buffer.writeStringArg(key, charset)
+        buffer.writeLongArg(decrement, charset)
 
         return CommandRequest(buffer, RedisOperation.WRITE, BLOCKING_STATUS)
     }
@@ -49,10 +49,11 @@ public object DecrByCommandCodec {
 
     public suspend fun decode(input: Buffer, charset: Charset): Long {
         val code = input.parseCode(RespCode.INTEGER)
-        return when(code) {
+        return when (code) {
             RespCode.INTEGER -> {
                 IntegerDecoder.decode(input, charset, code)
             }
+
             else -> {
                 throw UnexpectedResponseType("Expected [INTEGER] but got $code", input.tryInferCause(code))
             }

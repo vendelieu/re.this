@@ -26,71 +26,82 @@ public object ClientKillCommandCodec {
         COMMAND_HEADER.copyTo(buffer)
         filter.forEach { it0 ->
             when (it0) {
-                is ClientKillOptions.Address ->  {
+                is ClientKillOptions.Address -> {
                     size += 1
                     buffer.writeStringArg("ADDR", charset)
                     size += 1
-                    buffer.writeStringArg(it0.ipPort, charset, )
+                    buffer.writeStringArg(it0.ipPort, charset)
                 }
-                is ClientKillOptions.Id ->  {
+
+                is ClientKillOptions.Id -> {
                     size += 1
                     buffer.writeStringArg("ID", charset)
                     size += 1
-                    buffer.writeLongArg(it0.clientId, charset, )
+                    buffer.writeLongArg(it0.clientId, charset)
                 }
-                is ClientKillOptions.LAddr ->  {
+
+                is ClientKillOptions.LAddr -> {
                     size += 1
                     buffer.writeStringArg("LADDR", charset)
                     size += 1
-                    buffer.writeStringArg(it0.ipPort, charset, )
+                    buffer.writeStringArg(it0.ipPort, charset)
                 }
-                is ClientKillOptions.MaxAge ->  {
+
+                is ClientKillOptions.MaxAge -> {
                     size += 1
                     buffer.writeStringArg("MAXAGE", charset)
                     size += 1
                     buffer.writeInstantArg(it0.instant, charset, TimeUnit.SECONDS)
                 }
-                is ClientKillOptions.SkipMe ->  {
+
+                is ClientKillOptions.SkipMe -> {
                     size += 1
                     buffer.writeStringArg("SKIPME", charset)
                     when (it0) {
-                        is ClientKillOptions.SkipMe.Yes ->  {
+                        is ClientKillOptions.SkipMe.Yes -> {
                             size += 1
                             buffer.writeStringArg("YES", charset)
                         }
-                        is ClientKillOptions.SkipMe.No ->  {
+
+                        is ClientKillOptions.SkipMe.No -> {
                             size += 1
                             buffer.writeStringArg("NO", charset)
                         }
                     }
                 }
-                is ClientKillOptions.User ->  {
+
+                is ClientKillOptions.User -> {
                     size += 1
                     buffer.writeStringArg("USER", charset)
                     size += 1
-                    buffer.writeStringArg(it0.username, charset, )
+                    buffer.writeStringArg(it0.username, charset)
                 }
-                is ClientType ->  {
+
+                is ClientType -> {
                     size += 1
                     buffer.writeStringArg("TYPE", charset)
                     when (it0) {
-                        is ClientType.Normal ->  {
+                        is ClientType.Normal -> {
                             size += 1
                             buffer.writeStringArg("NORMAL", charset)
                         }
-                        is ClientType.Master ->  {
+
+                        is ClientType.Master -> {
                             size += 1
                             buffer.writeStringArg("MASTER", charset)
                         }
-                        is ClientType.Slave ->  {
+
+                        is ClientType.Slave -> {
                             size += 1
                             buffer.writeStringArg("SLAVE", charset)
                         }
-                        is ClientType.Replica ->  {
+
+                        is ClientType.Replica -> {
                             size += 1
                             buffer.writeStringArg("REPLICA", charset)
                         }
-                        is ClientType.PubSub ->  {
+
+                        is ClientType.PubSub -> {
                             size += 1
                             buffer.writeStringArg("PUBSUB", charset)
                         }
@@ -106,14 +117,18 @@ public object ClientKillCommandCodec {
         return CommandRequest(buffer, RedisOperation.WRITE, BLOCKING_STATUS)
     }
 
-    public suspend inline fun encodeWithSlot(charset: Charset, vararg filter: ClientKillOptions): CommandRequest = encode(charset, filter = filter)
+    public suspend inline fun encodeWithSlot(charset: Charset, vararg filter: ClientKillOptions): CommandRequest = encode(
+        charset,
+        filter = filter,
+    )
 
     public suspend fun decode(input: Buffer, charset: Charset): Long {
         val code = input.parseCode(RespCode.INTEGER)
-        return when(code) {
+        return when (code) {
             RespCode.INTEGER -> {
                 IntegerDecoder.decode(input, charset, code)
             }
+
             else -> {
                 throw UnexpectedResponseType("Expected [INTEGER] but got $code", input.tryInferCause(code))
             }

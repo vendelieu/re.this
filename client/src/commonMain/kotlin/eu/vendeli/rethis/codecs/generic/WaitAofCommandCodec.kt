@@ -24,9 +24,9 @@ public object WaitAofCommandCodec {
     ): CommandRequest {
         val buffer = Buffer()
         COMMAND_HEADER.copyTo(buffer)
-        buffer.writeLongArg(numlocal, charset, )
-        buffer.writeLongArg(numreplicas, charset, )
-        buffer.writeLongArg(timeout, charset, )
+        buffer.writeLongArg(numlocal, charset)
+        buffer.writeLongArg(numreplicas, charset)
+        buffer.writeLongArg(timeout, charset)
 
         return CommandRequest(buffer, RedisOperation.WRITE, BLOCKING_STATUS)
     }

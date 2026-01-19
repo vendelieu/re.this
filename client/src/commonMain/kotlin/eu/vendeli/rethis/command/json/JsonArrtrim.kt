@@ -10,8 +10,14 @@ public suspend fun ReThis.jsonArrTrim(
     start: Long,
     stop: Long,
 ): Long {
-    val request = if(cfg.withSlots) {
-        JsonArrTrimCommandCodec.encodeWithSlot(charset = cfg.charset, key = key, path = path, start = start, stop = stop)
+    val request = if (cfg.withSlots) {
+        JsonArrTrimCommandCodec.encodeWithSlot(
+            charset = cfg.charset,
+            key = key,
+            path = path,
+            start = start,
+            stop = stop,
+        )
     } else {
         JsonArrTrimCommandCodec.encode(charset = cfg.charset, key = key, path = path, start = start, stop = stop)
     }

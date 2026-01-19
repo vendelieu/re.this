@@ -9,7 +9,7 @@ public suspend fun ReThis.zLexCount(
     min: String,
     max: String,
 ): Long {
-    val request = if(cfg.withSlots) {
+    val request = if (cfg.withSlots) {
         ZLexCountCommandCodec.encodeWithSlot(charset = cfg.charset, key = key, min = min, max = max)
     } else {
         ZLexCountCommandCodec.encode(charset = cfg.charset, key = key, min = min, max = max)

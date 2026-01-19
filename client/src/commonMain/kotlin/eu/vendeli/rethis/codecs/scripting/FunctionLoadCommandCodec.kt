@@ -28,13 +28,13 @@ public object FunctionLoadCommandCodec {
         var size = 2
         COMMAND_HEADER.copyTo(buffer)
         replace?.let { it0 ->
-            if(it0) {
+            if (it0) {
                 size += 1
                 buffer.writeStringArg("REPLACE", charset)
             }
         }
         size += 1
-        buffer.writeStringArg(functionCode, charset, )
+        buffer.writeStringArg(functionCode, charset)
 
         buffer = Buffer().apply {
             writeString("*$size")
@@ -51,10 +51,11 @@ public object FunctionLoadCommandCodec {
 
     public suspend fun decode(input: Buffer, charset: Charset): String {
         val code = input.parseCode(RespCode.BULK)
-        return when(code) {
+        return when (code) {
             RespCode.BULK -> {
                 BulkStringDecoder.decode(input, charset, code)
             }
+
             else -> {
                 throw UnexpectedResponseType("Expected [BULK] but got $code", input.tryInferCause(code))
             }

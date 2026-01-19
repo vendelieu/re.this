@@ -2,8 +2,9 @@ package eu.vendeli.rethis.annotations
 
 @RequiresOptIn(
     level = RequiresOptIn.Level.WARNING,
-    message = "This part of ReThis is experimental, signature or behavior that may be changed or even removed in the future, " +
-        "use at your own risk.",
+    message =
+        "This part of ReThis is experimental, signature or behavior that may be changed or even removed in the future, " +
+            "use at your own risk.",
 )
 @MustBeDocumented
 @Retention(AnnotationRetention.BINARY)

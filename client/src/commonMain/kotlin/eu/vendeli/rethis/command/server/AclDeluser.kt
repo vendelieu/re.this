@@ -5,7 +5,7 @@ import eu.vendeli.rethis.codecs.server.AclDelUserCommandCodec
 import eu.vendeli.rethis.topology.handle
 
 public suspend fun ReThis.aclDelUser(vararg username: String): Long {
-    val request = if(cfg.withSlots) {
+    val request = if (cfg.withSlots) {
         AclDelUserCommandCodec.encodeWithSlot(charset = cfg.charset, username = username)
     } else {
         AclDelUserCommandCodec.encode(charset = cfg.charset, username = username)

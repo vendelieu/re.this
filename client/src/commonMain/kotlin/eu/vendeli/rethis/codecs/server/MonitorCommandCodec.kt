@@ -22,7 +22,7 @@ public object MonitorCommandCodec {
         return CommandRequest(buffer, RedisOperation.READ, BLOCKING_STATUS)
     }
 
-    public suspend inline fun encodeWithSlot(charset: Charset): CommandRequest = encode(charset, )
+    public suspend inline fun encodeWithSlot(charset: Charset): CommandRequest = encode(charset)
 
     public suspend fun decode(input: Buffer, charset: Charset): RType = RTypeDecoder.decode(input, charset)
 }

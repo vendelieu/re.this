@@ -11,12 +11,12 @@ class JsonSerializationFormat(
     override fun <T> serialize(serializer: KSerializer<T>, value: T): String =
         json.encodeToString(serializer, value)
 
-    override fun <T> deserialize(serializer: KSerializer<T>, string: String): T {
-        return if (serializer == String.serializer()) {
-            @Suppress("UNCHECKED_CAST")
-            string as T
-        } else {
-            json.decodeFromString(serializer, string)
-        }
+    override fun <T> deserialize(serializer: KSerializer<T>, string: String): T = if (serializer ==
+        String.serializer()
+    ) {
+        @Suppress("UNCHECKED_CAST")
+        string as T
+    } else {
+        json.decodeFromString(serializer, string)
     }
 }

@@ -6,7 +6,7 @@ import eu.vendeli.rethis.shared.request.json.JsonEntry
 import eu.vendeli.rethis.topology.handle
 
 public suspend fun ReThis.jsonMSet(vararg triplet: JsonEntry): Boolean {
-    val request = if(cfg.withSlots) {
+    val request = if (cfg.withSlots) {
         JsonMSetCommandCodec.encodeWithSlot(charset = cfg.charset, triplet = triplet)
     } else {
         JsonMSetCommandCodec.encode(charset = cfg.charset, triplet = triplet)

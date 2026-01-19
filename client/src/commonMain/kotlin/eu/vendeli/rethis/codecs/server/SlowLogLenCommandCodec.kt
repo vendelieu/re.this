@@ -25,14 +25,15 @@ public object SlowLogLenCommandCodec {
         return CommandRequest(buffer, RedisOperation.READ, BLOCKING_STATUS)
     }
 
-    public suspend inline fun encodeWithSlot(charset: Charset): CommandRequest = encode(charset, )
+    public suspend inline fun encodeWithSlot(charset: Charset): CommandRequest = encode(charset)
 
     public suspend fun decode(input: Buffer, charset: Charset): Long {
         val code = input.parseCode(RespCode.INTEGER)
-        return when(code) {
+        return when (code) {
             RespCode.INTEGER -> {
                 IntegerDecoder.decode(input, charset, code)
             }
+
             else -> {
                 throw UnexpectedResponseType("Expected [INTEGER] but got $code", input.tryInferCause(code))
             }

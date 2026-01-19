@@ -13,10 +13,24 @@ public suspend fun ReThis.blMove(
     whereTo: MoveDirection,
     timeout: Double,
 ): String? {
-    val request = if(cfg.withSlots) {
-        BlMoveCommandCodec.encodeWithSlot(charset = cfg.charset, source = source, destination = destination, whereFrom = whereFrom, whereTo = whereTo, timeout = timeout)
+    val request = if (cfg.withSlots) {
+        BlMoveCommandCodec.encodeWithSlot(
+            charset = cfg.charset,
+            source = source,
+            destination = destination,
+            whereFrom = whereFrom,
+            whereTo = whereTo,
+            timeout = timeout,
+        )
     } else {
-        BlMoveCommandCodec.encode(charset = cfg.charset, source = source, destination = destination, whereFrom = whereFrom, whereTo = whereTo, timeout = timeout)
+        BlMoveCommandCodec.encode(
+            charset = cfg.charset,
+            source = source,
+            destination = destination,
+            whereFrom = whereFrom,
+            whereTo = whereTo,
+            timeout = timeout,
+        )
     }
     return BlMoveCommandCodec.decode(topology.handle(request), cfg.charset)
 }
@@ -28,10 +42,24 @@ public suspend fun ReThis.blMoveBA(
     whereTo: MoveDirection,
     timeout: Double,
 ): ByteArray? {
-    val request = if(cfg.withSlots) {
-        BlMoveBACommandCodec.encodeWithSlot(charset = cfg.charset, source = source, destination = destination, whereFrom = whereFrom, whereTo = whereTo, timeout = timeout)
+    val request = if (cfg.withSlots) {
+        BlMoveBACommandCodec.encodeWithSlot(
+            charset = cfg.charset,
+            source = source,
+            destination = destination,
+            whereFrom = whereFrom,
+            whereTo = whereTo,
+            timeout = timeout,
+        )
     } else {
-        BlMoveBACommandCodec.encode(charset = cfg.charset, source = source, destination = destination, whereFrom = whereFrom, whereTo = whereTo, timeout = timeout)
+        BlMoveBACommandCodec.encode(
+            charset = cfg.charset,
+            source = source,
+            destination = destination,
+            whereFrom = whereFrom,
+            whereTo = whereTo,
+            timeout = timeout,
+        )
     }
     return BlMoveBACommandCodec.decode(topology.handle(request), cfg.charset)
 }

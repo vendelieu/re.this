@@ -6,7 +6,7 @@ import eu.vendeli.rethis.shared.request.bitmap.BitfieldOption
 import eu.vendeli.rethis.topology.handle
 
 public suspend fun ReThis.bitfield(key: String, vararg operation: BitfieldOption): List<Long>? {
-    val request = if(cfg.withSlots) {
+    val request = if (cfg.withSlots) {
         BitfieldCommandCodec.encodeWithSlot(charset = cfg.charset, key = key, operation = operation)
     } else {
         BitfieldCommandCodec.encode(charset = cfg.charset, key = key, operation = operation)

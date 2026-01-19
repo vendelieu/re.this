@@ -11,10 +11,22 @@ public suspend fun ReThis.xGroupSetId(
     idSelector: XId,
     entriesread: Long? = null,
 ): Boolean {
-    val request = if(cfg.withSlots) {
-        XGroupSetIdCommandCodec.encodeWithSlot(charset = cfg.charset, key = key, group = group, idSelector = idSelector, entriesread = entriesread)
+    val request = if (cfg.withSlots) {
+        XGroupSetIdCommandCodec.encodeWithSlot(
+            charset = cfg.charset,
+            key = key,
+            group = group,
+            idSelector = idSelector,
+            entriesread = entriesread,
+        )
     } else {
-        XGroupSetIdCommandCodec.encode(charset = cfg.charset, key = key, group = group, idSelector = idSelector, entriesread = entriesread)
+        XGroupSetIdCommandCodec.encode(
+            charset = cfg.charset,
+            key = key,
+            group = group,
+            idSelector = idSelector,
+            entriesread = entriesread,
+        )
     }
     return XGroupSetIdCommandCodec.decode(topology.handle(request), cfg.charset)
 }

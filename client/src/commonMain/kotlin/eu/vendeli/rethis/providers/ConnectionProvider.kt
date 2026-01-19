@@ -23,7 +23,6 @@ abstract class ConnectionProvider {
     override fun hashCode(): Int = node.hashCode()
 }
 
-
 internal suspend inline fun <R> withConn(
     provider: ConnectionProvider,
     conn: RConnection? = null,
@@ -52,6 +51,7 @@ internal suspend inline fun <R> ConnectionProvider.withConnection(block: (RConne
 
 private suspend fun ConnectionProvider.closeFinally(connection: RConnection, cause: Throwable?): Unit = when {
     cause == null -> releaseConnection(connection)
+
     else -> try {
         releaseConnection(connection)
     } catch (closeException: Throwable) {

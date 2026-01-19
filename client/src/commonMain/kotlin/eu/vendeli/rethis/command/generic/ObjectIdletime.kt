@@ -5,7 +5,7 @@ import eu.vendeli.rethis.codecs.generic.ObjectIdleTimeCommandCodec
 import eu.vendeli.rethis.topology.handle
 
 public suspend fun ReThis.objectIdleTime(key: String): Long? {
-    val request = if(cfg.withSlots) {
+    val request = if (cfg.withSlots) {
         ObjectIdleTimeCommandCodec.encodeWithSlot(charset = cfg.charset, key = key)
     } else {
         ObjectIdleTimeCommandCodec.encode(charset = cfg.charset, key = key)

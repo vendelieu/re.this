@@ -6,7 +6,7 @@ import eu.vendeli.rethis.shared.request.common.FlushType
 import eu.vendeli.rethis.topology.handle
 
 public suspend fun ReThis.functionFlush(flushType: FlushType): Boolean {
-    val request = if(cfg.withSlots) {
+    val request = if (cfg.withSlots) {
         FunctionFlushCommandCodec.encodeWithSlot(charset = cfg.charset, flushType = flushType)
     } else {
         FunctionFlushCommandCodec.encode(charset = cfg.charset, flushType = flushType)

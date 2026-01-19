@@ -26,9 +26,9 @@ public object MSetNxCommandCodec {
         COMMAND_HEADER.copyTo(buffer)
         data.forEach { it0 ->
             size += 1
-            buffer.writeStringArg(it0.key, charset, )
+            buffer.writeStringArg(it0.key, charset)
             size += 1
-            buffer.writeStringArg(it0.value, charset, )
+            buffer.writeStringArg(it0.value, charset)
         }
 
         buffer = Buffer().apply {
@@ -50,10 +50,11 @@ public object MSetNxCommandCodec {
 
     public suspend fun decode(input: Buffer, charset: Charset): Boolean {
         val code = input.parseCode(RespCode.INTEGER)
-        return when(code) {
+        return when (code) {
             RespCode.INTEGER -> {
                 IntegerDecoder.decode(input, charset, code) == 1L
             }
+
             else -> {
                 throw UnexpectedResponseType("Expected [INTEGER] but got $code", input.tryInferCause(code))
             }

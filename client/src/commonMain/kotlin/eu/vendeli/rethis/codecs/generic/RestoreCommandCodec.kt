@@ -30,30 +30,33 @@ public object RestoreCommandCodec {
         var size = 1
         COMMAND_HEADER.copyTo(buffer)
         size += 1
-        buffer.writeStringArg(key, charset, )
+        buffer.writeStringArg(key, charset)
         size += 1
-        buffer.writeLongArg(ttl, charset, )
+        buffer.writeLongArg(ttl, charset)
         size += 1
-        buffer.writeByteArrayArg(serializedValue, charset, )
+        buffer.writeByteArrayArg(serializedValue, charset)
         options.forEach { it0 ->
             when (it0) {
-                is RestoreOption.ABSTTL ->  {
+                is RestoreOption.ABSTTL -> {
                     size += 1
                     buffer.writeStringArg(it0.toString(), charset)
                 }
-                is RestoreOption.Frequency ->  {
+
+                is RestoreOption.Frequency -> {
                     size += 1
                     buffer.writeStringArg("FREQ", charset)
                     size += 1
-                    buffer.writeLongArg(it0.frequency, charset, )
+                    buffer.writeLongArg(it0.frequency, charset)
                 }
-                is RestoreOption.IdleTime ->  {
+
+                is RestoreOption.IdleTime -> {
                     size += 1
                     buffer.writeStringArg("IDLETIME", charset)
                     size += 1
                     buffer.writeDurationArg(it0.seconds, charset, TimeUnit.SECONDS)
                 }
-                is RestoreOption.REPLACE ->  {
+
+                is RestoreOption.REPLACE -> {
                     size += 1
                     buffer.writeStringArg(it0.toString(), charset)
                 }
@@ -82,10 +85,11 @@ public object RestoreCommandCodec {
 
     public suspend fun decode(input: Buffer, charset: Charset): Boolean {
         val code = input.parseCode(RespCode.SIMPLE_STRING)
-        return when(code) {
+        return when (code) {
             RespCode.SIMPLE_STRING -> {
                 SimpleStringDecoder.decode(input, charset, code) == "OK"
             }
+
             else -> {
                 throw UnexpectedResponseType("Expected [SIMPLE_STRING] but got $code", input.tryInferCause(code))
             }

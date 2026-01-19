@@ -9,7 +9,7 @@ public suspend fun ReThis.jsonArrAppend(
     path: String? = null,
     vararg `value`: String,
 ): Long {
-    val request = if(cfg.withSlots) {
+    val request = if (cfg.withSlots) {
         JsonArrAppendCommandCodec.encodeWithSlot(charset = cfg.charset, key = key, path = path, value = value)
     } else {
         JsonArrAppendCommandCodec.encode(charset = cfg.charset, key = key, path = path, value = value)

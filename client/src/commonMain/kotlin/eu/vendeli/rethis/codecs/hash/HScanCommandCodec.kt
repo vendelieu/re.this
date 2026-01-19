@@ -31,24 +31,26 @@ public object HScanCommandCodec {
         var size = 1
         COMMAND_HEADER.copyTo(buffer)
         size += 1
-        buffer.writeStringArg(key, charset, )
+        buffer.writeStringArg(key, charset)
         size += 1
-        buffer.writeLongArg(cursor, charset, )
+        buffer.writeLongArg(cursor, charset)
         option.forEach { it0 ->
             when (it0) {
-                is HScanOption.Count ->  {
+                is HScanOption.Count -> {
                     size += 1
                     buffer.writeStringArg("COUNT", charset)
                     size += 1
-                    buffer.writeLongArg(it0.count, charset, )
+                    buffer.writeLongArg(it0.count, charset)
                 }
-                is HScanOption.Match ->  {
+
+                is HScanOption.Match -> {
                     size += 1
                     buffer.writeStringArg("MATCH", charset)
                     size += 1
-                    buffer.writeStringArg(it0.pattern, charset, )
+                    buffer.writeStringArg(it0.pattern, charset)
                 }
-                is HScanOption.NOVALUES ->  {
+
+                is HScanOption.NOVALUES -> {
                     size += 1
                     buffer.writeStringArg(it0.toString(), charset)
                 }
@@ -74,5 +76,9 @@ public object HScanCommandCodec {
         return request.withSlot(slot % 16384)
     }
 
-    public suspend fun decode(input: Buffer, charset: Charset): ScanResult<Pair<String, String>> = PairScanDecoder.decode(input, charset)
+    public suspend fun decode(input: Buffer, charset: Charset): ScanResult<Pair<String, String>> = PairScanDecoder
+        .decode(
+            input,
+            charset,
+        )
 }

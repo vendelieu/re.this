@@ -20,7 +20,7 @@ public object SUnsubscribeCommandCodec {
         COMMAND_HEADER.copyTo(buffer)
         shardchannel.forEach { it0 ->
             size += 1
-            buffer.writeStringArg(it0, charset, )
+            buffer.writeStringArg(it0, charset)
         }
 
         buffer = Buffer().apply {
@@ -30,7 +30,10 @@ public object SUnsubscribeCommandCodec {
         return CommandRequest(buffer, RedisOperation.WRITE, BLOCKING_STATUS)
     }
 
-    public suspend inline fun encodeWithSlot(charset: Charset, vararg shardchannel: String): CommandRequest = encode(charset, shardchannel = shardchannel)
+    public suspend inline fun encodeWithSlot(charset: Charset, vararg shardchannel: String): CommandRequest = encode(
+        charset,
+        shardchannel = shardchannel,
+    )
 
     public suspend fun decode(input: Buffer, charset: Charset) {
     }

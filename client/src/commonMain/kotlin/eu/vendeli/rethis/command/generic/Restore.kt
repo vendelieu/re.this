@@ -11,10 +11,22 @@ public suspend fun ReThis.restore(
     serializedValue: ByteArray,
     vararg options: RestoreOption,
 ): Boolean {
-    val request = if(cfg.withSlots) {
-        RestoreCommandCodec.encodeWithSlot(charset = cfg.charset, key = key, ttl = ttl, serializedValue = serializedValue, options = options)
+    val request = if (cfg.withSlots) {
+        RestoreCommandCodec.encodeWithSlot(
+            charset = cfg.charset,
+            key = key,
+            ttl = ttl,
+            serializedValue = serializedValue,
+            options = options,
+        )
     } else {
-        RestoreCommandCodec.encode(charset = cfg.charset, key = key, ttl = ttl, serializedValue = serializedValue, options = options)
+        RestoreCommandCodec.encode(
+            charset = cfg.charset,
+            key = key,
+            ttl = ttl,
+            serializedValue = serializedValue,
+            options = options,
+        )
     }
     return RestoreCommandCodec.decode(topology.handle(request), cfg.charset)
 }

@@ -12,8 +12,14 @@ public suspend fun ReThis.geoAdd(
     condition: GeoAddOption.UpsertMode? = null,
     change: Boolean? = null,
 ): Long {
-    val request = if(cfg.withSlots) {
-        GeoAddCommandCodec.encodeWithSlot(charset = cfg.charset, key = key, data = data, condition = condition, change = change)
+    val request = if (cfg.withSlots) {
+        GeoAddCommandCodec.encodeWithSlot(
+            charset = cfg.charset,
+            key = key,
+            data = data,
+            condition = condition,
+            change = change,
+        )
     } else {
         GeoAddCommandCodec.encode(charset = cfg.charset, key = key, data = data, condition = condition, change = change)
     }

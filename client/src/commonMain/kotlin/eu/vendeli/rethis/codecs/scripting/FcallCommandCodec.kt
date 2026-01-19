@@ -31,16 +31,16 @@ public object FcallCommandCodec {
         var size = 1
         COMMAND_HEADER.copyTo(buffer)
         size += 1
-        buffer.writeStringArg(function, charset, )
+        buffer.writeStringArg(function, charset)
         size += 1
         buffer.writeIntArg(key.size, charset)
         key.forEach { it0 ->
             size += 1
-            buffer.writeStringArg(it0, charset, )
+            buffer.writeStringArg(it0, charset)
         }
         arg.forEach { it1 ->
             size += 1
-            buffer.writeStringArg(it1, charset, )
+            buffer.writeStringArg(it1, charset)
         }
 
         buffer = Buffer().apply {

@@ -11,7 +11,7 @@ public suspend fun ReThis.zMPop(
     vararg key: String,
     count: Long? = null,
 ): List<MPopResult>? {
-    val request = if(cfg.withSlots) {
+    val request = if (cfg.withSlots) {
         ZMPopCommandCodec.encodeWithSlot(charset = cfg.charset, where = where, key = key, count = count)
     } else {
         ZMPopCommandCodec.encode(charset = cfg.charset, where = where, key = key, count = count)

@@ -6,7 +6,7 @@ import eu.vendeli.rethis.codecs.list.RPushCommandCodec
 import eu.vendeli.rethis.topology.handle
 
 public suspend fun ReThis.rPushBA(key: String, vararg element: ByteArray): Long {
-    val request = if(cfg.withSlots) {
+    val request = if (cfg.withSlots) {
         RPushBACommandCodec.encodeWithSlot(charset = cfg.charset, key = key, element = element)
     } else {
         RPushBACommandCodec.encode(charset = cfg.charset, key = key, element = element)
@@ -15,7 +15,7 @@ public suspend fun ReThis.rPushBA(key: String, vararg element: ByteArray): Long 
 }
 
 public suspend fun ReThis.rPush(key: String, vararg element: String): Long {
-    val request = if(cfg.withSlots) {
+    val request = if (cfg.withSlots) {
         RPushCommandCodec.encodeWithSlot(charset = cfg.charset, key = key, element = element)
     } else {
         RPushCommandCodec.encode(charset = cfg.charset, key = key, element = element)

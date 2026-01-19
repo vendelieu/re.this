@@ -34,22 +34,23 @@ public object LPosCommandCodec {
         var size = 1
         COMMAND_HEADER.copyTo(buffer)
         size += 1
-        buffer.writeStringArg(key, charset, )
+        buffer.writeStringArg(key, charset)
         size += 1
-        buffer.writeStringArg(element, charset, )
+        buffer.writeStringArg(element, charset)
         option.forEach { it0 ->
             when (it0) {
-                is LPosOption.MaxLen ->  {
+                is LPosOption.MaxLen -> {
                     size += 1
                     buffer.writeStringArg("MAXLEN", charset)
                     size += 1
-                    buffer.writeLongArg(it0.len, charset, )
+                    buffer.writeLongArg(it0.len, charset)
                 }
-                is LPosOption.Rank ->  {
+
+                is LPosOption.Rank -> {
                     size += 1
                     buffer.writeStringArg("RANK", charset)
                     size += 1
-                    buffer.writeLongArg(it0.rank, charset, )
+                    buffer.writeLongArg(it0.rank, charset)
                 }
             }
         }
@@ -75,13 +76,15 @@ public object LPosCommandCodec {
 
     public suspend fun decode(input: Buffer, charset: Charset): Long? {
         val code = input.parseCode(RespCode.INTEGER)
-        return when(code) {
+        return when (code) {
             RespCode.INTEGER -> {
                 IntegerDecoder.decode(input, charset, code)
             }
+
             RespCode.NULL -> {
                 null
             }
+
             else -> {
                 throw UnexpectedResponseType("Expected [INTEGER, NULL] but got $code", input.tryInferCause(code))
             }

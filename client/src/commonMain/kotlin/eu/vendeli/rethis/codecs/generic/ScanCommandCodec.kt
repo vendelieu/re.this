@@ -27,26 +27,28 @@ public object ScanCommandCodec {
         var size = 1
         COMMAND_HEADER.copyTo(buffer)
         size += 1
-        buffer.writeLongArg(cursor, charset, )
+        buffer.writeLongArg(cursor, charset)
         option.forEach { it0 ->
             when (it0) {
-                is ScanOption.Count ->  {
+                is ScanOption.Count -> {
                     size += 1
                     buffer.writeStringArg("COUNT", charset)
                     size += 1
-                    buffer.writeLongArg(it0.count, charset, )
+                    buffer.writeLongArg(it0.count, charset)
                 }
-                is ScanOption.Match ->  {
+
+                is ScanOption.Match -> {
                     size += 1
                     buffer.writeStringArg("MATCH", charset)
                     size += 1
-                    buffer.writeStringArg(it0.pattern, charset, )
+                    buffer.writeStringArg(it0.pattern, charset)
                 }
-                is ScanOption.Type ->  {
+
+                is ScanOption.Type -> {
                     size += 1
                     buffer.writeStringArg("TYPE", charset)
                     size += 1
-                    buffer.writeStringArg(it0.type, charset, )
+                    buffer.writeStringArg(it0.type, charset)
                 }
             }
         }
@@ -64,5 +66,8 @@ public object ScanCommandCodec {
         vararg option: ScanOption,
     ): CommandRequest = encode(charset, cursor = cursor, option = option)
 
-    public suspend fun decode(input: Buffer, charset: Charset): ScanResult<String> = StringScanDecoder.decode(input, charset)
+    public suspend fun decode(input: Buffer, charset: Charset): ScanResult<String> = StringScanDecoder.decode(
+        input,
+        charset,
+    )
 }

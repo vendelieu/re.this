@@ -6,7 +6,7 @@ import eu.vendeli.rethis.codecs.string.GetDelCommandCodec
 import eu.vendeli.rethis.topology.handle
 
 public suspend fun ReThis.getDel(key: String): String? {
-    val request = if(cfg.withSlots) {
+    val request = if (cfg.withSlots) {
         GetDelCommandCodec.encodeWithSlot(charset = cfg.charset, key = key)
     } else {
         GetDelCommandCodec.encode(charset = cfg.charset, key = key)
@@ -15,7 +15,7 @@ public suspend fun ReThis.getDel(key: String): String? {
 }
 
 public suspend fun ReThis.getDelBA(key: String): ByteArray? {
-    val request = if(cfg.withSlots) {
+    val request = if (cfg.withSlots) {
         GetDelBACommandCodec.encodeWithSlot(charset = cfg.charset, key = key)
     } else {
         GetDelBACommandCodec.encode(charset = cfg.charset, key = key)

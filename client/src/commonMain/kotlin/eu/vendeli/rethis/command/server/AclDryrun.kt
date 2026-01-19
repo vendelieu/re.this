@@ -9,7 +9,7 @@ public suspend fun ReThis.aclDryRun(
     command: String,
     vararg arg: String,
 ): String {
-    val request = if(cfg.withSlots) {
+    val request = if (cfg.withSlots) {
         AclDryRunCommandCodec.encodeWithSlot(charset = cfg.charset, username = username, command = command, arg = arg)
     } else {
         AclDryRunCommandCodec.encode(charset = cfg.charset, username = username, command = command, arg = arg)

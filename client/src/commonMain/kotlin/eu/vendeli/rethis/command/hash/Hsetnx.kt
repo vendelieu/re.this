@@ -9,7 +9,7 @@ public suspend fun ReThis.hSetNx(
     `field`: String,
     `value`: String,
 ): Long {
-    val request = if(cfg.withSlots) {
+    val request = if (cfg.withSlots) {
         HSetNxCommandCodec.encodeWithSlot(charset = cfg.charset, key = key, field = field, value = value)
     } else {
         HSetNxCommandCodec.encode(charset = cfg.charset, key = key, field = field, value = value)

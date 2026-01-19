@@ -32,12 +32,12 @@ public object MemoryUsageCommandCodec {
         var size = 2
         COMMAND_HEADER.copyTo(buffer)
         size += 1
-        buffer.writeStringArg(key, charset, )
+        buffer.writeStringArg(key, charset)
         count?.let { it0 ->
             size += 1
             buffer.writeStringArg("SAMPLES", charset)
             size += 1
-            buffer.writeLongArg(it0, charset, )
+            buffer.writeLongArg(it0, charset)
         }
 
         buffer = Buffer().apply {
@@ -60,13 +60,15 @@ public object MemoryUsageCommandCodec {
 
     public suspend fun decode(input: Buffer, charset: Charset): Long? {
         val code = input.parseCode(RespCode.INTEGER)
-        return when(code) {
+        return when (code) {
             RespCode.INTEGER -> {
                 IntegerDecoder.decode(input, charset, code)
             }
+
             RespCode.NULL -> {
                 null
             }
+
             else -> {
                 throw UnexpectedResponseType("Expected [INTEGER, NULL] but got $code", input.tryInferCause(code))
             }

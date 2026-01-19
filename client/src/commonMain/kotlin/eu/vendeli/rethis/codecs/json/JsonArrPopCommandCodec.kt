@@ -27,14 +27,14 @@ public object JsonArrPopCommandCodec {
         var size = 1
         COMMAND_HEADER.copyTo(buffer)
         size += 1
-        buffer.writeStringArg(key, charset, )
+        buffer.writeStringArg(key, charset)
         path?.let { it0 ->
             size += 1
-            buffer.writeStringArg(it0, charset, )
+            buffer.writeStringArg(it0, charset)
         }
         index?.let { it1 ->
             size += 1
-            buffer.writeLongArg(it1, charset, )
+            buffer.writeLongArg(it1, charset)
         }
 
         buffer = Buffer().apply {

@@ -26,19 +26,24 @@ public object MemoryDoctorCommandCodec {
         return CommandRequest(buffer, RedisOperation.READ, BLOCKING_STATUS)
     }
 
-    public suspend inline fun encodeWithSlot(charset: Charset): CommandRequest = encode(charset, )
+    public suspend inline fun encodeWithSlot(charset: Charset): CommandRequest = encode(charset)
 
     public suspend fun decode(input: Buffer, charset: Charset): String {
         val code = input.parseCode(RespCode.BULK)
-        return when(code) {
+        return when (code) {
             RespCode.BULK -> {
                 BulkStringDecoder.decode(input, charset, code)
             }
+
             RespCode.VERBATIM_STRING -> {
                 VerbatimStringDecoder.decode(input, charset, code)
             }
+
             else -> {
-                throw UnexpectedResponseType("Expected [BULK, VERBATIM_STRING] but got $code", input.tryInferCause(code))
+                throw UnexpectedResponseType(
+                    "Expected [BULK, VERBATIM_STRING] but got $code",
+                    input.tryInferCause(code),
+                )
             }
         }
     }

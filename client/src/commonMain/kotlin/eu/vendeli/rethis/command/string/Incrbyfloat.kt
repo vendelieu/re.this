@@ -5,7 +5,7 @@ import eu.vendeli.rethis.codecs.string.IncrByFloatCommandCodec
 import eu.vendeli.rethis.topology.handle
 
 public suspend fun ReThis.incrByFloat(key: String, increment: Double): Double {
-    val request = if(cfg.withSlots) {
+    val request = if (cfg.withSlots) {
         IncrByFloatCommandCodec.encodeWithSlot(charset = cfg.charset, key = key, increment = increment)
     } else {
         IncrByFloatCommandCodec.encode(charset = cfg.charset, key = key, increment = increment)

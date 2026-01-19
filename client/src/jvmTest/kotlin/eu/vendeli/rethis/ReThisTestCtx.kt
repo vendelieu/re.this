@@ -10,7 +10,7 @@ import org.testcontainers.utility.DockerImageName
 import kotlin.time.Clock
 import kotlin.time.Instant
 
-abstract class TestCtx() : AnnotationSpec() {
+abstract class TestCtx : AnnotationSpec() {
     protected val timestamp: Instant get() = Clock.System.now()
     protected val defaultCharset = Charsets.UTF_8
 

@@ -25,7 +25,7 @@ public object SMembersCommandCodec {
     public suspend fun encode(charset: Charset, key: String): CommandRequest {
         val buffer = Buffer()
         COMMAND_HEADER.copyTo(buffer)
-        buffer.writeStringArg(key, charset, )
+        buffer.writeStringArg(key, charset)
 
         return CommandRequest(buffer, RedisOperation.READ, BLOCKING_STATUS)
     }
@@ -39,13 +39,15 @@ public object SMembersCommandCodec {
 
     public suspend fun decode(input: Buffer, charset: Charset): Set<String> {
         val code = input.parseCode(RespCode.ARRAY)
-        return when(code) {
+        return when (code) {
             RespCode.ARRAY -> {
                 SetStringDecoder.decode(input, charset, code)
             }
+
             RespCode.SET -> {
                 SetStringDecoder.decode(input, charset, code)
             }
+
             else -> {
                 throw UnexpectedResponseType("Expected [ARRAY, SET] but got $code", input.tryInferCause(code))
             }

@@ -9,8 +9,13 @@ public suspend fun ReThis.xGroupCreateConsumer(
     group: String,
     consumer: String,
 ): Long {
-    val request = if(cfg.withSlots) {
-        XGroupCreateConsumerCommandCodec.encodeWithSlot(charset = cfg.charset, key = key, group = group, consumer = consumer)
+    val request = if (cfg.withSlots) {
+        XGroupCreateConsumerCommandCodec.encodeWithSlot(
+            charset = cfg.charset,
+            key = key,
+            group = group,
+            consumer = consumer,
+        )
     } else {
         XGroupCreateConsumerCommandCodec.encode(charset = cfg.charset, key = key, group = group, consumer = consumer)
     }

@@ -36,32 +36,33 @@ public object GeoAddCommandCodec {
         var size = 1
         COMMAND_HEADER.copyTo(buffer)
         size += 1
-        buffer.writeStringArg(key, charset, )
+        buffer.writeStringArg(key, charset)
         condition?.let { it0 ->
             when (it0) {
-                is GeoAddOption.NX ->  {
+                is GeoAddOption.NX -> {
                     size += 1
                     buffer.writeStringArg(it0.toString(), charset)
                 }
-                is GeoAddOption.XX ->  {
+
+                is GeoAddOption.XX -> {
                     size += 1
                     buffer.writeStringArg(it0.toString(), charset)
                 }
             }
         }
         change?.let { it1 ->
-            if(it1) {
+            if (it1) {
                 size += 1
                 buffer.writeStringArg("CH", charset)
             }
         }
         data.forEach { it2 ->
             size += 1
-            buffer.writeDoubleArg(it2.longitude, charset, )
+            buffer.writeDoubleArg(it2.longitude, charset)
             size += 1
-            buffer.writeDoubleArg(it2.latitude, charset, )
+            buffer.writeDoubleArg(it2.latitude, charset)
             size += 1
-            buffer.writeStringArg(it2.member, charset, )
+            buffer.writeStringArg(it2.member, charset)
         }
 
         buffer = Buffer().apply {
@@ -86,10 +87,11 @@ public object GeoAddCommandCodec {
 
     public suspend fun decode(input: Buffer, charset: Charset): Long {
         val code = input.parseCode(RespCode.INTEGER)
-        return when(code) {
+        return when (code) {
             RespCode.INTEGER -> {
                 IntegerDecoder.decode(input, charset, code)
             }
+
             else -> {
                 throw UnexpectedResponseType("Expected [INTEGER] but got $code", input.tryInferCause(code))
             }

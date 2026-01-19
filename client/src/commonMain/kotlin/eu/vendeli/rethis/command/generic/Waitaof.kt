@@ -10,10 +10,20 @@ public suspend fun ReThis.waitAof(
     numreplicas: Long,
     timeout: Long,
 ): WaitAofResult {
-    val request = if(cfg.withSlots) {
-        WaitAofCommandCodec.encodeWithSlot(charset = cfg.charset, numlocal = numlocal, numreplicas = numreplicas, timeout = timeout)
+    val request = if (cfg.withSlots) {
+        WaitAofCommandCodec.encodeWithSlot(
+            charset = cfg.charset,
+            numlocal = numlocal,
+            numreplicas = numreplicas,
+            timeout = timeout,
+        )
     } else {
-        WaitAofCommandCodec.encode(charset = cfg.charset, numlocal = numlocal, numreplicas = numreplicas, timeout = timeout)
+        WaitAofCommandCodec.encode(
+            charset = cfg.charset,
+            numlocal = numlocal,
+            numreplicas = numreplicas,
+            timeout = timeout,
+        )
     }
     return WaitAofCommandCodec.decode(topology.handle(request), cfg.charset)
 }

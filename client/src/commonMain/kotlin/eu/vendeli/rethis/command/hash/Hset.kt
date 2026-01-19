@@ -6,7 +6,7 @@ import eu.vendeli.rethis.shared.request.common.FieldValue
 import eu.vendeli.rethis.topology.handle
 
 public suspend fun ReThis.hSet(key: String, vararg `data`: FieldValue): Long {
-    val request = if(cfg.withSlots) {
+    val request = if (cfg.withSlots) {
         HSetCommandCodec.encodeWithSlot(charset = cfg.charset, key = key, data = data)
     } else {
         HSetCommandCodec.encode(charset = cfg.charset, key = key, data = data)

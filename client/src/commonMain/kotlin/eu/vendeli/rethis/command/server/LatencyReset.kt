@@ -5,7 +5,7 @@ import eu.vendeli.rethis.codecs.server.LatencyResetCommandCodec
 import eu.vendeli.rethis.topology.handle
 
 public suspend fun ReThis.latencyReset(vararg event: String): Long {
-    val request = if(cfg.withSlots) {
+    val request = if (cfg.withSlots) {
         LatencyResetCommandCodec.encodeWithSlot(charset = cfg.charset, event = event)
     } else {
         LatencyResetCommandCodec.encode(charset = cfg.charset, event = event)

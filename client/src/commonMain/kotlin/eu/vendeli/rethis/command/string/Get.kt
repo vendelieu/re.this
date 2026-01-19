@@ -6,7 +6,7 @@ import eu.vendeli.rethis.codecs.string.GetCommandCodec
 import eu.vendeli.rethis.topology.handle
 
 public suspend fun ReThis.getBA(key: String): ByteArray? {
-    val request = if(cfg.withSlots) {
+    val request = if (cfg.withSlots) {
         GetBACommandCodec.encodeWithSlot(charset = cfg.charset, key = key)
     } else {
         GetBACommandCodec.encode(charset = cfg.charset, key = key)
@@ -15,7 +15,7 @@ public suspend fun ReThis.getBA(key: String): ByteArray? {
 }
 
 public suspend fun ReThis.`get`(key: String): String? {
-    val request = if(cfg.withSlots) {
+    val request = if (cfg.withSlots) {
         GetCommandCodec.encodeWithSlot(charset = cfg.charset, key = key)
     } else {
         GetCommandCodec.encode(charset = cfg.charset, key = key)

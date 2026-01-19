@@ -6,7 +6,7 @@ import eu.vendeli.rethis.shared.request.cluster.ClusterFailoverOption
 import eu.vendeli.rethis.topology.handle
 
 public suspend fun ReThis.clusterFailover(options: ClusterFailoverOption? = null): Boolean {
-    val request = if(cfg.withSlots) {
+    val request = if (cfg.withSlots) {
         ClusterFailoverCommandCodec.encodeWithSlot(charset = cfg.charset, options = options)
     } else {
         ClusterFailoverCommandCodec.encode(charset = cfg.charset, options = options)

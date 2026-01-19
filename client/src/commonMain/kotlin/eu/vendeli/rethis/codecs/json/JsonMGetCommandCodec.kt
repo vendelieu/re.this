@@ -29,10 +29,10 @@ public object JsonMGetCommandCodec {
         COMMAND_HEADER.copyTo(buffer)
         key.forEach { it0 ->
             size += 1
-            buffer.writeStringArg(it0, charset, )
+            buffer.writeStringArg(it0, charset)
         }
         size += 1
-        buffer.writeStringArg(path, charset, )
+        buffer.writeStringArg(path, charset)
 
         buffer = Buffer().apply {
             writeString("*$size")
@@ -49,10 +49,11 @@ public object JsonMGetCommandCodec {
 
     public suspend fun decode(input: Buffer, charset: Charset): List<String?> {
         val code = input.parseCode(RespCode.ARRAY)
-        return when(code) {
+        return when (code) {
             RespCode.ARRAY -> {
                 ArrayStringDecoder.decodeNullable(input, charset, code)
             }
+
             else -> {
                 throw UnexpectedResponseType("Expected [ARRAY] but got $code", input.tryInferCause(code))
             }

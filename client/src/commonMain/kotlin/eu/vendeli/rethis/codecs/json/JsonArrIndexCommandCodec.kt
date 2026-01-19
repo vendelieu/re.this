@@ -32,18 +32,18 @@ public object JsonArrIndexCommandCodec {
         var size = 1
         COMMAND_HEADER.copyTo(buffer)
         size += 1
-        buffer.writeStringArg(key, charset, )
+        buffer.writeStringArg(key, charset)
         size += 1
-        buffer.writeStringArg(path, charset, )
+        buffer.writeStringArg(path, charset)
         size += 1
-        buffer.writeStringArg(value, charset, )
+        buffer.writeStringArg(value, charset)
         start?.let { it0 ->
             size += 1
-            buffer.writeLongArg(it0, charset, )
+            buffer.writeLongArg(it0, charset)
         }
         stop?.let { it1 ->
             size += 1
-            buffer.writeLongArg(it1, charset, )
+            buffer.writeLongArg(it1, charset)
         }
 
         buffer = Buffer().apply {
@@ -64,10 +64,11 @@ public object JsonArrIndexCommandCodec {
 
     public suspend fun decode(input: Buffer, charset: Charset): Long {
         val code = input.parseCode(RespCode.INTEGER)
-        return when(code) {
+        return when (code) {
             RespCode.INTEGER -> {
                 IntegerDecoder.decode(input, charset, code)
             }
+
             else -> {
                 throw UnexpectedResponseType("Expected [INTEGER] but got $code", input.tryInferCause(code))
             }

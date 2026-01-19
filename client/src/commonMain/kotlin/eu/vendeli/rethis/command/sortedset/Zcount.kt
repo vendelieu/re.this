@@ -9,7 +9,7 @@ public suspend fun ReThis.zCount(
     min: Double,
     max: Double,
 ): Long {
-    val request = if(cfg.withSlots) {
+    val request = if (cfg.withSlots) {
         ZCountCommandCodec.encodeWithSlot(charset = cfg.charset, key = key, min = min, max = max)
     } else {
         ZCountCommandCodec.encode(charset = cfg.charset, key = key, min = min, max = max)

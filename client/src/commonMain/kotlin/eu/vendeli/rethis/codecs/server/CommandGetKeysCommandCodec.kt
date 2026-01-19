@@ -28,10 +28,10 @@ public object CommandGetKeysCommandCodec {
         var size = 2
         COMMAND_HEADER.copyTo(buffer)
         size += 1
-        buffer.writeStringArg(command, charset, )
+        buffer.writeStringArg(command, charset)
         arg.forEach { it0 ->
             size += 1
-            buffer.writeStringArg(it0, charset, )
+            buffer.writeStringArg(it0, charset)
         }
 
         buffer = Buffer().apply {
@@ -49,10 +49,11 @@ public object CommandGetKeysCommandCodec {
 
     public suspend fun decode(input: Buffer, charset: Charset): List<String> {
         val code = input.parseCode(RespCode.ARRAY)
-        return when(code) {
+        return when (code) {
             RespCode.ARRAY -> {
                 ArrayStringDecoder.decode(input, charset, code)
             }
+
             else -> {
                 throw UnexpectedResponseType("Expected [ARRAY] but got $code", input.tryInferCause(code))
             }

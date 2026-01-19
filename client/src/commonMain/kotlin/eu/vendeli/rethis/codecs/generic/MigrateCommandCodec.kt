@@ -37,58 +37,63 @@ public object MigrateCommandCodec {
         var size = 1
         COMMAND_HEADER.copyTo(buffer)
         size += 1
-        buffer.writeStringArg(host, charset, )
+        buffer.writeStringArg(host, charset)
         size += 1
-        buffer.writeLongArg(port, charset, )
+        buffer.writeLongArg(port, charset)
         when (keySelector) {
-            is MigrateKey.Actual ->  {
+            is MigrateKey.Actual -> {
                 size += 1
-                buffer.writeStringArg(keySelector.key, charset, )
+                buffer.writeStringArg(keySelector.key, charset)
             }
-            is MigrateKey.Empty ->  {
+
+            is MigrateKey.Empty -> {
                 size += 1
                 buffer.writeStringArg("", charset)
             }
         }
         size += 1
-        buffer.writeLongArg(destinationDb, charset, )
+        buffer.writeLongArg(destinationDb, charset)
         size += 1
         buffer.writeDurationArg(timeout, charset, TimeUnit.MILLISECONDS)
         option.forEach { it0 ->
             when (it0) {
-                is MigrateOption.Authorization ->  {
+                is MigrateOption.Authorization -> {
                     when (it0) {
-                        is MigrateOption.Auth ->  {
+                        is MigrateOption.Auth -> {
                             size += 1
                             buffer.writeStringArg("AUTH", charset)
                             size += 1
-                            buffer.writeStringArg(it0.auth, charset, )
+                            buffer.writeStringArg(it0.auth, charset)
                         }
-                        is MigrateOption.Auth2 ->  {
+
+                        is MigrateOption.Auth2 -> {
                             size += 1
                             buffer.writeStringArg("AUTH2", charset)
                             size += 1
-                            buffer.writeStringArg(it0.username, charset, )
+                            buffer.writeStringArg(it0.username, charset)
                             size += 1
-                            buffer.writeStringArg(it0.password, charset, )
+                            buffer.writeStringArg(it0.password, charset)
                         }
                     }
                 }
-                is MigrateOption.Keys ->  {
+
+                is MigrateOption.Keys -> {
                     size += 1
                     buffer.writeStringArg("KEYS", charset)
                     it0.keys.forEach { it1 ->
                         size += 1
-                        buffer.writeStringArg(it1, charset, )
+                        buffer.writeStringArg(it1, charset)
                     }
                 }
-                is MigrateOption.Strategy ->  {
+
+                is MigrateOption.Strategy -> {
                     when (it0) {
-                        is MigrateOption.COPY ->  {
+                        is MigrateOption.COPY -> {
                             size += 1
                             buffer.writeStringArg(it0.toString(), charset)
                         }
-                        is MigrateOption.REPLACE ->  {
+
+                        is MigrateOption.REPLACE -> {
                             size += 1
                             buffer.writeStringArg(it0.toString(), charset)
                         }
@@ -115,32 +120,44 @@ public object MigrateCommandCodec {
     ): CommandRequest {
         var slot: Int? = null
         when (keySelector) {
-            is MigrateKey.Actual ->  {
+            is MigrateKey.Actual -> {
                 slot = validateSlot(slot, CRC16.lookup(keySelector.key.toByteArray(charset)))
             }
+
             else -> {}
         }
         option.forEach { it0 ->
             when (it0) {
-                is MigrateOption.Keys ->  {
+                is MigrateOption.Keys -> {
                     it0.keys.forEach { it1 ->
                         slot = validateSlot(slot, CRC16.lookup(it1.toByteArray(charset)))
                     }
                 }
+
                 else -> {}
             }
         }
         if (slot == null) throw KeyAbsentException("Expected key is not provided")
-        val request = encode(charset, host = host, port = port, keySelector = keySelector, destinationDb = destinationDb, timeout = timeout, option = option)
+        val request =
+            encode(
+                charset,
+                host = host,
+                port = port,
+                keySelector = keySelector,
+                destinationDb = destinationDb,
+                timeout = timeout,
+                option = option,
+            )
         return request.withSlot(slot % 16384)
     }
 
     public suspend fun decode(input: Buffer, charset: Charset): String {
         val code = input.parseCode(RespCode.SIMPLE_STRING)
-        return when(code) {
+        return when (code) {
             RespCode.SIMPLE_STRING -> {
                 SimpleStringDecoder.decode(input, charset, code)
             }
+
             else -> {
                 throw UnexpectedResponseType("Expected [SIMPLE_STRING] but got $code", input.tryInferCause(code))
             }

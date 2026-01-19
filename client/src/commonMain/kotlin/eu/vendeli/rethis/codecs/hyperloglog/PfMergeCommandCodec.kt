@@ -28,10 +28,10 @@ public object PfMergeCommandCodec {
         var size = 1
         COMMAND_HEADER.copyTo(buffer)
         size += 1
-        buffer.writeStringArg(destkey, charset, )
+        buffer.writeStringArg(destkey, charset)
         sourcekey.forEach { it0 ->
             size += 1
-            buffer.writeStringArg(it0, charset, )
+            buffer.writeStringArg(it0, charset)
         }
 
         buffer = Buffer().apply {
@@ -58,10 +58,11 @@ public object PfMergeCommandCodec {
 
     public suspend fun decode(input: Buffer, charset: Charset): String {
         val code = input.parseCode(RespCode.SIMPLE_STRING)
-        return when(code) {
+        return when (code) {
             RespCode.SIMPLE_STRING -> {
                 SimpleStringDecoder.decode(input, charset, code)
             }
+
             else -> {
                 throw UnexpectedResponseType("Expected [SIMPLE_STRING] but got $code", input.tryInferCause(code))
             }

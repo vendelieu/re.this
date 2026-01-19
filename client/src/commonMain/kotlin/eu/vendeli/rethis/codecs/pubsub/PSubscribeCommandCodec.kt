@@ -20,7 +20,7 @@ public object PSubscribeCommandCodec {
         COMMAND_HEADER.copyTo(buffer)
         pattern.forEach { it0 ->
             size += 1
-            buffer.writeStringArg(it0, charset, )
+            buffer.writeStringArg(it0, charset)
         }
 
         buffer = Buffer().apply {
@@ -30,7 +30,10 @@ public object PSubscribeCommandCodec {
         return CommandRequest(buffer, RedisOperation.READ, BLOCKING_STATUS)
     }
 
-    public suspend inline fun encodeWithSlot(charset: Charset, vararg pattern: String): CommandRequest = encode(charset, pattern = pattern)
+    public suspend inline fun encodeWithSlot(charset: Charset, vararg pattern: String): CommandRequest = encode(
+        charset,
+        pattern = pattern,
+    )
 
     public suspend fun decode(input: Buffer, charset: Charset) {
     }

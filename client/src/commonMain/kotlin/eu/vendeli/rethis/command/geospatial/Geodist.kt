@@ -11,8 +11,14 @@ public suspend fun ReThis.geoDist(
     member2: String,
     unit: GeoUnit? = null,
 ): Double? {
-    val request = if(cfg.withSlots) {
-        GeoDistCommandCodec.encodeWithSlot(charset = cfg.charset, key = key, member1 = member1, member2 = member2, unit = unit)
+    val request = if (cfg.withSlots) {
+        GeoDistCommandCodec.encodeWithSlot(
+            charset = cfg.charset,
+            key = key,
+            member1 = member1,
+            member2 = member2,
+            unit = unit,
+        )
     } else {
         GeoDistCommandCodec.encode(charset = cfg.charset, key = key, member1 = member1, member2 = member2, unit = unit)
     }
