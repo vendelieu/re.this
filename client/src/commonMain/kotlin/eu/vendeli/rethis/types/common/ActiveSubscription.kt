@@ -1,9 +1,10 @@
 package eu.vendeli.rethis.types.common
 
 import eu.vendeli.rethis.providers.ConnectionProvider
+import eu.vendeli.rethis.types.interfaces.PubSubHandler
 import kotlinx.coroutines.Job
 
-internal data class SubscriptionWorker(
+internal data class ActiveSubscription(
     val connectionProvider: ConnectionProvider,
-    val job: Job,
+    val handlers: MutableMap<PubSubHandler, MutableSet<Job>>,
 )

@@ -12,7 +12,8 @@ import eu.vendeli.rethis.shared.types.ReThisException
 import eu.vendeli.rethis.shared.types.RedisOperation
 import eu.vendeli.rethis.shared.utils.unwrap
 import eu.vendeli.rethis.types.common.*
-import eu.vendeli.rethis.types.interfaces.SubscriptionHandler
+import eu.vendeli.rethis.types.interfaces.MessageEventHandler
+import eu.vendeli.rethis.types.interfaces.toPubSubHandler
 import eu.vendeli.rethis.utils.ClusterEventNames
 import eu.vendeli.rethis.utils.registerSubscription
 import io.ktor.utils.io.charsets.*
@@ -51,11 +52,13 @@ class SentinelTopologyManager(
     }
 
     private suspend fun subscribeToSentinels() {
-        val handler = SubscriptionHandler { _, _ -> reactiveRefresh() }
+        val handler = MessageEventHandler { _, _ ->
+            reactiveRefresh()
+        }.toPubSubHandler(client)
         snapshot.load()?.providers?.forEach {
             client.registerSubscription(
-                ClusterEventNames.SWITCH_MASTER.name,
-                Subscription(SubscriptionType.PLAIN, handler),
+                SubscribeTarget.Channel(ClusterEventNames.SWITCH_MASTER.name),
+                handler,
                 it,
             )
         }

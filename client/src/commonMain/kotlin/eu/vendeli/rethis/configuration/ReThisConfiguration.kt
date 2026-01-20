@@ -91,6 +91,9 @@ sealed class ReThisConfiguration(
      */
     var charset: Charset = Charsets.UTF_8
 
+    internal val charsetDecoder: CharsetDecoder by lazy { charset.newDecoder() }
+    internal val charsetEncoder: CharsetEncoder by lazy { charset.newEncoder() }
+
     /**
      * Specifies the [CoroutineDispatcher] to be used for executing general asynchronous operations.
      *

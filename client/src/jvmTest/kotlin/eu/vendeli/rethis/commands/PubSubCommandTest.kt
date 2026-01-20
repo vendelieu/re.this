@@ -5,7 +5,7 @@ import eu.vendeli.rethis.command.pubsub.*
 import eu.vendeli.rethis.shared.response.common.PubSubNumEntry
 import eu.vendeli.rethis.shared.types.DataProcessingException
 import eu.vendeli.rethis.shared.types.processingException
-import eu.vendeli.rethis.types.interfaces.SubscriptionEventHandler
+import eu.vendeli.rethis.types.interfaces.PubSubHandler
 import io.kotest.assertions.throwables.shouldNotThrowAny
 import io.kotest.matchers.collections.shouldNotBeEmpty
 import io.kotest.matchers.comparables.shouldBeGreaterThan
@@ -121,7 +121,7 @@ class PubSubCommandTest : ReThisTestCtx() {
         var caughtEx: Exception? = null
 
         client.subscriptions.setEventHandler(
-            object : SubscriptionEventHandler {
+            object : PubSubHandler {
                 override suspend fun onSubscribe(id: String, subscribedChannels: Long) {
                     println("-- id $id count: $subscribedChannels")
                 }

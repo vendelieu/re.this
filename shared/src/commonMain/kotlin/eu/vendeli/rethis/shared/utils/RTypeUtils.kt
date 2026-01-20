@@ -98,10 +98,13 @@ private fun Buffer.readSimpleResponseWrapped(
             val size = readLineStrict().toInt()
             if (size < 0) return RType.Null
             else if (size == 0) {
-                readLineCRLF() // skip crlf
-                return RType.Null
+                CARRIAGE_RETURN_BYTE
+                skip(2) // skip crlf
+                return BulkString(EMPTY_BUFFER)
             }
-            val content = readPartLine(charset)
+            val content = Buffer()
+            readTo(content, size.toLong())
+            skip(2)
             BulkString(content)
         }
 
@@ -165,7 +168,8 @@ inline fun <reified T> RType.unwrap(): T? {
         this is F64 -> if (T::class == Double::class) value as T else null
         this is BigNumber -> if (T::class == BigInteger::class) value as T else null
         this is VerbatimString -> if (T::class == String::class) value as T else null
-        this is BulkString -> if (T::class == String::class) value as T else null
+        this is BulkString -> if (T::class == ByteArray::class) value as T else null
+        this is BulkString -> if (T::class == String::class) value.readString() as T else null
         else -> {
             __ParserLogger.warn("Wrong unwrapping [common] method used for $this")
             null
