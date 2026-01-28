@@ -131,6 +131,7 @@ class StreamCommandsTest : ReThisTestCtx() {
             ),
         )
         result shouldNotBe null
+        result shouldNotBe emptyList<RType>()
     }
 
     @Test

@@ -31,7 +31,7 @@ fun ReThis.StreamFlow(
     batchSize: Long = 10,
     block: Duration = Duration.ZERO,
     acknowledge: Boolean = true,
-): Flow<Map<String, RType>> = flow {
+): Flow<List<RType>> = flow {
     val options = buildList {
         if (block.isPositive()) add(XReadGroupOption.Block(block))
         add(XReadGroupOption.Count(batchSize))

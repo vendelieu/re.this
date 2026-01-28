@@ -12,7 +12,7 @@ public suspend fun ReThis.xReadGroup(
     consumer: String,
     streams: XReadGroupKeyIds,
     vararg option: XReadGroupOption,
-): Map<String, RType>? {
+): List<RType>? {
     val request = if(cfg.withSlots) {
         XReadGroupCommandCodec.encodeWithSlot(charset = cfg.charset, group = group, consumer = consumer, streams = streams, option = option)
     } else {

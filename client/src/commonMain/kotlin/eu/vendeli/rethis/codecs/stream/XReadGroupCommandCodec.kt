@@ -1,6 +1,6 @@
 package eu.vendeli.rethis.codecs.stream
 
-import eu.vendeli.rethis.shared.decoders.aggregate.MapRTypeDecoder
+import eu.vendeli.rethis.shared.decoders.aggregate.ArrayRTypeDecoder
 import eu.vendeli.rethis.shared.request.stream.XReadGroupKeyIds
 import eu.vendeli.rethis.shared.request.stream.XReadGroupOption
 import eu.vendeli.rethis.shared.types.*
@@ -93,14 +93,10 @@ public object XReadGroupCommandCodec {
         return request.withSlot(slot % 16384)
     }
 
-    public suspend fun decode(input: Buffer, charset: Charset): Map<String, RType>? {
-        val code = input.parseCode(RespCode.ARRAY)
-        return when(code) {
+    public suspend fun decode(input: Buffer, charset: Charset): List<RType>? {
+        return when(val code = input.parseCode(RespCode.ARRAY)) {
             RespCode.ARRAY -> {
-                MapRTypeDecoder.decode(input, charset, code)
-            }
-            RespCode.MAP -> {
-                MapRTypeDecoder.decode(input, charset, code)
+                ArrayRTypeDecoder.decode(input, charset, code)
             }
             RespCode.NULL -> {
                 null
