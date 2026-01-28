@@ -13,10 +13,22 @@ public suspend fun ReThis.xReadGroup(
     streams: XReadGroupKeyIds,
     vararg option: XReadGroupOption,
 ): List<RType>? {
-    val request = if(cfg.withSlots) {
-        XReadGroupCommandCodec.encodeWithSlot(charset = cfg.charset, group = group, consumer = consumer, streams = streams, option = option)
+    val request = if (cfg.withSlots) {
+        XReadGroupCommandCodec.encodeWithSlot(
+            charset = cfg.charset,
+            group = group,
+            consumer = consumer,
+            streams = streams,
+            option = option,
+        )
     } else {
-        XReadGroupCommandCodec.encode(charset = cfg.charset, group = group, consumer = consumer, streams = streams, option = option)
+        XReadGroupCommandCodec.encode(
+            charset = cfg.charset,
+            group = group,
+            consumer = consumer,
+            streams = streams,
+            option = option,
+        )
     }
     return XReadGroupCommandCodec.decode(topology.handle(request), cfg.charset)
 }

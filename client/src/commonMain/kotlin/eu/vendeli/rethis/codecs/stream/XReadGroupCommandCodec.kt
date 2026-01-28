@@ -36,24 +36,26 @@ public object XReadGroupCommandCodec {
         size += 1
         buffer.writeStringArg("GROUP", charset)
         size += 1
-        buffer.writeStringArg(group, charset, )
+        buffer.writeStringArg(group, charset)
         size += 1
-        buffer.writeStringArg(consumer, charset, )
+        buffer.writeStringArg(consumer, charset)
         option.forEach { it0 ->
             when (it0) {
-                is XReadGroupOption.Block ->  {
+                is XReadGroupOption.Block -> {
                     size += 1
                     buffer.writeStringArg("BLOCK", charset)
                     size += 1
                     buffer.writeDurationArg(it0.milliseconds, charset, TimeUnit.MILLISECONDS)
                 }
-                is XReadGroupOption.Count ->  {
+
+                is XReadGroupOption.Count -> {
                     size += 1
                     buffer.writeStringArg("COUNT", charset)
                     size += 1
-                    buffer.writeLongArg(it0.count, charset, )
+                    buffer.writeLongArg(it0.count, charset)
                 }
-                is XReadGroupOption.NoAck ->  {
+
+                is XReadGroupOption.NoAck -> {
                     size += 1
                     buffer.writeStringArg("NOACK", charset)
                 }
@@ -63,11 +65,11 @@ public object XReadGroupCommandCodec {
         buffer.writeStringArg("STREAMS", charset)
         streams.key.forEach { it1 ->
             size += 1
-            buffer.writeStringArg(it1, charset, )
+            buffer.writeStringArg(it1, charset)
         }
         streams.id.forEach { it2 ->
             size += 1
-            buffer.writeStringArg(it2, charset, )
+            buffer.writeStringArg(it2, charset)
         }
 
         buffer = Buffer().apply {
@@ -94,15 +96,17 @@ public object XReadGroupCommandCodec {
     }
 
     public suspend fun decode(input: Buffer, charset: Charset): List<RType>? {
-        return when(val code = input.parseCode(RespCode.ARRAY)) {
+        return when (val code = input.parseCode(RespCode.ARRAY)) {
             RespCode.ARRAY -> {
                 ArrayRTypeDecoder.decode(input, charset, code)
             }
+
             RespCode.NULL -> {
                 null
             }
+
             else -> {
-                throw UnexpectedResponseType("Expected [ARRAY, MAP, NULL] but got $code", input.tryInferCause(code))
+                throw UnexpectedResponseType("Expected [ARRAY, NULL] but got $code", input.tryInferCause(code))
             }
         }
     }
