@@ -8,7 +8,7 @@ bignum = "0.3.10"
 kotlinx-serialization = "1.9.0"
 
 dokka = "2.1.0"
-kotlinter = "5.3.0"
+kotlinter = "5.4.0"
 deteKT = "1.23.8"
 publisher = "0.35.0"
 binvalid = "0.18.1"
