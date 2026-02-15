@@ -1,7 +1,7 @@
 plugins {
     kotlin("jvm")
-    kotlin("plugin.allopen") version "2.3.0"
-    id("org.jetbrains.kotlinx.benchmark") version "0.4.15"
+    kotlin("plugin.allopen") version "2.3.10"
+    id("org.jetbrains.kotlinx.benchmark") version "0.4.16"
 }
 
 repositories {
@@ -9,10 +9,10 @@ repositories {
 }
 
 dependencies {
-    implementation("org.jetbrains.kotlinx:kotlinx-benchmark-runtime:0.4.15")
+    implementation("org.jetbrains.kotlinx:kotlinx-benchmark-runtime:0.4.16")
     implementation(project(":client"))
     implementation("redis.clients:jedis:7.2.1")
-    implementation("io.lettuce:lettuce-core:7.2.1.RELEASE")
+    implementation("io.lettuce:lettuce-core:7.4.0.RELEASE")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactive:1.10.2")
     implementation("io.github.crackthecodeabhi:kreds:0.9.1")
 
