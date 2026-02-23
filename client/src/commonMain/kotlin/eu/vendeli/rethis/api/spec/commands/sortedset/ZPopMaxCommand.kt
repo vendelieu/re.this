@@ -14,6 +14,6 @@ import eu.vendeli.rethis.shared.types.RespCode
 fun interface ZPopMaxCommand : RedisCommandSpec<List<MPopResult>> {
     suspend fun encode(
         key: String,
-        count: Long?
+        count: Long?,
     ): CommandRequest
 }

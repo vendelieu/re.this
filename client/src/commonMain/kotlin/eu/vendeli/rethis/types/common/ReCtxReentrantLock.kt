@@ -2,7 +2,6 @@ package eu.vendeli.rethis.types.common
 
 import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.command.scripting.eval
-//import eu.vendeli.rethis.command.scripting.eval
 import eu.vendeli.rethis.shared.types.LockLostException
 import eu.vendeli.rethis.shared.utils.unwrap
 import eu.vendeli.rethis.types.interfaces.ReDistributedLock
@@ -92,7 +91,7 @@ internal class ReCtxReentrantLock(
                     return true
                 }
 
-                0 -> { /* someone else holds it */
+                0 -> { // someone else holds it
                 }
 
                 -1 -> {
@@ -131,9 +130,7 @@ internal class ReCtxReentrantLock(
         val newDepth = currentState.depth - 1
         val isFinal = newDepth == 0
 
-        val r = releaseScript(currentState.token, defaultLeaseMs)
-
-        when (r) {
+        when (val r = releaseScript(currentState.token, defaultLeaseMs)) {
             1 -> {
                 if (isFinal) {
                     stopWatchdog()

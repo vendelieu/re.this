@@ -11,6 +11,6 @@ import eu.vendeli.rethis.shared.types.RespCode
 fun interface ClientPauseCommand : RedisCommandSpec<Boolean> {
     suspend fun encode(
         timeout: Long,
-        mode: ClientPauseMode?
+        mode: ClientPauseMode?,
     ): CommandRequest
 }

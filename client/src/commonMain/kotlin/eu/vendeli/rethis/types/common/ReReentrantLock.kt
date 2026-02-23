@@ -2,7 +2,7 @@ package eu.vendeli.rethis.types.common
 
 import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.command.scripting.eval
-//import eu.vendeli.rethis.command.scripting.eval
+// import eu.vendeli.rethis.command.scripting.eval
 import eu.vendeli.rethis.shared.types.LockLostException
 import eu.vendeli.rethis.shared.utils.unwrap
 import eu.vendeli.rethis.types.interfaces.ReDistributedLock

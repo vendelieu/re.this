@@ -1,13 +1,13 @@
-//package eu.vendeli.rethis.commands.server
+// package eu.vendeli.rethis.commands.server
 //
-//import eu.vendeli.rethis.ReThisTestCtx
-//import eu.vendeli.rethis.command.server.commandDocs
-//import eu.vendeli.rethis.command.server.commandGetKeys
-//import io.kotest.matchers.collections.shouldContain
-//import io.kotest.matchers.collections.shouldNotBeEmpty
-//import io.kotest.matchers.maps.shouldNotBeEmpty
+// import eu.vendeli.rethis.ReThisTestCtx
+// import eu.vendeli.rethis.command.server.commandDocs
+// import eu.vendeli.rethis.command.server.commandGetKeys
+// import io.kotest.matchers.collections.shouldContain
+// import io.kotest.matchers.collections.shouldNotBeEmpty
+// import io.kotest.matchers.maps.shouldNotBeEmpty
 //
-//class ServerCommandIntrospectionTest : ReThisTestCtx() {
+// class ServerCommandIntrospectionTest : ReThisTestCtx() {
 //    @Test
 //    suspend fun `COMMAND DOCS returns docs for known commands`() {
 //        val res = client.commandDocs("SET", "GET")
@@ -20,4 +20,4 @@
 //        keys.shouldNotBeEmpty()
 //        keys.shouldContain("k")
 //    }
-//}
+// }

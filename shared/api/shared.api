@@ -51,184 +51,246 @@ public abstract interface annotation class eu/vendeli/rethis/shared/annotations/
 }
 
 public abstract interface class eu/vendeli/rethis/shared/decoders/ResponseDecoder {
-	public abstract fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public static synthetic fun decode$default (Leu/vendeli/rethis/shared/decoders/ResponseDecoder;Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public abstract fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;)Ljava/lang/Object;
+	public static synthetic fun decode$default (Leu/vendeli/rethis/shared/decoders/ResponseDecoder;Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;ILjava/lang/Object;)Ljava/lang/Object;
 }
 
 public final class eu/vendeli/rethis/shared/decoders/ResponseDecoder$DefaultImpls {
-	public static synthetic fun decode$default (Leu/vendeli/rethis/shared/decoders/ResponseDecoder;Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public static synthetic fun decode$default (Leu/vendeli/rethis/shared/decoders/ResponseDecoder;Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;ILjava/lang/Object;)Ljava/lang/Object;
+}
+
+public final class eu/vendeli/rethis/shared/decoders/aggregate/ArrayByteArrayDecoder : eu/vendeli/rethis/shared/decoders/ResponseDecoder {
+	public static final field INSTANCE Leu/vendeli/rethis/shared/decoders/aggregate/ArrayByteArrayDecoder;
+	public synthetic fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;)Ljava/lang/Object;
+	public fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;)Ljava/util/List;
+	public final fun decodeNullable (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;)Ljava/util/List;
+	public static synthetic fun decodeNullable$default (Leu/vendeli/rethis/shared/decoders/aggregate/ArrayByteArrayDecoder;Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;ILjava/lang/Object;)Ljava/util/List;
 }
 
 public final class eu/vendeli/rethis/shared/decoders/aggregate/ArrayLongDecoder : eu/vendeli/rethis/shared/decoders/ResponseDecoder {
 	public static final field INSTANCE Leu/vendeli/rethis/shared/decoders/aggregate/ArrayLongDecoder;
-	public fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public final fun decodeNullable (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public static synthetic fun decodeNullable$default (Leu/vendeli/rethis/shared/decoders/aggregate/ArrayLongDecoder;Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public synthetic fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;)Ljava/lang/Object;
+	public fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;)Ljava/util/List;
+	public final fun decodeNullable (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;)Ljava/util/List;
+	public static synthetic fun decodeNullable$default (Leu/vendeli/rethis/shared/decoders/aggregate/ArrayLongDecoder;Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;ILjava/lang/Object;)Ljava/util/List;
 }
 
 public final class eu/vendeli/rethis/shared/decoders/aggregate/ArrayRTypeDecoder : eu/vendeli/rethis/shared/decoders/ResponseDecoder {
 	public static final field INSTANCE Leu/vendeli/rethis/shared/decoders/aggregate/ArrayRTypeDecoder;
-	public fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public synthetic fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;)Ljava/lang/Object;
+	public fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;)Ljava/util/List;
 }
 
 public final class eu/vendeli/rethis/shared/decoders/aggregate/ArrayStringDecoder : eu/vendeli/rethis/shared/decoders/ResponseDecoder {
 	public static final field INSTANCE Leu/vendeli/rethis/shared/decoders/aggregate/ArrayStringDecoder;
-	public fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public final fun decodeNullable (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public static synthetic fun decodeNullable$default (Leu/vendeli/rethis/shared/decoders/aggregate/ArrayStringDecoder;Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public synthetic fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;)Ljava/lang/Object;
+	public fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;)Ljava/util/List;
+	public final fun decodeNullable (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;)Ljava/util/List;
+	public static synthetic fun decodeNullable$default (Leu/vendeli/rethis/shared/decoders/aggregate/ArrayStringDecoder;Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;ILjava/lang/Object;)Ljava/util/List;
+}
+
+public final class eu/vendeli/rethis/shared/decoders/aggregate/MapByteArrayDecoder : eu/vendeli/rethis/shared/decoders/ResponseDecoder {
+	public static final field INSTANCE Leu/vendeli/rethis/shared/decoders/aggregate/MapByteArrayDecoder;
+	public synthetic fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;)Ljava/lang/Object;
+	public fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;)Ljava/util/Map;
+	public final fun decodeNullable (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;)Ljava/util/Map;
+	public static synthetic fun decodeNullable$default (Leu/vendeli/rethis/shared/decoders/aggregate/MapByteArrayDecoder;Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;ILjava/lang/Object;)Ljava/util/Map;
 }
 
 public final class eu/vendeli/rethis/shared/decoders/aggregate/MapRTypeDecoder : eu/vendeli/rethis/shared/decoders/ResponseDecoder {
 	public static final field INSTANCE Leu/vendeli/rethis/shared/decoders/aggregate/MapRTypeDecoder;
-	public fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public final fun decodeNullable (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public synthetic fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;)Ljava/lang/Object;
+	public fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;)Ljava/util/Map;
+	public final fun decodeNullable (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;)Ljava/util/Map;
 }
 
 public final class eu/vendeli/rethis/shared/decoders/aggregate/MapStringDecoder : eu/vendeli/rethis/shared/decoders/ResponseDecoder {
 	public static final field INSTANCE Leu/vendeli/rethis/shared/decoders/aggregate/MapStringDecoder;
-	public fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public final fun decodeNullable (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public static synthetic fun decodeNullable$default (Leu/vendeli/rethis/shared/decoders/aggregate/MapStringDecoder;Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public synthetic fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;)Ljava/lang/Object;
+	public fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;)Ljava/util/Map;
+	public final fun decodeNullable (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;)Ljava/util/Map;
+	public static synthetic fun decodeNullable$default (Leu/vendeli/rethis/shared/decoders/aggregate/MapStringDecoder;Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;ILjava/lang/Object;)Ljava/util/Map;
+}
+
+public final class eu/vendeli/rethis/shared/decoders/aggregate/SetByteArrayDecoder : eu/vendeli/rethis/shared/decoders/ResponseDecoder {
+	public static final field INSTANCE Leu/vendeli/rethis/shared/decoders/aggregate/SetByteArrayDecoder;
+	public synthetic fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;)Ljava/lang/Object;
+	public fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;)Ljava/util/Set;
 }
 
 public final class eu/vendeli/rethis/shared/decoders/aggregate/SetStringDecoder : eu/vendeli/rethis/shared/decoders/ResponseDecoder {
 	public static final field INSTANCE Leu/vendeli/rethis/shared/decoders/aggregate/SetStringDecoder;
-	public fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public synthetic fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;)Ljava/lang/Object;
+	public fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;)Ljava/util/Set;
 }
 
 public final class eu/vendeli/rethis/shared/decoders/cluster/ClusterShardsDecoder : eu/vendeli/rethis/shared/decoders/ResponseDecoder {
 	public static final field INSTANCE Leu/vendeli/rethis/shared/decoders/cluster/ClusterShardsDecoder;
-	public fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public synthetic fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;)Ljava/lang/Object;
+	public fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;)Ljava/util/List;
 }
 
 public final class eu/vendeli/rethis/shared/decoders/cluster/ClusterSlotsDecoder : eu/vendeli/rethis/shared/decoders/ResponseDecoder {
 	public static final field INSTANCE Leu/vendeli/rethis/shared/decoders/cluster/ClusterSlotsDecoder;
-	public fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;)Leu/vendeli/rethis/shared/response/cluster/Cluster;
+	public synthetic fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;)Ljava/lang/Object;
 }
 
 public final class eu/vendeli/rethis/shared/decoders/common/ArrayIntBooleanDecoder : eu/vendeli/rethis/shared/decoders/ResponseDecoder {
 	public static final field INSTANCE Leu/vendeli/rethis/shared/decoders/common/ArrayIntBooleanDecoder;
-	public fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public synthetic fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;)Ljava/lang/Object;
+	public fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;)Ljava/util/List;
 }
 
 public final class eu/vendeli/rethis/shared/decoders/common/LMPopDecoder : eu/vendeli/rethis/shared/decoders/ResponseDecoder {
 	public static final field INSTANCE Leu/vendeli/rethis/shared/decoders/common/LMPopDecoder;
-	public fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public synthetic fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;)Ljava/lang/Object;
+	public fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;)Ljava/util/List;
 }
 
 public final class eu/vendeli/rethis/shared/decoders/common/LPopDecoder : eu/vendeli/rethis/shared/decoders/ResponseDecoder {
 	public static final field INSTANCE Leu/vendeli/rethis/shared/decoders/common/LPopDecoder;
-	public fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;)Leu/vendeli/rethis/shared/response/common/PopResult;
+	public synthetic fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;)Ljava/lang/Object;
 }
 
 public final class eu/vendeli/rethis/shared/decoders/common/PairScanDecoder : eu/vendeli/rethis/shared/decoders/ResponseDecoder {
 	public static final field INSTANCE Leu/vendeli/rethis/shared/decoders/common/PairScanDecoder;
-	public fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;)Leu/vendeli/rethis/shared/response/common/ScanResult;
+	public synthetic fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;)Ljava/lang/Object;
 }
 
 public final class eu/vendeli/rethis/shared/decoders/common/StringScanDecoder : eu/vendeli/rethis/shared/decoders/ResponseDecoder {
 	public static final field INSTANCE Leu/vendeli/rethis/shared/decoders/common/StringScanDecoder;
-	public fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;)Leu/vendeli/rethis/shared/response/common/ScanResult;
+	public synthetic fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;)Ljava/lang/Object;
 }
 
 public final class eu/vendeli/rethis/shared/decoders/connection/AclLogDecoder : eu/vendeli/rethis/shared/decoders/ResponseDecoder {
 	public static final field INSTANCE Leu/vendeli/rethis/shared/decoders/connection/AclLogDecoder;
-	public fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public synthetic fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;)Ljava/lang/Object;
+	public fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;)Ljava/util/List;
 }
 
 public final class eu/vendeli/rethis/shared/decoders/general/BigDecimalDecoder : eu/vendeli/rethis/shared/decoders/ResponseDecoder {
 	public static final field INSTANCE Leu/vendeli/rethis/shared/decoders/general/BigDecimalDecoder;
-	public fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;)Lcom/ionspin/kotlin/bignum/decimal/BigDecimal;
+	public synthetic fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;)Ljava/lang/Object;
 }
 
 public final class eu/vendeli/rethis/shared/decoders/general/BooleanDecoder : eu/vendeli/rethis/shared/decoders/ResponseDecoder {
 	public static final field INSTANCE Leu/vendeli/rethis/shared/decoders/general/BooleanDecoder;
-	public fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;)Ljava/lang/Boolean;
+	public synthetic fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;)Ljava/lang/Object;
+}
+
+public final class eu/vendeli/rethis/shared/decoders/general/BulkByteArrayDecoder : eu/vendeli/rethis/shared/decoders/ResponseDecoder {
+	public static final field INSTANCE Leu/vendeli/rethis/shared/decoders/general/BulkByteArrayDecoder;
+	public synthetic fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;)Ljava/lang/Object;
+	public fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;)[B
+	public final fun decodeNullable (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;)[B
+	public static synthetic fun decodeNullable$default (Leu/vendeli/rethis/shared/decoders/general/BulkByteArrayDecoder;Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;ILjava/lang/Object;)[B
 }
 
 public final class eu/vendeli/rethis/shared/decoders/general/BulkErrorDecoder : eu/vendeli/rethis/shared/decoders/ResponseDecoder {
 	public static final field INSTANCE Leu/vendeli/rethis/shared/decoders/general/BulkErrorDecoder;
-	public fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public synthetic fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;)Ljava/lang/Object;
+	public fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;)Ljava/lang/Void;
 }
 
 public final class eu/vendeli/rethis/shared/decoders/general/BulkStringDecoder : eu/vendeli/rethis/shared/decoders/ResponseDecoder {
 	public static final field INSTANCE Leu/vendeli/rethis/shared/decoders/general/BulkStringDecoder;
-	public fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public final fun decodeNullable (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public static synthetic fun decodeNullable$default (Leu/vendeli/rethis/shared/decoders/general/BulkStringDecoder;Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public synthetic fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;)Ljava/lang/Object;
+	public fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;)Ljava/lang/String;
+	public final fun decodeNullable (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;)Ljava/lang/String;
+	public static synthetic fun decodeNullable$default (Leu/vendeli/rethis/shared/decoders/general/BulkStringDecoder;Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;ILjava/lang/Object;)Ljava/lang/String;
 }
 
 public final class eu/vendeli/rethis/shared/decoders/general/DoubleDecoder : eu/vendeli/rethis/shared/decoders/ResponseDecoder {
 	public static final field INSTANCE Leu/vendeli/rethis/shared/decoders/general/DoubleDecoder;
-	public fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;)Ljava/lang/Double;
+	public synthetic fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;)Ljava/lang/Object;
 }
 
 public final class eu/vendeli/rethis/shared/decoders/general/IntegerDecoder : eu/vendeli/rethis/shared/decoders/ResponseDecoder {
 	public static final field INSTANCE Leu/vendeli/rethis/shared/decoders/general/IntegerDecoder;
-	public fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;)Ljava/lang/Long;
+	public synthetic fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;)Ljava/lang/Object;
 }
 
 public final class eu/vendeli/rethis/shared/decoders/general/RTypeDecoder : eu/vendeli/rethis/shared/decoders/ResponseDecoder {
 	public static final field INSTANCE Leu/vendeli/rethis/shared/decoders/general/RTypeDecoder;
-	public fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;)Leu/vendeli/rethis/shared/types/RType;
+	public synthetic fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;)Ljava/lang/Object;
 }
 
 public final class eu/vendeli/rethis/shared/decoders/general/SimpleErrorDecoder : eu/vendeli/rethis/shared/decoders/ResponseDecoder {
 	public static final field INSTANCE Leu/vendeli/rethis/shared/decoders/general/SimpleErrorDecoder;
-	public fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public synthetic fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;)Ljava/lang/Object;
+	public fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;)Ljava/lang/Void;
 }
 
 public final class eu/vendeli/rethis/shared/decoders/general/SimpleStringDecoder : eu/vendeli/rethis/shared/decoders/ResponseDecoder {
 	public static final field INSTANCE Leu/vendeli/rethis/shared/decoders/general/SimpleStringDecoder;
-	public fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public synthetic fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;)Ljava/lang/Object;
+	public fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;)Ljava/lang/String;
 	public final fun decodeNullable (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;)Ljava/lang/String;
 	public static synthetic fun decodeNullable$default (Leu/vendeli/rethis/shared/decoders/general/SimpleStringDecoder;Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;ILjava/lang/Object;)Ljava/lang/String;
 }
 
 public final class eu/vendeli/rethis/shared/decoders/general/VerbatimStringDecoder : eu/vendeli/rethis/shared/decoders/ResponseDecoder {
 	public static final field INSTANCE Leu/vendeli/rethis/shared/decoders/general/VerbatimStringDecoder;
-	public fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public final fun decodeNullable (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public synthetic fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;)Ljava/lang/Object;
+	public fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;)Ljava/lang/String;
+	public final fun decodeNullable (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;)Ljava/lang/String;
 }
 
 public final class eu/vendeli/rethis/shared/decoders/generic/DumpDecoder : eu/vendeli/rethis/shared/decoders/ResponseDecoder {
 	public static final field INSTANCE Leu/vendeli/rethis/shared/decoders/generic/DumpDecoder;
-	public fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public synthetic fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;)Ljava/lang/Object;
+	public fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;)[B
 }
 
 public final class eu/vendeli/rethis/shared/decoders/generic/WaitAofDecoder : eu/vendeli/rethis/shared/decoders/ResponseDecoder {
 	public static final field INSTANCE Leu/vendeli/rethis/shared/decoders/generic/WaitAofDecoder;
-	public fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;)Leu/vendeli/rethis/shared/response/common/WaitAofResult;
+	public synthetic fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;)Ljava/lang/Object;
 }
 
 public final class eu/vendeli/rethis/shared/decoders/geospatial/GeoPosDecoder : eu/vendeli/rethis/shared/decoders/ResponseDecoder {
 	public static final field INSTANCE Leu/vendeli/rethis/shared/decoders/geospatial/GeoPosDecoder;
-	public fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public synthetic fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;)Ljava/lang/Object;
+	public fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;)Ljava/util/List;
 }
 
 public final class eu/vendeli/rethis/shared/decoders/pubsub/PubSubNumSubDecoder : eu/vendeli/rethis/shared/decoders/ResponseDecoder {
 	public static final field INSTANCE Leu/vendeli/rethis/shared/decoders/pubsub/PubSubNumSubDecoder;
-	public fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public synthetic fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;)Ljava/lang/Object;
+	public fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;)Ljava/util/List;
 }
 
 public final class eu/vendeli/rethis/shared/decoders/pubsub/SubEventDecoder : eu/vendeli/rethis/shared/decoders/ResponseDecoder {
 	public static final field INSTANCE Leu/vendeli/rethis/shared/decoders/pubsub/SubEventDecoder;
-	public fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public synthetic fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;)Ljava/lang/Object;
+	public fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;)Ljava/util/List;
 }
 
 public final class eu/vendeli/rethis/shared/decoders/server/ShutdownDecoder : eu/vendeli/rethis/shared/decoders/ResponseDecoder {
 	public static final field INSTANCE Leu/vendeli/rethis/shared/decoders/server/ShutdownDecoder;
-	public fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;)Ljava/lang/Boolean;
+	public synthetic fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;)Ljava/lang/Object;
 }
 
 public final class eu/vendeli/rethis/shared/decoders/sortedset/ZPopResultDecoder : eu/vendeli/rethis/shared/decoders/ResponseDecoder {
 	public static final field INSTANCE Leu/vendeli/rethis/shared/decoders/sortedset/ZPopResultDecoder;
-	public fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;)Leu/vendeli/rethis/shared/response/stream/ZPopResult;
+	public synthetic fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;)Ljava/lang/Object;
 }
 
 public final class eu/vendeli/rethis/shared/decoders/string/LcsDecoder : eu/vendeli/rethis/shared/decoders/ResponseDecoder {
 	public static final field INSTANCE Leu/vendeli/rethis/shared/decoders/string/LcsDecoder;
-	public fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;)Leu/vendeli/rethis/shared/response/string/LcsResult;
+	public synthetic fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;)Ljava/lang/Object;
 }
 
 public final class eu/vendeli/rethis/shared/request/bitmap/BitOpOption {
@@ -1549,6 +1611,19 @@ public final class eu/vendeli/rethis/shared/response/stream/ZMember {
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class eu/vendeli/rethis/shared/response/stream/ZMemberBA {
+	public fun <init> ([BD)V
+	public final fun component1 ()[B
+	public final fun component2 ()D
+	public final fun copy ([BD)Leu/vendeli/rethis/shared/response/stream/ZMemberBA;
+	public static synthetic fun copy$default (Leu/vendeli/rethis/shared/response/stream/ZMemberBA;[BDILjava/lang/Object;)Leu/vendeli/rethis/shared/response/stream/ZMemberBA;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getMember ()[B
+	public final fun getScore ()D
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
 public final class eu/vendeli/rethis/shared/response/stream/ZPopResult {
 	public fun <init> (Ljava/lang/String;Ljava/lang/String;D)V
 	public final fun component1 ()Ljava/lang/String;
@@ -1619,12 +1694,13 @@ public final class eu/vendeli/rethis/shared/types/Bool : eu/vendeli/rethis/share
 
 public final class eu/vendeli/rethis/shared/types/BulkString : eu/vendeli/rethis/shared/types/RPrimitive {
 	public fun <init> (Ljava/lang/String;)V
-	public final fun component1 ()Ljava/lang/String;
-	public final fun copy (Ljava/lang/String;)Leu/vendeli/rethis/shared/types/BulkString;
-	public static synthetic fun copy$default (Leu/vendeli/rethis/shared/types/BulkString;Ljava/lang/String;ILjava/lang/Object;)Leu/vendeli/rethis/shared/types/BulkString;
+	public fun <init> (Lkotlinx/io/Buffer;)V
+	public final fun component1 ()Lkotlinx/io/Buffer;
+	public final fun copy (Lkotlinx/io/Buffer;)Leu/vendeli/rethis/shared/types/BulkString;
+	public static synthetic fun copy$default (Leu/vendeli/rethis/shared/types/BulkString;Lkotlinx/io/Buffer;ILjava/lang/Object;)Leu/vendeli/rethis/shared/types/BulkString;
 	public fun equals (Ljava/lang/Object;)Z
 	public synthetic fun getValue ()Ljava/lang/Object;
-	public fun getValue ()Ljava/lang/String;
+	public fun getValue ()Lkotlinx/io/Buffer;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -1646,8 +1722,8 @@ public final class eu/vendeli/rethis/shared/types/CommandRequest {
 	public final fun copy (Lkotlinx/io/Buffer;Leu/vendeli/rethis/shared/types/RedisOperation;Z)Leu/vendeli/rethis/shared/types/CommandRequest;
 	public static synthetic fun copy$default (Leu/vendeli/rethis/shared/types/CommandRequest;Lkotlinx/io/Buffer;Leu/vendeli/rethis/shared/types/RedisOperation;ZILjava/lang/Object;)Leu/vendeli/rethis/shared/types/CommandRequest;
 	public fun equals (Ljava/lang/Object;)Z
-	public final fun getBuffer ()Lkotlinx/io/Buffer;
 	public final fun getComputedSlot ()Ljava/lang/Integer;
+	public final fun getData ()Lkotlinx/io/Buffer;
 	public final fun getOperation ()Leu/vendeli/rethis/shared/types/RedisOperation;
 	public fun hashCode ()I
 	public final fun isBlocking ()Z
@@ -1719,6 +1795,11 @@ public final class eu/vendeli/rethis/shared/types/KeyAbsentException : eu/vendel
 	public fun <init> (Ljava/lang/String;Ljava/lang/Throwable;)V
 	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/Throwable;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun getCause ()Ljava/lang/Throwable;
+	public fun getMessage ()Ljava/lang/String;
+}
+
+public final class eu/vendeli/rethis/shared/types/LockLostException : eu/vendeli/rethis/shared/types/ReThisException {
+	public fun <init> (Ljava/lang/String;)V
 	public fun getMessage ()Ljava/lang/String;
 }
 
@@ -1907,6 +1988,14 @@ public final class eu/vendeli/rethis/shared/types/RespCode$Type : java/lang/Enum
 	public static fun values ()[Leu/vendeli/rethis/shared/types/RespCode$Type;
 }
 
+public class eu/vendeli/rethis/shared/types/RespProtocolException : eu/vendeli/rethis/shared/types/ReThisException {
+	public fun <init> (Ljava/lang/String;)V
+}
+
+public final class eu/vendeli/rethis/shared/types/RespUnexpectedEOF : eu/vendeli/rethis/shared/types/RespProtocolException {
+	public fun <init> ()V
+}
+
 public final class eu/vendeli/rethis/shared/types/ResponseParsingException : eu/vendeli/rethis/shared/types/ReThisException {
 	public fun <init> ()V
 	public fun <init> (Ljava/lang/String;Ljava/lang/Throwable;)V
@@ -1964,10 +2053,16 @@ public final class eu/vendeli/rethis/shared/utils/ErrorUtilsKt {
 }
 
 public final class eu/vendeli/rethis/shared/utils/ParsingUtilsKt {
+	public static final field BYTE_0 B
+	public static final field BYTE_9 B
+	public static final field BYTE_MINUS B
 	public static final fun getEMPTY_BUFFER ()Lkotlinx/io/Buffer;
+	public static final fun readCompleteResponseInto (Lio/ktor/utils/io/ByteReadChannel;Lkotlinx/io/Buffer;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
 public final class eu/vendeli/rethis/shared/utils/RTypeUtilsKt {
+	public static final field CARRIAGE_RETURN_BYTE B
+	public static final field NEWLINE_BYTE B
 	public static final fun get__ParserLogger (Leu/vendeli/rethis/shared/types/RType;)Lorg/slf4j/Logger;
 	public static final fun handleEx (Leu/vendeli/rethis/shared/types/RType;)Leu/vendeli/rethis/shared/types/RType;
 	public static final fun isOk (Leu/vendeli/rethis/shared/types/RType;)Z
@@ -1977,5 +2072,10 @@ public final class eu/vendeli/rethis/shared/utils/RTypeUtilsKt {
 
 public final class eu/vendeli/rethis/shared/utils/SlotUtilsKt {
 	public static final fun validateSlot (Ljava/lang/Integer;I)I
+}
+
+public final class eu/vendeli/rethis/shared/utils/StringCodec {
+	public static final field INSTANCE Leu/vendeli/rethis/shared/utils/StringCodec;
+	public final fun decodeToString (Ljava/nio/charset/Charset;Lkotlinx/io/Buffer;)Ljava/lang/String;
 }
 

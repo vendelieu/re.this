@@ -10,7 +10,9 @@ import kotlin.time.Duration
 fun interface PExpireCommand : RedisCommandSpec<Boolean> {
     suspend fun encode(
         key: String,
-        milliseconds: @RedisMeta.OutgoingTimeUnit(TimeUnit.SECONDS) Duration,
-        condition: UpdateStrategyOption?
+        milliseconds:
+            @RedisMeta.OutgoingTimeUnit(TimeUnit.SECONDS)
+            Duration,
+        condition: UpdateStrategyOption?,
     ): CommandRequest
 }

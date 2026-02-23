@@ -10,6 +10,6 @@ import eu.vendeli.rethis.shared.types.RespCode
 fun interface PfMergeCommand : RedisCommandSpec<String> {
     suspend fun encode(
         destkey: String,
-        vararg sourcekey: String
+        vararg sourcekey: String,
     ): CommandRequest
 }

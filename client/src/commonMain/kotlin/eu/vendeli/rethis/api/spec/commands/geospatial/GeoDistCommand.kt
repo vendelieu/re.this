@@ -13,6 +13,6 @@ fun interface GeoDistCommand : RedisCommandSpec<Double> {
         key: String,
         member1: String,
         member2: String,
-        unit: GeoUnit?
+        unit: GeoUnit?,
     ): CommandRequest
 }

@@ -12,6 +12,6 @@ fun interface JsonArrTrimCommand : RedisCommandSpec<Long> {
         key: String,
         path: String,
         start: Long,
-        stop: Long
+        stop: Long,
     ): CommandRequest
 }

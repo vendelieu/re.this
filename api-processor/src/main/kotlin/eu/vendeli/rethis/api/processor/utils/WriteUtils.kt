@@ -3,6 +3,7 @@ package eu.vendeli.rethis.api.processor.utils
 import com.google.devtools.ksp.KspExperimental
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import eu.vendeli.rethis.api.processor.context.CodeGenContext
+import eu.vendeli.rethis.api.processor.context.CollectedTokens
 import eu.vendeli.rethis.api.processor.core.RedisCommandProcessor.Companion.context
 import eu.vendeli.rethis.api.processor.types.*
 
@@ -144,7 +145,7 @@ private fun CodeGenContext.inferWriting(
                     appendLine("buffer.writeBulkString(%L.toString().toByteArray(charset))", pointer ?: fieldAccess)
                 } else actualTokens.forEach { tokenName ->
                     // Collect token and use RedisToken
-                    context[eu.vendeli.rethis.api.processor.context.CollectedTokens]?.addToken(tokenName)
+                    context[CollectedTokens]?.addToken(tokenName)
                     val tokenProperty = tokenName.let {
                         when (it) {
                             "" -> "EMPTY"

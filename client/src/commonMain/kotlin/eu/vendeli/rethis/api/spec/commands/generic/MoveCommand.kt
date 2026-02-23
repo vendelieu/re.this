@@ -10,6 +10,6 @@ import eu.vendeli.rethis.shared.types.RespCode
 fun interface MoveCommand : RedisCommandSpec<Boolean> {
     suspend fun encode(
         key: String,
-        db: Long
+        db: Long,
     ): CommandRequest
 }

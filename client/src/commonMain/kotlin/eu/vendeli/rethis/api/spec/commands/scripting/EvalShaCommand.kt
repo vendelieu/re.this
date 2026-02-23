@@ -14,6 +14,6 @@ fun interface EvalShaCommand : RedisCommandSpec<RType> {
     suspend fun encode(
         sha1: String,
         @RedisMeta.WithSizeParam("numkeys") vararg key: String,
-        arg: List<String>
+        arg: List<String>,
     ): CommandRequest
 }

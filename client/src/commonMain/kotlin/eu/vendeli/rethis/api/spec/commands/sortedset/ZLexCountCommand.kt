@@ -11,6 +11,6 @@ fun interface ZLexCountCommand : RedisCommandSpec<Long> {
     suspend fun encode(
         key: String,
         min: String,
-        max: String
+        max: String,
     ): CommandRequest
 }

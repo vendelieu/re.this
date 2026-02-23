@@ -11,6 +11,6 @@ fun interface SetRangeCommand : RedisCommandSpec<Long> {
     suspend fun encode(
         key: String,
         offset: Long,
-        value: String
+        value: String,
     ): CommandRequest
 }

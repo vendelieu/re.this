@@ -11,6 +11,6 @@ fun interface LRemCommand : RedisCommandSpec<Long> {
     suspend fun encode(
         key: String,
         count: Long,
-        element: String
+        element: String,
     ): CommandRequest
 }

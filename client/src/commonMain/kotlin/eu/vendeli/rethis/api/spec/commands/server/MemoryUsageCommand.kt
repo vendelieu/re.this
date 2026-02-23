@@ -11,6 +11,6 @@ import eu.vendeli.rethis.shared.types.RespCode
 fun interface MemoryUsageCommand : RedisCommandSpec<Long> {
     suspend fun encode(
         key: String,
-        @RedisOption.Token("SAMPLES") count: Long?
+        @RedisOption.Token("SAMPLES") count: Long?,
     ): CommandRequest
 }

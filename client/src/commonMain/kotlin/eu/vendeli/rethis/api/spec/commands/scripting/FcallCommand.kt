@@ -14,6 +14,6 @@ fun interface FcallCommand : RedisCommandSpec<RType> {
     suspend fun encode(
         function: String,
         @RedisMeta.WithSizeParam("numkeys") vararg key: String,
-        arg: List<String>
+        arg: List<String>,
     ): CommandRequest
 }

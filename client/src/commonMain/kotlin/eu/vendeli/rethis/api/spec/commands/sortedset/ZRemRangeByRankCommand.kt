@@ -11,6 +11,6 @@ fun interface ZRemRangeByRankCommand : RedisCommandSpec<Long> {
     suspend fun encode(
         key: String,
         start: Long,
-        stop: Long
+        stop: Long,
     ): CommandRequest
 }

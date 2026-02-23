@@ -10,7 +10,9 @@ import kotlin.time.Duration
 fun interface ExpireCommand : RedisCommandSpec<Boolean> {
     suspend fun encode(
         key: String,
-        seconds: @RedisMeta.OutgoingTimeUnit(TimeUnit.SECONDS) Duration,
-        condition: UpdateStrategyOption?
+        seconds:
+            @RedisMeta.OutgoingTimeUnit(TimeUnit.SECONDS)
+            Duration,
+        condition: UpdateStrategyOption?,
     ): CommandRequest
 }

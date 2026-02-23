@@ -10,6 +10,6 @@ import eu.vendeli.rethis.shared.types.RespCode
 fun interface WaitCommand : RedisCommandSpec<Long> {
     suspend fun encode(
         numreplicas: Long,
-        timeout: Long
+        timeout: Long,
     ): CommandRequest
 }

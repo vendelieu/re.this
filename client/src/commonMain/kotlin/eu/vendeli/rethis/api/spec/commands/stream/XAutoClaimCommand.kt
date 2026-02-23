@@ -13,6 +13,6 @@ fun interface XAutoClaimCommand : RedisCommandSpec<List<RType>> {
         minIdleTime: String,
         start: String,
         @RedisOption.Token("COUNT") count: Long?,
-        @RedisOption.Token("JUSTID") justid: Boolean?
+        @RedisOption.Token("JUSTID") justid: Boolean?,
     ): CommandRequest
 }

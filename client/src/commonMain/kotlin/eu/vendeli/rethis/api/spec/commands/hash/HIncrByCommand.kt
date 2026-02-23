@@ -11,6 +11,6 @@ fun interface HIncrByCommand : RedisCommandSpec<Long> {
     suspend fun encode(
         key: String,
         field: String,
-        increment: Long
+        increment: Long,
     ): CommandRequest
 }

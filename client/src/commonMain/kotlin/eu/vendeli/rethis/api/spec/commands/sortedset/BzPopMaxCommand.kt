@@ -14,6 +14,6 @@ import eu.vendeli.rethis.shared.types.RespCode
 fun interface BzPopMaxCommand : RedisCommandSpec<ZPopResult> {
     suspend fun encode(
         timeout: Double,
-        vararg key: String
+        vararg key: String,
     ): CommandRequest
 }

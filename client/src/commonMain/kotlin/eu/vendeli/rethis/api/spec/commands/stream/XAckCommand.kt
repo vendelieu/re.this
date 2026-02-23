@@ -11,6 +11,6 @@ fun interface XAckCommand : RedisCommandSpec<Long> {
     suspend fun encode(
         key: String,
         group: String,
-        vararg id: String
+        vararg id: String,
     ): CommandRequest
 }

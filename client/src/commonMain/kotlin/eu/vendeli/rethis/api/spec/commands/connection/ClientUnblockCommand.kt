@@ -11,6 +11,6 @@ import eu.vendeli.rethis.shared.types.RespCode
 fun interface ClientUnblockCommand : RedisCommandSpec<Boolean> {
     suspend fun encode(
         clientId: Long,
-        unblockType: ClientUnblockType?
+        unblockType: ClientUnblockType?,
     ): CommandRequest
 }

@@ -12,6 +12,6 @@ import eu.vendeli.rethis.shared.types.RespCode
 fun interface HPersistCommand : RedisCommandSpec<List<Long>> {
     suspend fun encode(
         key: String,
-        @RedisOption.Token("FIELDS") @RedisMeta.WithSizeParam("numfields") vararg field: String
+        @RedisOption.Token("FIELDS") @RedisMeta.WithSizeParam("numfields") vararg field: String,
     ): CommandRequest
 }

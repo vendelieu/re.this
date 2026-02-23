@@ -10,6 +10,6 @@ import eu.vendeli.rethis.shared.types.RespCode
 fun interface LIndexCommand : RedisCommandSpec<String> {
     suspend fun encode(
         key: String,
-        index: Long
+        index: Long,
     ): CommandRequest
 }

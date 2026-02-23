@@ -10,6 +10,6 @@ import eu.vendeli.rethis.shared.types.RespCode
 fun interface XGroupDestroyCommand : RedisCommandSpec<Long> {
     suspend fun encode(
         key: String,
-        group: String
+        group: String,
     ): CommandRequest
 }

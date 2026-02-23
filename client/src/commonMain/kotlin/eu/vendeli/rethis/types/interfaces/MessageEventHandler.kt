@@ -50,8 +50,8 @@ fun MessageHandler.toPubSubHandler(client: ReThis) = object : PubSubHandler {
                     client,
                     StringCodec.decodeToString(
                         client.cfg.charset,
-                        incomingMessage
-                    )
+                        incomingMessage,
+                    ),
                 )
             }
         }

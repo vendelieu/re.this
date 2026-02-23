@@ -13,6 +13,6 @@ fun interface CopyCommand : RedisCommandSpec<Boolean> {
     suspend fun encode(
         source: String,
         destination: String,
-        @RIgnoreSpecAbsence vararg option: CopyOption
+        @RIgnoreSpecAbsence vararg option: CopyOption,
     ): CommandRequest
 }

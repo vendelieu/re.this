@@ -9,6 +9,6 @@ import eu.vendeli.rethis.shared.types.RespCode
 @RedisCommand("STRLEN", RedisOperation.READ, [RespCode.INTEGER])
 fun interface StrlenCommand : RedisCommandSpec<Long> {
     suspend fun encode(
-        key: String
+        key: String,
     ): CommandRequest
 }

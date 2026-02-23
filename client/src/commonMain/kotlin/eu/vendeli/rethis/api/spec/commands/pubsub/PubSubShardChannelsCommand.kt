@@ -9,6 +9,6 @@ import eu.vendeli.rethis.shared.types.RespCode
 @RedisCommand("PUBSUB SHARDCHANNELS", RedisOperation.READ, [RespCode.ARRAY])
 fun interface PubSubShardChannelsCommand : RedisCommandSpec<List<String>> {
     suspend fun encode(
-        pattern: String?
+        pattern: String?,
     ): CommandRequest
 }

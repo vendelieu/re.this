@@ -10,6 +10,6 @@ import eu.vendeli.rethis.shared.types.RespCode
 fun interface RenameNxCommand : RedisCommandSpec<Boolean> {
     suspend fun encode(
         key: String,
-        newkey: String
+        newkey: String,
     ): CommandRequest
 }

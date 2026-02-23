@@ -11,6 +11,6 @@ fun interface JsonNumMultByCommand : RedisCommandSpec<RType> {
     suspend fun encode(
         key: String,
         path: String,
-        value: Double
+        value: Double,
     ): CommandRequest
 }

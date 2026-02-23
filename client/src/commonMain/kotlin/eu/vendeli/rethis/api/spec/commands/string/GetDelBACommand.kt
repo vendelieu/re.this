@@ -9,6 +9,6 @@ import eu.vendeli.rethis.shared.types.RespCode
 @RedisCommand("GETDEL", RedisOperation.WRITE, [RespCode.BULK, RespCode.NULL])
 fun interface GetDelBACommand : RedisCommandSpec<ByteArray> {
     suspend fun encode(
-        key: String
+        key: String,
     ): CommandRequest
 }

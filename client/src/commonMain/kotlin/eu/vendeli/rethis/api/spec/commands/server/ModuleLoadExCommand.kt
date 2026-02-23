@@ -10,5 +10,8 @@ import eu.vendeli.rethis.shared.types.RespCode
 
 @RedisCommand("MODULE LOADEX", RedisOperation.WRITE, [RespCode.SIMPLE_STRING])
 fun interface ModuleLoadExCommand : RedisCommandSpec<Boolean> {
-    suspend fun encode(path: String, @RIgnoreSpecAbsence vararg options: ModuleOption): CommandRequest
+    suspend fun encode(
+        path: String,
+        @RIgnoreSpecAbsence vararg options: ModuleOption,
+    ): CommandRequest
 }

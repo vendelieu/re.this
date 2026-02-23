@@ -11,6 +11,6 @@ fun interface HIncrByFloatCommand : RedisCommandSpec<Double> {
     suspend fun encode(
         key: String,
         field: String,
-        increment: Double
+        increment: Double,
     ): CommandRequest
 }

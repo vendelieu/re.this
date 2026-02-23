@@ -12,6 +12,6 @@ fun interface JsonArrInsertCommand : RedisCommandSpec<Long> {
         key: String,
         path: String,
         index: Long,
-        vararg value: String
+        vararg value: String,
     ): CommandRequest
 }

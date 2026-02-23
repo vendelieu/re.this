@@ -1,7 +1,7 @@
 package eu.vendeli.rethis.wrappers
 
 import eu.vendeli.rethis.ReThis
-//import eu.vendeli.rethis.command.stream.xReadGroup
+// import eu.vendeli.rethis.command.stream.xReadGroup
 import eu.vendeli.rethis.shared.request.stream.XReadGroupKeyIds
 import eu.vendeli.rethis.shared.request.stream.XReadGroupOption
 import eu.vendeli.rethis.shared.types.RType

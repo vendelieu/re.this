@@ -11,6 +11,6 @@ fun interface ZCountCommand : RedisCommandSpec<Long> {
     suspend fun encode(
         key: String,
         min: Double,
-        max: Double
+        max: Double,
     ): CommandRequest
 }

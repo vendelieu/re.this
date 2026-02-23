@@ -10,6 +10,6 @@ import eu.vendeli.rethis.shared.types.RespCode
 fun interface SPublishCommand : RedisCommandSpec<Long> {
     suspend fun encode(
         shardchannel: String,
-        message: String
+        message: String,
     ): CommandRequest
 }

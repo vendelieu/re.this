@@ -14,6 +14,6 @@ import eu.vendeli.rethis.shared.types.RespCode
 fun interface BlPopCommand : RedisCommandSpec<PopResult> {
     suspend fun encode(
         vararg key: String,
-        timeout: Double
+        timeout: Double,
     ): CommandRequest
 }

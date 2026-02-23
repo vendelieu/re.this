@@ -11,6 +11,6 @@ fun interface JsonStrAppendCommand : RedisCommandSpec<Long> {
     suspend fun encode(
         key: String,
         value: String,
-        path: String?
+        path: String?,
     ): CommandRequest
 }

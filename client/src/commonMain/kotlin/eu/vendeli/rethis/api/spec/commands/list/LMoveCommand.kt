@@ -14,6 +14,6 @@ fun interface LMoveCommand : RedisCommandSpec<String> {
         source: String,
         destination: String,
         @RedisOption.Name("wherefrom") whereFrom: MoveDirection,
-        @RedisOption.Name("whereto") whereTo: MoveDirection
+        @RedisOption.Name("whereto") whereTo: MoveDirection,
     ): CommandRequest
 }

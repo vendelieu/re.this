@@ -10,6 +10,6 @@ import eu.vendeli.rethis.shared.types.RespCode
 fun interface JsonObjKeysCommand : RedisCommandSpec<List<String>> {
     suspend fun encode(
         key: String,
-        path: String?
+        path: String?,
     ): CommandRequest
 }
