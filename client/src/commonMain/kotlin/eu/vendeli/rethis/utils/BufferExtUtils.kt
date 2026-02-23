@@ -63,6 +63,7 @@ fun Buffer.writeBooleanArg(value: Boolean, charset: Charset) =
 fun Buffer.writeArrayHeader(count: Int) {
     append(RespCode.ARRAY)
     writeDecimalLong(count.toLong())
+    appendEOL()
 }
 
 fun Buffer.writeBulkString(data: ByteArray) {
