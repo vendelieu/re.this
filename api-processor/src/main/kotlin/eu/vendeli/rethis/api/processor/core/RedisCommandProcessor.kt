@@ -35,7 +35,7 @@ class RedisCommandProcessor(
         // DEBUG: Log ALL found command specs
         logger.warn("=== KSP FOUND ${resolvedCommands.size} COMMAND SPECS ===")
         resolvedCommands.forEach { (cmd, klass) ->
-            logger.warn("  - ${klass.joinToString { it.simpleName.toString() }} -> ${cmd.name}")
+            logger.warn("  - ${klass.joinToString { it.simpleName.asString() }} -> ${cmd.name}")
         }
         logger.warn("=== END OF FOUND SPECS ===")
 

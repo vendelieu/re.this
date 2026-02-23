@@ -1,57 +1,53 @@
 [
     {
-        "jmhVersion" : "1.21",
-        "benchmark" : "eu.vendeli.rethis.benchmarks.JedisBenchmark.jedisSetGet",
+        "jmhVersion" : "1.37",
+        "benchmark" : "eu.vendeli.rethis.api.spec.benchmarks.JedisBenchmark.jedisSetGet",
         "mode" : "thrpt",
-        "threads" : 1,
+        "threads" : 4,
         "forks" : 1,
-        "jvm" : "/home/vendelieu/.jdks/azul-21.0.4/bin/java",
+        "jvm" : "/Users/dzhamalail.tsatsaev/Library/Java/JavaVirtualMachines/openjdk-24.0.1/Contents/Home/bin/java",
         "jvmArgs" : [
             "-Dfile.encoding=UTF-8",
             "-Duser.country=US",
             "-Duser.language=en",
-            "-Duser.variant",
-            "-Xms12g",
-            "-Xmx12g",
-            "-Xss2m",
-            "-XX:MaxMetaspaceSize=1g"
+            "-Duser.variant"
         ],
-        "jdkVersion" : "21.0.4",
+        "jdkVersion" : "24.0.1",
         "vmName" : "OpenJDK 64-Bit Server VM",
-        "vmVersion" : "21.0.4+7-LTS",
-        "warmupIterations" : 2,
+        "vmVersion" : "24.0.1+9-30",
+        "warmupIterations" : 5,
         "warmupTime" : "1000 ms",
         "warmupBatchSize" : 1,
         "measurementIterations" : 5,
         "measurementTime" : "1000 ms",
         "measurementBatchSize" : 1,
         "primaryMetric" : {
-            "score" : 15726.988779646781,
-            "scoreError" : 1939.9981705030168,
+            "score" : 2038.9246316010122,
+            "scoreError" : 38.038919891305696,
             "scoreConfidence" : [
-                13786.990609143764,
-                17666.986950149796
+                2000.8857117097064,
+                2076.963551492318
             ],
             "scorePercentiles" : {
-                "0.0" : 15372.423465739048,
-                "50.0" : 15599.184239355354,
-                "90.0" : 16609.557210812884,
-                "95.0" : 16609.557210812884,
-                "99.0" : 16609.557210812884,
-                "99.9" : 16609.557210812884,
-                "99.99" : 16609.557210812884,
-                "99.999" : 16609.557210812884,
-                "99.9999" : 16609.557210812884,
-                "100.0" : 16609.557210812884
+                "0.0" : 2022.9480931027335,
+                "50.0" : 2039.4462420379189,
+                "90.0" : 2049.6305387847106,
+                "95.0" : 2049.6305387847106,
+                "99.0" : 2049.6305387847106,
+                "99.9" : 2049.6305387847106,
+                "99.99" : 2049.6305387847106,
+                "99.999" : 2049.6305387847106,
+                "99.9999" : 2049.6305387847106,
+                "100.0" : 2049.6305387847106
             },
             "scoreUnit" : "ops/s",
             "rawData" : [
                 [
-                    15611.288881127748,
-                    15442.490101198871,
-                    15372.423465739048,
-                    16609.557210812884,
-                    15599.184239355354
+                    2039.1859699584866,
+                    2043.4123141212124,
+                    2049.6305387847106,
+                    2039.4462420379189,
+                    2022.9480931027335
                 ]
             ]
         },
@@ -59,58 +55,54 @@
         }
     },
     {
-        "jmhVersion" : "1.21",
-        "benchmark" : "eu.vendeli.rethis.benchmarks.KredsBenchmark.kredsSetGet",
+        "jmhVersion" : "1.37",
+        "benchmark" : "eu.vendeli.rethis.api.spec.benchmarks.KredsBenchmark.kredsSetGet",
         "mode" : "thrpt",
-        "threads" : 1,
+        "threads" : 4,
         "forks" : 1,
-        "jvm" : "/home/vendelieu/.jdks/azul-21.0.4/bin/java",
+        "jvm" : "/Users/dzhamalail.tsatsaev/Library/Java/JavaVirtualMachines/openjdk-24.0.1/Contents/Home/bin/java",
         "jvmArgs" : [
             "-Dfile.encoding=UTF-8",
             "-Duser.country=US",
             "-Duser.language=en",
-            "-Duser.variant",
-            "-Xms12g",
-            "-Xmx12g",
-            "-Xss2m",
-            "-XX:MaxMetaspaceSize=1g"
+            "-Duser.variant"
         ],
-        "jdkVersion" : "21.0.4",
+        "jdkVersion" : "24.0.1",
         "vmName" : "OpenJDK 64-Bit Server VM",
-        "vmVersion" : "21.0.4+7-LTS",
-        "warmupIterations" : 2,
+        "vmVersion" : "24.0.1+9-30",
+        "warmupIterations" : 5,
         "warmupTime" : "1000 ms",
         "warmupBatchSize" : 1,
         "measurementIterations" : 5,
         "measurementTime" : "1000 ms",
         "measurementBatchSize" : 1,
         "primaryMetric" : {
-            "score" : 839860.8996612927,
-            "scoreError" : 28180.92799178335,
+            "score" : 448.6171695272965,
+            "scoreError" : 83.81861440580043,
             "scoreConfidence" : [
-                811679.9716695093,
-                868041.827653076
+                364.79855512149607,
+                532.4357839330969
             ],
             "scorePercentiles" : {
-                "0.0" : 830535.9000848006,
-                "50.0" : 837527.9207054375,
-                "90.0" : 848408.0713877481,
-                "95.0" : 848408.0713877481,
-                "99.0" : 848408.0713877481,
-                "99.9" : 848408.0713877481,
-                "99.99" : 848408.0713877481,
-                "99.999" : 848408.0713877481,
-                "99.9999" : 848408.0713877481,
-                "100.0" : 848408.0713877481
+                "0.0" : 430.4675086171432,
+                "50.0" : 438.19108362876545,
+                "90.0" : 483.0564416069937,
+                "95.0" : 483.0564416069937,
+                "99.0" : 483.0564416069937,
+                "99.9" : 483.0564416069937,
+                "99.99" : 483.0564416069937,
+                "99.999" : 483.0564416069937,
+                "99.9999" : 483.0564416069937,
+                "100.0" : 483.0564416069937
             },
             "scoreUnit" : "ops/s",
             "rawData" : [
                 [
-                    837527.9207054375,
-                    836728.5258125965,
-                    830535.9000848006,
-                    846104.0803158806,
-                    848408.0713877481
+                    438.19108362876545,
+                    483.0564416069937,
+                    456.95297761746076,
+                    434.4178361661195,
+                    430.4675086171432
                 ]
             ]
         },
@@ -118,58 +110,54 @@
         }
     },
     {
-        "jmhVersion" : "1.21",
-        "benchmark" : "eu.vendeli.rethis.benchmarks.LettuceBenchmark.lettuceSetGet",
+        "jmhVersion" : "1.37",
+        "benchmark" : "eu.vendeli.rethis.api.spec.benchmarks.LettuceBenchmark.lettuceSetGet",
         "mode" : "thrpt",
-        "threads" : 1,
+        "threads" : 4,
         "forks" : 1,
-        "jvm" : "/home/vendelieu/.jdks/azul-21.0.4/bin/java",
+        "jvm" : "/Users/dzhamalail.tsatsaev/Library/Java/JavaVirtualMachines/openjdk-24.0.1/Contents/Home/bin/java",
         "jvmArgs" : [
             "-Dfile.encoding=UTF-8",
             "-Duser.country=US",
             "-Duser.language=en",
-            "-Duser.variant",
-            "-Xms12g",
-            "-Xmx12g",
-            "-Xss2m",
-            "-XX:MaxMetaspaceSize=1g"
+            "-Duser.variant"
         ],
-        "jdkVersion" : "21.0.4",
+        "jdkVersion" : "24.0.1",
         "vmName" : "OpenJDK 64-Bit Server VM",
-        "vmVersion" : "21.0.4+7-LTS",
-        "warmupIterations" : 2,
+        "vmVersion" : "24.0.1+9-30",
+        "warmupIterations" : 5,
         "warmupTime" : "1000 ms",
         "warmupBatchSize" : 1,
         "measurementIterations" : 5,
         "measurementTime" : "1000 ms",
         "measurementBatchSize" : 1,
         "primaryMetric" : {
-            "score" : 1380333.188066156,
-            "scoreError" : 6181093.607227963,
+            "score" : 1747.721308560275,
+            "scoreError" : 65.42253205176577,
             "scoreConfidence" : [
-                -4800760.419161808,
-                7561426.795294119
+                1682.2987765085093,
+                1813.1438406120408
             ],
             "scorePercentiles" : {
-                "0.0" : 14373.7961988482,
-                "50.0" : 430277.194467646,
-                "90.0" : 3582405.2756772395,
-                "95.0" : 3582405.2756772395,
-                "99.0" : 3582405.2756772395,
-                "99.9" : 3582405.2756772395,
-                "99.99" : 3582405.2756772395,
-                "99.999" : 3582405.2756772395,
-                "99.9999" : 3582405.2756772395,
-                "100.0" : 3582405.2756772395
+                "0.0" : 1724.7260236593966,
+                "50.0" : 1747.3167547395346,
+                "90.0" : 1772.3892044576746,
+                "95.0" : 1772.3892044576746,
+                "99.0" : 1772.3892044576746,
+                "99.9" : 1772.3892044576746,
+                "99.99" : 1772.3892044576746,
+                "99.999" : 1772.3892044576746,
+                "99.9999" : 1772.3892044576746,
+                "100.0" : 1772.3892044576746
             },
             "scoreUnit" : "ops/s",
             "rawData" : [
                 [
-                    2595479.4783812338,
-                    3582405.2756772395,
-                    279130.1956058124,
-                    14373.7961988482,
-                    430277.194467646
+                    1747.3167547395346,
+                    1749.9497765277458,
+                    1772.3892044576746,
+                    1744.2247834170225,
+                    1724.7260236593966
                 ]
             ]
         },
@@ -177,58 +165,54 @@
         }
     },
     {
-        "jmhVersion" : "1.21",
-        "benchmark" : "eu.vendeli.rethis.benchmarks.RethisBenchmark.rethisSetGet",
+        "jmhVersion" : "1.37",
+        "benchmark" : "eu.vendeli.rethis.api.spec.benchmarks.RethisBenchmark.rethisSetGet",
         "mode" : "thrpt",
-        "threads" : 1,
+        "threads" : 4,
         "forks" : 1,
-        "jvm" : "/home/vendelieu/.jdks/azul-21.0.4/bin/java",
+        "jvm" : "/Users/dzhamalail.tsatsaev/Library/Java/JavaVirtualMachines/openjdk-24.0.1/Contents/Home/bin/java",
         "jvmArgs" : [
             "-Dfile.encoding=UTF-8",
             "-Duser.country=US",
             "-Duser.language=en",
-            "-Duser.variant",
-            "-Xms12g",
-            "-Xmx12g",
-            "-Xss2m",
-            "-XX:MaxMetaspaceSize=1g"
+            "-Duser.variant"
         ],
-        "jdkVersion" : "21.0.4",
+        "jdkVersion" : "24.0.1",
         "vmName" : "OpenJDK 64-Bit Server VM",
-        "vmVersion" : "21.0.4+7-LTS",
-        "warmupIterations" : 2,
+        "vmVersion" : "24.0.1+9-30",
+        "warmupIterations" : 5,
         "warmupTime" : "1000 ms",
         "warmupBatchSize" : 1,
         "measurementIterations" : 5,
         "measurementTime" : "1000 ms",
         "measurementBatchSize" : 1,
         "primaryMetric" : {
-            "score" : 1452718.5077546318,
-            "scoreError" : 1341935.9327286524,
+            "score" : 2171.0967452456416,
+            "scoreError" : 479.80680463810825,
             "scoreConfidence" : [
-                110782.57502597943,
-                2794654.440483284
+                1691.2899406075335,
+                2650.9035498837497
             ],
             "scorePercentiles" : {
-                "0.0" : 956542.6462258053,
-                "50.0" : 1477393.2015581273,
-                "90.0" : 1869051.7252201173,
-                "95.0" : 1869051.7252201173,
-                "99.0" : 1869051.7252201173,
-                "99.9" : 1869051.7252201173,
-                "99.99" : 1869051.7252201173,
-                "99.999" : 1869051.7252201173,
-                "99.9999" : 1869051.7252201173,
-                "100.0" : 1869051.7252201173
+                "0.0" : 1967.8106555614195,
+                "50.0" : 2189.615147950496,
+                "90.0" : 2292.2798195624396,
+                "95.0" : 2292.2798195624396,
+                "99.0" : 2292.2798195624396,
+                "99.9" : 2292.2798195624396,
+                "99.99" : 2292.2798195624396,
+                "99.999" : 2292.2798195624396,
+                "99.9999" : 2292.2798195624396,
+                "100.0" : 2292.2798195624396
             },
             "scoreUnit" : "ops/s",
             "rawData" : [
                 [
-                    1659390.1950222743,
-                    956542.6462258053,
-                    1477393.2015581273,
-                    1301214.7707468346,
-                    1869051.7252201173
+                    2292.2798195624396,
+                    2159.7038382901815,
+                    2246.0742648636733,
+                    1967.8106555614195,
+                    2189.615147950496
                 ]
             ]
         },
