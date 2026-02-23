@@ -18,9 +18,10 @@ data class RConnection(
     @ReThisInternal
     @OptIn(InternalAPI::class, InternalIoApi::class)
     suspend fun doRequest(payload: Buffer): Buffer {
-        COMMON_LOGGER.trace { "Request:\n${payload.copy().readString()}" }
+        val payloadCopy = payload.copy()
+        COMMON_LOGGER.trace { "Request:\n${payloadCopy.readString()}" }
 
-        output.writeBuffer.transferFrom(payload)
+        output.writeBuffer(payload)
         output.flush()
 
         val response = Buffer()
@@ -37,7 +38,7 @@ data class RConnection(
             "Request:\n${payload.joinToString("\n") { it.copy().readString() }}"
         }
         for (request in payload) {
-            output.writeBuffer.transferFrom(request)
+            output.writeBuffer(request)
         }
         output.flush()
 

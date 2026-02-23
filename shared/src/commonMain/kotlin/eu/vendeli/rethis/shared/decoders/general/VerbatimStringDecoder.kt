@@ -12,7 +12,7 @@ import kotlinx.io.readLineStrict
 
 
 object VerbatimStringDecoder : ResponseDecoder<String> {
-    override suspend fun decode(input: Buffer, charset: Charset, code: RespCode?,): String {
+    override fun decode(input: Buffer, charset: Charset, code: RespCode?,): String {
         if (input == EMPTY_BUFFER) return ""
         if (code == null) input.resolveToken(RespCode.VERBATIM_STRING)
 
@@ -23,7 +23,7 @@ object VerbatimStringDecoder : ResponseDecoder<String> {
         return input.readLineStrict()
     }
 
-    suspend fun decodeNullable(input: Buffer, charset: Charset, code: RespCode?,): String? {
+    fun decodeNullable(input: Buffer, charset: Charset, code: RespCode?,): String? {
         if (input == EMPTY_BUFFER) return ""
         if (code == null) input.resolveToken(RespCode.VERBATIM_STRING)
 

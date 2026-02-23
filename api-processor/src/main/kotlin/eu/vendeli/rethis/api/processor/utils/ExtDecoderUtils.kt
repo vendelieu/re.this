@@ -1,6 +1,7 @@
 package eu.vendeli.rethis.api.processor.utils
 
 import com.squareup.kotlinpoet.BOOLEAN
+import com.squareup.kotlinpoet.BYTE_ARRAY
 import com.squareup.kotlinpoet.CodeBlock
 import com.squareup.kotlinpoet.DOUBLE
 import com.squareup.kotlinpoet.ksp.toClassName
@@ -63,7 +64,8 @@ internal fun CodeBlock.Builder.writePlainDecoder(code: RespCode) {
 
     val decoder = when {
         isReturnByteArray && code == RespCode.BULK -> BulkByteArrayDecoder::class.qualifiedName!!
-        else -> plainDecoders[code] ?: throw ReThisException("Unsupported response type for plain decoder: ${code.name} [${currName()}]")
+        else -> plainDecoders[code]
+            ?: throw ReThisException("Unsupported response type for plain decoder: ${code.name} [${currName()}]")
     }
     addImport(decoder)
 
@@ -81,6 +83,7 @@ internal fun CodeBlock.Builder.writePlainDecoder(code: RespCode) {
         code != RespCode.BULK && isReturnByteArray -> {
             statement.append(".encodeToByteArray()")
         }
+
         code.isString() && isReturnDouble -> {
             if (statement[10] == DECODE_STRING_N[10]) statement.append("?")
             statement.append(".toDouble()")
@@ -106,8 +109,8 @@ internal fun CodeBlock.Builder.writeCollectionDecoder(code: RespCode) {
 
     val decoderOptions = collectionDecoders[code]
         ?: throw ReThisException("Unsupported response type for collection decoder: ${code.name} [${currName()}]")
-    val decoder =
-        decoderOptions[argument] ?: throw ReThisException("Unsupported type for collection decoder: $argument [${currName()}]")
+    val decoder = decoderOptions[argument]
+        ?: throw ReThisException("Unsupported type for collection decoder: $argument [${currName()}]")
     addImport(decoder)
 
     addStatement(baseStatement, decoder.name)
@@ -118,7 +121,8 @@ internal fun CodeBlock.Builder.writeMapDecoder() {
     val baseArg = currentCmd.arguments.last().toTypeName()
     val argument = baseArg.copy(false)
 
-    val decoder = mapDecoders[argument] ?: throw ReThisException("Unsupported type for map decoder: $argument [${currName()}]")
+    val decoder =
+        mapDecoders[argument] ?: throw ReThisException("Unsupported type for map decoder: $argument [${currName()}]")
     addImport(decoder)
 
     val baseStatement = if (baseArg.isNullable) DECODE_STRING_N else DECODE_STRING

@@ -3,6 +3,7 @@ package eu.vendeli.rethis.types.interfaces
 import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.shared.types.BulkString
 import eu.vendeli.rethis.shared.types.RType
+//import eu.vendeli.rethis.shared.utils.StringCodec
 import eu.vendeli.rethis.types.common.PubSubKind
 import eu.vendeli.rethis.types.common.SubscribeTarget
 import io.ktor.utils.io.charsets.*
@@ -46,7 +47,8 @@ fun MessageHandler.toPubSubHandler(client: ReThis) = object : PubSubHandler {
             }
 
             is MessageEventHandler -> {
-                onMessage(client, client.cfg.charsetDecoder.decode(incomingMessage))
+                TODO()
+//                onMessage(client, StringCodec.decodeToString(client.cfg.charset, incomingMessage))
             }
         }
     }

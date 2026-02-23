@@ -8,6 +8,7 @@ import com.squareup.kotlinpoet.ksp.toTypeName
 import eu.vendeli.rethis.api.processor.context.CodeGenContext
 import eu.vendeli.rethis.api.processor.core.LibTreePlanter
 import eu.vendeli.rethis.api.processor.core.RedisCommandProcessor.Companion.context
+import eu.vendeli.rethis.api.processor.types.EncodePhase
 import eu.vendeli.rethis.api.processor.types.WriteOpProps
 import eu.vendeli.rethis.api.processor.types.emitOp
 import eu.vendeli.rethis.api.processor.types.filterWithoutKey
@@ -16,12 +17,9 @@ import eu.vendeli.rethis.api.processor.types.filterWithoutKey
 internal fun addEncoderCode() {
     val encodeCode = CodeBlock.builder()
     addImport(
-        "kotlinx.io.Buffer",
-        "kotlinx.io.writeString",
         "eu.vendeli.rethis.shared.utils.CRC16",
         "eu.vendeli.rethis.shared.types.CommandRequest",
         "eu.vendeli.rethis.shared.types.RedisOperation",
-        "io.ktor.utils.io.core.toByteArray",
     )
 
     val specSigArguments = context.currentCommand.encodeFunction.parameters.associate { param ->
@@ -35,16 +33,21 @@ internal fun addEncoderCode() {
     val ops = buildWritePlan(context.enrichedTree)
 
     if (!context.currentCommand.hasCustomEncoder) {
-        encodeCode.addStatement("va%L buffer = Buffer()", if (context.currentCommand.haveVaryingSize) "r" else "l")
-
-        if (context.currentCommand.haveVaryingSize) {
-            val baseSize = context.currentCommand.command.name.split(' ').size
-            encodeCode.addStatement("var size = $baseSize")
-        }
-        encodeCode.addStatement("COMMAND_HEADER.copyTo(buffer)")
+        val baseSize = context.currentCommand.command.name.split(' ').size
+        encodeCode.addStatement("var argCount = $baseSize")
 
         context += CodeGenContext(encodeCode)
-        ops.forEach { it.emitOp(encode = true) }
+        ops.forEach { it.emitOp(EncodePhase.SIZE) }
+
+        addImport("kotlinx.io.Buffer")
+        encodeCode.addStatement("val buffer = Buffer()")
+        if (context.currentCommand.haveVaryingSize) {
+            addImport("eu.vendeli.rethis.utils.writeArrayHeader")
+            encodeCode.addStatement("buffer.writeArrayHeader(argCount)")
+        }
+        encodeCode.addStatement("buffer.write(COMMAND_HEADER)")
+
+        ops.forEach { it.emitOp(EncodePhase.WRITE) }
 
         encodeCode.addCommandSpecDeclaration()
     } else {
@@ -53,7 +56,6 @@ internal fun addEncoderCode() {
 
     context.typeSpec.addFunction(
         FunSpec.builder("encode")
-            .addModifiers(KModifier.SUSPEND)
             .apply {
                 addParameter("charset", charsetClassName)
                 specSigArguments.forEach { param ->
@@ -81,7 +83,7 @@ internal fun addEncoderCode() {
         addStatement("var slot: Int? = null")
         context += CodeGenContext(this)
         val slotOps = ops.mapNotNull { it.filterWithoutKey() }
-        slotOps.forEach { it.emitOp(encode = false) }
+        slotOps.forEach { it.emitOp(EncodePhase.SLOT) }
 
         slotOps.findWrappedCall { it.props.contains(WriteOpProps.COLLECTION) }?.also {
             addImport("eu.vendeli.rethis.shared.types.KeyAbsentException")
@@ -96,7 +98,6 @@ internal fun addEncoderCode() {
 
     context.typeSpec.addFunction(
         FunSpec.builder("encodeWithSlot")
-            .addModifiers(KModifier.SUSPEND, KModifier.INLINE)
             .apply {
                 addParameter("charset", charsetClassName)
                 specSigArguments.forEach { param ->

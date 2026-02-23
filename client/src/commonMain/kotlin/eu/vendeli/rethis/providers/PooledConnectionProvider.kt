@@ -16,7 +16,7 @@ internal class PooledConnectionProvider(
         ConnectionPool(node.socket, cfg, connectionFactory, rootJob)
     }
 
-    override suspend fun execute(request: CommandRequest): Buffer = withConnection { it.doRequest(request.buffer) }
+    override suspend fun execute(request: CommandRequest): Buffer = withConnection { it.doRequest(request.data) }
 
     override fun close() {
         if (client.cfg.pool.closeGracefully) coRunBlocking { pool.closeGracefully() }

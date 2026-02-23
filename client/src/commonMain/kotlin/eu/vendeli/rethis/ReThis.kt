@@ -39,7 +39,7 @@ class ReThis internal constructor(
     internal val connectionFactory = ConnectionFactory(cfg, rootJob)
     internal val connectionProviderFactory = DefaultConnectionProviderFactory(this)
     internal val topology = topologyBlock()
-    internal val scope = CoroutineScope(rootJob + cfg.dispatcher + CoroutineName(CLIENT_NAME))
+    internal val scope = CoroutineScope(rootJob + cfg.executionDispatcher + CoroutineName(CLIENT_NAME))
 
     val subscriptions = SubscriptionManager()
     val isActive get() = rootJob.isActive
@@ -96,7 +96,7 @@ class ReThis internal constructor(
 
         val multiCommand = MultiCommandCodec.encode(cfg.charset)
         return withConn(topology.route(multiCommand), coLocalCon?.connection) { conn ->
-            val tx = MultiCommandCodec.decode(conn.doRequest(multiCommand.buffer), cfg.charset)
+            val tx = MultiCommandCodec.decode(conn.doRequest(multiCommand.data), cfg.charset)
             if (!tx) throw TransactionInvalidStateException("Failed to start transaction")
             logger.debug { "Started transaction" }
 
@@ -107,12 +107,12 @@ class ReThis internal constructor(
                 }.join()
 
             if (e != null) {
-                conn.doRequest(DiscardCommandCodec.encode(cfg.charset).buffer)
+                conn.doRequest(DiscardCommandCodec.encode(cfg.charset).data)
                 logger.error("Transaction canceled", e)
                 throw TransactionInvalidStateException("Transaction canceled due to exception", e)
             }
 
-            val exec = conn.doRequest(ExecCommandCodec.encode(cfg.charset).buffer)
+            val exec = conn.doRequest(ExecCommandCodec.encode(cfg.charset).data)
             logger.debug { "Transaction completed" }
 
             ExecCommandCodec.decode(exec, cfg.charset)

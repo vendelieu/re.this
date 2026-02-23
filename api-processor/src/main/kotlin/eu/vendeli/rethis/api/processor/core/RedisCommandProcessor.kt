@@ -41,6 +41,8 @@ class RedisCommandProcessor(
         if (resolvedCommands.isEmpty()) return emptyList()
 
         context += ResolvedSpecs(resolvedCommands)
+        context += eu.vendeli.rethis.api.processor.context.CollectedTokens()
+
         loadGlobalCtx()
 
         // Iterate over each command and ALL its specs

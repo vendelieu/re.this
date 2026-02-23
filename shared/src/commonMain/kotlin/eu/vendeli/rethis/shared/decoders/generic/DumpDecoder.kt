@@ -13,7 +13,7 @@ import kotlinx.io.Buffer
 
 object DumpDecoder : ResponseDecoder<ByteArray?> {
     private val EMPTY_BA = ByteArray(0)
-    override suspend fun decode(
+    override fun decode(
         input: Buffer,
         charset: Charset,
         code: RespCode?,

@@ -10,7 +10,7 @@ import kotlinx.io.Buffer
 import kotlinx.io.readLineStrict
 
 object SetStringDecoder : ResponseDecoder<Set<String>> {
-    override suspend fun decode(
+    override fun decode(
         input: Buffer,
         charset: Charset,
         code: RespCode?,

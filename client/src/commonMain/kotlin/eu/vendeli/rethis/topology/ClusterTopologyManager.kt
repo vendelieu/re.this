@@ -13,7 +13,6 @@ import eu.vendeli.rethis.types.common.ClusterSnapshot
 import eu.vendeli.rethis.utils.toAddress
 import eu.vendeli.rethis.utils.toHostAndPort
 import eu.vendeli.rethis.utils.withRetry
-import io.ktor.utils.io.charsets.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -30,7 +29,7 @@ class ClusterTopologyManager(
     private val logger = cfg.loggerFactory.get("eu.vendeli.rethis.topology.ClusterTopologyManager")
     private val snapshotRef: AtomicReference<ClusterSnapshot?> = AtomicReference(null)
     private val refreshMutex = Mutex()
-    private val scope = CoroutineScope(cfg.dispatcher + Job(client.rootJob))
+    private val scope = CoroutineScope(cfg.generalDispatcher + Job(client.rootJob))
 
     init {
         logger.info("Connecting to $initialNodes")
@@ -103,7 +102,7 @@ class ClusterTopologyManager(
     override suspend fun handleFailure(request: CommandRequest, exception: Throwable): Buffer = when (exception) {
         is RedirectAskException -> {
             route(request).withConnection { conn ->
-                conn.doBatchRequest(listOf(AskingCommandCodec.encode(cfg.charset).buffer, request.buffer))
+                conn.doBatchRequest(listOf(AskingCommandCodec.encode(cfg.charset).data, request.data))
             }
         }
 
@@ -149,16 +148,16 @@ class ClusterTopologyManager(
     private suspend fun fetchClusterSlots(): List<ClusterNode> {
         val initialNodes = ArrayDeque(initialNodes)
         return withRetry(cfg) {
-            val req = ClusterSlotsCommandCodec.encode(Charsets.UTF_8)
+            val req = ClusterSlotsCommandCodec.encode(cfg.charset)
             val conn = client.connectionFactory.createConnOrNull(initialNodes.removeFirst().socket)
                 ?: throw ClusterException("Can't create connection while fetching cluster slots")
             val response = try {
-                conn.doRequest(req.buffer)
+                conn.doRequest(req.data)
             } finally {
                 client.connectionFactory.dispose(conn)
             }
 
-            ClusterSlotsCommandCodec.decode(response, Charsets.UTF_8).nodes
+            ClusterSlotsCommandCodec.decode(response, cfg.charset).nodes
         }
     }
 }

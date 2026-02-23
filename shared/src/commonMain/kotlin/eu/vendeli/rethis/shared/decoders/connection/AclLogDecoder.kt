@@ -10,7 +10,7 @@ import kotlinx.io.Buffer
 
 
 object AclLogDecoder : ResponseDecoder<List<String>> {
-    override suspend fun decode(
+    override fun decode(
         input: Buffer,
         charset: Charset,
         code: RespCode?,

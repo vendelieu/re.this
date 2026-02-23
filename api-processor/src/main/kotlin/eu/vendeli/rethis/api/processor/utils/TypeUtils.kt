@@ -1,6 +1,7 @@
 package eu.vendeli.rethis.api.processor.utils
 
 import com.google.devtools.ksp.symbol.*
+import com.squareup.kotlinpoet.BYTE_ARRAY
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.LONG
 import com.squareup.kotlinpoet.STRING
@@ -16,7 +17,6 @@ import eu.vendeli.rethis.shared.types.RespCode
 internal val charsetClassName = ClassName("io.ktor.utils.io.charsets", "Charset")
 internal val commandRequestClassName = CommandRequest::class.asClassName()
 internal val RTYPE = RType::class.asClassName()
-internal val BYTE_ARRAY = ByteArray::class.asClassName()
 
 internal val plainDecoders = mapOf(
     RespCode.SIMPLE_STRING to SimpleStringDecoder::class.qualifiedName,
@@ -74,6 +74,8 @@ internal fun KSAnnotated.isStdType() =
     this is KSClassDeclaration && qualifiedName?.getQualifier()?.startsWith("kotlin") == true
 
 internal fun KSDeclaration.isTimeType() = qualifiedName?.getQualifier()?.startsWith("kotlin.time") == true
+internal fun KSDeclaration.isInstant() = qualifiedName?.asString() == "kotlin.time.Instant"
+internal fun KSDeclaration.isDuration() = qualifiedName?.asString() == "kotlin.time.Duration"
 
 internal fun KSDeclaration.isEnum() = this is KSClassDeclaration && classKind == ClassKind.ENUM_CLASS
 internal fun KSDeclaration.isBool() = qualifiedName?.asString().let { it == "kotlin.Boolean" || it == "boolean" }

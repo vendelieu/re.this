@@ -34,7 +34,7 @@ suspend fun ReThis.registerSubscription(
         subscriptions.registerSubscription(target, providerResolved, handler, job)
 
         try {
-            conn.doRequest(target.encode(cfg.charset).buffer)
+            conn.doRequest(target.encode(cfg.charset).data)
 
             while (isActive) {
                 conn.input.readCompleteResponseInto(payload)

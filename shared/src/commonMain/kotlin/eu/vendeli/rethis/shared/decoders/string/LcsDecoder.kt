@@ -10,7 +10,7 @@ import kotlinx.io.Buffer
 
 object LcsDecoder : ResponseDecoder<LcsResult> {
     private val EMPTY_LCS_RESULT = LcsResult(matches = emptyList(), totalLength = 0L)
-    override suspend fun decode(input: Buffer, charset: Charset, code: RespCode?,): LcsResult {
+    override fun decode(input: Buffer, charset: Charset, code: RespCode?,): LcsResult {
         if (input == EMPTY_BUFFER) return EMPTY_LCS_RESULT
         val response = input.readResponseWrapped(charset)
 

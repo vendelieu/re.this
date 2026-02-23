@@ -4,6 +4,8 @@ import eu.vendeli.rethis.ReThisTestCtx
 import eu.vendeli.rethis.command.string.*
 import eu.vendeli.rethis.shared.request.string.GetExOption
 import io.kotest.matchers.shouldBe
+import io.ktor.utils.io.core.internal.writeDirect
+import kotlinx.io.Buffer
 import kotlin.time.Duration.Companion.seconds
 
 class StringCommandTest2 : ReThisTestCtx() {
@@ -29,6 +31,7 @@ class StringCommandTest2 : ReThisTestCtx() {
 
     @Test
     suspend fun `test GET command`() {
+        Buffer()
         client.set("testKey13", "testValue13")
         client.get("testKey13") shouldBe "testValue13"
     }

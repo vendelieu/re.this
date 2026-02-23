@@ -12,7 +12,13 @@ import kotlinx.io.Buffer
 import kotlinx.io.InternalIoApi
 import kotlin.jvm.JvmName
 
+private const val MAX_NESTING_DEPTH = 32 // Reasonable limit for RESP nesting
+
 val EMPTY_BUFFER = Buffer()
+
+const val BYTE_MINUS = '-'.code.toByte()
+const val BYTE_0 = '0'.code.toByte()
+const val BYTE_9 = '9'.code.toByte()
 internal val EMPTY_BYTE_ARRAY = ByteArray(0)
 
 @Suppress("UNCHECKED_CAST")
@@ -21,7 +27,7 @@ internal inline fun <reified R> Any?.safeCast(): R? = this as? R
 @Suppress("UNCHECKED_CAST")
 internal inline fun <reified R> Any?.cast(): R = this as R
 
-internal suspend inline fun MutableCollection<String>.parseStrings(size: Int, input: Buffer, charset: Charset) {
+internal inline fun MutableCollection<String>.parseStrings(size: Int, input: Buffer, charset: Charset) {
     repeat(size) {
         when (val code = RespCode.fromCode(input.readByte())) {
             RespCode.BULK -> add(
@@ -41,7 +47,7 @@ internal suspend inline fun MutableCollection<String>.parseStrings(size: Int, in
 }
 
 @JvmName("parseStringsNullable")
-internal suspend inline fun MutableCollection<String?>.parseStrings(size: Int, input: Buffer, charset: Charset) {
+internal inline fun MutableCollection<String?>.parseStrings(size: Int, input: Buffer, charset: Charset) {
     repeat(size) {
         when (val code = RespCode.fromCode(input.readByte())) {
             RespCode.NULL -> add(null)
@@ -67,10 +73,6 @@ internal inline fun Buffer.resolveToken(requiredToken: RespCode): RespCode {
     return code
 }
 
-private data class Frame(
-    var remaining: Int,
-)
-
 @OptIn(InternalAPI::class, InternalIoApi::class)
 suspend fun ByteReadChannel.readCompleteResponseInto(
     target: Buffer,
@@ -79,20 +81,21 @@ suspend fun ByteReadChannel.readCompleteResponseInto(
     val firstType = readByteRequired(target)
     val firstCode = RespCode.fromCode(firstType)
 
-    val stack = ArrayDeque<Frame>()
-
-    // Top-level always expects exactly 1 element
-    stack.addLast(Frame(remaining = 1))
+    // Stack as IntArray: each element is the remaining count for that nesting level
+    val stack = IntArray(MAX_NESTING_DEPTH)
+    var stackSize = 1
+    stack[0] = 1 // Top-level expects exactly 1 element
 
     // We already consumed the first type byte
-    processValue(
+    stackSize = processValue(
         out = target,
         code = firstCode,
         stack = stack,
+        stackSize = stackSize,
     )
 
     // When stack empties, exactly one frame is read
-    check(stack.isEmpty()) {
+    check(stackSize == 0) {
         "RESP framing invariant violated: stack not empty at end"
     }
 }
@@ -101,8 +104,11 @@ suspend fun ByteReadChannel.readCompleteResponseInto(
 private suspend fun ByteReadChannel.processValue(
     out: Buffer,
     code: RespCode,
-    stack: ArrayDeque<Frame>,
-) {
+    stack: IntArray,
+    stackSize: Int,
+): Int {
+    var size = stackSize
+
     when (code.type) {
         RespCode.Type.SIMPLE -> {
             // + - : # , ( _
@@ -117,26 +123,25 @@ private suspend fun ByteReadChannel.processValue(
                     readUntilCrlfInto(out)
                 }
             }
-            onElementComplete(stack)
+            onElementComplete(stack, size)
         }
 
         RespCode.Type.SIMPLE_AGG -> {
             // $ ! =
             readBulkLike(out)
-            onElementComplete(stack)
+            size = onElementComplete(stack, size)
         }
 
         RespCode.Type.AGGREGATE -> {
-            readAggregateHeader(out, code, stack)
+            size = readAggregateHeader(out, code, stack, size)
         }
     }
 
     // Continue while there are pending aggregate elements
-    while (stack.isNotEmpty()) {
-        val frame = stack.last()
-        if (frame.remaining == 0) {
-            stack.removeLast()
-            onElementComplete(stack)
+    while (size > 0) {
+        if (stack[size - 1] == 0) {
+            size--
+            size = onElementComplete(stack, size)
             continue
         }
 
@@ -144,21 +149,24 @@ private suspend fun ByteReadChannel.processValue(
         val nextType = readByteRequired(out)
         val nextCode = RespCode.fromCode(nextType)
 
-        processValue(
+        size = processValue(
             out = out,
             code = nextCode,
             stack = stack,
+            stackSize = size,
         )
     }
+
+    return size
 }
 
 @OptIn(InternalAPI::class, InternalIoApi::class)
 private suspend fun ByteReadChannel.readAggregateHeader(
     out: Buffer,
     code: RespCode,
-    stack: ArrayDeque<Frame>,
-) {
-    // Read "<count>\r\n"
+    stack: IntArray,
+    stackSize: Int,
+): Int {
     val count = readDecimalLong(out)
 
     if (count < -1) {
@@ -167,8 +175,7 @@ private suspend fun ByteReadChannel.readAggregateHeader(
 
     // Null aggregate
     if (count == -1L) {
-        onElementComplete(stack)
-        return
+        return onElementComplete(stack, stackSize)
     }
 
     val elements = when (code) {
@@ -180,7 +187,12 @@ private suspend fun ByteReadChannel.readAggregateHeader(
         throw RespProtocolException("Aggregate too large: $elements")
     }
 
-    stack.addLast(Frame(elements.toInt()))
+    if (stackSize >= stack.size) {
+        throw RespProtocolException("RESP nesting too deep: $stackSize")
+    }
+
+    stack[stackSize] = elements.toInt()
+    return stackSize + 1
 }
 
 @OptIn(InternalAPI::class, InternalIoApi::class)
@@ -205,18 +217,10 @@ private suspend fun ByteReadChannel.readBulkLike(
     readCrlfRequired(out)
 }
 
-private fun onElementComplete(stack: ArrayDeque<Frame>) {
-    if (stack.isEmpty()) return
-    stack.last().remaining--
-}
-
-@OptIn(InternalAPI::class, InternalIoApi::class)
-private suspend fun ByteReadChannel.readByteRequired(out: Buffer): Byte {
-    if (readBuffer.buffer.size == 0L) awaitContent()
-    if (readBuffer.buffer.size == 0L) throw RespUnexpectedEOF()
-    val b = readBuffer.buffer.readByte()
-    out.writeByte(b)
-    return b
+private fun onElementComplete(stack: IntArray, stackSize: Int): Int {
+    if (stackSize == 0) return 0
+    stack[stackSize - 1]--
+    return stackSize
 }
 
 @OptIn(InternalAPI::class, InternalIoApi::class)
@@ -275,7 +279,7 @@ private suspend fun ByteReadChannel.readDecimalLong(out: Buffer): Long {
         out.writeByte(b)
 
         when (b) {
-            '-'.code.toByte() -> {
+            BYTE_MINUS -> {
                 if (readAny) throw RespProtocolException("Unexpected '-' in number")
                 negative = true
             }
@@ -291,9 +295,9 @@ private suspend fun ByteReadChannel.readDecimalLong(out: Buffer): Long {
                 return if (negative) -value else value
             }
 
-            in '0'.code.toByte()..'9'.code.toByte() -> {
+            in BYTE_0..BYTE_9 -> {
                 readAny = true
-                value = value * 10 + (b - '0'.code.toByte())
+                value = value * 10 + (b - BYTE_0)
             }
 
             else -> throw RespProtocolException(
@@ -301,6 +305,15 @@ private suspend fun ByteReadChannel.readDecimalLong(out: Buffer): Long {
             )
         }
     }
+}
+
+@OptIn(InternalAPI::class, InternalIoApi::class)
+private suspend fun ByteReadChannel.readByteRequired(out: Buffer): Byte {
+    if (readBuffer.buffer.size == 0L) awaitContent()
+    if (readBuffer.buffer.size == 0L) throw RespUnexpectedEOF()
+    val b = readBuffer.buffer.readByte()
+    out.writeByte(b)
+    return b
 }
 
 @OptIn(InternalAPI::class, InternalIoApi::class)

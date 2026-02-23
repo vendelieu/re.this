@@ -14,7 +14,7 @@ import io.ktor.utils.io.charsets.*
 import kotlinx.io.Buffer
 
 object LMPopDecoder : ResponseDecoder<List<MPopResult>> {
-    override suspend fun decode(
+    override fun decode(
         input: Buffer,
         charset: Charset,
         code: RespCode?,
