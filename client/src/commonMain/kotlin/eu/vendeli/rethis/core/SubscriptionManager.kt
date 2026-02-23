@@ -11,6 +11,8 @@ class SubscriptionManager {
     internal val activeSubscriptions = ConcurrentMap<SubscribeTarget, ActiveSubscription>()
     internal val globalHandlers = mutableSetOf<PubSubHandler>()
 
+    val size: Int get() = activeSubscriptions.size
+
     fun unsubscribe(target: SubscribeTarget) {
         val subscriptionToRemove = activeSubscriptions[target]
         subscriptionToRemove?.handlers?.forEach { (_, jobs) ->
