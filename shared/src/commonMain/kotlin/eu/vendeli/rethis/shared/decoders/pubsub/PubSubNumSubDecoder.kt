@@ -17,11 +17,11 @@ object PubSubNumSubDecoder : ResponseDecoder<List<PubSubNumEntry>> {
         code: RespCode?,
     ): List<PubSubNumEntry> {
         if (input == EMPTY_BUFFER) return emptyList()
-        return ArrayRTypeDecoder.decode(input, charset).chunked(2) {
-            PubSubNumEntry(
-                it.first().unwrap<String>()!!,
-                it.last().unwrap() ?: 0,
-            )
+        return ArrayRTypeDecoder.decode(input, charset).chunked(2).mapNotNull {
+            val channel = it.getOrNull(0)?.unwrap<String>() ?: return@mapNotNull null
+            val count = it.getOrNull(1)?.unwrap<Long>() ?: 0L
+
+            PubSubNumEntry(channel, count)
         }
     }
 }

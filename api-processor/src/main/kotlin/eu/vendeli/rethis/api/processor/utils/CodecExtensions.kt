@@ -91,8 +91,8 @@ internal fun buildStaticCommandParts(
     val size = commandSize + parametersSize
 
     val commandPart = mainCommandPart.joinToString("\\r\\n") { "$${it.length}\\r\\n$it" }
-    val sizePart = if (context.currentCommand.haveVaryingSize) "" else "*$size"
-    return "$sizePart\\r\\n$commandPart\\r\\n"
+    val sizePart = if (context.currentCommand.haveVaryingSize) "" else "*$size\\r\\n"
+    return "$sizePart$commandPart\\r\\n"
 }
 
 internal fun buildStaticHeaderInitializer(header: String): CodeBlock = CodeBlock.Builder().apply {
