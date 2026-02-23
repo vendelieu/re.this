@@ -3,10 +3,9 @@ package eu.vendeli.rethis.types.interfaces
 import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.shared.types.BulkString
 import eu.vendeli.rethis.shared.types.RType
-//import eu.vendeli.rethis.shared.utils.StringCodec
+import eu.vendeli.rethis.shared.utils.StringCodec
 import eu.vendeli.rethis.types.common.PubSubKind
 import eu.vendeli.rethis.types.common.SubscribeTarget
-import io.ktor.utils.io.charsets.*
 import kotlinx.io.Buffer
 
 sealed interface MessageHandler
@@ -47,8 +46,13 @@ fun MessageHandler.toPubSubHandler(client: ReThis) = object : PubSubHandler {
             }
 
             is MessageEventHandler -> {
-                TODO()
-//                onMessage(client, StringCodec.decodeToString(client.cfg.charset, incomingMessage))
+                onMessage(
+                    client,
+                    StringCodec.decodeToString(
+                        client.cfg.charset,
+                        incomingMessage
+                    )
+                )
             }
         }
     }
