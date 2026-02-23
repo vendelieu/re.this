@@ -1,6 +1,8 @@
 @file:Suppress("PropertyName")
 
 import kotlinx.validation.ExperimentalBCVApi
+import org.jmailen.gradle.kotlinter.tasks.FormatTask
+import org.jmailen.gradle.kotlinter.tasks.LintTask
 
 plugins {
     alias(libs.plugins.ksp)
@@ -20,7 +22,7 @@ dependencies {
 ksp {
     arg(
         "clientProjectDir",
-        projectDir.resolve("build/generated/ksp/metadata/commonMain/kotlin/").absolutePath,
+        layout.buildDirectory.dir("generated/ksp/metadata/commonMain/kotlin").get().asFile.absolutePath,
     )
 }
 
@@ -38,7 +40,7 @@ configureKotlin {
                 api(libs.coroutines.core)
             }
             // Include generated codecs and commands
-            kotlin.srcDir("build/generated/ksp/metadata/commonMain/kotlin")
+            kotlin.srcDir(layout.buildDirectory.dir("generated/ksp/metadata/commonMain/kotlin"))
         }
 
         jvmTest.dependencies {
@@ -77,3 +79,29 @@ detekt {
     allRules = false
     config.from(files("$rootDir/detekt.yml"))
 }
+
+// Ensure platform compilation and source jar tasks run after KSP generates common metadata sources
+val kspTaskName = "kspCommonMainKotlinMetadata"
+fun Task.shouldDependOnKsp(): Boolean =
+    name != kspTaskName &&
+        (
+            name.startsWith("compileKotlin") ||
+                name.contains("SourcesJar", ignoreCase = true) ||
+                name.startsWith("lintKotlin") ||
+                name.startsWith("formatKotlin")
+            )
+
+tasks.matching { it.shouldDependOnKsp() }
+    .configureEach {
+        dependsOn(kspTaskName)
+    }
+
+// Exclude generated sources from kotlinter
+tasks.withType<LintTask>().configureEach {
+    exclude("**/build/generated/**")
+}
+
+tasks.withType<FormatTask>().configureEach {
+    exclude("**/build/generated/**")
+}
+

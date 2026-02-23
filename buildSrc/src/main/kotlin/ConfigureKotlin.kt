@@ -19,7 +19,6 @@ fun Project.configureKotlin(block: KotlinMultiplatformExtension.() -> Unit) {
                 "-opt-in=eu.vendeli.rethis.annotations.ReThisInternal",
                 "-opt-in=eu.vendeli.rethis.annotations.ReThisExperimental",
                 "-Xannotation-default-target=param-property",
-                "-opt-in=kotlin.time.ExperimentalTime",
             )
         }
 
