@@ -1,3 +1,7 @@
+import kotlinx.serialization.json.*
+import java.text.NumberFormat
+import java.util.*
+
 plugins {
     kotlin("jvm")
     kotlin("plugin.allopen") version "2.3.10"
@@ -22,34 +26,67 @@ dependencies {
 allOpen.annotation("org.openjdk.jmh.annotations.State")
 benchmark.targets.register("main")
 
-tasks.register("copyLatestBenchmarkJson") {
+tasks.register("updateBenchmarkTableInReadme") {
     group = "benchmark"
-    description = "Copies the latest benchmark JSON report to the project root as report.json"
+    description = "Updates the benchmark table in README.md between markers from latest JSON"
 
     doLast {
         val benchmarkDir = file("build/reports/benchmarks")
         if (!benchmarkDir.exists()) {
-            println("No benchmark reports found in $benchmarkDir")
+            println("No benchmark output directory found: $benchmarkDir")
             return@doLast
         }
 
-        // Find all JSON files recursively
-        val jsonFiles = benchmarkDir.walkTopDown()
+        // Pick the latest JSON
+        val latestJson = benchmarkDir.walkTopDown()
             .filter { it.isFile && it.extension == "json" }
-            .toList()
-
-        if (jsonFiles.isEmpty()) {
+            .maxByOrNull { it.lastModified() } ?: run {
             println("No JSON files found in $benchmarkDir")
             return@doLast
         }
 
-        // Pick the latest file by last modified time
-        val latestJson = jsonFiles.maxBy { it.lastModified() }
+        val benchmarksArray = Json.parseToJsonElement(latestJson.readText()).jsonArray
 
-        // Copy to project root as report.json
-        val targetFile = file("report.json")
-        latestJson.copyTo(targetFile, overwrite = true)
+        // Map library names → Ops/sec (formatted with commas)
+        val resultsMap = mutableMapOf<String, String>()
+        benchmarksArray.forEach { bench ->
+            val obj = bench.jsonObject
+            val fqName = obj["benchmark"]?.jsonPrimitive?.content ?: return@forEach
+            val score = obj["primaryMetric"]?.jsonObject?.get("score")?.jsonPrimitive?.double ?: return@forEach
+            val formatted = NumberFormat.getNumberInstance(Locale.US).format(score.toLong())
 
-        println("Copied latest benchmark JSON: ${latestJson.name} → ${targetFile.path}")
+            when {
+                fqName.contains("RethisBenchmark") -> resultsMap["Rethis"] = formatted
+                fqName.contains("LettuceBenchmark") -> resultsMap["Lettuce"] = formatted
+                fqName.contains("KredsBenchmark") -> resultsMap["Kreds"] = formatted
+                fqName.contains("JedisBenchmark") -> resultsMap["Jedis (pooled)"] = formatted
+            }
+        }
+
+        if (resultsMap.isEmpty()) {
+            println("No recognized benchmarks found in JSON")
+            return@doLast
+        }
+
+        // Generate Markdown table
+        val tableMarkdown = buildString {
+            appendLine("| Library        |       Ops/sec |")
+            appendLine("|----------------|--------------:|")
+            resultsMap.forEach { (lib, ops) ->
+                appendLine("| $lib | **$ops** |")
+            }
+        }
+
+        // Read README and replace content between markers
+        val readmeFile = file("../README.md")
+        val readmeText = readmeFile.readText()
+
+        val newReadme = readmeText.replace(
+            Regex("(?s)(<!-- BENCHMARK_TABLE -->).*?(<!-- END_BENCHMARK_TABLE -->)"),
+            "$1\n$tableMarkdown$2",
+        )
+
+        readmeFile.writeText(newReadme)
+        println("README.md benchmark table updated successfully:\n$resultsMap")
     }
 }

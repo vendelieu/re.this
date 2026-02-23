@@ -72,12 +72,16 @@ suspend fun main() {
 
 ## Benchmarks & Performance
 
+<!-- BENCHMARK_TABLE -->
 | Library        |       Ops/sec |
 |----------------|--------------:|
-| **Rethis**     | **1,452,718** |
-| Lettuce        |     1,380,333 |
-| Kreds          |       839,861 |
-| Jedis (pooled) |        15,727 |
+| Jedis (pooled) | **2,038** |
+| Kreds | **448** |
+| Lettuce | **1,747** |
+| Rethis | **2,171** |
+<!-- END_BENCHMARK_TABLE -->
+
+See more detailed [report](benchmarks/report.json).
 
 ## Compatibility & Requirements
 
