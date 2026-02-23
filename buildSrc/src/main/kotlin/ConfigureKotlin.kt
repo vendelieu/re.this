@@ -5,6 +5,8 @@ import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 
+val JVM_TARGET = 17
+
 fun Project.configureKotlin(block: KotlinMultiplatformExtension.() -> Unit) {
     plugins.apply("kotlin-multiplatform")
 
@@ -22,12 +24,11 @@ fun Project.configureKotlin(block: KotlinMultiplatformExtension.() -> Unit) {
             )
         }
 
-        val jvmTargetVer = 17
         jvm {
             compilations.all {
                 compileTaskProvider.configure {
                     compilerOptions {
-                        jvmTarget.set(JvmTarget.fromTarget("$jvmTargetVer"))
+                        jvmTarget.set(JvmTarget.fromTarget("$JVM_TARGET"))
                         freeCompilerArgs.addAll(
                             "-Xjsr305=strict",
                         )
@@ -35,7 +36,7 @@ fun Project.configureKotlin(block: KotlinMultiplatformExtension.() -> Unit) {
                 }
             }
         }
-        jvmToolchain(jvmTargetVer)
+        jvmToolchain(JVM_TARGET)
 
         js { nodejs() }
 
