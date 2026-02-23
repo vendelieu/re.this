@@ -1,6 +1,7 @@
 package eu.vendeli.rethis.types.common
 
 import eu.vendeli.rethis.ReThis
+import eu.vendeli.rethis.command.scripting.eval
 //import eu.vendeli.rethis.command.scripting.eval
 import eu.vendeli.rethis.shared.types.LockLostException
 import eu.vendeli.rethis.shared.utils.unwrap
@@ -91,7 +92,8 @@ internal class ReCtxReentrantLock(
                     return true
                 }
 
-                0 -> { /* someone else holds it */ }
+                0 -> { /* someone else holds it */
+                }
 
                 -1 -> {
                     throw LockLostException("Lock currently held by another owner for key=$key")
@@ -192,23 +194,20 @@ internal class ReCtxReentrantLock(
 
     private suspend fun acquireScript(token: String, leaseMs: Long): Int =
         runCatching {
-            TODO()
-//            val r = client.eval(ACQUIRE_SCRIPT, key = arrayOf(key), arg = listOf(token, leaseMs.toString()))
-//            r.unwrap<Long?>()?.toInt() ?: -2
+            val r = client.eval(ACQUIRE_SCRIPT, key = arrayOf(key), arg = listOf(token, leaseMs.toString()))
+            r.unwrap<Long?>()?.toInt() ?: -2
         }.getOrElse { -2 }
 
     private suspend fun releaseScript(token: String, leaseMs: Long): Int =
         runCatching {
-            TODO()
-//            val r = client.eval(RELEASE_SCRIPT, key = arrayOf(key), arg = listOf(token, leaseMs.toString()))
-//            r.unwrap<Long?>()?.toInt() ?: -2
+            val r = client.eval(RELEASE_SCRIPT, key = arrayOf(key), arg = listOf(token, leaseMs.toString()))
+            r.unwrap<Long?>()?.toInt() ?: -2
         }.getOrElse { -2 }
 
     private suspend fun refreshScript(token: String, leaseMs: Long): Int =
         runCatching {
-            TODO()
-//            val r = client.eval(REFRESH_SCRIPT, key = arrayOf(key), arg = listOf(token, leaseMs.toString()))
-//            r.unwrap<Long?>()?.toInt() ?: -2
+            val r = client.eval(REFRESH_SCRIPT, key = arrayOf(key), arg = listOf(token, leaseMs.toString()))
+            r.unwrap<Long?>()?.toInt() ?: -2
         }.getOrElse { -2 }
 
     companion object {
