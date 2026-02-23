@@ -9,5 +9,7 @@ import eu.vendeli.rethis.shared.types.RespCode
 
 @RedisCommand("BGSAVE", RedisOperation.WRITE, [RespCode.SIMPLE_STRING])
 fun interface BgSaveCommand : RedisCommandSpec<Boolean> {
-    suspend fun encode(@RedisOption.Token("SCHEDULE") schedule: Boolean?): CommandRequest
+    suspend fun encode(
+        @RedisOption.Token("SCHEDULE") schedule: Boolean?,
+    ): CommandRequest
 }

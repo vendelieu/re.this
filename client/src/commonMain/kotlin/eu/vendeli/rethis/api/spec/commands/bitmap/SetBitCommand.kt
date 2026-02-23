@@ -11,6 +11,6 @@ fun interface SetBitCommand : RedisCommandSpec<Long> {
     suspend fun encode(
         key: String,
         offset: Long,
-        value: Long
+        value: Long,
     ): CommandRequest
 }

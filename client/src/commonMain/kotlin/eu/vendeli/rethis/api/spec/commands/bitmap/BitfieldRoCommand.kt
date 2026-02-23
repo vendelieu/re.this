@@ -12,6 +12,6 @@ import eu.vendeli.rethis.shared.types.RespCode
 fun interface BitfieldRoCommand : RedisCommandSpec<List<Long>> {
     suspend fun encode(
         key: String,
-        @RedisOption.Name("getBlock") vararg options: BitfieldOption.Get
+        @RedisOption.Name("getBlock") vararg options: BitfieldOption.Get,
     ): CommandRequest
 }

@@ -12,6 +12,6 @@ import eu.vendeli.rethis.shared.types.RespCode
 fun interface ZInterCardCommand : RedisCommandSpec<Long> {
     suspend fun encode(
         @RedisMeta.WithSizeParam("numkeys") vararg key: String,
-        @RedisOption.Token("LIMIT") limit: Long?
+        @RedisOption.Token("LIMIT") limit: Long?,
     ): CommandRequest
 }

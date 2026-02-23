@@ -9,6 +9,6 @@ import eu.vendeli.rethis.shared.types.RespCode
 @RedisCommand("INCR", RedisOperation.WRITE, [RespCode.INTEGER])
 fun interface IncrCommand : RedisCommandSpec<Long> {
     suspend fun encode(
-        key: String
+        key: String,
     ): CommandRequest
 }

@@ -12,6 +12,6 @@ fun interface BitOpCommand : RedisCommandSpec<Long> {
     suspend fun encode(
         operation: BitOpOption.OperationType,
         destkey: String,
-        vararg key: String
+        vararg key: String,
     ): CommandRequest
 }

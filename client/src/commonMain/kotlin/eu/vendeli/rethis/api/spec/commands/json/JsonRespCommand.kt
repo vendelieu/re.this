@@ -7,6 +7,6 @@ import eu.vendeli.rethis.shared.types.*
 fun interface JsonRespCommand : RedisCommandSpec<List<RType>> {
     suspend fun encode(
         key: String,
-        path: String?
+        path: String?,
     ): CommandRequest
 }

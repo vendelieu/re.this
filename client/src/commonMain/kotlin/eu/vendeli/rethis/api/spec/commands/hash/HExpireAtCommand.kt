@@ -15,7 +15,9 @@ import kotlin.time.Instant
 fun interface HExpireAtCommand : RedisCommandSpec<List<Long>> {
     suspend fun encode(
         key: String,
-        unixTimeSeconds: @RedisMeta.OutgoingTimeUnit(TimeUnit.SECONDS) Instant,
+        unixTimeSeconds:
+            @RedisMeta.OutgoingTimeUnit(TimeUnit.SECONDS)
+            Instant,
         @RedisOption.Token("FIELDS") @RedisMeta.WithSizeParam("numfields") vararg field: String,
         condition: UpdateStrategyOption?,
     ): CommandRequest

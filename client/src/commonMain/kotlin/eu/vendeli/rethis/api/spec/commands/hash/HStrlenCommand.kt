@@ -10,6 +10,6 @@ import eu.vendeli.rethis.shared.types.RespCode
 fun interface HStrlenCommand : RedisCommandSpec<Long> {
     suspend fun encode(
         key: String,
-        field: String
+        field: String,
     ): CommandRequest
 }

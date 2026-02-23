@@ -11,6 +11,6 @@ fun interface ZIncrByCommand : RedisCommandSpec<Double> {
     suspend fun encode(
         key: String,
         member: String,
-        increment: Long
+        increment: Long,
     ): CommandRequest
 }

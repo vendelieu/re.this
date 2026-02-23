@@ -6,6 +6,7 @@ import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSType
 import eu.vendeli.rethis.api.processor.context.CodeGenContext
 import eu.vendeli.rethis.api.processor.context.CodeGenContext.BlockType
+import eu.vendeli.rethis.api.processor.context.CollectedTokens
 import eu.vendeli.rethis.api.processor.core.RedisCommandProcessor.Companion.context
 import eu.vendeli.rethis.api.processor.utils.*
 import eu.vendeli.rethis.shared.annotations.RedisOption
@@ -77,7 +78,7 @@ internal fun WriteOp.emitOp(phase: EncodePhase, parentPointer: String? = null) {
                     subType.declaration.getAnnotationsByType(RedisOption.Token::class).forEach {
                         // Always collect tokens for RedisToken generation
                         if (phase == EncodePhase.WRITE) {
-                            context[eu.vendeli.rethis.api.processor.context.CollectedTokens]?.addToken(it.name)
+                            context[CollectedTokens]?.addToken(it.name)
                         }
 
                         // Write tokens for non-data-objects (data objects are handled in WriteUtils.kt)
@@ -236,7 +237,7 @@ internal fun CodeGenContext.writeTokens(
             if (context.currentCommand.haveVaryingSize) appendLine("argCount += 1")
         } else if (phase == EncodePhase.WRITE) {
             addImport("eu.vendeli.rethis.utils.writeBulkString")
-            context[eu.vendeli.rethis.api.processor.context.CollectedTokens]?.addToken(it.name)
+            context[CollectedTokens]?.addToken(it.name)
             val tokenProperty = getRedisTokenProperty(it.name)
             addImport("eu.vendeli.rethis.utils.RedisToken")
             appendLine("buffer.writeBulkString(RedisToken.%L)", tokenProperty)

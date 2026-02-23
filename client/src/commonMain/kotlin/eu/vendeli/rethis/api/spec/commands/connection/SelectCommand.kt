@@ -9,6 +9,6 @@ import eu.vendeli.rethis.shared.types.RespCode
 @RedisCommand("SELECT", RedisOperation.WRITE, [RespCode.SIMPLE_STRING])
 fun interface SelectCommand : RedisCommandSpec<Boolean> {
     suspend fun encode(
-        index: Long
+        index: Long,
     ): CommandRequest
 }

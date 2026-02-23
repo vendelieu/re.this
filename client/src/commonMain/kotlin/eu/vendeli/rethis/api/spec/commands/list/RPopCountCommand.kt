@@ -10,6 +10,6 @@ import eu.vendeli.rethis.shared.types.RespCode
 fun interface RPopCountCommand : RedisCommandSpec<List<String>> {
     suspend fun encode(
         key: String,
-        count: Long?
+        count: Long?,
     ): CommandRequest
 }

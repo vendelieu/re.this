@@ -11,6 +11,6 @@ fun interface JsonArrPopCommand : RedisCommandSpec<RType> {
     suspend fun encode(
         key: String,
         path: String?,
-        index: Long?
+        index: Long?,
     ): CommandRequest
 }

@@ -6,6 +6,7 @@ import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.processing.SymbolProcessor
 import com.google.devtools.ksp.symbol.KSAnnotated
 import com.google.devtools.ksp.symbol.KSClassDeclaration
+import eu.vendeli.rethis.api.processor.context.CollectedTokens
 import eu.vendeli.rethis.api.processor.context.ProcessorContext
 import eu.vendeli.rethis.api.processor.context.ResolvedSpecs
 import eu.vendeli.rethis.api.processor.core.RedisProcessor.process
@@ -41,7 +42,7 @@ class RedisCommandProcessor(
         if (resolvedCommands.isEmpty()) return emptyList()
 
         context += ResolvedSpecs(resolvedCommands)
-        context += eu.vendeli.rethis.api.processor.context.CollectedTokens()
+        context += CollectedTokens()
 
         loadGlobalCtx()
 

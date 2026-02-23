@@ -14,6 +14,6 @@ fun interface EvalRoCommand : RedisCommandSpec<RType> {
     suspend fun encode(
         script: String,
         @RedisMeta.WithSizeParam("numkeys") vararg key: String,
-        arg: List<String>
+        arg: List<String>,
     ): CommandRequest
 }

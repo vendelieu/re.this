@@ -10,6 +10,6 @@ import eu.vendeli.rethis.shared.types.RespCode
 fun interface GeoHashCommand : RedisCommandSpec<List<String>> {
     suspend fun encode(
         key: String,
-        vararg member: String
+        vararg member: String,
     ): CommandRequest
 }

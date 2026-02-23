@@ -7,6 +7,6 @@ import eu.vendeli.rethis.shared.types.*
 fun interface XInfoConsumersCommand : RedisCommandSpec<List<RType>> {
     suspend fun encode(
         key: String,
-        group: String
+        group: String,
     ): CommandRequest
 }

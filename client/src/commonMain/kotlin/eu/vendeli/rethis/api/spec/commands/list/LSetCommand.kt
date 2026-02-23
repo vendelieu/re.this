@@ -11,6 +11,6 @@ fun interface LSetCommand : RedisCommandSpec<String> {
     suspend fun encode(
         key: String,
         index: Long,
-        element: String
+        element: String,
     ): CommandRequest
 }

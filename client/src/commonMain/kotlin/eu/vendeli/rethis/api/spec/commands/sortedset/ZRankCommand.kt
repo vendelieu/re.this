@@ -10,6 +10,6 @@ import eu.vendeli.rethis.shared.types.RespCode
 fun interface ZRankCommand : RedisCommandSpec<Long> {
     suspend fun encode(
         key: String,
-        member: String
+        member: String,
     ): CommandRequest
 }

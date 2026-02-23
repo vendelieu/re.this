@@ -14,6 +14,6 @@ fun interface XGroupSetIdCommand : RedisCommandSpec<Boolean> {
         key: String,
         group: String,
         idSelector: XId,
-        @RedisOption.Token("ENTRIESREAD") entriesread: Long?
+        @RedisOption.Token("ENTRIESREAD") entriesread: Long?,
     ): CommandRequest
 }

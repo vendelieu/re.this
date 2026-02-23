@@ -13,6 +13,6 @@ fun interface JsonArrIndexCommand : RedisCommandSpec<Long> {
         path: String,
         value: String,
         start: Long?,
-        stop: Long?
+        stop: Long?,
     ): CommandRequest
 }

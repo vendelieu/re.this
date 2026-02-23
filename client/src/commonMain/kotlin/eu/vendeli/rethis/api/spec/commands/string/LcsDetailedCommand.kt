@@ -14,7 +14,7 @@ import eu.vendeli.rethis.shared.types.RedisOperation
 import eu.vendeli.rethis.shared.types.RespCode
 
 @RedisCommand(
-    "LCS", 
+    "LCS",
     RedisOperation.READ,
     [RespCode.MAP, RespCode.ARRAY],
 )
@@ -25,6 +25,6 @@ fun interface LcsDetailedCommand : RedisCommandSpec<LcsResult> {
         key2: String,
         @RIgnoreSpecAbsence mode: LcsMode.IDX,
         minMatchLen: MinMatchLen?,
-        @RedisOption.Token("WITHMATCHLEN") @RedisOption.Name("withmatchlen") withMatchLen: Boolean?
+        @RedisOption.Token("WITHMATCHLEN") @RedisOption.Name("withmatchlen") withMatchLen: Boolean?,
     ): CommandRequest
 }

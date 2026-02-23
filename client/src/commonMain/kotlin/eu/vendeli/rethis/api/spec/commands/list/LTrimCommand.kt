@@ -11,6 +11,6 @@ fun interface LTrimCommand : RedisCommandSpec<String> {
     suspend fun encode(
         key: String,
         start: Long,
-        stop: Long
+        stop: Long,
     ): CommandRequest
 }

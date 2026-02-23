@@ -12,6 +12,6 @@ fun interface SentinelMonitorCommand : RedisCommandSpec<Boolean> {
         masterName: String,
         ip: String,
         port: Int,
-        quorum: Int
+        quorum: Int,
     ): CommandRequest
 }

@@ -10,6 +10,6 @@ import eu.vendeli.rethis.shared.types.RespCode
 fun interface IncrByFloatCommand : RedisCommandSpec<Double> {
     suspend fun encode(
         key: String,
-        increment: Double
+        increment: Double,
     ): CommandRequest
 }

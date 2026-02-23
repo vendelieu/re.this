@@ -10,6 +10,6 @@ import eu.vendeli.rethis.shared.types.RespCode
 fun interface HDelCommand : RedisCommandSpec<Long> {
     suspend fun encode(
         key: String,
-        vararg field: String
+        vararg field: String,
     ): CommandRequest
 }

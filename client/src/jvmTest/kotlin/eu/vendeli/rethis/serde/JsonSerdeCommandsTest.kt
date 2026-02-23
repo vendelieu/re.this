@@ -1,22 +1,22 @@
-//package eu.vendeli.rethis.serde
+// package eu.vendeli.rethis.serde
 //
-//import eu.vendeli.rethis.ReThisTestCtx
-//import eu.vendeli.rethis.command.json.jsonArrPop
-//import eu.vendeli.rethis.command.serde.jsonGet
-//import eu.vendeli.rethis.command.serde.jsonMGet
-//import eu.vendeli.rethis.command.serde.jsonSet
-//import eu.vendeli.rethis.shared.request.json.JsonGetOption
-//import eu.vendeli.rethis.shared.types.BulkString
-//import eu.vendeli.rethis.shared.types.RArray
-//import eu.vendeli.rethis.shared.utils.unwrap
-//import eu.vendeli.rethis.utils.serdeModule
-//import io.kotest.matchers.collections.shouldHaveSize
-//import io.kotest.matchers.nulls.shouldNotBeNull
-//import io.kotest.matchers.shouldBe
-//import io.kotest.matchers.types.shouldBeTypeOf
-//import kotlinx.serialization.Serializable
+// import eu.vendeli.rethis.ReThisTestCtx
+// import eu.vendeli.rethis.command.json.jsonArrPop
+// import eu.vendeli.rethis.command.serde.jsonGet
+// import eu.vendeli.rethis.command.serde.jsonMGet
+// import eu.vendeli.rethis.command.serde.jsonSet
+// import eu.vendeli.rethis.shared.request.json.JsonGetOption
+// import eu.vendeli.rethis.shared.types.BulkString
+// import eu.vendeli.rethis.shared.types.RArray
+// import eu.vendeli.rethis.shared.utils.unwrap
+// import eu.vendeli.rethis.utils.serdeModule
+// import io.kotest.matchers.collections.shouldHaveSize
+// import io.kotest.matchers.nulls.shouldNotBeNull
+// import io.kotest.matchers.shouldBe
+// import io.kotest.matchers.types.shouldBeTypeOf
+// import kotlinx.serialization.Serializable
 //
-//class JsonSerdeCommandsTest : ReThisTestCtx(true) {
+// class JsonSerdeCommandsTest : ReThisTestCtx(true) {
 //    @Serializable
 //    data class User(
 //        val id: Int,
@@ -126,4 +126,4 @@
 //            last().shouldNotBeNull() shouldBe 4
 //        }
 //    }
-//}
+// }

@@ -15,6 +15,6 @@ fun interface XGroupCreateCommand : RedisCommandSpec<Boolean> {
         group: String,
         idSelector: XId,
         @RedisOption.Token("MKSTREAM") mkstream: Boolean?,
-        @RedisOption.Token("ENTRIESREAD") entriesread: Long?
+        @RedisOption.Token("ENTRIESREAD") entriesread: Long?,
     ): CommandRequest
 }

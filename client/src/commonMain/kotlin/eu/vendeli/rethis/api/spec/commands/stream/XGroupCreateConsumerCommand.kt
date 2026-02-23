@@ -11,6 +11,6 @@ fun interface XGroupCreateConsumerCommand : RedisCommandSpec<Long> {
     suspend fun encode(
         key: String,
         group: String,
-        consumer: String
+        consumer: String,
     ): CommandRequest
 }

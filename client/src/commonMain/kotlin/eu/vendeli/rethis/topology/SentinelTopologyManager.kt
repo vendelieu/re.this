@@ -8,14 +8,15 @@ import eu.vendeli.rethis.configuration.SentinelConfiguration
 import eu.vendeli.rethis.providers.ConnectionProvider
 import eu.vendeli.rethis.providers.withConnection
 import eu.vendeli.rethis.shared.types.CommandRequest
-import eu.vendeli.rethis.shared.utils.unwrap
 import eu.vendeli.rethis.shared.types.ReThisException
 import eu.vendeli.rethis.shared.types.RedisOperation
+import eu.vendeli.rethis.shared.utils.unwrap
 import eu.vendeli.rethis.types.common.*
 import eu.vendeli.rethis.types.interfaces.MessageEventHandler
 import eu.vendeli.rethis.types.interfaces.toPubSubHandler
 import eu.vendeli.rethis.utils.ClusterEventNames
 import eu.vendeli.rethis.utils.registerSubscription
+import io.ktor.utils.io.charsets.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -151,7 +152,7 @@ class SentinelTopologyManager(
         // send: SENTINEL slaves <masterName>
         val response = doRequest(SentinelReplicasCommandCodec.encode(Charsets.UTF_8, masterName).data)
         return SentinelReplicasCommandCodec.decode(response, Charsets.UTF_8).mapNotNull {
-             // format explained here: https://redis.io/docs/latest/commands/cluster-nodes/
+            // format explained here: https://redis.io/docs/latest/commands/cluster-nodes/
             val parts = it.unwrap<String>()!!.split(' ')
             if (!parts[4].contains("slave")) return@mapNotNull null
             val address = parts[1].substringBefore('@').split(':')

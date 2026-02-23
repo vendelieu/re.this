@@ -9,6 +9,6 @@ import eu.vendeli.rethis.shared.types.RespCode
 @RedisCommand("GET", RedisOperation.READ, [RespCode.BULK, RespCode.NULL])
 fun interface GetBACommand : RedisCommandSpec<ByteArray> {
     suspend fun encode(
-        key: String
+        key: String,
     ): CommandRequest
 }

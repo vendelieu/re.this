@@ -12,6 +12,6 @@ import eu.vendeli.rethis.shared.types.RespCode
 fun interface SortCommand : RedisCommandSpec<List<String>> {
     suspend fun encode(
         key: String,
-        @RIgnoreSpecAbsence vararg option: SortOption
+        @RIgnoreSpecAbsence vararg option: SortOption,
     ): CommandRequest
 }

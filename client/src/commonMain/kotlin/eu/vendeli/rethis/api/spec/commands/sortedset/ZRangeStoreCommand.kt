@@ -22,6 +22,6 @@ fun interface ZRangeStoreCommand : RedisCommandSpec<Long> {
         max: String,
         @RedisOption.Name("sortby") sortBy: ZRangeOption.Type?,
         @RedisOption.Token("REV") rev: Boolean?,
-        limit: ZRangeStoreLimit?
+        limit: ZRangeStoreLimit?,
     ): CommandRequest
 }

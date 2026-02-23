@@ -10,6 +10,6 @@ import eu.vendeli.rethis.shared.types.RespCode
 fun interface GetBitCommand : RedisCommandSpec<Long> {
     suspend fun encode(
         key: String,
-        offset: Long
+        offset: Long,
     ): CommandRequest
 }

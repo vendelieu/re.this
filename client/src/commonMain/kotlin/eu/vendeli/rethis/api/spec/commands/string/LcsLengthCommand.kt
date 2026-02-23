@@ -9,7 +9,7 @@ import eu.vendeli.rethis.shared.types.RedisOperation
 import eu.vendeli.rethis.shared.types.RespCode
 
 @RedisCommand(
-    "LCS", 
+    "LCS",
     RedisOperation.READ,
     [RespCode.INTEGER],
 )
@@ -17,6 +17,6 @@ fun interface LcsLengthCommand : RedisCommandSpec<Long> {
     suspend fun encode(
         key1: String,
         key2: String,
-        @RIgnoreSpecAbsence mode: LcsMode.LEN
+        @RIgnoreSpecAbsence mode: LcsMode.LEN,
     ): CommandRequest
 }

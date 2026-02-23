@@ -11,6 +11,6 @@ fun interface JsonMergeCommand : RedisCommandSpec<Boolean> {
     suspend fun encode(
         key: String,
         path: String,
-        value: String
+        value: String,
     ): CommandRequest
 }

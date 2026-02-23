@@ -11,6 +11,6 @@ fun interface LRangeCommand : RedisCommandSpec<List<String>> {
     suspend fun encode(
         key: String,
         start: Long,
-        stop: Long
+        stop: Long,
     ): CommandRequest
 }

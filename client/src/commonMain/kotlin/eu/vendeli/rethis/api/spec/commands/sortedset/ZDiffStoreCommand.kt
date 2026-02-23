@@ -11,6 +11,6 @@ import eu.vendeli.rethis.shared.types.RespCode
 fun interface ZDiffStoreCommand : RedisCommandSpec<Long> {
     suspend fun encode(
         destination: String,
-        @RedisMeta.WithSizeParam("numkeys") vararg key: String
+        @RedisMeta.WithSizeParam("numkeys") vararg key: String,
     ): CommandRequest
 }

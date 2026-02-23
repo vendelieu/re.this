@@ -9,6 +9,6 @@ import eu.vendeli.rethis.shared.types.RespCode
 @RedisCommand("PING", RedisOperation.READ, [RespCode.SIMPLE_STRING, RespCode.BULK])
 fun interface PingCommand : RedisCommandSpec<String> {
     suspend fun encode(
-        message: String?
+        message: String?,
     ): CommandRequest
 }

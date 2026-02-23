@@ -10,6 +10,6 @@ import eu.vendeli.rethis.shared.types.*
 fun interface JsonToggleCommand : RedisCommandSpec<RType> {
     suspend fun encode(
         key: String,
-        path: String
+        path: String,
     ): CommandRequest
 }

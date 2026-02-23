@@ -14,6 +14,6 @@ fun interface BitPosCommand : RedisCommandSpec<Long> {
         bit: Long,
         start: Long?,
         end: Long?,
-        unit: BitmapUnit?
+        unit: BitmapUnit?,
     ): CommandRequest
 }
