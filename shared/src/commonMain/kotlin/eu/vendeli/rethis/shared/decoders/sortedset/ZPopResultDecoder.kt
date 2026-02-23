@@ -12,7 +12,7 @@ import kotlinx.io.Buffer
 
 object ZPopResultDecoder : ResponseDecoder<ZPopResult> {
     private val EMPTY_POP_RESULT = ZPopResult(key = "", popped = "", score = 0.0)
-    override suspend fun decode(
+    override fun decode(
         input: Buffer,
         charset: Charset,
         code: RespCode?,

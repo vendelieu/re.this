@@ -10,7 +10,7 @@ import kotlinx.io.readLineStrict
 
 
 object SimpleStringDecoder : ResponseDecoder<String> {
-    override suspend fun decode(input: Buffer, charset: Charset, code: RespCode?,): String {
+    override fun decode(input: Buffer, charset: Charset, code: RespCode?,): String {
         if (input == EMPTY_BUFFER) return ""
         if (code == null) input.resolveToken(RespCode.SIMPLE_STRING)
 

@@ -11,7 +11,7 @@ import kotlinx.io.Buffer
 
 object WaitAofDecoder : ResponseDecoder<WaitAofResult> {
     private val EMPTY_WAIT_AOF_RESULT = WaitAofResult(fsyncedRedises = 0, fsyncedReplicas = 0)
-    override suspend fun decode(
+    override fun decode(
         input: Buffer,
         charset: Charset,
         code: RespCode?,

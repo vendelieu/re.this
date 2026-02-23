@@ -14,7 +14,7 @@ import kotlinx.io.readLineStrict
 
 
 object BulkByteArrayDecoder : ResponseDecoder<ByteArray> {
-    override suspend fun decode(input: Buffer, charset: Charset, code: RespCode?,): ByteArray {
+    override fun decode(input: Buffer, charset: Charset, code: RespCode?,): ByteArray {
         if (input == EMPTY_BUFFER) return EMPTY_BYTE_ARRAY
         if (code == null) input.resolveToken(RespCode.BULK)
 
@@ -29,7 +29,7 @@ object BulkByteArrayDecoder : ResponseDecoder<ByteArray> {
         return output
     }
 
-    suspend fun decodeNullable(input: Buffer, charset: Charset, code: RespCode? = null): ByteArray? {
+    fun decodeNullable(input: Buffer, charset: Charset, code: RespCode? = null): ByteArray? {
         if (input == EMPTY_BUFFER) return EMPTY_BYTE_ARRAY
         if (code == null) input.resolveToken(RespCode.BULK)
 

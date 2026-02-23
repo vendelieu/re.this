@@ -3,7 +3,7 @@ package eu.vendeli.rethis.shared.types
 import kotlinx.io.Buffer
 
 data class CommandRequest(
-    val buffer: Buffer,
+    val data: Buffer,
     val operation: RedisOperation,
     val isBlocking: Boolean = false,
 ) {

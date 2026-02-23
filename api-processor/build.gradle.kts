@@ -9,7 +9,7 @@ group = "eu.vendeli"
 
 dependencies {
     implementation(project(":shared"))
-    implementation(project(":client"))
+    implementation(libs.kotlinx.io.core)
     implementation(libs.ksp)
     implementation(libs.poet)
     implementation(libs.poet.ksp)

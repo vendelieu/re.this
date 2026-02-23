@@ -11,7 +11,7 @@ import kotlinx.io.Buffer
 import kotlinx.io.readLineStrict
 
 object ArrayRTypeDecoder : ResponseDecoder<List<RType>> {
-    override suspend fun decode(
+    override fun decode(
         input: Buffer,
         charset: Charset,
         code: RespCode?,

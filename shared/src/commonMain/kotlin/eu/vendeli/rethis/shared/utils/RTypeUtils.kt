@@ -129,8 +129,8 @@ private fun Buffer.readSimpleResponseWrapped(
 
 private fun Buffer.readPartLine(charset: Charset) = readLineCRLF().readText(charset)
 
-internal const val CARRIAGE_RETURN_BYTE = '\r'.code.toByte()
-internal const val NEWLINE_BYTE = '\n'.code.toByte()
+const val CARRIAGE_RETURN_BYTE = '\r'.code.toByte()
+const val NEWLINE_BYTE = '\n'.code.toByte()
 
 private inline fun Buffer.readLineCRLF(): Buffer {
     val buffer = Buffer()

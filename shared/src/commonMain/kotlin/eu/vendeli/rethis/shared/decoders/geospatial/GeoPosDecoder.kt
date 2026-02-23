@@ -13,7 +13,7 @@ import kotlinx.io.Buffer
 
 
 object GeoPosDecoder : ResponseDecoder<List<List<GeoPosition>?>> {
-    override suspend fun decode(
+    override fun decode(
         input: Buffer,
         charset: Charset,
         code: RespCode?,

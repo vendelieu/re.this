@@ -11,7 +11,7 @@ import kotlinx.io.readLineStrict
 
 
 object IntegerDecoder : ResponseDecoder<Long> {
-    override suspend fun decode(input: Buffer, charset: Charset, code: RespCode?,): Long {
+    override fun decode(input: Buffer, charset: Charset, code: RespCode?,): Long {
         if (input == EMPTY_BUFFER) return Long.MIN_VALUE
         if (code == null) input.resolveToken(RespCode.INTEGER)
 

@@ -2,6 +2,7 @@ package eu.vendeli.rethis.shared.types
 
 import com.ionspin.kotlin.bignum.integer.BigInteger
 import kotlinx.io.Buffer
+import kotlinx.io.writeString
 
 sealed class RType {
     open val value: Any? get() = null
@@ -49,7 +50,9 @@ data class VerbatimString(
 
 data class BulkString(
     override val value: Buffer,
-) : RPrimitive()
+) : RPrimitive() {
+    constructor(value: String) : this(Buffer().apply { writeString(value) })
+}
 
 data class RArray(
     override val value: List<RType>,

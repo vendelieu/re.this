@@ -190,7 +190,7 @@ internal class ConnectionPool(
         if (!cfg.pool.connectionHealthCheck) return this
 
         runCatching {
-            doRequest(PingCommandCodec.encode(charset = Charsets.UTF_8, message = null).buffer)
+            doRequest(PingCommandCodec.encode(charset = Charsets.UTF_8, message = null).data)
         }.onFailure {
             connectionFactory.dispose(this)
             return null

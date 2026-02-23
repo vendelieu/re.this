@@ -6,6 +6,7 @@ import eu.vendeli.rethis.shared.types.CommandRequest
 import eu.vendeli.rethis.shared.types.RedisOperation
 import io.ktor.utils.io.charsets.*
 import kotlinx.io.Buffer
+import kotlinx.io.readByteArray
 import kotlinx.io.writeString
 
 /**

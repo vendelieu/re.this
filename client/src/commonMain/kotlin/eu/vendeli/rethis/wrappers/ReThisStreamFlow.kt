@@ -1,7 +1,7 @@
 package eu.vendeli.rethis.wrappers
 
 import eu.vendeli.rethis.ReThis
-import eu.vendeli.rethis.command.stream.xReadGroup
+//import eu.vendeli.rethis.command.stream.xReadGroup
 import eu.vendeli.rethis.shared.request.stream.XReadGroupKeyIds
 import eu.vendeli.rethis.shared.request.stream.XReadGroupOption
 import eu.vendeli.rethis.shared.types.RType
@@ -43,9 +43,9 @@ fun ReThis.StreamFlow(
         .launch(Dispatchers.IO_OR_UNCONFINED) {
             while (isActive) {
                 // XREADGROUP GROUP <group> <consumer> BLOCK <blockMs> COUNT <batchSize> STREAMS <key> >
-                val msgs = xReadGroup(group, consumer, XReadGroupKeyIds(listOf(key), listOf(">")), *options).orEmpty()
+//                val msgs = xReadGroup(group, consumer, XReadGroupKeyIds(listOf(key), listOf(">")), *options).orEmpty()
 
-                emit(msgs)
+//                emit(msgs)
             }
         }.join()
 }

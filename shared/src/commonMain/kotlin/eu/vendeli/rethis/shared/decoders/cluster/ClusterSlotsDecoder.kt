@@ -15,7 +15,7 @@ import kotlinx.io.readLineStrict
 
 object ClusterSlotsDecoder : ResponseDecoder<Cluster> {
     private val EMPTY_CLUSTER = Cluster(emptyList())
-    override suspend fun decode(
+    override fun decode(
         input: Buffer,
         charset: Charset,
         code: RespCode?,

@@ -13,7 +13,7 @@ import kotlinx.io.Buffer
 import kotlinx.io.readLineStrict
 
 object MapRTypeDecoder : ResponseDecoder<Map<String, RType>> {
-    override suspend fun decode(
+    override fun decode(
         input: Buffer,
         charset: Charset,
         code: RespCode?,
@@ -36,6 +36,6 @@ object MapRTypeDecoder : ResponseDecoder<Map<String, RType>> {
         }
     }
 
-    suspend fun decodeNullable(input: Buffer, charset: Charset, code: RespCode?): Map<String, RType> =
+    fun decodeNullable(input: Buffer, charset: Charset, code: RespCode?): Map<String, RType> =
         decode(input, charset, code)
 }

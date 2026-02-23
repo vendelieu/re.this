@@ -11,7 +11,7 @@ import kotlinx.io.Buffer
 
 
 object PubSubNumSubDecoder : ResponseDecoder<List<PubSubNumEntry>> {
-    override suspend fun decode(
+    override fun decode(
         input: Buffer,
         charset: Charset,
         code: RespCode?,

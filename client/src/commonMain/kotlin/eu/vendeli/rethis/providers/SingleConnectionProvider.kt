@@ -12,7 +12,7 @@ internal class SingleConnectionProvider(
     override val node: Address,
     private val client: ReThis,
 ) : ConnectionProvider() {
-    override suspend fun execute(request: CommandRequest): Buffer = withConnection { it.doRequest(request.buffer) }
+    override suspend fun execute(request: CommandRequest): Buffer = withConnection { it.doRequest(request.data) }
 
     override fun close() {}
 

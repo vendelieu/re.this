@@ -115,7 +115,7 @@ internal object RedisProcessor {
                     .build(),
             )
             .addProperty(
-                PropertySpec.builder("COMMAND_HEADER", Buffer::class, KModifier.PRIVATE)
+                PropertySpec.builder("COMMAND_HEADER", BYTE_ARRAY, KModifier.PRIVATE)
                     .initializer(buildStaticHeaderInitializer(staticParts))
                     .build(),
             )

@@ -11,7 +11,7 @@ import kotlinx.io.readLineStrict
 
 
 object BooleanDecoder : ResponseDecoder<Boolean> {
-    override suspend fun decode(input: Buffer, charset: Charset, code: RespCode?,): Boolean {
+    override fun decode(input: Buffer, charset: Charset, code: RespCode?,): Boolean {
         if (input == EMPTY_BUFFER) return false
         if (code == null) input.resolveToken(RespCode.BOOLEAN)
 

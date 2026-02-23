@@ -1,6 +1,5 @@
 rootProject.name = "rethis"
 
-include(":api-spec")
 include(":api-processor")
 include(":client")
 include(":shared")

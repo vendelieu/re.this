@@ -37,26 +37,26 @@ class TransactionCommandTest : ReThisTestCtx() {
         val conn = cProvider.borrowConnection()
 
         conn
-            .doRequest(MultiCommandCodec.encode(Charsets.UTF_8).buffer)
+            .doRequest(MultiCommandCodec.encode(Charsets.UTF_8).data)
             .readResponseWrapped(charset = Charsets.UTF_8)
             .isOk()
             .shouldBeTrue()
 
         conn
             .doRequest(
-                SetCommandCodec.encode(Charsets.UTF_8, "test1", "testv1").buffer,
+                SetCommandCodec.encode(Charsets.UTF_8, "test1", "testv1").data,
             ).readResponseWrapped(Charsets.UTF_8)
             .shouldBe(PlainString("QUEUED"))
 
         conn
             .doRequest(
-                SetCommandCodec.encode(Charsets.UTF_8, "test2", "testv2").buffer,
+                SetCommandCodec.encode(Charsets.UTF_8, "test2", "testv2").data,
             ).readResponseWrapped(Charsets.UTF_8)
             .shouldBe(PlainString("QUEUED"))
 
         conn
             .doRequest(
-                ExecCommandCodec.encode(Charsets.UTF_8).buffer,
+                ExecCommandCodec.encode(Charsets.UTF_8).data,
             ).readResponseWrapped(Charsets.UTF_8)
             .shouldBeTypeOf<RArray>() shouldBe RArray(
             listOf(
