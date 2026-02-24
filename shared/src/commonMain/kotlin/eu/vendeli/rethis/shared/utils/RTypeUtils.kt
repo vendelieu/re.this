@@ -168,8 +168,8 @@ inline fun <reified T> RType.unwrap(): T? {
         this is F64 -> if (T::class == Double::class) value as T else null
         this is BigNumber -> if (T::class == BigInteger::class) value as T else null
         this is VerbatimString -> if (T::class == String::class) value as T else null
-        this is BulkString -> if (T::class == ByteArray::class) value as T else null
-        this is BulkString -> if (T::class == String::class) value.readString() as T else null
+        this is BulkString -> if (T::class == Buffer::class) value as T else null
+        this is BulkString -> if (T::class == String::class) value.readLineStrict() as T else null
         else -> {
             __ParserLogger.warn("Wrong unwrapping [common] method used for $this")
             null
