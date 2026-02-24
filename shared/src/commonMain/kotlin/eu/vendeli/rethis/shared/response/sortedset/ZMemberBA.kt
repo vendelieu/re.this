@@ -1,4 +1,4 @@
-package eu.vendeli.rethis.shared.response.stream
+package eu.vendeli.rethis.shared.response.sortedset
 
 data class ZMemberBA(
     val member: ByteArray,

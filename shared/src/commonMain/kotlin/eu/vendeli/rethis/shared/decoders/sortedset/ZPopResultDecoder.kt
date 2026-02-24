@@ -2,7 +2,7 @@ package eu.vendeli.rethis.shared.decoders.sortedset
 
 import eu.vendeli.rethis.shared.decoders.ResponseDecoder
 import eu.vendeli.rethis.shared.decoders.aggregate.ArrayRTypeDecoder
-import eu.vendeli.rethis.shared.response.stream.ZPopResult
+import eu.vendeli.rethis.shared.response.sortedset.ZPopResult
 import eu.vendeli.rethis.shared.types.RespCode
 import eu.vendeli.rethis.shared.utils.EMPTY_BUFFER
 import eu.vendeli.rethis.shared.utils.unwrap

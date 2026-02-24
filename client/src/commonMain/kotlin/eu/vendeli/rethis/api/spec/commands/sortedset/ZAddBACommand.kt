@@ -3,7 +3,7 @@ package eu.vendeli.rethis.api.spec.commands.sortedset
 import eu.vendeli.rethis.shared.annotations.RedisCommand
 import eu.vendeli.rethis.shared.annotations.RedisOption
 import eu.vendeli.rethis.shared.request.common.UpdateStrategyOption
-import eu.vendeli.rethis.shared.response.stream.ZMemberBA
+import eu.vendeli.rethis.shared.response.sortedset.ZMemberBA
 import eu.vendeli.rethis.shared.types.CommandRequest
 import eu.vendeli.rethis.shared.types.RedisCommandSpec
 import eu.vendeli.rethis.shared.types.RedisOperation
