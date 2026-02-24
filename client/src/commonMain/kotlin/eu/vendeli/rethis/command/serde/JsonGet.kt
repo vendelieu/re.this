@@ -27,7 +27,7 @@ suspend fun <T : Any> ReThis.jsonGet(
                 " which is for type safety substituted with default value, so serde operations will fail",
         )
     }
-    val raw = jsonGet(key = key, options = options) ?: return null
+    val raw: String = jsonGet(key = key, options = options) ?: return null
     return try {
         format.deserialize(serializer, raw)
     } catch (ex: Exception) {
