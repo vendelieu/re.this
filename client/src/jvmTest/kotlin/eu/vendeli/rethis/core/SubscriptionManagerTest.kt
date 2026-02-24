@@ -1,27 +1,106 @@
-// package eu.vendeli.rethis.core
-//
-// import eu.vendeli.rethis.ReThisTestCtx
-// import eu.vendeli.rethis.types.interfaces.SubscriptionHandler
-// import org.junit.jupiter.api.assertDoesNotThrow
-//
-// class SubscriptionManagerTest : ReThisTestCtx() {
-//    @Test
-//    fun `Given pattern subscriptions, When unsubscribing all, Then no exception is thrown`() {
-//        // Given
-//        val manager = SubscriptionManager()
-//        manager.registerSubscription(
-//            "1",
-//            Subscription(type = SubscriptionType.PATTERN, handler = SubscriptionHandler({ a, b -> })),
-//        )
-//        manager.registerSubscription(
-//            "2",
-//            Subscription(type = SubscriptionType.PATTERN, handler = SubscriptionHandler({ a, b -> })),
-//        )
-//
-//        // Then
-//        assertDoesNotThrow {
-//            // When
-//            manager.unsubscribeAll()
-//        }
-//    }
-// }
+ package eu.vendeli.rethis.core
+
+ import eu.vendeli.rethis.ReThisTestCtx
+ import eu.vendeli.rethis.providers.ConnectionProvider
+ import eu.vendeli.rethis.shared.types.CommandRequest
+ import eu.vendeli.rethis.shared.types.RType
+ import eu.vendeli.rethis.types.common.Address
+ import eu.vendeli.rethis.types.common.PubSubKind
+ import eu.vendeli.rethis.types.common.RConnection
+ import eu.vendeli.rethis.types.common.SubscribeTarget
+ import eu.vendeli.rethis.types.interfaces.PubSubHandler
+ import io.kotest.matchers.nulls.shouldNotBeNull
+ import io.kotest.matchers.shouldBe
+ import kotlinx.coroutines.Job
+ import kotlinx.io.Buffer
+
+ class SubscriptionManagerTest : ReThisTestCtx() {
+     private val manager = SubscriptionManager()
+
+     private val testHandler = object : PubSubHandler {
+         override suspend fun onSubscribe(kind: PubSubKind, target: SubscribeTarget, subscribedChannels: Long) {}
+         override suspend fun onUnsubscribe(kind: PubSubKind, target: SubscribeTarget, subscribedChannels: Long) {}
+         override suspend fun onMessage(kind: PubSubKind, channel: String, message: RType, pattern: String?) {}
+         override suspend fun onException(target: SubscribeTarget, ex: Exception) {}
+     }
+
+     private val testProvider = object : ConnectionProvider() {
+         override val node: Address = Address("localhost", 6379)
+         override suspend fun execute(request: CommandRequest): Buffer = Buffer()
+         override fun close() {}
+         override suspend fun borrowConnection(): RConnection = throw NotImplementedError()
+         override suspend fun releaseConnection(conn: RConnection) {}
+         override fun hasSpareConnection(): Boolean = false
+     }
+
+     @Test
+     suspend fun registerSubscription_should_add_subscription_and_handler() {
+         println("[DEBUG_LOG] Running registerSubscription test")
+         val target = SubscribeTarget.Channel("test")
+         val job = Job()
+         manager.registerSubscription(target, testProvider, testHandler, job)
+
+         manager.size shouldBe 1
+         manager.activeSubscriptions[target].shouldNotBeNull()
+         manager.activeSubscriptions[target]?.handlers?.get(testHandler)?.contains(job) shouldBe true
+     }
+
+     @Test
+     suspend fun unregisterHandler_should_remove_job_from_handler() {
+         val target = SubscribeTarget.Channel("test")
+         val job = Job()
+         manager.registerSubscription(target, testProvider, testHandler, job)
+         manager.unregisterHandler(target, testHandler, job)
+
+         manager.activeSubscriptions[target]?.handlers?.get(testHandler)?.contains(job) shouldBe false
+     }
+
+     @Test
+     suspend fun unsubscribe_should_cancel_all_jobs_and_remove_target() {
+         val target = SubscribeTarget.Channel("test")
+         val job1 = Job()
+         val job2 = Job()
+         manager.registerSubscription(target, testProvider, testHandler, job1)
+         manager.registerSubscription(target, testProvider, testHandler, job2)
+
+         manager.unsubscribe(target)
+
+         job1.isCancelled shouldBe true
+         job2.isCancelled shouldBe true
+         manager.size shouldBe 0
+         manager.activeSubscriptions[target] shouldBe null
+     }
+
+     @Test
+     suspend fun unsubscribeAll_should_clear_all_subscriptions() {
+         val target1 = SubscribeTarget.Channel("test1")
+         val target2 = SubscribeTarget.Channel("test2")
+         manager.registerSubscription(target1, testProvider, testHandler, Job())
+         manager.registerSubscription(target2, testProvider, testHandler, Job())
+
+         manager.unsubscribeAll()
+
+         manager.size shouldBe 0
+     }
+
+     @Test
+     suspend fun global_handlers_registration() {
+         manager.registerGlobalHandler(testHandler)
+         manager.globalHandlers.contains(testHandler) shouldBe true
+
+         manager.unregisterGlobalHandler(testHandler)
+         manager.globalHandlers.contains(testHandler) shouldBe false
+     }
+
+     @Test
+     suspend fun isActiveHandlers_should_return_correct_status() {
+         val target = SubscribeTarget.Channel("test")
+         manager.isActiveHandlers(target) shouldBe false
+
+         manager.registerSubscription(target, testProvider, testHandler, Job())
+         manager.isActiveHandlers(target) shouldBe true
+
+         manager.unsubscribe(target)
+         manager.isActiveHandlers(target) shouldBe false
+     }
+ }

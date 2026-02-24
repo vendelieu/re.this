@@ -1,5 +1,12 @@
 # Re.this Changelog
 
+## [unreleased]
+
+* Fixed `XREADGROUP` decoding.
+* Improved token handling in codecs.
+* Improved varying argument handling in codecs.
+* Improved subscriptions user interface.
+
 ## 0.3.9
 
 * Fixed correct encoding of `Instant` values to seconds (#98).
