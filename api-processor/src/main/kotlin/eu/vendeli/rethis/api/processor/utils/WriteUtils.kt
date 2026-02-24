@@ -1,11 +1,13 @@
 package eu.vendeli.rethis.api.processor.utils
 
 import com.google.devtools.ksp.KspExperimental
+import com.google.devtools.ksp.getAnnotationsByType
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import eu.vendeli.rethis.api.processor.context.CodeGenContext
 import eu.vendeli.rethis.api.processor.context.CollectedTokens
 import eu.vendeli.rethis.api.processor.core.RedisCommandProcessor.Companion.context
 import eu.vendeli.rethis.api.processor.types.*
+import eu.vendeli.rethis.shared.annotations.RedisOption
 
 internal fun buildWritePlan(root: EnrichedNode): List<WriteOp> = recurse(root)
 
@@ -138,8 +140,10 @@ private fun CodeGenContext.inferWriting(
             }
             resolvedType.declaration.isDataObject() -> {
                 // For data objects, get token from the declaration itself
-                val declToken = (resolvedType.declaration as? KSClassDeclaration)?.tokenName()
-                val actualTokens = if (declToken != null) listOf(declToken) else node.tokens.map { it.name }
+                @OptIn(KspExperimental::class)
+                val declTokens = (resolvedType.declaration as? KSClassDeclaration)
+                    ?.getAnnotationsByType(RedisOption.Token::class)?.map { it.name }?.toList()
+                val actualTokens = if (!declTokens.isNullOrEmpty()) declTokens else node.tokens.map { it.name }
                 val declarationToken = resolvedType.declaration.effectiveName()
                 if (actualTokens.singleOrNull() == declarationToken) {
                     appendLine("buffer.writeBulkString(%L.toString().toByteArray(charset))", pointer ?: fieldAccess)

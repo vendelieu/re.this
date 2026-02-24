@@ -13,10 +13,12 @@ import eu.vendeli.rethis.shared.decoders.general.*
 import eu.vendeli.rethis.shared.types.CommandRequest
 import eu.vendeli.rethis.shared.types.RType
 import eu.vendeli.rethis.shared.types.RespCode
+import eu.vendeli.rethis.shared.types.stream.XReadGroupResponse
 
 internal val charsetClassName = ClassName("io.ktor.utils.io.charsets", "Charset")
 internal val commandRequestClassName = CommandRequest::class.asClassName()
 internal val RTYPE = RType::class.asClassName()
+internal val XREADGROUP_RESPONSE = XReadGroupResponse::class.asClassName()
 
 internal val plainDecoders = mapOf(
     RespCode.SIMPLE_STRING to SimpleStringDecoder::class.qualifiedName,
@@ -37,6 +39,7 @@ internal val collectionDecoders = mapOf(
         RTYPE to ArrayRTypeDecoder::class.qualifiedName,
         STRING to ArrayStringDecoder::class.qualifiedName,
         BYTE_ARRAY to ArrayByteArrayDecoder::class.qualifiedName,
+        XREADGROUP_RESPONSE to XReadGroupDecoder::class.qualifiedName,
     ),
     RespCode.SET to mapOf(
         STRING to SetStringDecoder::class.qualifiedName,

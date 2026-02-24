@@ -75,7 +75,8 @@ internal fun WriteOp.emitOp(phase: EncodePhase, parentPointer: String? = null) {
                 ctx.builder.beginControlFlow("is ${subType.name} -> ")
                 val processedTokens = mutableSetOf<String>()
                 if (phase != EncodePhase.SLOT) {
-                    subType.declaration.getAnnotationsByType(RedisOption.Token::class).forEach {
+                    val tokens = subType.declaration.getAnnotationsByType(RedisOption.Token::class).toList()
+                    tokens.forEach {
                         // Always collect tokens for RedisToken generation
                         if (phase == EncodePhase.WRITE) {
                             context[CollectedTokens]?.addToken(it.name)
