@@ -1,6 +1,6 @@
 # Re.this Changelog
 
-## [unreleased]
+## 0.4.0
 
 * Fixed `XREADGROUP` decoding.
 * Improved token handling in codecs.

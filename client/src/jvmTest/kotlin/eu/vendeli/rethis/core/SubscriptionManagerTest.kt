@@ -34,8 +34,7 @@
      }
 
      @Test
-     suspend fun registerSubscription_should_add_subscription_and_handler() {
-         println("[DEBUG_LOG] Running registerSubscription test")
+     fun `registerSubscription should add subscription and handler`() {
          val target = SubscribeTarget.Channel("test")
          val job = Job()
          manager.registerSubscription(target, testProvider, testHandler, job)
@@ -46,7 +45,7 @@
      }
 
      @Test
-     suspend fun unregisterHandler_should_remove_job_from_handler() {
+     fun `unregisterHandler should remove job from handler`() {
          val target = SubscribeTarget.Channel("test")
          val job = Job()
          manager.registerSubscription(target, testProvider, testHandler, job)
@@ -56,7 +55,7 @@
      }
 
      @Test
-     suspend fun unsubscribe_should_cancel_all_jobs_and_remove_target() {
+     fun `unsubscribe should cancel all jobs and remove target`() {
          val target = SubscribeTarget.Channel("test")
          val job1 = Job()
          val job2 = Job()
@@ -72,7 +71,7 @@
      }
 
      @Test
-     suspend fun unsubscribeAll_should_clear_all_subscriptions() {
+     fun `unsubscribeAll should clear all subscriptions`() {
          val target1 = SubscribeTarget.Channel("test1")
          val target2 = SubscribeTarget.Channel("test2")
          manager.registerSubscription(target1, testProvider, testHandler, Job())
@@ -84,7 +83,7 @@
      }
 
      @Test
-     suspend fun global_handlers_registration() {
+     fun `global handlers registration`() {
          manager.registerGlobalHandler(testHandler)
          manager.globalHandlers.contains(testHandler) shouldBe true
 
@@ -93,7 +92,7 @@
      }
 
      @Test
-     suspend fun isActiveHandlers_should_return_correct_status() {
+     fun `isActiveHandlers should return correct status`() {
          val target = SubscribeTarget.Channel("test")
          manager.isActiveHandlers(target) shouldBe false
 
