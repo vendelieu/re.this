@@ -36,6 +36,7 @@ class SubscriptionManagerTest : ReThisTestCtx() {
          override fun close() {}
          override suspend fun borrowConnection(): RConnection = throw NotImplementedError()
          override suspend fun releaseConnection(conn: RConnection) {}
+         override fun disposeConnection(conn: RConnection) {}
          override fun hasSpareConnection(): Boolean = false
      }
 

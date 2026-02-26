@@ -21,6 +21,7 @@ internal class SingleConnectionProvider(
     }
 
     override suspend fun releaseConnection(conn: RConnection) = client.connectionFactory.dispose(conn)
+    override fun disposeConnection(conn: RConnection) = client.connectionFactory.dispose(conn)
 
     override fun hasSpareConnection() = !client.connectionFactory.isReachedLimit()
 }

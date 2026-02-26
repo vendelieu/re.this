@@ -25,6 +25,7 @@ internal class PooledConnectionProvider(
 
     override suspend fun borrowConnection(): RConnection = pool.acquire()
     override suspend fun releaseConnection(conn: RConnection) = pool.release(conn)
+    override fun disposeConnection(conn: RConnection) = client.connectionFactory.dispose(conn)
 
     override fun hasSpareConnection() = pool.haveIdleConnections()
 }

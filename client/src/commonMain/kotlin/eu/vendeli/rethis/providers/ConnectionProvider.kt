@@ -17,6 +17,7 @@ abstract class ConnectionProvider {
 
     abstract suspend fun borrowConnection(): RConnection
     abstract suspend fun releaseConnection(conn: RConnection)
+    abstract fun disposeConnection(conn: RConnection)
     abstract fun hasSpareConnection(): Boolean
 
     override fun equals(other: Any?): Boolean = node == (other as? ConnectionProvider)?.node
@@ -53,7 +54,7 @@ private suspend fun ConnectionProvider.closeFinally(connection: RConnection, cau
     cause == null -> releaseConnection(connection)
 
     else -> try {
-        releaseConnection(connection)
+        disposeConnection(connection)
     } catch (closeException: Throwable) {
         cause.addSuppressed(closeException)
     }

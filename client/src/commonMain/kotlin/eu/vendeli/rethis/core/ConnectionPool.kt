@@ -7,6 +7,7 @@ import eu.vendeli.rethis.utils.CLIENT_NAME
 import eu.vendeli.rethis.utils.IO_OR_UNCONFINED
 import io.ktor.network.sockets.*
 import io.ktor.util.logging.*
+import io.ktor.utils.io.InternalAPI
 import io.ktor.utils.io.charsets.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
@@ -89,7 +90,12 @@ internal class ConnectionPool(
         return@aq deferred.await()
     }
 
+    @OptIn(InternalAPI::class)
     fun release(conn: RConnection) {
+        if (!conn.input.readBuffer.exhausted()) {
+            connectionFactory.dispose(conn)
+            return
+        }
         pending.tryReceive().onSuccess {
             it.complete(conn)
             return
