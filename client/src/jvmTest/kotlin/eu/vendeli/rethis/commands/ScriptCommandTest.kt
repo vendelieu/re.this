@@ -10,8 +10,10 @@ import io.kotest.assertions.throwables.shouldNotThrowAny
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
+import io.kotest.matchers.types.shouldBeTypeOf
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.io.readString
 
 class ScriptCommandTest : ReThisTestCtx() {
     @Test
@@ -24,24 +26,33 @@ class ScriptCommandTest : ReThisTestCtx() {
     @Test
     suspend fun `test EVAL_RO command`() {
         val script = "return {KEYS[1],ARGV[1]}"
-        client.evalRo(script, "testKey2", arg = listOf("testValue2")) shouldBe
-            RArray(listOf(BulkString("testKey2"), BulkString("testValue2")))
+        val result = client.evalRo(script, "testKey1", arg = listOf("testValue1"))
+        result.shouldBeTypeOf<RArray>()
+        result.value.size shouldBe 2
+        result.value[0].shouldBeTypeOf<BulkString>().value.readString() shouldBe "testKey1"
+        result.value[1].shouldBeTypeOf<BulkString>().value.readString() shouldBe "testValue1"
     }
 
     @Test
     suspend fun `test EVALSHA command`() {
         val script = "return {KEYS[1],ARGV[1]}"
         val sha1 = client.scriptLoad(script).shouldNotBeNull()
-        client.evalSha(sha1, "testKey3", arg = listOf("testValue3")) shouldBe
-            RArray(listOf(BulkString("testKey3"), BulkString("testValue3")))
+        val result = client.evalSha(sha1, "testKey3", arg = listOf("testValue3")).shouldBeTypeOf<RArray>()
+
+        result.value.size shouldBe 2
+        result.value[0].shouldBeTypeOf<BulkString>().value.readString() shouldBe "testKey3"
+        result.value[1].shouldBeTypeOf<BulkString>().value.readString() shouldBe "testValue3"
     }
 
     @Test
     suspend fun `test EVALSHA_RO command`() {
         val script = "return {KEYS[1],ARGV[1]}"
         val sha1 = client.scriptLoad(script).shouldNotBeNull()
-        client.evalShaRo(sha1, "testKey4", arg = listOf("testValue4")) shouldBe
-            RArray(listOf(BulkString("testKey4"), BulkString("testValue4")))
+
+        val result = client.evalShaRo(sha1, "testKey4", arg = listOf("testValue4")).shouldBeTypeOf<RArray>()
+        result.value.size shouldBe 2
+        result.value[0].shouldBeTypeOf<BulkString>().value.readString() shouldBe "testKey4"
+        result.value[1].shouldBeTypeOf<BulkString>().value.readString() shouldBe "testValue4"
     }
 
     @Test
@@ -49,7 +60,8 @@ class ScriptCommandTest : ReThisTestCtx() {
         val script = "#!lua name=mylib\n redis.register_function('myfunc', function(keys, args) return args[1] end)"
         val name = "myfunc"
         client.functionLoad(script).shouldNotBeNull()
-        client.fcall(name, "testKey5", arg = listOf("testValue5")) shouldBe BulkString("testValue5")
+        val result = client.fcall(name, "testKey5", arg = listOf("testValue5"))
+        result.shouldBeTypeOf<BulkString>().value.readString() shouldBe "testValue5"
     }
 
     @Test
