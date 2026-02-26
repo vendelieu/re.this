@@ -43,17 +43,12 @@ fun FileSpec.Builder.addCommandFunctions(
                         "${it.key} = ${it.key}"
                     }
                     addImport("eu.vendeli.rethis.topology", "handle")
-                    addImport("kotlinx.coroutines", "async")
-
-                    beginControlFlow("return scope.async")
                     beginControlFlow("val request = if(cfg.withSlots)")
                     addStatement("$codecName.encodeWithSlot(charset = cfg.charset$parameters)")
                     nextControlFlow("else")
                     addStatement("$codecName.encode(charset = cfg.charset$parameters)")
                     endControlFlow()
-                    addStatement("$codecName.decode(topology.handle(request), cfg.charset)")
-                    endControlFlow()
-                    add(".await()")
+                    addStatement("return $codecName.decode(topology.handle(request), cfg.charset)")
                 }.build(),
             )
             .build(),

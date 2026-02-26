@@ -1,8 +1,11 @@
 package eu.vendeli.rethis.types.common
 
 import eu.vendeli.rethis.codecs.pubsub.PSubscribeCommandCodec
+import eu.vendeli.rethis.codecs.pubsub.PUnsubscribeCommandCodec
 import eu.vendeli.rethis.codecs.pubsub.SSubscribeCommandCodec
+import eu.vendeli.rethis.codecs.pubsub.SUnsubscribeCommandCodec
 import eu.vendeli.rethis.codecs.pubsub.SubscribeCommandCodec
+import eu.vendeli.rethis.codecs.pubsub.UnsubscribeCommandCodec
 import eu.vendeli.rethis.shared.types.CommandRequest
 import io.ktor.utils.io.charsets.Charset
 
@@ -18,7 +21,7 @@ sealed class SubscribeTarget {
     ) : SubscribeTarget()
 }
 
-suspend fun SubscribeTarget.encode(charset: Charset): CommandRequest =
+fun SubscribeTarget.encode(charset: Charset): CommandRequest =
     when (this) {
         is SubscribeTarget.Channel -> {
             SubscribeCommandCodec.encode(charset, name)
@@ -31,4 +34,11 @@ suspend fun SubscribeTarget.encode(charset: Charset): CommandRequest =
         is SubscribeTarget.Shard -> {
             SSubscribeCommandCodec.encode(charset, name)
         }
+    }
+
+fun SubscribeTarget.encodeUnsubscribe(charset: Charset): CommandRequest =
+    when (this) {
+        is SubscribeTarget.Channel -> UnsubscribeCommandCodec.encode(charset, name)
+        is SubscribeTarget.Pattern -> PUnsubscribeCommandCodec.encode(charset, pattern)
+        is SubscribeTarget.Shard -> SUnsubscribeCommandCodec.encode(charset, name)
     }

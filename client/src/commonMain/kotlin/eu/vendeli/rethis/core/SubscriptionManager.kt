@@ -9,21 +9,17 @@ import kotlinx.coroutines.Job
 
 class SubscriptionManager {
     internal val activeSubscriptions = ConcurrentMap<SubscribeTarget, ActiveSubscription>()
-    internal val globalHandlers = mutableSetOf<PubSubHandler>()
+    internal val globalHandlers = ConcurrentSet<PubSubHandler>()
 
     val size: Int get() = activeSubscriptions.size
 
     fun unsubscribe(target: SubscribeTarget) {
-        val subscriptionToRemove = activeSubscriptions[target]
-        subscriptionToRemove?.handlers?.forEach { (_, jobs) ->
-            jobs.forEach { job -> job.cancel() }
-        }
-        subscriptionToRemove?.handlers?.clear()
-        activeSubscriptions.remove(target)
+        val removed = activeSubscriptions.remove(target) ?: return
+        removed.handlers.values.flatten().forEach { it.cancel() }
     }
 
     fun unsubscribeAll() {
-        activeSubscriptions.keys.forEach { unsubscribe(it) }
+        activeSubscriptions.keys.toList().forEach { unsubscribe(it) }
     }
 
     fun registerGlobalHandler(handler: PubSubHandler) {
@@ -44,9 +40,9 @@ class SubscriptionManager {
     ) {
         activeSubscriptions
             .getOrPut(target) {
-                ActiveSubscription(provider, mutableMapOf())
+                ActiveSubscription(provider)
             }.handlers
-            .getOrPut(handler) { mutableSetOf() }
+            .getOrPut(handler) { ConcurrentSet() }
             .add(worker)
     }
 
@@ -55,6 +51,14 @@ class SubscriptionManager {
         handler: PubSubHandler,
         worker: Job,
     ) {
-        activeSubscriptions[target]?.handlers?.get(handler)?.remove(worker)
+        val subscription = activeSubscriptions[target] ?: return
+        val jobs = subscription.handlers[handler] ?: return
+        jobs.remove(worker)
+        if (jobs.isEmpty()) {
+            subscription.handlers.remove(handler)
+            if (subscription.handlers.isEmpty()) {
+                activeSubscriptions.remove(target)
+            }
+        }
     }
 }

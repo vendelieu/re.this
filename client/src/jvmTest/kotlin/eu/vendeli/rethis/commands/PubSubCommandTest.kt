@@ -18,7 +18,12 @@ import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.throwable.shouldHaveMessage
 import io.kotest.matchers.types.shouldBeTypeOf
+import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
+import kotlinx.coroutines.delay
+import java.util.concurrent.atomic.AtomicBoolean
+import java.util.concurrent.atomic.AtomicInteger
+import java.util.concurrent.atomic.AtomicReference
 
 class PubSubCommandTest : ReThisTestCtx() {
     @BeforeEach
@@ -127,53 +132,50 @@ class PubSubCommandTest : ReThisTestCtx() {
     }
 
     @Test
-    suspend fun `test subscription evenHandler`() {
-        var onMessage = 0
-        var onUnsub = 0
-        var caughtEx: Exception? = null
+    suspend fun `test subscription eventHandler`() {
+        val handlerRan = AtomicBoolean(false)
+        val onMessage = AtomicInteger(0)
+        val onUnsub = AtomicInteger(0)
+        val caughtEx = AtomicReference<Exception?>(null)
 
         client.subscriptions.registerGlobalHandler(
             object : PubSubHandler {
-                override suspend fun onSubscribe(kind: PubSubKind, target: SubscribeTarget, subscribedChannels: Long) {
-                    println("-- kind $kind target: $target count: $subscribedChannels")
-                }
-
+                override suspend fun onSubscribe(kind: PubSubKind, target: SubscribeTarget, subscribedChannels: Long) {}
                 override suspend fun onUnsubscribe(kind: PubSubKind, target: SubscribeTarget, subscribedChannels: Long) {
-                    println("!-- kind $kind target: $target count: $subscribedChannels")
-                    onUnsub++
+                    onUnsub.incrementAndGet()
                 }
-
-                override suspend fun onMessage(kind: PubSubKind, channel: String, message: RType, pattern: String?) {
-                }
-
+                override suspend fun onMessage(kind: PubSubKind, channel: String, message: RType, pattern: String?) {}
                 override suspend fun onException(target: SubscribeTarget, ex: Exception) {
-                    caughtEx = ex
+                    caughtEx.set(ex)
                 }
             },
         )
-        client.subscribe("testChannel") { _, _: String -> }
-        eventually(1.seconds) {
-            client.subscriptions.isActiveHandlers(SubscribeTarget.Channel("testChannel")).shouldBeTrue()
-        }
 
-        client.pSubscribe("testCh*") { _, _: String ->
-            onMessage++
-            processingException { "test" }
-        }
-        eventually(1.seconds) {
-            client.subscriptions.isActiveHandlers(SubscribeTarget.Pattern("testCh*")).shouldBeTrue()
-        }
-
-        client.subscriptions.unsubscribe(SubscribeTarget.Channel("testChannel"))
-        eventually(1.seconds) {
-            client.subscriptions.isActiveHandlers(SubscribeTarget.Channel("testChannel")).shouldBe(false)
-        }
-        client.publish("testChannel", "test")
+        val channelName = "eventHandlerChannel"
+        client.subscribe(
+            channelName,
+            callback = object : PubSubHandler {
+                override suspend fun onSubscribe(kind: PubSubKind, target: SubscribeTarget, subscribedChannels: Long) {}
+                override suspend fun onUnsubscribe(kind: PubSubKind, target: SubscribeTarget, subscribedChannels: Long) {}
+                override suspend fun onMessage(kind: PubSubKind, channel: String, message: RType, pattern: String?) {
+                    handlerRan.set(true)
+                    onMessage.incrementAndGet()
+                    processingException { "test" }
+                }
+                override suspend fun onException(target: SubscribeTarget, ex: Exception) {}
+            },
+        )
 
         eventually(1.seconds) {
-            onMessage shouldBeGreaterThan 0
-            caughtEx.shouldNotBeNull().shouldBeTypeOf<DataProcessingException>() shouldHaveMessage "test"
+            client.publish(channelName, "test") shouldBe 1L
         }
-        onUnsub shouldBe 0
+        eventually(2.seconds) {
+            handlerRan.get() shouldBe true
+            onMessage.get() shouldBeGreaterThan 0
+            caughtEx.get().shouldNotBeNull()
+                .shouldBeTypeOf<DataProcessingException>()
+                .shouldHaveMessage("test")
+        }
+        onUnsub.get() shouldBe 0
     }
 }

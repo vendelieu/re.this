@@ -248,11 +248,6 @@ class RedisDistributedLockTest : ReThisTestCtx() {
         owner2.unlock().shouldBeTrue()
     }
 
-    // Removed: `non-owner coroutine cannot unlock` test
-    // Per-coroutine ownership checking on unlock is incompatible with withLock's
-    // withContext(NonCancellable) pattern. Protection against unauthorized unlock
-    // comes from different lock instances having different Redis tokens.
-
     @Test
     suspend fun `different client cannot unlock`() = coroutineScope {
         val lockName = "rethis:lock:ownership:${UUID.randomUUID()}"

@@ -1,13 +1,12 @@
 package eu.vendeli.rethis.types.common
 
-import eu.vendeli.rethis.shared.types.Int64
-import eu.vendeli.rethis.shared.types.PlainString
 import eu.vendeli.rethis.shared.types.Push
+import eu.vendeli.rethis.shared.utils.unwrap
 
 object PubSubEventParser {
     fun parse(push: Push): PubSubEvent? {
         if (push.value.isEmpty()) return null
-        val marker = (push.value[0] as? PlainString)?.value ?: return null
+        val marker = push.value[0].unwrap<String>() ?: return null
 
         return when (marker) {
             // ---------- Sub/Unsub ----------
@@ -94,8 +93,8 @@ object PubSubEventParser {
     }
 
     private fun string(push: Push, idx: Int) =
-        (push.value[idx] as PlainString).value
+        push.value[idx].unwrap<String>()!!
 
     private fun int(push: Push, idx: Int) =
-        (push.value[idx] as Int64).value
+        push.value[idx].unwrap<Long>()!!
 }

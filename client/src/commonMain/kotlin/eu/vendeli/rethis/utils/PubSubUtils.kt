@@ -5,6 +5,7 @@ import eu.vendeli.rethis.annotations.ReThisInternal
 import eu.vendeli.rethis.providers.ConnectionProvider
 import eu.vendeli.rethis.shared.decoders.general.RTypeDecoder
 import eu.vendeli.rethis.shared.types.Push
+import eu.vendeli.rethis.shared.types.RArray
 import eu.vendeli.rethis.shared.utils.readCompleteResponseInto
 import eu.vendeli.rethis.types.common.*
 import eu.vendeli.rethis.types.coroutine.CoLocalConn
@@ -29,7 +30,6 @@ suspend fun ReThis.registerSubscription(
     scope.launch(CoLocalConn(connection, false) + ctx) {
         val conn = currentCoroutineContext()[CoLocalConn]!!.connection
         val job = currentCoroutineContext()[Job]!!
-        val payload = Buffer()
 
         subscriptions.registerSubscription(target, providerResolved, handler, job)
 
@@ -37,30 +37,37 @@ suspend fun ReThis.registerSubscription(
             conn.doRequest(target.encode(cfg.charset).data)
 
             while (isActive) {
+                val payload = Buffer()
                 conn.input.readCompleteResponseInto(payload)
                 val frame = RTypeDecoder.decode(payload, cfg.charset)
-                val push = frame as? Push ?: continue
+                val push = when (frame) {
+                    is Push -> frame
+                    is RArray -> Push(frame.value)
+                    else -> null
+                } ?: continue
                 val event = PubSubEventParser.parse(push) ?: continue
 
-                // Dispatch both global and local handlers
                 when (event) {
                     is PubSubEvent.Message -> {
                         subscriptions.globalHandlers.forEach {
-                            it.onMessage(event.kind, event.channel, event.payload, event.pattern)
+                            runCatching { it.onMessage(event.kind, event.channel, event.payload, event.pattern) }
+                                .onFailure { e -> logger.warn("Global handler threw in onMessage", e) }
                         }
                         handler.onMessage(event.kind, event.channel, event.payload, event.pattern)
                     }
 
                     is PubSubEvent.Subscribed -> {
                         subscriptions.globalHandlers.forEach {
-                            it.onSubscribe(event.kind, event.target, event.activeCount)
+                            runCatching { it.onSubscribe(event.kind, event.target, event.activeCount) }
+                                .onFailure { e -> logger.warn("Global handler threw in onSubscribe", e) }
                         }
                         handler.onSubscribe(event.kind, event.target, event.activeCount)
                     }
 
                     is PubSubEvent.Unsubscribed -> {
                         subscriptions.globalHandlers.forEach {
-                            it.onUnsubscribe(event.kind, event.target, event.activeCount)
+                            runCatching { it.onUnsubscribe(event.kind, event.target, event.activeCount) }
+                                .onFailure { e -> logger.warn("Global handler threw in onUnsubscribe", e) }
                         }
                         handler.onUnsubscribe(event.kind, event.target, event.activeCount)
                     }
@@ -70,10 +77,16 @@ suspend fun ReThis.registerSubscription(
             throw e
         } catch (e: Exception) {
             logger.error("Caught exception in $target channel handler", e)
-            subscriptions.globalHandlers.forEach { it.onException(target, e) }
+            runCatching { handler.onException(target, e) }
+            subscriptions.globalHandlers.forEach { runCatching { it.onException(target, e) } }
         } finally {
             subscriptions.unregisterHandler(target, handler, job)
-            providerResolved.releaseConnection(conn)
+            runCatching {
+                conn.doRequest(target.encodeUnsubscribe(cfg.charset).data)
+                providerResolved.releaseConnection(conn)
+            }.onFailure {
+                connectionFactory.dispose(conn)
+            }
         }
     }
 }

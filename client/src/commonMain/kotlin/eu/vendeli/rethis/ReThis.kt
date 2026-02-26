@@ -54,7 +54,7 @@ class ReThis internal constructor(
 
         subscriptions.unsubscribeAll()
         topology.close()
-        scope.cancel()
+        rootJob.cancel()
     }
 
     suspend fun pipeline(block: suspend ReThis.() -> Unit): List<RType> {

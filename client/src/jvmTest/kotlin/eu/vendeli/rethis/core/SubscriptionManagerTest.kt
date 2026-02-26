@@ -9,13 +9,19 @@
  import eu.vendeli.rethis.types.common.RConnection
  import eu.vendeli.rethis.types.common.SubscribeTarget
  import eu.vendeli.rethis.types.interfaces.PubSubHandler
- import io.kotest.matchers.nulls.shouldNotBeNull
- import io.kotest.matchers.shouldBe
- import kotlinx.coroutines.Job
- import kotlinx.io.Buffer
+import io.kotest.matchers.nulls.shouldNotBeNull
+import io.kotest.matchers.shouldBe
+import kotlinx.coroutines.Job
+import kotlinx.io.Buffer
+import org.junit.jupiter.api.BeforeEach
 
- class SubscriptionManagerTest : ReThisTestCtx() {
-     private val manager = SubscriptionManager()
+class SubscriptionManagerTest : ReThisTestCtx() {
+    private var manager = SubscriptionManager()
+
+    @BeforeEach
+    fun setUp() {
+        manager = SubscriptionManager()
+    }
 
      private val testHandler = object : PubSubHandler {
          override suspend fun onSubscribe(kind: PubSubKind, target: SubscribeTarget, subscribedChannels: Long) {}
@@ -44,15 +50,29 @@
          manager.activeSubscriptions[target]?.handlers?.get(testHandler)?.contains(job) shouldBe true
      }
 
-     @Test
-     fun `unregisterHandler should remove job from handler`() {
-         val target = SubscribeTarget.Channel("test")
-         val job = Job()
-         manager.registerSubscription(target, testProvider, testHandler, job)
-         manager.unregisterHandler(target, testHandler, job)
+    @Test
+    fun `unregisterHandler should remove job from handler`() {
+        val target = SubscribeTarget.Channel("test")
+        val job1 = Job()
+        val job2 = Job()
+        manager.registerSubscription(target, testProvider, testHandler, job1)
+        manager.registerSubscription(target, testProvider, testHandler, job2)
+        manager.unregisterHandler(target, testHandler, job1)
 
-         manager.activeSubscriptions[target]?.handlers?.get(testHandler)?.contains(job) shouldBe false
-     }
+        manager.activeSubscriptions[target]?.handlers?.get(testHandler)?.contains(job1) shouldBe false
+        manager.activeSubscriptions[target]?.handlers?.get(testHandler)?.contains(job2) shouldBe true
+    }
+
+    @Test
+    fun `unregisterHandler should prune empty entries`() {
+        val target = SubscribeTarget.Channel("test")
+        val job = Job()
+        manager.registerSubscription(target, testProvider, testHandler, job)
+        manager.unregisterHandler(target, testHandler, job)
+
+        manager.activeSubscriptions[target] shouldBe null
+        manager.size shouldBe 0
+    }
 
      @Test
      fun `unsubscribe should cancel all jobs and remove target`() {

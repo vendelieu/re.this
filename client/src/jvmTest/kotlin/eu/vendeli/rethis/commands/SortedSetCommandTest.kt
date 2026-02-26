@@ -11,6 +11,7 @@ import eu.vendeli.rethis.shared.types.BulkString
 import io.kotest.matchers.collections.shouldNotBeEmpty
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeTypeOf
+import kotlinx.io.readString
 
 class SortedSetCommandTest : ReThisTestCtx() {
     @Test
@@ -60,7 +61,7 @@ class SortedSetCommandTest : ReThisTestCtx() {
             .shouldNotBeEmpty()
             .first()
             .shouldBeTypeOf<BulkString>()
-            .value shouldBe "testValue27"
+            .value.readString() shouldBe "testValue27"
     }
 
     @Test

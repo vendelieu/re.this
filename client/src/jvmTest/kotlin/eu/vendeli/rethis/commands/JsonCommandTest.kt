@@ -5,8 +5,9 @@ import eu.vendeli.rethis.command.json.*
 import eu.vendeli.rethis.shared.types.BulkString
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeTypeOf
+import kotlinx.io.readString
 
-class JsonCommandTest : ReThisTestCtx(true) {
+class JsonCommandTest : ReThisTestCtx(withJsonModule = true) {
     @Test
     suspend fun `test JSON_ARRAPPEND command`() {
         client.jsonSet("testKey1", "[1, 2, 3]", ".")
@@ -34,7 +35,7 @@ class JsonCommandTest : ReThisTestCtx(true) {
     @Test
     suspend fun `test JSON_ARRPOP command`() {
         client.jsonSet("testKey5", "[1, 2, 3]", ".")
-        client.jsonArrPop("testKey5", ".").shouldBeTypeOf<BulkString>().value shouldBe "3"
+        client.jsonArrPop("testKey5", ".").shouldBeTypeOf<BulkString>().value.readString() shouldBe "3"
     }
 
     @Test

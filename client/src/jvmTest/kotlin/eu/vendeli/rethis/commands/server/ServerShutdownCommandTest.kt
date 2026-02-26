@@ -4,7 +4,9 @@ import com.redis.testcontainers.RedisContainer
 import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.command.server.shutdown
 import eu.vendeli.rethis.shared.request.server.SaveSelector
+import eu.vendeli.rethis.shared.types.RespUnexpectedEOF
 import io.kotest.assertions.throwables.shouldNotThrowAny
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.AnnotationSpec
 import io.kotest.matchers.nulls.shouldBeNull
 import org.testcontainers.utility.DockerImageName
@@ -17,7 +19,7 @@ class ServerShutdownCommandTest : AnnotationSpec() {
             container.start()
             val client = ReThis(container.host, container.firstMappedPort)
 
-            shouldNotThrowAny {
+            shouldThrow<RespUnexpectedEOF> {
                 client.shutdown(SaveSelector.NOSAVE).shouldBeNull()
             }
         } finally {

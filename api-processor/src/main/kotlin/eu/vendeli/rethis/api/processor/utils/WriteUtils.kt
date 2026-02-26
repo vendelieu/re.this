@@ -48,7 +48,8 @@ private fun recurse(node: EnrichedNode): List<WriteOp> {
                 val pName = when {
                     blockStack.isNotEmpty() -> {
                         val iteratorVar = pointer ?: name
-                        if (blockStack.last().second != name && iteratorVar != name) {
+                        val isChildOfBlockField = parentPointer != null && parentPointer == blockStack.last().second
+                        if ((blockStack.last().second != name || isChildOfBlockField) && iteratorVar != name) {
                             "$iteratorVar.$name"
                         } else {
                             iteratorVar
@@ -101,8 +102,8 @@ private fun CodeGenContext.inferWriting(
         // Inside a block (forEach, let, when) - use iterator.fieldName or just iterator if same name
         blockStack.isNotEmpty() -> {
             val iteratorVar = pointer ?: fieldAccess
-            // If the field name is different from what we're iterating over, qualify it
-            if (blockStack.last().second != fieldAccess && iteratorVar != fieldAccess) {
+            val isChildOfBlockField = parentPointer != null && parentPointer == blockStack.last().second
+            if ((blockStack.last().second != fieldAccess || isChildOfBlockField) && iteratorVar != fieldAccess) {
                 "$iteratorVar.$fieldAccess"
             } else {
                 iteratorVar

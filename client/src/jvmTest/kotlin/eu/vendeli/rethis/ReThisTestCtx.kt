@@ -8,6 +8,7 @@ import io.kotest.core.spec.style.AnnotationSpec
 import kotlinx.io.Buffer
 import org.testcontainers.utility.DockerImageName
 import kotlin.time.Clock
+import kotlin.time.Duration.Companion.seconds
 import kotlin.time.Instant
 
 abstract class TestCtx : AnnotationSpec() {
@@ -35,7 +36,9 @@ abstract class ReThisTestCtx(
         DockerImageName.parse(if (!withJsonModule) "redis:7.4.0" else "redislabs/rejson"),
     ).apply { start() }
 
-    private var reThis: ReThis = ReThis(redis.host, redis.firstMappedPort)
+    private var reThis: ReThis = ReThis(redis.host, redis.firstMappedPort) {
+        connectionAcquireTimeout = 1.seconds
+    }
     protected val client get() = reThis
 
     protected suspend fun connectionProvider() = client.topology.route(
@@ -53,4 +56,10 @@ abstract class ReThisTestCtx(
     protected fun createClient(
         cfg: StandaloneConfiguration.() -> Unit = {},
     ): ReThis = ReThis(redis.host, redis.firstMappedPort, configurator = cfg)
+
+    @AfterAll
+    fun cleanup() {
+        client.close()
+        redis.stop()
+    }
 }
