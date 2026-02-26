@@ -36,6 +36,12 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
+      - name: Cache KSP generated sources
+        uses: actions/cache@v5
+        with:
+          path: client/build/generated/ksp
+          key: ${{ runner.os }}-ksp-generated-${{ hashFiles('api-processor/**', 'client/src/commonMain/kotlin/eu/vendeli/rethis/api/spec/**') }}
+
       - name: Get version number from tag
         id: vars
         run: echo "version=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
