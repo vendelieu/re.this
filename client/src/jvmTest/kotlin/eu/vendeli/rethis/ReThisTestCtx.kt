@@ -5,6 +5,7 @@ import eu.vendeli.rethis.codecs.connection.PingCommandCodec
 import eu.vendeli.rethis.configuration.ReThisConfiguration
 import eu.vendeli.rethis.configuration.StandaloneConfiguration
 import io.kotest.core.spec.style.AnnotationSpec
+import io.kotest.core.test.config.DefaultTestConfig
 import kotlinx.io.Buffer
 import org.testcontainers.utility.DockerImageName
 import kotlin.time.Clock
@@ -30,6 +31,10 @@ abstract class TestCtx : AnnotationSpec() {
 abstract class ReThisTestCtx(
     withJsonModule: Boolean = false,
 ) : TestCtx() {
+    init {
+        defaultTestConfig = DefaultTestConfig(timeout = 30.seconds)
+    }
+
     protected val targetDb = 1L
 
     protected val redis = RedisContainer(

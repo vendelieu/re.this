@@ -340,23 +340,26 @@ class RedisDistributedLockTest : ReThisTestCtx() {
     @Test
     suspend fun `lock works after previous owner releases`() = coroutineScope {
         val lockName = "rethis:lock:sequential:${UUID.randomUUID()}"
+        val j1HasLock = CompletableDeferred<Unit>()
+        val leaseTime = 5.seconds
 
         val completed = AtomicInteger(0)
 
         val j1 = launch {
             val lock = client.reDistributedLock(lockName)
-            lock.lock(1.seconds)
+            lock.lock(leaseTime)
+            j1HasLock.complete(Unit)
             delay(50)
             completed.incrementAndGet()
             lock.unlock()
         }
 
-        delay(10) // Let j1 acquire first
+        j1HasLock.await()
 
         val j2 = launch {
             val otherClient = createClient()
             val lock = otherClient.reDistributedLock(lockName)
-            lock.lock(1.seconds) // Should wait for j1 to release
+            lock.lock(leaseTime) // Should wait for j1 to release
             completed.incrementAndGet()
             lock.unlock()
         }
