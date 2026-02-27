@@ -50,6 +50,7 @@ configureKotlin {
             implementation(libs.test.kotest.assertions)
             implementation(libs.logback)
             implementation(libs.testcontainers.redis)
+            implementation(libs.test.dotenv.kotlin)
         }
     }
 }

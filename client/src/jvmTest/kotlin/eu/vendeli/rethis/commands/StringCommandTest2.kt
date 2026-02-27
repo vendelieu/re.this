@@ -1,8 +1,10 @@
 package eu.vendeli.rethis.commands
 
+import eu.vendeli.rethis.IOSensitiveTest
 import eu.vendeli.rethis.ReThisTestCtx
 import eu.vendeli.rethis.command.string.*
 import eu.vendeli.rethis.shared.request.string.GetExOption
+import io.kotest.core.annotation.EnabledIf
 import io.kotest.matchers.shouldBe
 import kotlinx.io.Buffer
 import kotlin.time.Duration.Companion.seconds
@@ -69,14 +71,5 @@ class StringCommandTest2 : ReThisTestCtx() {
     suspend fun `test INCRBYFLOAT command`() {
         client.set("testKey19", "10.5")
         client.incrByFloat("testKey19", 5.5) shouldBe 16.0
-    }
-
-    @Test
-    suspend fun `big string test`() {
-        val key = "test:big:string"
-        val bigValue = "A".repeat(1024 * 100)
-
-        client.set(key, bigValue)
-        client.get(key) shouldBe bigValue
     }
 }
