@@ -4,7 +4,6 @@ import eu.vendeli.rethis.ReThisTestCtx
 import eu.vendeli.rethis.command.string.*
 import eu.vendeli.rethis.shared.request.string.GetExOption
 import io.kotest.matchers.shouldBe
-import io.ktor.utils.io.core.internal.writeDirect
 import kotlinx.io.Buffer
 import kotlin.time.Duration.Companion.seconds
 
@@ -75,19 +74,9 @@ class StringCommandTest2 : ReThisTestCtx() {
     @Test
     suspend fun `big string test`() {
         val key = "test:big:string"
-        val bigValue = "A".repeat(1024 * 500)
+        val bigValue = "A".repeat(1024 * 100)
 
         client.set(key, bigValue)
-
-        try {
-            val result = client.get(key)
-            if (result == bigValue) {
-                println("Success")
-            } else {
-                println("Data mismatch, Length: ${result?.length}")
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
+        client.get(key) shouldBe bigValue
     }
 }

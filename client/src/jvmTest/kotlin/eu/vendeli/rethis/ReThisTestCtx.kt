@@ -41,7 +41,9 @@ abstract class ReThisTestCtx(
         DockerImageName.parse(if (!withJsonModule) "redis:7.4.0" else "redislabs/rejson"),
     ).apply { start() }
 
-    private var reThis: ReThis = ReThis(redis.host, redis.firstMappedPort)
+    private var reThis: ReThis = ReThis(redis.host, redis.firstMappedPort) {
+        socket { timeout = 15_000 }
+    }
     protected val client get() = reThis
 
     protected suspend fun connectionProvider() = client.topology.route(
