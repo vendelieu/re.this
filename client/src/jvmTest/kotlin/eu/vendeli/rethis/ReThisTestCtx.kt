@@ -35,12 +35,10 @@ abstract class ReThisTestCtx(
         defaultTestConfig = DefaultTestConfig(timeout = 30.seconds)
     }
 
-    protected val targetDb = 1L
-
     protected val redis = RedisContainer(
         DockerImageName.parse(if (!withJsonModule) "redis:7.4.0" else "redislabs/rejson"),
     ).apply { start() }
-
+    protected val targetDb = 1L
     private var reThis: ReThis = ReThis(redis.host, redis.firstMappedPort)
     protected val client get() = reThis
 
