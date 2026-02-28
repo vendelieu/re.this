@@ -76,9 +76,9 @@ internal fun KSDeclaration.isSealed() =
 internal fun KSAnnotated.isStdType() =
     this is KSClassDeclaration && qualifiedName?.getQualifier()?.startsWith("kotlin") == true
 
-internal fun KSDeclaration.isTimeType() = qualifiedName?.getQualifier()?.startsWith("kotlin.time") == true
 internal fun KSDeclaration.isInstant() = qualifiedName?.asString() == "kotlin.time.Instant"
 internal fun KSDeclaration.isDuration() = qualifiedName?.asString() == "kotlin.time.Duration"
+internal fun KSDeclaration.isCharArray() = qualifiedName?.asString() == "kotlin.CharArray"
 
 internal fun KSDeclaration.isEnum() = this is KSClassDeclaration && classKind == ClassKind.ENUM_CLASS
 internal fun KSDeclaration.isBool() = qualifiedName?.asString().let { it == "kotlin.Boolean" || it == "boolean" }

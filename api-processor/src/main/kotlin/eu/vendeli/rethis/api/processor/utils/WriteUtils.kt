@@ -136,6 +136,9 @@ private fun CodeGenContext.inferWriting(
                     resolvedType.declaration.qualifiedName?.asString() == "kotlin.ByteArray" -> {
                         appendLine("buffer.writeBulkString(%L)", pName)
                     }
+                    resolvedType.declaration.isCharArray() -> {
+                        appendLine("buffer.writeBulkString(%L.concatToString().toByteArray(charset))", pName)
+                    }
                     else -> appendLine("buffer.writeBulkString(%L.toString().toByteArray(charset))", pName)
                 }
             }

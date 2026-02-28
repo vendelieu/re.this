@@ -9,9 +9,10 @@ class ClientTest : ReThisTestCtx() {
 
     @Test
     suspend fun `client disconnect test`() {
-        client.ping()
-        client.isActive shouldBe true
-        client.close()
-        client.isActive shouldBe false
+        val testClient = createClient()
+        testClient.ping()
+        testClient.isActive shouldBe true
+        testClient.close()
+        testClient.isActive shouldBe false
     }
 }
