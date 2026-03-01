@@ -55,6 +55,7 @@ private fun recurse(node: EnrichedNode): List<WriteOp> {
                             iteratorVar
                         }
                     }
+
                     !parentPointer.isNullOrBlank() -> "$parentPointer.$name"
                     else -> name
                 }
@@ -123,25 +124,34 @@ private fun CodeGenContext.inferWriting(
         when {
             resolvedType.declaration.isStdType() -> {
                 when {
+                    resolvedType.declaration.isString() -> {
+                        appendLine("buffer.writeBulkString(%L.toByteArray(charset))", pName)
+                    }
+
                     resolvedType.declaration.isInstant() -> {
                         val timeUnit = resolvedType.getTimeUnit()
                         val expr = if (timeUnit == "MILLISECONDS") "toEpochMilliseconds()" else "epochSeconds"
                         appendLine("buffer.writeBulkString(%L.%L.toString().toByteArray(charset))", pName, expr)
                     }
+
                     resolvedType.declaration.isDuration() -> {
                         val timeUnit = resolvedType.getTimeUnit()
                         val expr = if (timeUnit == "MILLISECONDS") "inWholeMilliseconds" else "inWholeSeconds"
                         appendLine("buffer.writeBulkString(%L.%L.toString().toByteArray(charset))", pName, expr)
                     }
-                    resolvedType.declaration.qualifiedName?.asString() == "kotlin.ByteArray" -> {
+
+                    resolvedType.declaration.isByteArray() -> {
                         appendLine("buffer.writeBulkString(%L)", pName)
                     }
+
                     resolvedType.declaration.isCharArray() -> {
                         appendLine("buffer.writeBulkString(%L.concatToString().toByteArray(charset))", pName)
                     }
+
                     else -> appendLine("buffer.writeBulkString(%L.toString().toByteArray(charset))", pName)
                 }
             }
+
             resolvedType.declaration.isDataObject() -> {
                 // For data objects, get token from the declaration itself
                 @OptIn(KspExperimental::class)
@@ -149,26 +159,24 @@ private fun CodeGenContext.inferWriting(
                     ?.getAnnotationsByType(RedisOption.Token::class)?.map { it.name }?.toList()
                 val actualTokens = if (!declTokens.isNullOrEmpty()) declTokens else node.tokens.map { it.name }
                 val declarationToken = resolvedType.declaration.effectiveName()
+
                 if (actualTokens.singleOrNull() == declarationToken) {
-                    appendLine("buffer.writeBulkString(%L.toString().toByteArray(charset))", pointer ?: fieldAccess)
-                } else actualTokens.forEach { tokenName ->
-                    // Collect token and use RedisToken
-                    context[CollectedTokens]?.addToken(tokenName)
-                    val tokenProperty = tokenName.let {
-                        when (it) {
-                            "" -> "EMPTY"
-                            "*" -> "ASTERISK"
-                            "=" -> "EQUALS"
-                            "~" -> "TILDE"
-                            "$" -> "DOLLAR"
-                            else -> it.uppercase().replace("-", "_").replace(" ", "_")
-                        }
+                    appendLine(
+                        "buffer.writeBulkString(%L.toString().toByteArray(charset))",
+                        pointer ?: fieldAccess,
+                    )
+                } else {
+                    actualTokens.forEach { tokenName ->
+                        // Collect token and use RedisToken
+                        context[CollectedTokens]?.addToken(tokenName)
+                        val tokenProperty = tokenToRedisTokenPropertyName(tokenName)
+                        addImport("eu.vendeli.rethis.utils.RedisToken")
+                        addImport("eu.vendeli.rethis.utils.writeBulkString")
+                        appendLine("buffer.writeBulkString(RedisToken.%L)", tokenProperty)
                     }
-                    addImport("eu.vendeli.rethis.utils.RedisToken")
-                    addImport("eu.vendeli.rethis.utils.writeBulkString")
-                    appendLine("buffer.writeBulkString(RedisToken.%L)", tokenProperty)
                 }
             }
+
             resolvedType.declaration.isEnum() -> {
                 appendLine("buffer.writeBulkString(%L.toString().toByteArray(charset))", pName)
             }

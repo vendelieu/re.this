@@ -79,6 +79,8 @@ internal fun KSAnnotated.isStdType() =
 internal fun KSDeclaration.isInstant() = qualifiedName?.asString() == "kotlin.time.Instant"
 internal fun KSDeclaration.isDuration() = qualifiedName?.asString() == "kotlin.time.Duration"
 internal fun KSDeclaration.isCharArray() = qualifiedName?.asString() == "kotlin.CharArray"
+internal fun KSDeclaration.isString() = qualifiedName?.asString() == "kotlin.String"
+internal fun KSDeclaration.isByteArray() = qualifiedName?.asString() == "kotlin.ByteArray"
 
 internal fun KSDeclaration.isEnum() = this is KSClassDeclaration && classKind == ClassKind.ENUM_CLASS
 internal fun KSDeclaration.isBool() = qualifiedName?.asString().let { it == "kotlin.Boolean" || it == "boolean" }

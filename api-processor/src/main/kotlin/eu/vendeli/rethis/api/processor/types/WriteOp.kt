@@ -88,7 +88,7 @@ internal fun WriteOp.emitOp(phase: EncodePhase, parentPointer: String? = null) {
                                 if (context.currentCommand.haveVaryingSize) ctx.appendLine("argCount += 1")
                             } else if (phase == EncodePhase.WRITE) {
                                 addImport("eu.vendeli.rethis.utils.writeBulkString")
-                                val tokenProperty = getRedisTokenProperty(it.name)
+                                val tokenProperty = tokenToRedisTokenPropertyName(it.name)
                                 addImport("eu.vendeli.rethis.utils.RedisToken")
                                 ctx.appendLine("buffer.writeBulkString(RedisToken.%L)", tokenProperty)
                             }
@@ -197,29 +197,6 @@ private fun WriteOp.handleTokens(processedTokens: Set<String>) {
     }
 }
 
-/**
- * Converts a token string to its corresponding RedisTokens property name.
- * All tokens are collected and given valid Kotlin property names.
- */
-private fun getRedisTokenProperty(tokenName: String): String {
-    // Map special tokens to valid Kotlin identifiers
-    return when (tokenName) {
-        "" -> "EMPTY"
-        "*" -> "ASTERISK"
-        "=" -> "EQUALS"
-        "~" -> "TILDE"
-        "$" -> "DOLLAR"
-        "crash-after-election" -> "CRASH_AFTER_ELECTION"
-        "crash-after-promotion" -> "CRASH_AFTER_PROMOTION"
-        "help" -> "HELP"
-        else -> {
-            // Convert all tokens to valid Kotlin property names
-            // Replace hyphens and spaces with underscores, ensure uppercase
-            tokenName.uppercase().replace("-", "_").replace(" ", "_")
-        }
-    }
-}
-
 internal fun CodeGenContext.writeTokens(
     node: EnrichedNode,
     tokens: List<EnrichedTreeAttr.Token>,
@@ -239,7 +216,7 @@ internal fun CodeGenContext.writeTokens(
         } else if (phase == EncodePhase.WRITE) {
             addImport("eu.vendeli.rethis.utils.writeBulkString")
             context[CollectedTokens]?.addToken(it.name)
-            val tokenProperty = getRedisTokenProperty(it.name)
+            val tokenProperty = tokenToRedisTokenPropertyName(it.name)
             addImport("eu.vendeli.rethis.utils.RedisToken")
             appendLine("buffer.writeBulkString(RedisToken.%L)", tokenProperty)
         }

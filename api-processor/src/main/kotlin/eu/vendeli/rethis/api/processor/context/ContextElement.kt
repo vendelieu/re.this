@@ -214,7 +214,7 @@ internal class CollectedTokens(
             appendLine("internal object RedisToken {")
 
             sortedTokens.forEach { token ->
-                val propertyName = tokenToPropertyName(token)
+                val propertyName = tokenToRedisTokenPropertyName(token)
                 val kotlinString = token.replace("\"", "\\\"")
                 appendLine("    val $propertyName = \"$kotlinString\".encodeToByteArray()")
             }
@@ -231,18 +231,6 @@ internal class CollectedTokens(
         targetFile.parentFile.mkdirs()
         targetFile.writeText(fileContent)
         context.logger.warn("Generated RedisToken.kt with ${tokens.size} tokens at: ${targetFile.absolutePath}")
-    }
-
-    private fun tokenToPropertyName(token: String): String = when (token) {
-        "" -> "EMPTY"
-        "*" -> "ASTERISK"
-        "=" -> "EQUALS"
-        "~" -> "TILDE"
-        "$" -> "DOLLAR"
-        "crash-after-election" -> "CRASH_AFTER_ELECTION"
-        "crash-after-promotion" -> "CRASH_AFTER_PROMOTION"
-        "help" -> "HELP"
-        else -> token.uppercase().replace("-", "_").replace(" ", "_")
     }
 
     companion object : ContextKey<CollectedTokens>
