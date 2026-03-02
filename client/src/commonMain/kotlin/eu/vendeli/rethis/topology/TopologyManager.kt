@@ -46,11 +46,10 @@ internal suspend inline fun TopologyManager.handle(request: CommandRequest): Buf
                         }
                     }.takeIf { !coLocalConn.isTx } ?: run {
                     warnOfSubstitution(cfg)
+                    // return empty buffer if transaction (to not break response contract since transaction return QUEUED)
                     EMPTY_BUFFER
                 }
             }
-
-            // return empty buffer if transaction (to not break response contract since transaction return QUEUED)
 
             else -> {
                 route(request).execute(request)

@@ -26,11 +26,6 @@ import io.kotest.matchers.types.shouldBeTypeOf
 import kotlinx.coroutines.launch
 
 class TransactionCommandTest : ReThisTestCtx() {
-    @BeforeAll
-    fun prepare() = rewriteCfg {
-        retry { times = 1 }
-    }
-
     @Test
     suspend fun `test EXEC command with multiple queued commands`() {
         val cProvider = connectionProvider()

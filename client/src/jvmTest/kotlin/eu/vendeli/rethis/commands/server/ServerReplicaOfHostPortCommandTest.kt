@@ -7,8 +7,12 @@ import io.kotest.matchers.shouldBe
 
 class ServerReplicaOfHostPortCommandTest : ReThisTestCtx() {
     @Test
-    suspend fun `REPLICAOF self host-port returns an error`() {
+    suspend fun `REPLICAOF self host-port`() {
         val result = client.replicaOf(ReplicaOfArgs.HostPort(redis.host, redis.firstMappedPort.toLong()))
+        result shouldBe true
+
+        // returning back
+        client.replicaOf(ReplicaOfArgs.NoOne)
         result shouldBe true
     }
 }

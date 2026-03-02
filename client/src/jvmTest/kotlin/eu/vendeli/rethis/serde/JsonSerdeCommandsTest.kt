@@ -17,7 +17,7 @@
  import kotlinx.io.readString
  import kotlinx.serialization.Serializable
 
- class JsonSerdeCommandsTest : ReThisTestCtx(true) {
+ class JsonSerdeCommandsTest : ReThisTestCtx() {
     @Serializable
     data class User(
         val id: Int,

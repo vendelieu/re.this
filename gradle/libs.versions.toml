@@ -51,7 +51,6 @@ autoService-ksp = { module = "dev.zacsweers.autoservice:auto-service-ksp", versi
 ksp = { module = "com.google.devtools.ksp:symbol-processing-api", version.ref = "ksp" }
 poet = { module = "com.squareup:kotlinpoet", version.ref = "poet" }
 poet-ksp = { module = "com.squareup:kotlinpoet-ksp", version.ref = "poet" }
-ksp-plugin = { module = "com.google.devtools.ksp:com.google.devtools.ksp.gradle.plugin", version.ref = "ksp" }
 test-dotenv-kotlin = { module = "io.github.cdimascio:dotenv-kotlin", version.ref = "dotenv-kotlin" }
 
 [plugins]

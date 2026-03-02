@@ -7,7 +7,7 @@ import eu.vendeli.rethis.shared.types.*
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeTypeOf
 
-class JsonCommandTest2 : ReThisTestCtx(withJsonModule = true) {
+class JsonCommandTest2 : ReThisTestCtx() {
     @Test
     suspend fun `test JSON_MGET command`() {
         client.jsonSet("testKey13", "[1, 2, 3]", ".")

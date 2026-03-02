@@ -8,7 +8,7 @@ import eu.vendeli.rethis.shared.types.RedisCommandSpec
 import eu.vendeli.rethis.shared.types.RedisOperation
 import eu.vendeli.rethis.shared.types.RespCode
 
-@RedisCommand("CLIENT LIST", RedisOperation.READ, [RespCode.BULK])
+@RedisCommand("CLIENT LIST", RedisOperation.READ, [RespCode.BULK, RespCode.VERBATIM_STRING])
 fun interface ClientListCommand : RedisCommandSpec<String> {
     suspend fun encode(
         clientType: ClientType?,

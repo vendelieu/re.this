@@ -12,7 +12,7 @@ import kotlinx.io.Buffer
 import kotlinx.io.InternalIoApi
 import kotlin.jvm.JvmName
 
-private const val MAX_NESTING_DEPTH = 32 // Reasonable limit for RESP nesting
+private const val MAX_NESTING_DEPTH = 64 // Limit for RESP nesting (incl. ATTRIBUTE maps and deep replies)
 
 val EMPTY_BUFFER = Buffer()
 
@@ -76,9 +76,10 @@ internal inline fun Buffer.resolveToken(requiredToken: RespCode): RespCode {
 @OptIn(InternalAPI::class, InternalIoApi::class)
 suspend fun ByteReadChannel.readCompleteResponseInto(
     target: Buffer,
+    attributesOut: Buffer? = null,
 ) {
-    // Read first type byte
-    val firstType = readByteRequired(target)
+    // Read first type byte without writing to target (so we can route ATTRIBUTE to attributesOut)
+    val firstType = readByteOnly()
     val firstCode = RespCode.fromCode(firstType)
 
     // Stack as IntArray: each element is the remaining count for that nesting level
@@ -86,16 +87,39 @@ suspend fun ByteReadChannel.readCompleteResponseInto(
     var stackSize = 1
     stack[0] = 1 // Top-level expects exactly 1 element
 
-    // We already consumed the first type byte
-    stackSize = processValue(
-        out = target,
-        code = firstCode,
-        stack = stack,
-        stackSize = stackSize,
-    )
+    val finalStackSize = if (firstCode == RespCode.ATTRIBUTE) {
+        // RESP3: attribute map followed by the actual reply — consume attribute, then read reply into target
+        val attrBuffer = attributesOut ?: Buffer()
+        attrBuffer.writeByte(firstType)
+        val afterAttr = processValue(
+            out = attrBuffer,
+            code = firstCode,
+            stack = stack,
+            stackSize = stackSize,
+        )
+        check(afterAttr == 0) { "RESP framing invariant violated: attribute map did not consume fully" }
+        // Read the next value (actual reply) into target
+        val nextType = readByteRequired(target)
+        val nextCode = RespCode.fromCode(nextType)
+        stack[0] = 1
+        processValue(
+            out = target,
+            code = nextCode,
+            stack = stack,
+            stackSize = 1,
+        )
+    } else {
+        target.writeByte(firstType)
+        processValue(
+            out = target,
+            code = firstCode,
+            stack = stack,
+            stackSize = stackSize,
+        )
+    }
 
     // When stack empties, exactly one frame is read
-    check(stackSize == 0) {
+    check(finalStackSize == 0) {
         "RESP framing invariant violated: stack not empty at end"
     }
 }
@@ -226,16 +250,16 @@ private fun onElementComplete(stack: IntArray, stackSize: Int): Int {
 @OptIn(InternalAPI::class, InternalIoApi::class)
 private suspend fun ByteReadChannel.readUntilCrlfInto(out: Buffer) {
     while (true) {
-        if (readBuffer.buffer.size == 0L) awaitContent()
-        if (readBuffer.buffer.size == 0L) throw RespUnexpectedEOF()
+        if (readBuffer.exhausted()) awaitContent()
+        if (readBuffer.exhausted()) throw RespUnexpectedEOF()
 
         val b = readBuffer.buffer.readByte()
         out.writeByte(b)
 
         if (b == CARRIAGE_RETURN_BYTE) {
             // Expect LF next
-            if (readBuffer.buffer.size == 0L) awaitContent()
-            if (readBuffer.buffer.size == 0L) throw RespUnexpectedEOF()
+            if (readBuffer.exhausted()) awaitContent()
+            if (readBuffer.exhausted()) throw RespUnexpectedEOF()
 
             val lf = readBuffer.buffer.readByte()
             out.writeByte(lf)
@@ -250,12 +274,12 @@ private suspend fun ByteReadChannel.readUntilCrlfInto(out: Buffer) {
 
 @OptIn(InternalAPI::class, InternalIoApi::class)
 private suspend fun ByteReadChannel.readCrlfRequired(out: Buffer) {
-    if (readBuffer.buffer.size == 0L) awaitContent()
-    if (readBuffer.buffer.size == 0L) throw RespUnexpectedEOF()
+    if (readBuffer.exhausted()) awaitContent()
+    if (readBuffer.exhausted()) throw RespUnexpectedEOF()
     val cr = readBuffer.buffer.readByte()
 
-    if (readBuffer.buffer.size == 0L) awaitContent()
-    if (readBuffer.buffer.size == 0L) throw RespUnexpectedEOF()
+    if (readBuffer.exhausted()) awaitContent()
+    if (readBuffer.exhausted()) throw RespUnexpectedEOF()
     val lf = readBuffer.buffer.readByte()
 
     if (cr != CARRIAGE_RETURN_BYTE || lf != NEWLINE_BYTE) {
@@ -273,8 +297,8 @@ private suspend fun ByteReadChannel.readDecimalLong(out: Buffer): Long {
     var readAny = false
 
     while (true) {
-        if (readBuffer.buffer.size == 0L) awaitContent()
-        if (readBuffer.buffer.size == 0L) throw RespUnexpectedEOF()
+        if (readBuffer.exhausted()) awaitContent()
+        if (readBuffer.exhausted()) throw RespUnexpectedEOF()
         val b = readBuffer.buffer.readByte()
         out.writeByte(b)
 
@@ -285,8 +309,8 @@ private suspend fun ByteReadChannel.readDecimalLong(out: Buffer): Long {
             }
 
             CARRIAGE_RETURN_BYTE -> {
-                if (readBuffer.buffer.size == 0L) awaitContent()
-                if (readBuffer.buffer.size == 0L) throw RespUnexpectedEOF()
+                if (readBuffer.exhausted()) awaitContent()
+                if (readBuffer.exhausted()) throw RespUnexpectedEOF()
                 val lf = readBuffer.buffer.readByte()
                 out.writeByte(lf)
                 if (lf != NEWLINE_BYTE) {
@@ -308,9 +332,17 @@ private suspend fun ByteReadChannel.readDecimalLong(out: Buffer): Long {
 }
 
 @OptIn(InternalAPI::class, InternalIoApi::class)
+private suspend fun ByteReadChannel.readByteOnly(): Byte {
+    if (readBuffer.exhausted()) awaitContent()
+    if (readBuffer.exhausted()) throw RespUnexpectedEOF()
+    return readBuffer.buffer.readByte()
+}
+
+@OptIn(InternalAPI::class, InternalIoApi::class)
 private suspend fun ByteReadChannel.readByteRequired(out: Buffer): Byte {
-    if (readBuffer.buffer.size == 0L) awaitContent()
-    if (readBuffer.buffer.size == 0L) throw RespUnexpectedEOF()
+    if (readBuffer.exhausted()) awaitContent()
+    if (readBuffer.exhausted()) throw RespUnexpectedEOF()
+
     val b = readBuffer.buffer.readByte()
     out.writeByte(b)
     return b
@@ -320,8 +352,8 @@ private suspend fun ByteReadChannel.readByteRequired(out: Buffer): Byte {
 private suspend fun ByteReadChannel.readFullyRequired(out: Buffer, length: Long) {
     var remaining = length
     while (remaining > 0) {
-        if (readBuffer.buffer.size == 0L) awaitContent()
-        if (readBuffer.buffer.size == 0L) throw RespUnexpectedEOF()
+        if (readBuffer.exhausted()) awaitContent()
+        if (readBuffer.exhausted()) throw RespUnexpectedEOF()
         val toRead = minOf(remaining, readBuffer.buffer.size)
         out.write(readBuffer.buffer, toRead)
         remaining -= toRead

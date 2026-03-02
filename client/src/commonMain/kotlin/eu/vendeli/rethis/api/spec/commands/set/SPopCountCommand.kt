@@ -6,8 +6,8 @@ import eu.vendeli.rethis.shared.types.RedisCommandSpec
 import eu.vendeli.rethis.shared.types.RedisOperation
 import eu.vendeli.rethis.shared.types.RespCode
 
-@RedisCommand("SPOP", RedisOperation.WRITE, [RespCode.ARRAY])
-fun interface SPopCountCommand : RedisCommandSpec<List<String>> {
+@RedisCommand("SPOP", RedisOperation.WRITE, [RespCode.ARRAY, RespCode.SET])
+fun interface SPopCountCommand : RedisCommandSpec<Set<String>> {
     suspend fun encode(
         key: String,
         count: Long?,

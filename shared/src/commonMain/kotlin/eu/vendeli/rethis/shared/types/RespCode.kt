@@ -30,9 +30,9 @@ enum class RespCode(
     }
 
     companion object {
-        private val EntryMap = entries.associateBy { it.code }
+        private val CodeMap = entries.associateBy { it.code }
 
-        fun fromCode(code: Byte): RespCode = EntryMap[code] ?: throw IllegalArgumentException(
+        fun fromCode(code: Byte): RespCode = CodeMap[code] ?: throw IllegalArgumentException(
             "No suitable message type found - ${code.toInt().toChar()}",
         )
     }

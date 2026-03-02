@@ -7,7 +7,7 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeTypeOf
 import kotlinx.io.readString
 
-class JsonCommandTest : ReThisTestCtx(withJsonModule = true) {
+class JsonCommandTest : ReThisTestCtx() {
     @Test
     suspend fun `test JSON_ARRAPPEND command`() {
         client.jsonSet("testKey1", "[1, 2, 3]", ".")

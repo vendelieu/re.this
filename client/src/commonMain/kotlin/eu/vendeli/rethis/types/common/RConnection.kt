@@ -17,7 +17,7 @@ data class RConnection(
 ) {
     @ReThisInternal
     @OptIn(InternalAPI::class, InternalIoApi::class)
-    suspend fun doRequest(payload: Buffer): Buffer {
+    suspend fun doRequest(payload: Buffer, attributesOut: Buffer? = null): Buffer {
         val payloadCopy = payload.copy()
         COMMON_LOGGER.trace { "Request:\n${payloadCopy.readString()}" }
 
@@ -25,7 +25,7 @@ data class RConnection(
         output.flush()
 
         val response = Buffer()
-        input.readCompleteResponseInto(response)
+        input.readCompleteResponseInto(response, attributesOut)
 
         COMMON_LOGGER.trace { "Response:\n${response.copy().readString()}" }
         return response
