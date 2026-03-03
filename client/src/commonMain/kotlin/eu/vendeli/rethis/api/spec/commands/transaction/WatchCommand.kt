@@ -6,7 +6,7 @@ import eu.vendeli.rethis.shared.types.RedisCommandSpec
 import eu.vendeli.rethis.shared.types.RedisOperation
 import eu.vendeli.rethis.shared.types.RespCode
 
-@RedisCommand("WATCH", RedisOperation.WRITE, [RespCode.SIMPLE_STRING])
+@RedisCommand("WATCH", RedisOperation.WRITE, [RespCode.SIMPLE_STRING, RespCode.BULK])
 fun interface WatchCommand : RedisCommandSpec<Boolean> {
     suspend fun encode(vararg key: String): CommandRequest
 }

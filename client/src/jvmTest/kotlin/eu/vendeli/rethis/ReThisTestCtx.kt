@@ -21,9 +21,6 @@ abstract class TestCtx : AnnotationSpec() {
     protected val timestamp: Instant get() = Clock.System.now()
     protected val defaultCharset = Charsets.UTF_8
 
-    @Suppress("UNCHECKED_CAST")
-    protected inline fun <T> Any?.safeCast() = this as? T
-
     @Suppress("TestFunctionName")
     protected suspend fun Buffer(block: suspend Buffer.() -> Unit): Buffer {
         val buff = Buffer()
@@ -77,3 +74,9 @@ abstract class ReThisTestCtx : TestCtx() {
         protected val client = ReThis(redis.host, redis.firstMappedPort, RespVer.V3, DEFAULT_TEST_CFG)
     }
 }
+
+@Suppress("UNCHECKED_CAST")
+internal inline fun <T> Any?.safeCast() = this as? T
+
+@Suppress("UNCHECKED_CAST")
+internal inline fun <T> Any?.cast() = this as T

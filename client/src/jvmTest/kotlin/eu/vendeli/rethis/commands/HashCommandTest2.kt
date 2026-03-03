@@ -3,7 +3,10 @@ package eu.vendeli.rethis.commands
 import eu.vendeli.rethis.ReThisTestCtx
 import eu.vendeli.rethis.command.hash.*
 import eu.vendeli.rethis.shared.request.common.FieldValue
+import eu.vendeli.rethis.shared.types.BulkString
+import eu.vendeli.rethis.shared.types.RArray
 import eu.vendeli.rethis.shared.utils.unwrap
+import eu.vendeli.rethis.shared.utils.unwrapList
 import io.kotest.matchers.collections.shouldBeIn
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
@@ -38,13 +41,26 @@ class HashCommandTest2 : ReThisTestCtx() {
             FieldValue("field3", "value3"),
         )
 
-        val fields = client.hRandFieldCount("testKey20", 2, true).map {
-            it.unwrap<String>()!!
-        }
-        fields.size shouldBe 4
-
         val allFields = listOf("field1", "field2", "field3")
         val allValues = listOf("value1", "value2", "value3")
+
+        val result = client.hRandFieldCount("testKey20", 2, true)
+        if (result.first() is RArray) {
+            result.first().unwrapList<String>().run {
+                first() shouldBeIn allFields
+                last() shouldBeIn allValues
+            }
+            result.last().unwrapList<String>().run {
+                first() shouldBeIn allFields
+                last() shouldBeIn allValues
+            }
+            return
+        }
+        val fields = result.map {
+            it.unwrap<String>()!!
+        }
+
+        fields.size shouldBe 4
 
         fields.first() shouldBeIn allFields
         fields.get(1) shouldBeIn allValues

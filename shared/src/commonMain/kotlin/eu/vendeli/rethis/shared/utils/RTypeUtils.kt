@@ -122,7 +122,10 @@ private fun Buffer.readSimpleResponseWrapped(
             VerbatimString(encoding, content)
         }
 
-        RespCode.NULL -> RType.Null
+        RespCode.NULL -> {
+            skip(2) // skip crlf
+            RType.Null
+        }
         else -> throw ResponseParsingException("Unexpected simple code: $code")
     }
 }

@@ -7,13 +7,14 @@ import eu.vendeli.rethis.shared.types.CommandRequest
 import eu.vendeli.rethis.shared.types.RedisCommandSpec
 import eu.vendeli.rethis.shared.types.RedisOperation
 import eu.vendeli.rethis.shared.types.RespCode
+import eu.vendeli.rethis.utils.JSON_DEFAULT_PATH
 
 @RedisCommand("JSON.SET", RedisOperation.WRITE, [RespCode.SIMPLE_STRING])
 fun interface JsonSetCommand : RedisCommandSpec<String> {
     suspend fun encode(
         key: String,
         value: String,
-        @RedisMeta.Default("\"$\"") path: String,
+        @RedisMeta.Default("\"$JSON_DEFAULT_PATH\"") path: String,
         condition: UpsertMode?,
     ): CommandRequest
 }

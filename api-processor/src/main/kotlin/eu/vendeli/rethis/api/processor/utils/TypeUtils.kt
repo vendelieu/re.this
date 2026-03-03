@@ -88,3 +88,18 @@ internal fun KSDeclaration.isBool() = qualifiedName?.asString().let { it == "kot
 internal fun List<CommandArgument>.flattenArguments(): List<CommandArgument> = flatMap { argument ->
     listOf(argument) + argument.arguments.flattenArguments()
 }
+
+/**
+ * Maps a Kotlin parameter type to the Redis spec type string used in command arguments.
+ * Used as a tie-breaker when multiple RSpec nodes match the same parameter name and bounds.
+ */
+internal fun KSType.toSpecType(): String? {
+    val name = declaration.qualifiedName?.asString() ?: return null
+    return when (name) {
+        "kotlin.String" -> "string"
+        "kotlin.Long", "kotlin.Int" -> "integer"
+        "kotlin.Double", "kotlin.Float" -> "double"
+        "kotlin.Boolean" -> "boolean"
+        else -> null
+    }
+}

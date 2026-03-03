@@ -77,7 +77,7 @@
 
         // Pop from nested array
         client
-            .jsonArrPop(key, "$.users")
+            .jsonArrPop(key, path = "$.users")
             .shouldBeTypeOf<RArray>()
             .value
             .first()

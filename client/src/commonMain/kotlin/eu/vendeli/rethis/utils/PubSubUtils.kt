@@ -7,7 +7,10 @@ import eu.vendeli.rethis.shared.decoders.general.RTypeDecoder
 import eu.vendeli.rethis.shared.types.Push
 import eu.vendeli.rethis.shared.types.RArray
 import eu.vendeli.rethis.shared.utils.readCompleteResponseInto
-import eu.vendeli.rethis.types.common.*
+import eu.vendeli.rethis.types.common.PubSubEvent
+import eu.vendeli.rethis.types.common.PubSubEventParser
+import eu.vendeli.rethis.types.common.SubscribeTarget
+import eu.vendeli.rethis.types.common.encode
 import eu.vendeli.rethis.types.coroutine.CoLocalConn
 import eu.vendeli.rethis.types.interfaces.PubSubHandler
 import io.ktor.utils.io.*
@@ -39,8 +42,7 @@ suspend fun ReThis.registerSubscription(
             while (isActive) {
                 val payload = Buffer()
                 conn.input.readCompleteResponseInto(payload)
-                val frame = RTypeDecoder.decode(payload, cfg.charset)
-                val push = when (frame) {
+                val push = when (val frame = RTypeDecoder.decode(payload, cfg.charset)) {
                     is Push -> frame
                     is RArray -> Push(frame.value)
                     else -> null
@@ -81,12 +83,7 @@ suspend fun ReThis.registerSubscription(
             subscriptions.globalHandlers.forEach { runCatching { it.onException(target, e) } }
         } finally {
             subscriptions.unregisterHandler(target, handler, job)
-            runCatching {
-                conn.doRequest(target.encodeUnsubscribe(cfg.charset).data)
-                providerResolved.releaseConnection(conn)
-            }.onFailure {
-                connectionFactory.dispose(conn)
-            }
+            connectionFactory.dispose(conn)
         }
     }
 }

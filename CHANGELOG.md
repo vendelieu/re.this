@@ -6,6 +6,8 @@
 * Improved token handling in codecs.
 * Improved varying argument handling in codecs.
 * Improved subscriptions user interface.
+* Returned default path (`.`) for json commands.
+* Fixed `Null` parsing in wrapped (`RType`) parser.
 
 ## 0.3.9
 

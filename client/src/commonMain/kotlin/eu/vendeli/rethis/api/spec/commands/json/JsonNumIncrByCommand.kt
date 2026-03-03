@@ -4,13 +4,14 @@ import eu.vendeli.rethis.shared.annotations.RedisCommand
 import eu.vendeli.rethis.shared.annotations.RedisMeta
 import eu.vendeli.rethis.shared.decoders.general.RTypeDecoder
 import eu.vendeli.rethis.shared.types.*
+import eu.vendeli.rethis.utils.JSON_DEFAULT_PATH
 
 @RedisCommand("JSON.NUMINCRBY", RedisOperation.WRITE, [RespCode.ARRAY])
 @RedisMeta.CustomCodec(decoder = RTypeDecoder::class)
 fun interface JsonNumIncrByCommand : RedisCommandSpec<RType> {
     suspend fun encode(
         key: String,
-        path: String,
         value: Double,
+        @RedisMeta.Default("\"$JSON_DEFAULT_PATH\"") path: String,
     ): CommandRequest
 }

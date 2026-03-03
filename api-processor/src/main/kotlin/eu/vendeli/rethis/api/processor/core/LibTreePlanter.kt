@@ -69,7 +69,22 @@ internal object LibTreePlanter {
 
         val rNode = when {
             nodesByName.size == 1 -> nodesByName.first()
-            nodesByName.size > 1 -> nodesByName.singleOrNull { it.path.isWithinBounds(parentBounds) }
+            nodesByName.size > 1 -> {
+                val withinBounds = nodesByName.filter { it.path.isWithinBounds(parentBounds) }
+                when {
+                    withinBounds.size == 1 -> withinBounds.single()
+                    withinBounds.size > 1 -> {
+                        val specType = pType.toSpecType()
+                        if (specType != null) {
+                            withinBounds.singleOrNull { it.arg.type == specType }
+                                ?: withinBounds.firstOrNull()
+                        } else {
+                            withinBounds.firstOrNull()
+                        }
+                    }
+                    else -> null
+                }
+            }
             else -> null
         }
 

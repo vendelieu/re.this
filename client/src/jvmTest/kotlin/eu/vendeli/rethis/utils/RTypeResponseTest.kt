@@ -2,6 +2,7 @@ package eu.vendeli.rethis.utils
 
 import com.ionspin.kotlin.bignum.integer.toBigInteger
 import eu.vendeli.rethis.TestCtx
+import eu.vendeli.rethis.safeCast
 import eu.vendeli.rethis.shared.types.*
 import eu.vendeli.rethis.shared.utils.readResponseWrapped
 import io.kotest.matchers.shouldBe

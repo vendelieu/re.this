@@ -19,7 +19,11 @@ object ZPopResultDecoder : ResponseDecoder<ZPopResult> {
     ): ZPopResult {
         if (input == EMPTY_BUFFER) return EMPTY_POP_RESULT
         return ArrayRTypeDecoder.decode(input, charset).let {
-            ZPopResult(key = it[0].unwrap()!!, popped = it[1].unwrap()!!, score = it[2].unwrap<String>()!!.toDouble())
+            ZPopResult(
+                key = it[0].unwrap()!!,
+                popped = it[1].unwrap()!!,
+                score = it[2].unwrap<String>()?.toDouble() ?: it[2].unwrap<Double>()!!
+            )
         }
     }
 }

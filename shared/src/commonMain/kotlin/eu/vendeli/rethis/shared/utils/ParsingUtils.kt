@@ -93,9 +93,9 @@ suspend fun ByteReadChannel.readCompleteResponseInto(
         attrBuffer.writeByte(firstType)
         val afterAttr = processValue(
             out = attrBuffer,
-            code = firstCode,
+            initialCode = firstCode,
             stack = stack,
-            stackSize = stackSize,
+            initialStackSize = stackSize,
         )
         check(afterAttr == 0) { "RESP framing invariant violated: attribute map did not consume fully" }
         // Read the next value (actual reply) into target
@@ -104,17 +104,17 @@ suspend fun ByteReadChannel.readCompleteResponseInto(
         stack[0] = 1
         processValue(
             out = target,
-            code = nextCode,
+            initialCode = nextCode,
             stack = stack,
-            stackSize = 1,
+            initialStackSize = 1,
         )
     } else {
         target.writeByte(firstType)
         processValue(
             out = target,
-            code = firstCode,
+            initialCode = firstCode,
             stack = stack,
-            stackSize = stackSize,
+            initialStackSize = stackSize,
         )
     }
 
@@ -127,61 +127,45 @@ suspend fun ByteReadChannel.readCompleteResponseInto(
 @OptIn(InternalAPI::class, InternalIoApi::class)
 private suspend fun ByteReadChannel.processValue(
     out: Buffer,
-    code: RespCode,
+    initialCode: RespCode,
     stack: IntArray,
-    stackSize: Int,
+    initialStackSize: Int,
 ): Int {
-    var size = stackSize
+    var stackSize = initialStackSize
+    var currentCode: RespCode? = initialCode
 
-    when (code.type) {
-        RespCode.Type.SIMPLE -> {
-            // + - : # , ( _
-            when (code) {
-                RespCode.NULL -> {
-                    // "_\r\n"
-                    readCrlfRequired(out)
-                }
-
-                else -> {
-                    // Simple line
-                    readUntilCrlfInto(out)
-                }
+    while (true) {
+        if (currentCode == null) {
+            if (stackSize == 0) return 0
+            if (stack[stackSize - 1] == 0) {
+                stackSize--
+                stackSize = onElementComplete(stack, stackSize)
+                continue
             }
-            onElementComplete(stack, size)
+            val nextType = readByteRequired(out)
+            currentCode = RespCode.fromCode(nextType)
         }
 
-        RespCode.Type.SIMPLE_AGG -> {
-            // $ ! =
-            readBulkLike(out)
-            size = onElementComplete(stack, size)
-        }
+        val code = currentCode!!
+        currentCode = null
 
-        RespCode.Type.AGGREGATE -> {
-            size = readAggregateHeader(out, code, stack, size)
+        when (code.type) {
+            RespCode.Type.SIMPLE -> {
+                when (code) {
+                    RespCode.NULL -> readCrlfRequired(out)
+                    else -> readUntilCrlfInto(out)
+                }
+                stackSize = onElementComplete(stack, stackSize)
+            }
+            RespCode.Type.SIMPLE_AGG -> {
+                readBulkLike(out)
+                stackSize = onElementComplete(stack, stackSize)
+            }
+            RespCode.Type.AGGREGATE -> {
+                stackSize = readAggregateHeader(out, code, stack, stackSize)
+            }
         }
     }
-
-    // Continue while there are pending aggregate elements
-    while (size > 0) {
-        if (stack[size - 1] == 0) {
-            size--
-            size = onElementComplete(stack, size)
-            continue
-        }
-
-        // Read next element type
-        val nextType = readByteRequired(out)
-        val nextCode = RespCode.fromCode(nextType)
-
-        size = processValue(
-            out = out,
-            code = nextCode,
-            stack = stack,
-            stackSize = size,
-        )
-    }
-
-    return size
 }
 
 @OptIn(InternalAPI::class, InternalIoApi::class)
