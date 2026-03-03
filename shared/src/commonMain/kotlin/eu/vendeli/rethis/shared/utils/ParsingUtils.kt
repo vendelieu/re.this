@@ -146,7 +146,7 @@ private suspend fun ByteReadChannel.processValue(
             currentCode = RespCode.fromCode(nextType)
         }
 
-        val code = currentCode!!
+        val code = currentCode
         currentCode = null
 
         when (code.type) {

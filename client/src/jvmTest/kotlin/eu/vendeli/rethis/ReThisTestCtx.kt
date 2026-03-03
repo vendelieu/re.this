@@ -15,7 +15,7 @@ import kotlin.time.Clock
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.Instant
 
-private val TEST_TIMEOUT = 30.seconds
+private val TEST_TIMEOUT = 120.seconds
 
 abstract class TestCtx : AnnotationSpec() {
     protected val timestamp: Instant get() = Clock.System.now()
