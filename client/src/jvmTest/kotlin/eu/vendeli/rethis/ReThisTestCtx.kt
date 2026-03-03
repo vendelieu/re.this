@@ -12,10 +12,10 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.io.Buffer
 import org.testcontainers.utility.DockerImageName
 import kotlin.time.Clock
-import kotlin.time.Duration.Companion.seconds
+import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Instant
 
-private val TEST_TIMEOUT = 120.seconds
+private val TEST_TIMEOUT = 3.minutes
 
 abstract class TestCtx : AnnotationSpec() {
     protected val timestamp: Instant get() = Clock.System.now()
