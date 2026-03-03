@@ -12,7 +12,7 @@ import kotlinx.io.Buffer
 import kotlinx.io.readLineStrict
 
 object ArrayLongDecoder : ResponseDecoder<List<Long>> {
-    override suspend fun decode(
+    override fun decode(
         input: Buffer,
         charset: Charset,
         code: RespCode?,
@@ -28,7 +28,7 @@ object ArrayLongDecoder : ResponseDecoder<List<Long>> {
         }
     }
 
-    suspend fun decodeNullable(
+    fun decodeNullable(
         input: Buffer,
         charset: Charset,
         code: RespCode? = null,

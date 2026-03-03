@@ -6,8 +6,7 @@ import eu.vendeli.rethis.command.json.jsonSet
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 
-class JsonByteArrayCommandsTest : ReThisTestCtx(withJsonModule = true) {
-
+class JsonByteArrayCommandsTest : ReThisTestCtx() {
     // ==================== JSON Commands ====================
 
     @Test

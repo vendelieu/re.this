@@ -11,7 +11,7 @@ import kotlinx.io.readLineStrict
 
 
 object ShutdownDecoder : ResponseDecoder<Boolean?> {
-    override suspend fun decode(
+    override fun decode(
         input: Buffer,
         charset: Charset,
         code: RespCode?,

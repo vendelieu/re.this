@@ -16,7 +16,7 @@ enum class RespCode(
     BULK_ERROR('!'.code.toByte(), Type.SIMPLE_AGG),
     VERBATIM_STRING('='.code.toByte(), Type.SIMPLE_AGG),
     MAP('%'.code.toByte(), Type.AGGREGATE),
-    ATTRIBUTE('`'.code.toByte(), Type.AGGREGATE),
+    ATTRIBUTE('|'.code.toByte(), Type.AGGREGATE),
     SET('~'.code.toByte(), Type.AGGREGATE),
     PUSH('>'.code.toByte(), Type.AGGREGATE),
     ;
@@ -30,9 +30,9 @@ enum class RespCode(
     }
 
     companion object {
-        private val EntryMap = entries.associateBy { it.code }
+        private val CodeMap = entries.associateBy { it.code }
 
-        fun fromCode(code: Byte): RespCode = EntryMap[code] ?: throw IllegalArgumentException(
+        fun fromCode(code: Byte): RespCode = CodeMap[code] ?: throw IllegalArgumentException(
             "No suitable message type found - ${code.toInt().toChar()}",
         )
     }

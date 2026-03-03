@@ -26,37 +26,32 @@ import io.kotest.matchers.types.shouldBeTypeOf
 import kotlinx.coroutines.launch
 
 class TransactionCommandTest : ReThisTestCtx() {
-    @BeforeAll
-    fun prepare() = rewriteCfg {
-        retry { times = 1 }
-    }
-
     @Test
     suspend fun `test EXEC command with multiple queued commands`() {
         val cProvider = connectionProvider()
         val conn = cProvider.borrowConnection()
 
         conn
-            .doRequest(MultiCommandCodec.encode(Charsets.UTF_8).buffer)
+            .doRequest(MultiCommandCodec.encode(Charsets.UTF_8).data)
             .readResponseWrapped(charset = Charsets.UTF_8)
             .isOk()
             .shouldBeTrue()
 
         conn
             .doRequest(
-                SetCommandCodec.encode(Charsets.UTF_8, "test1", "testv1").buffer,
+                SetCommandCodec.encode(Charsets.UTF_8, "test1", "testv1").data,
             ).readResponseWrapped(Charsets.UTF_8)
             .shouldBe(PlainString("QUEUED"))
 
         conn
             .doRequest(
-                SetCommandCodec.encode(Charsets.UTF_8, "test2", "testv2").buffer,
+                SetCommandCodec.encode(Charsets.UTF_8, "test2", "testv2").data,
             ).readResponseWrapped(Charsets.UTF_8)
             .shouldBe(PlainString("QUEUED"))
 
         conn
             .doRequest(
-                ExecCommandCodec.encode(Charsets.UTF_8).buffer,
+                ExecCommandCodec.encode(Charsets.UTF_8).data,
             ).readResponseWrapped(Charsets.UTF_8)
             .shouldBeTypeOf<RArray>() shouldBe RArray(
             listOf(
@@ -99,14 +94,16 @@ class TransactionCommandTest : ReThisTestCtx() {
     }
 
     @Test
-    suspend fun `test transaction with queued commands that fail`() = shouldThrow<ReThisException> {
-        client.transaction {
-            set("testKey1", "testVal1")
-            set("testKey2", "testVal2")
-            set("testKey2", "testVal2")
-            jsonClear("test")
+    suspend fun `test transaction with queued commands that fail`() {
+        shouldThrow<TransactionInvalidStateException> {
+            client.transaction {
+                set("testKey1", "testVal1")
+                set("testKey2", "testVal2")
+                set("testKey2", "testVal2")
+                throw RuntimeException("test")
+            }
         }
-    }.cause.shouldNotBeNull().message shouldBe "ERR unknown command 'JSON.CLEAR', with args beginning with: 'test' "
+    }
 
     @Test
     suspend fun `test WATCH command with multiple keys`() {

@@ -26,13 +26,15 @@ import kotlin.time.Duration.Companion.seconds
  * Defaults to [ReadFrom.Master].
  * @property db Specifies the Redis database index to use. If null, the default database is used.
  * @property charset Defines the character encoding for the connection. Defaults to UTF-8.
- * @property dispatcher The coroutine dispatcher used for performing operations. Defaults to [Dispatchers.Default].
+ * @property executionDispatcher The coroutine dispatcher used for performing operations. Defaults to [Dispatchers.Default].
  * @property maxConnections Maximum number of allowed connections in the pool. Defaults to 5000.
  * @property connectionAcquireTimeout Maximum time to wait for acquiring a connection from the pool. Defaults to 10 seconds.
  * @property loggerFactory Factory for creating loggers. Defaults to [DefaultLoggerFactory].
  */
 @ConfigurationDSL
-sealed class ReThisConfiguration(internal val protocol: RespVer) {
+sealed class ReThisConfiguration(
+    internal val protocol: RespVer,
+) {
     internal var auth: AuthConfiguration? = null
     internal var tls: TLSConfig? = null
     internal var socket: SocketConfiguration = SocketConfiguration()
@@ -97,17 +99,17 @@ sealed class ReThisConfiguration(internal val protocol: RespVer) {
      * enable the use of a specific dispatcher for tailored concurrency handling, such as a single-threaded
      * dispatcher or a custom thread pool.
      */
-    var dispatcher: CoroutineDispatcher = Dispatchers.Default
+    var executionDispatcher: CoroutineDispatcher = Dispatchers.IO_OR_UNCONFINED
 
     /**
      * Specifies the [CoroutineDispatcher] to be used for handling connections.
      *
-     * By default, the dispatcher is set to [Dispatchers.IO_OR_UNCONFINED], which provides a shared pool of
+     * By default, the dispatcher is set to [Dispatchers.Default], which provides a shared pool of
      * threads optimized for compute-intensive tasks, with fallback to unconfined on js targets.
      * This property can be customized to enable the use of a specific dispatcher for tailored concurrency handling,
      * such as a single-threaded dispatcher or a custom thread pool.
      */
-    var connectionDispatcher: CoroutineDispatcher = Dispatchers.IO_OR_UNCONFINED
+    var generalDispatcher: CoroutineDispatcher = Dispatchers.Default
 
     /**
      * Determines the maximum number of connections allowed generally (in pool, requests over pool, pubsub, and transaction mode).
@@ -194,28 +196,29 @@ sealed class ReThisConfiguration(internal val protocol: RespVer) {
         socket.block()
     }
 
-    override fun toString(): String = StringBuilder().apply {
-        appendLine("${this@ReThisConfiguration::class.simpleName} {")
+    override fun toString(): String = StringBuilder()
+        .apply {
+            appendLine("${this@ReThisConfiguration::class.simpleName} {")
 
-        appendLine(
-            "\tauth=${
-                auth?.let {
-                    "{username=${auth?.username}, password=${auth?.password?.size?.let { "*".repeat(it) }}}"
-                }
-            }",
-        )
-        appendLine("\ttls=$tls")
-        appendLine("\t${socket}")
-        appendLine("\t$retry")
-        appendLine("\tusePooling=$usePooling")
-        if (usePooling) appendLine("\tpool=$pool")
-        appendLine("\tdb=${db ?: 0}")
-        appendLine("\tcharset=$charset")
-        appendLine("\tdispatcher=$dispatcher")
-        appendLine("\tmaxConnections=$maxConnections")
-        appendLine("\tconnectionAcquireTimeout=$connectionAcquireTimeout")
-        appendLine("\tloggerFactory=${loggerFactory::class.simpleName}")
+            appendLine(
+                "\tauth=${
+                    auth?.let {
+                        "{username=${auth?.username}, password=${auth?.password?.size?.let { "*".repeat(it) }}}"
+                    }
+                }",
+            )
+            appendLine("\ttls=$tls")
+            appendLine("\t$socket")
+            appendLine("\t$retry")
+            appendLine("\tusePooling=$usePooling")
+            if (usePooling) appendLine("\tpool=$pool")
+            appendLine("\tdb=${db ?: 0}")
+            appendLine("\tcharset=$charset")
+            appendLine("\tdispatcher=$executionDispatcher")
+            appendLine("\tmaxConnections=$maxConnections")
+            appendLine("\tconnectionAcquireTimeout=$connectionAcquireTimeout")
+            appendLine("\tloggerFactory=${loggerFactory::class.simpleName}")
 
-        appendLine("}")
-    }.toString()
+            appendLine("}")
+        }.toString()
 }

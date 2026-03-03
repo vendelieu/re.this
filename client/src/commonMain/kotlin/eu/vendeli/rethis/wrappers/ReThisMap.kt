@@ -33,7 +33,7 @@ class ReThisMap(
             client.hVals(bucket).toMutableList()
         }
 
-    override fun put(key: String, value: String): String = updateValue(client, bucket, key to value).let { value }
+    override fun put(key: String, value: String): String = updateValue(client, bucket, key to value)
 
     override fun get(key: String): String? = coRunBlocking {
         client.hGet(bucket, key)
@@ -72,7 +72,7 @@ private inline fun Pair<String, String>.toMapEntry(
     override val key: String get() = first
     override val value: String get() = second
 
-    override fun setValue(newValue: String): String = updateValue(client, bucket, key to newValue).let { newValue }
+    override fun setValue(newValue: String): String = updateValue(client, bucket, first to newValue)
 }
 
 @Suppress("NOTHING_TO_INLINE")

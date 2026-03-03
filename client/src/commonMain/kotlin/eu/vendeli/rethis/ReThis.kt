@@ -39,7 +39,7 @@ class ReThis internal constructor(
     internal val connectionFactory = ConnectionFactory(cfg, rootJob)
     internal val connectionProviderFactory = DefaultConnectionProviderFactory(this)
     internal val topology = topologyBlock()
-    internal val scope = CoroutineScope(rootJob + cfg.dispatcher + CoroutineName(CLIENT_NAME))
+    internal val scope = CoroutineScope(rootJob + cfg.executionDispatcher + CoroutineName(CLIENT_NAME))
 
     val subscriptions = SubscriptionManager()
     val isActive get() = rootJob.isActive
@@ -54,7 +54,7 @@ class ReThis internal constructor(
 
         subscriptions.unsubscribeAll()
         topology.close()
-        scope.cancel()
+        rootJob.cancel()
     }
 
     suspend fun pipeline(block: suspend ReThis.() -> Unit): List<RType> {
@@ -68,10 +68,11 @@ class ReThis internal constructor(
         val requests = mutableListOf<CommandRequest>()
         logger.info("Pipeline started")
         try {
-            scope.launch(currentCoroutineContext() + CoPipelineCtx(requests)) {
-                block()
-                ctxConn = currentCoroutineContext()[CoLocalConn]?.connection
-            }.join()
+            scope
+                .launch(currentCoroutineContext() + CoPipelineCtx(requests)) {
+                    block()
+                    ctxConn = currentCoroutineContext()[CoLocalConn]?.connection
+                }.join()
         } catch (e: Throwable) {
             logger.error("Pipeline removed")
             requests.clear()
@@ -95,22 +96,23 @@ class ReThis internal constructor(
 
         val multiCommand = MultiCommandCodec.encode(cfg.charset)
         return withConn(topology.route(multiCommand), coLocalCon?.connection) { conn ->
-            val tx = MultiCommandCodec.decode(conn.doRequest(multiCommand.buffer), cfg.charset)
+            val tx = MultiCommandCodec.decode(conn.doRequest(multiCommand.data), cfg.charset)
             if (!tx) throw TransactionInvalidStateException("Failed to start transaction")
             logger.debug { "Started transaction" }
 
             var e: Throwable? = null
-            scope.launch(currentCoroutineContext() + CoLocalConn(conn)) {
-                runCatching { block() }.getOrElse { e = it }
-            }.join()
+            scope
+                .launch(currentCoroutineContext() + CoLocalConn(conn, true)) {
+                    runCatching { block() }.getOrElse { e = it }
+                }.join()
 
             if (e != null) {
-                conn.doRequest(DiscardCommandCodec.encode(cfg.charset).buffer)
+                conn.doRequest(DiscardCommandCodec.encode(cfg.charset).data)
                 logger.error("Transaction canceled", e)
                 throw TransactionInvalidStateException("Transaction canceled due to exception", e)
             }
 
-            val exec = conn.doRequest(ExecCommandCodec.encode(cfg.charset).buffer)
+            val exec = conn.doRequest(ExecCommandCodec.encode(cfg.charset).data)
             logger.debug { "Transaction completed" }
 
             ExecCommandCodec.decode(exec, cfg.charset)
@@ -171,7 +173,8 @@ fun ReThis(
     cfg.db = addr.db
     addr.credentials.takeIf { it.isNotEmpty() }?.also { credentials ->
         cfg.auth = AuthConfiguration(
-            credentials.first().toCharArray(), credentials.takeIf { it.size > 1 }?.last(),
+            credentials.first().toCharArray(),
+            credentials.takeIf { it.size > 1 }?.last(),
         )
     }
 

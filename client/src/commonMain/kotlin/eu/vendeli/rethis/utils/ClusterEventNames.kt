@@ -1,6 +1,8 @@
 package eu.vendeli.rethis.utils
 
-enum class ClusterEventNames(val literal: String) {
+enum class ClusterEventNames(
+    val literal: String,
+) {
     PLUS_RESET_MASTER("+reset-master"),
     PLUS_SLAVE("+slave"),
     PLUS_FAILOVER_STATE_RECONF_SLAVES("+failover-state-reconf-slaves"),
@@ -25,5 +27,5 @@ enum class ClusterEventNames(val literal: String) {
     FAILOVER_END("failover-end"),
     SWITCH_MASTER("+switch-master"),
     PLUS_TILT("+tilt"),
-    MINUS_TILT("-tilt")
+    MINUS_TILT("-tilt"),
 }

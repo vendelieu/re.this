@@ -2,6 +2,7 @@ package eu.vendeli.rethis.commands
 
 import eu.vendeli.rethis.ReThisTestCtx
 import eu.vendeli.rethis.command.geospatial.*
+import eu.vendeli.rethis.safeCast
 import eu.vendeli.rethis.shared.request.geospatial.ByBox
 import eu.vendeli.rethis.shared.request.geospatial.ByRadius
 import eu.vendeli.rethis.shared.request.geospatial.FromLongitudeLatitude
@@ -9,10 +10,12 @@ import eu.vendeli.rethis.shared.response.geospatial.GeoMember
 import eu.vendeli.rethis.shared.response.geospatial.GeoSort
 import eu.vendeli.rethis.shared.response.geospatial.GeoUnit
 import eu.vendeli.rethis.shared.types.BulkString
+import eu.vendeli.rethis.shared.types.F64
 import eu.vendeli.rethis.shared.types.Int64
 import eu.vendeli.rethis.shared.types.RArray
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
+import kotlinx.io.readString
 import kotlin.math.roundToInt
 
 class GeoCommandTest : ReThisTestCtx() {
@@ -48,7 +51,7 @@ class GeoCommandTest : ReThisTestCtx() {
     suspend fun `test GEOSEARCH command`() {
         client.geoAdd("testSet5", GeoMember(13.361389, 38.115556, "testValue6"))
         client.geoAdd("testSet5", GeoMember(12.758489, 38.788135, "testValue7"))
-        client.geoSearch(
+        val result = client.geoSearch(
             "testSet5",
             FromLongitudeLatitude(15.0, 37.0),
             ByRadius(400.0, GeoUnit.KILOMETERS),
@@ -56,34 +59,39 @@ class GeoCommandTest : ReThisTestCtx() {
             withDist = true,
             withHash = true,
             order = GeoSort.ASC,
-        ) shouldBe listOf(
-            RArray(
-                listOf(
-                    BulkString("testValue6"),
-                    BulkString("190.4424"),
-                    Int64(3479099956230698),
-                    RArray(
-                        listOf(
-                            BulkString("13.36138933897018433"),
-                            BulkString("38.11555639549629859"),
-                        ),
-                    ),
-                ),
-            ),
-            RArray(
-                listOf(
-                    BulkString("testValue7"),
-                    BulkString("279.7405"),
-                    Int64(3479273021651468),
-                    RArray(
-                        listOf(
-                            BulkString("12.7584877610206604"),
-                            BulkString("38.78813451624225195"),
-                        ),
-                    ),
-                ),
-            ),
         )
+
+        result.size shouldBe 2
+
+        val firstResult = result[0] as RArray
+        val firstValues = firstResult.value
+        (firstValues[0] as BulkString) shouldBe BulkString("testValue6")
+        (firstValues[1] as BulkString) shouldBe BulkString("190.4424")
+        (firstValues[2] as Int64) shouldBe Int64(3479099956230698)
+        val firstCoords = (firstValues[3] as RArray).value
+        firstCoords[0].let {
+            if (it is BulkString) it.value.readString() else it.safeCast<F64>()!!.value.toString()
+        } shouldBe "13.361389338970184"
+        firstCoords[1].let {
+            if (it is BulkString) it.value.readString() else it.safeCast<F64>()!!.value.toString()
+        } shouldBe "38.1155563954963"
+
+        val secondResult = result[1] as RArray
+        val secondValues = secondResult.value
+        secondValues[0].let {
+            if (it is BulkString) it.value.readString() else it.safeCast<F64>()!!.value.toString()
+        } shouldBe "testValue7"
+        secondValues[1].let {
+            if (it is BulkString) it.value.readString() else it.safeCast<F64>()!!.value.toString()
+        } shouldBe "279.7405"
+        (secondValues[2] as Int64) shouldBe Int64(3479273021651468)
+        val secondCoords = (secondValues[3] as RArray).value
+        secondCoords[0].let {
+            if (it is BulkString) it.value.readString() else it.safeCast<F64>()!!.value.toString()
+        } shouldBe "12.75848776102066"
+        secondCoords[1].let {
+            if (it is BulkString) it.value.readString() else it.safeCast<F64>()!!.value.toString()
+        } shouldBe "38.78813451624225"
     }
 
     @Test

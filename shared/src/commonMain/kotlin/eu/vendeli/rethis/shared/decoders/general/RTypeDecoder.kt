@@ -9,7 +9,7 @@ import io.ktor.utils.io.charsets.*
 import kotlinx.io.Buffer
 
 object RTypeDecoder : ResponseDecoder<RType> {
-    override suspend fun decode(
+    override fun decode(
         input: Buffer,
         charset: Charset,
         code: RespCode?,

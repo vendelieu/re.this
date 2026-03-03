@@ -98,10 +98,13 @@ private fun Buffer.readSimpleResponseWrapped(
             val size = readLineStrict().toInt()
             if (size < 0) return RType.Null
             else if (size == 0) {
-                readLineCRLF() // skip crlf
-                return RType.Null
+                CARRIAGE_RETURN_BYTE
+                skip(2) // skip crlf
+                return BulkString(EMPTY_BUFFER)
             }
-            val content = readPartLine(charset)
+            val content = Buffer()
+            readTo(content, size.toLong())
+            skip(2)
             BulkString(content)
         }
 
@@ -109,6 +112,7 @@ private fun Buffer.readSimpleResponseWrapped(
             readLineCRLF() // skip size
             RType.Error(readPartLine(charset))
         }
+
         RespCode.VERBATIM_STRING -> {
             val size = readLineStrict().toInt()
             if (size < 0) return RType.Null
@@ -118,15 +122,18 @@ private fun Buffer.readSimpleResponseWrapped(
             VerbatimString(encoding, content)
         }
 
-        RespCode.NULL -> RType.Null
+        RespCode.NULL -> {
+            skip(2) // skip crlf
+            RType.Null
+        }
         else -> throw ResponseParsingException("Unexpected simple code: $code")
     }
 }
 
 private fun Buffer.readPartLine(charset: Charset) = readLineCRLF().readText(charset)
 
-private const val CARRIAGE_RETURN_BYTE = '\r'.code.toByte()
-private const val NEWLINE_BYTE = '\n'.code.toByte()
+const val CARRIAGE_RETURN_BYTE = '\r'.code.toByte()
+const val NEWLINE_BYTE = '\n'.code.toByte()
 
 private inline fun Buffer.readLineCRLF(): Buffer {
     val buffer = Buffer()
@@ -164,7 +171,8 @@ inline fun <reified T> RType.unwrap(): T? {
         this is F64 -> if (T::class == Double::class) value as T else null
         this is BigNumber -> if (T::class == BigInteger::class) value as T else null
         this is VerbatimString -> if (T::class == String::class) value as T else null
-        this is BulkString -> if (T::class == String::class) value as T else null
+        this is BulkString && T::class == Buffer::class -> value as T
+        this is BulkString && T::class == String::class -> value.readString() as T
         else -> {
             __ParserLogger.warn("Wrong unwrapping [common] method used for $this")
             null

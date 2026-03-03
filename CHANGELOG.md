@@ -1,5 +1,14 @@
 # Re.this Changelog
 
+## 0.4.0
+
+* Fixed `XREADGROUP` decoding.
+* Improved token handling in codecs.
+* Improved varying argument handling in codecs.
+* Improved subscriptions user interface.
+* Returned default path (`.`) for json commands.
+* Fixed `Null` parsing in wrapped (`RType`) parser.
+
 ## 0.3.9
 
 * Fixed correct encoding of `Instant` values to seconds (#98).

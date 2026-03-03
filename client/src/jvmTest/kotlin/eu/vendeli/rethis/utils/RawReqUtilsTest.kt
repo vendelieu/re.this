@@ -11,32 +11,33 @@ import java.util.*
 
 class RawReqUtilsTest : ReThisTestCtx() {
     private fun Buffer.readAllUtf8(): String = readString()
+    private fun ByteArray.readAllUtf8(): String = decodeToString()
 
     @Test
-    fun `toRESPBuffer encodes ECHO properly`() {
+    fun `toRESPByteArray encodes ECHO properly`() {
         val payload = listOf("ECHO", "hi").toRESPBuffer()
         val encoded = payload.readAllUtf8()
-        encoded shouldBe "*2\r\n\$4\r\nECHO\r\n\$2\r\nhi\r\n"
+        encoded shouldBe "*2\r\n$4\r\nECHO\r\n$2\r\nhi\r\n"
     }
 
     @Test
-    fun `toRESPBuffer encodes null as Null Bulk String`() {
+    fun `toRESPByteArray encodes null as Null Bulk String`() {
         val payload = listOf("ECHO", null).toRESPBuffer()
         val encoded = payload.readAllUtf8()
-        encoded shouldBe "*2\r\n\$4\r\nECHO\r\n\$-1\r\n"
+        encoded shouldBe "*2\r\n$4\r\nECHO\r\n$-1\r\n"
     }
 
     @Test
-    suspend fun `execute with prepared RESP buffer returns expected bulk string for ECHO`() {
+    suspend fun `execute with prepared RESP byte array returns expected bulk string for ECHO`() {
         val req = listOf("ECHO", "ok").toRESPBuffer()
         val resp = client.execute(req)
         val raw = resp.readAllUtf8()
         // Expect bulk string with "ok"
-        raw shouldBe "\$2\r\nok\r\n"
+        raw shouldBe "$2\r\nok\r\n"
     }
 
     @Test
-    suspend fun `execute block helper builds buffer and PING succeeds`() {
+    suspend fun `execute block helper builds byte array and PING succeeds`() {
         val resp = client.execute {
             add("PING")
         }
@@ -46,7 +47,7 @@ class RawReqUtilsTest : ReThisTestCtx() {
     }
 
     @Test
-    suspend fun `toRESPBuffer supports numbers and byte arrays with INCRBY and ECHO`() {
+    suspend fun `toRESPByteArray supports numbers and byte arrays with INCRBY and ECHO`() {
         // Use a fresh key to avoid collisions
         val key = "raw:req:int:" + UUID.randomUUID()
         // INCRBY key by Int(2)
@@ -58,7 +59,7 @@ class RawReqUtilsTest : ReThisTestCtx() {
         val bytes = "bin".encodeToByteArray()
         val echoReq = listOf("ECHO", bytes).toRESPBuffer()
         val echoResp = client.execute(echoReq).readAllUtf8()
-        echoResp shouldBe "\$3\r\nbin\r\n"
+        echoResp shouldBe "$3\r\nbin\r\n"
     }
 
     @Test

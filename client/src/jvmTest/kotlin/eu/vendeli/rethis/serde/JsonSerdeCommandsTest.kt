@@ -1,22 +1,23 @@
-package eu.vendeli.rethis.serde
+ package eu.vendeli.rethis.serde
 
-import eu.vendeli.rethis.ReThisTestCtx
-import eu.vendeli.rethis.command.json.jsonArrPop
-import eu.vendeli.rethis.command.serde.jsonGet
-import eu.vendeli.rethis.command.serde.jsonMGet
-import eu.vendeli.rethis.command.serde.jsonSet
-import eu.vendeli.rethis.shared.request.json.JsonGetOption
-import eu.vendeli.rethis.shared.types.BulkString
-import eu.vendeli.rethis.shared.types.RArray
-import eu.vendeli.rethis.shared.utils.unwrap
-import eu.vendeli.rethis.utils.serdeModule
-import io.kotest.matchers.collections.shouldHaveSize
-import io.kotest.matchers.nulls.shouldNotBeNull
-import io.kotest.matchers.shouldBe
-import io.kotest.matchers.types.shouldBeTypeOf
-import kotlinx.serialization.Serializable
+ import eu.vendeli.rethis.ReThisTestCtx
+ import eu.vendeli.rethis.command.json.jsonArrPop
+ import eu.vendeli.rethis.command.serde.jsonGet
+ import eu.vendeli.rethis.command.serde.jsonMGet
+ import eu.vendeli.rethis.command.serde.jsonSet
+ import eu.vendeli.rethis.shared.request.json.JsonGetOption
+ import eu.vendeli.rethis.shared.types.BulkString
+ import eu.vendeli.rethis.shared.types.RArray
+ import eu.vendeli.rethis.shared.utils.unwrap
+ import eu.vendeli.rethis.utils.serdeModule
+ import io.kotest.matchers.collections.shouldHaveSize
+ import io.kotest.matchers.nulls.shouldNotBeNull
+ import io.kotest.matchers.shouldBe
+ import io.kotest.matchers.types.shouldBeTypeOf
+ import kotlinx.io.readString
+ import kotlinx.serialization.Serializable
 
-class JsonSerdeCommandsTest : ReThisTestCtx(true) {
+ class JsonSerdeCommandsTest : ReThisTestCtx() {
     @Serializable
     data class User(
         val id: Int,
@@ -76,13 +77,13 @@ class JsonSerdeCommandsTest : ReThisTestCtx(true) {
 
         // Pop from nested array
         client
-            .jsonArrPop(key, "$.users")
+            .jsonArrPop(key, path = "$.users")
             .shouldBeTypeOf<RArray>()
             .value
             .first()
             .shouldBeTypeOf<BulkString>()
             .let {
-                client.serdeModule().deserialize(User.serializer(), it.unwrap<String>()!!)
+                client.serdeModule().deserialize(User.serializer(), it.value.readString())
             } shouldBe User(5, "Eve")
         client.jsonGet<NestedUserList>(key) shouldBe NestedUserList(
             users = listOf(User(4, "David")),
@@ -126,4 +127,4 @@ class JsonSerdeCommandsTest : ReThisTestCtx(true) {
             last().shouldNotBeNull() shouldBe 4
         }
     }
-}
+ }

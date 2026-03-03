@@ -6,29 +6,36 @@ import eu.vendeli.rethis.shared.types.ResponseParsingException
 import eu.vendeli.rethis.shared.utils.EMPTY_BUFFER
 import eu.vendeli.rethis.shared.utils.resolveToken
 import io.ktor.utils.io.charsets.*
+import io.ktor.utils.io.core.*
 import kotlinx.io.Buffer
-import kotlinx.io.readLine
 import kotlinx.io.readLineStrict
 
 
 object BulkStringDecoder : ResponseDecoder<String> {
-    override suspend fun decode(input: Buffer, charset: Charset, code: RespCode?,): String {
+    override fun decode(input: Buffer, charset: Charset, code: RespCode?): String {
         if (input == EMPTY_BUFFER) return ""
         if (code == null) input.resolveToken(RespCode.BULK)
 
-        if (input.readLineStrict().toInt() < 0) throw ResponseParsingException(
+        val size = input.readLineStrict().toInt()
+        if (size < 0) throw ResponseParsingException(
             "Invalid response structure, expected string token got null",
         )
+        val output = input.readText(charset, size)
+        input.skip(2)
 
-        return input.readLineStrict()
+        return output
     }
 
-    suspend fun decodeNullable(input: Buffer, charset: Charset, code: RespCode? = null): String? {
+    fun decodeNullable(input: Buffer, charset: Charset, code: RespCode? = null): String? {
         if (input == EMPTY_BUFFER) return ""
         if (code == null) input.resolveToken(RespCode.BULK)
 
-        if (input.readLineStrict().toInt() < 0) return null
+        val size = input.readLineStrict().toIntOrNull() ?: return null
+        if (size < 0) return null
 
-        return input.readLine()
+        val output = input.readText(charset, size)
+        input.readBytes(2)
+
+        return output
     }
 }

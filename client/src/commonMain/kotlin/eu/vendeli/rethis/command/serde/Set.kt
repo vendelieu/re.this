@@ -12,9 +12,7 @@ suspend inline fun <reified T> ReThis.`set`(
     key: String,
     value: T,
     vararg options: SetOption,
-): String? where T : Any {
-    return set(key, value, serializer<T>(), *options)
-}
+): String? where T : Any = set(key, value, serializer<T>(), *options)
 
 suspend fun <T> ReThis.`set`(
     key: String,
@@ -24,8 +22,10 @@ suspend fun <T> ReThis.`set`(
     serializationFormat: SerializationFormat = cfg.serializationFormat,
 ): String? {
     if (isInTx()) {
-        logger.warn("Be aware that in transaction commands return `QUEUED`" +
-            " which is for type safety substituted with default value, so serde operations will fail")
+        logger.warn(
+            "Be aware that in transaction commands return `QUEUED`" +
+                " which is for type safety substituted with default value, so serde operations will fail",
+        )
     }
     val value = serializationFormat.serialize(serializer, value)
     return set(key, value, *options)

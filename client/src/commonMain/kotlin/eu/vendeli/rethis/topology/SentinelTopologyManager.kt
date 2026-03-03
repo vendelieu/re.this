@@ -12,7 +12,8 @@ import eu.vendeli.rethis.shared.types.ReThisException
 import eu.vendeli.rethis.shared.types.RedisOperation
 import eu.vendeli.rethis.shared.utils.unwrap
 import eu.vendeli.rethis.types.common.*
-import eu.vendeli.rethis.types.interfaces.SubscriptionHandler
+import eu.vendeli.rethis.types.interfaces.MessageEventHandler
+import eu.vendeli.rethis.types.interfaces.toPubSubHandler
 import eu.vendeli.rethis.utils.ClusterEventNames
 import eu.vendeli.rethis.utils.registerSubscription
 import io.ktor.utils.io.charsets.*
@@ -34,7 +35,7 @@ class SentinelTopologyManager(
     private val logger = cfg.loggerFactory.get("eu.vendeli.rethis.SentinelTopologyManager")
     private val snapshot: AtomicReference<SentinelSnapshot?> = AtomicReference(null)
     private val refreshMutex = Mutex()
-    private val scope = CoroutineScope(cfg.dispatcher + Job(client.rootJob))
+    private val scope = CoroutineScope(cfg.generalDispatcher + Job(client.rootJob))
 
     init {
         logger.info("Connecting to $sentinelNodes with $masterName as master")
@@ -51,11 +52,13 @@ class SentinelTopologyManager(
     }
 
     private suspend fun subscribeToSentinels() {
-        val handler = SubscriptionHandler { _, _ -> reactiveRefresh() }
+        val handler = MessageEventHandler { _, _ ->
+            reactiveRefresh()
+        }.toPubSubHandler(client)
         snapshot.load()?.providers?.forEach {
             client.registerSubscription(
-                ClusterEventNames.SWITCH_MASTER.name,
-                Subscription(SubscriptionType.PLAIN, handler),
+                SubscribeTarget.Channel(ClusterEventNames.SWITCH_MASTER.name),
+                handler,
                 it,
             )
         }
@@ -73,17 +76,19 @@ class SentinelTopologyManager(
         val idxMap = oldProviders.mapIndexed { i, p -> p.node to i }.toMap()
 
         val allAddrs = listOf(masterNode) + replicaNodes
-        val newProviders = allAddrs.mapIndexed { idx, addr ->
-            idxMap[addr]?.let { oldProviders[it] }
-                ?: client.connectionProviderFactory.create(addr)
-        }.toTypedArray()
+        val newProviders = allAddrs
+            .mapIndexed { idx, addr ->
+                idxMap[addr]?.let { oldProviders[it] }
+                    ?: client.connectionProviderFactory.create(addr)
+            }.toTypedArray()
 
         // schedule closing old unused
-        oldProviders.filter {
-            it.node !in allAddrs
-        }.forEach {
-            scope.launch { it.close() }
-        }
+        oldProviders
+            .filter {
+                it.node !in allAddrs
+            }.forEach {
+                scope.launch { it.close() }
+            }
 
         val snap = SentinelSnapshot(
             masterIdx = 0,
@@ -132,11 +137,11 @@ class SentinelTopologyManager(
     }
 
     private suspend fun measureLatency(provider: ConnectionProvider) = measureTime {
-        provider.withConnection { it.doRequest(PingCommandCodec.encode(Charsets.UTF_8, null).buffer) }
+        provider.withConnection { it.doRequest(PingCommandCodec.encode(Charsets.UTF_8, null).data) }
     }
 
     private suspend fun RConnection.getMasterAddress(masterName: String): Address {
-        val response = doRequest(SentinelGetMasterAddrCommandCodec.encode(Charsets.UTF_8, masterName).buffer)
+        val response = doRequest(SentinelGetMasterAddrCommandCodec.encode(Charsets.UTF_8, masterName).data)
         val result = SentinelGetMasterAddrCommandCodec.decode(response, Charsets.UTF_8)
 
         require(result.size == 2)
@@ -145,7 +150,7 @@ class SentinelTopologyManager(
 
     private suspend fun RConnection.getSlaveAddresses(masterName: String): List<Address> {
         // send: SENTINEL slaves <masterName>
-        val response = doRequest(SentinelReplicasCommandCodec.encode(Charsets.UTF_8, masterName).buffer)
+        val response = doRequest(SentinelReplicasCommandCodec.encode(Charsets.UTF_8, masterName).data)
         return SentinelReplicasCommandCodec.decode(response, Charsets.UTF_8).mapNotNull {
             // format explained here: https://redis.io/docs/latest/commands/cluster-nodes/
             val parts = it.unwrap<String>()!!.split(' ')

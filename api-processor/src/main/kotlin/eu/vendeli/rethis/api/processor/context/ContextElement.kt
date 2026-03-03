@@ -186,6 +186,56 @@ internal class ETree(val tree: EnrichedNode) : ContextElement {
 }
 
 
+internal class CollectedTokens(
+    val tokens: MutableSet<String> = mutableSetOf()
+) : ContextElement {
+    override val key = CollectedTokens
+
+    fun addToken(tokenName: String) {
+        tokens.add(tokenName)
+    }
+
+    override fun onFinish() {
+        context.logger.warn("CollectedTokens.onFinish() called with ${tokens.size} tokens")
+        if (tokens.isEmpty()) {
+            context.logger.warn("No tokens collected, skipping RedisTokens generation")
+            return
+        }
+
+        val sortedTokens = tokens.sorted()
+        val fileContent = buildString {
+            appendLine("package eu.vendeli.rethis.utils")
+            appendLine()
+            appendLine("/**")
+            appendLine(" * Predefined byte arrays for Redis command tokens.")
+            appendLine(" * Auto-generated from @RedisOption.Token annotations.")
+            appendLine(" * These are computed once to avoid repeated string-to-byte conversions in generated codecs.")
+            appendLine(" */")
+            appendLine("internal object RedisToken {")
+
+            sortedTokens.forEach { token ->
+                val propertyName = tokenToRedisTokenPropertyName(token)
+                val kotlinString = token.replace("\"", "\\\"")
+                appendLine("    val $propertyName = \"$kotlinString\".encodeToByteArray()")
+            }
+
+            appendLine("}")
+        }
+
+        // clientDir is the KSP generated directory, e.g.: /path/to/project/client/build/generated/ksp/metadata/commonMain/kotlin
+        // Generate RedisToken.kt in the same generated directory
+        val targetFile = File(context.meta.clientDir)
+            .resolve("eu/vendeli/rethis/utils")
+            .resolve("RedisToken.kt")
+
+        targetFile.parentFile.mkdirs()
+        targetFile.writeText(fileContent)
+        context.logger.warn("Generated RedisToken.kt with ${tokens.size} tokens at: ${targetFile.absolutePath}")
+    }
+
+    companion object : ContextKey<CollectedTokens>
+}
+
 internal class CodeGenContext(
     val builder: CodeBlock.Builder,
     private var nameCtr: Int = 0,
@@ -200,7 +250,7 @@ internal class CodeGenContext(
         return newName
     }
 
-    fun buildBlock(fieldName: String, type: BlockType, block: () -> Unit) {
+    fun buildBlock(fieldName: String, type: BlockType, parentPointer: String? = null, block: () -> Unit) {
         val oldPointer = thisExpr
         thisExpr = when (type) {
             BlockType.WHEN if thisExpr.isNotBlank() -> thisExpr
@@ -210,13 +260,15 @@ internal class CodeGenContext(
         // before block should be old pointer or param
 
         val prevName = blockStack.lastOrNull()?.second
-        val newName = pointedParameter(fieldName, oldPointer)
+        // Use explicit parentPointer if provided, otherwise use oldPointer only if we're nested
+        val effectivePointer = parentPointer ?: oldPointer.takeIf { blockStack.isNotEmpty() } ?: ""
+        val newName = pointedParameter(fieldName, effectivePointer)
         val paramPointer = if (prevName != fieldName && newName.substringAfter('.') != fieldName) ".$fieldName" else ""
 
         val guard = when (type) {
             BlockType.LET -> "${newName}$paramPointer?.let { $thisExpr ->"
             BlockType.FOR -> "${newName}$paramPointer.forEach { $thisExpr ->"
-            BlockType.WHEN -> "when (${pointer ?: fieldName}$paramPointer)"
+            BlockType.WHEN -> "when (${if (effectivePointer.isNotBlank()) effectivePointer else fieldName}$paramPointer)"
         }
 
         blockStack.addLast(type to fieldName)
@@ -234,9 +286,9 @@ internal class CodeGenContext(
     }
 
     var pointer: String?
-        get() = thisExpr.takeIf { !it.isBlank() }
+        get() = thisExpr.takeIf { it.isNotBlank() }
         set(value) {
-            if (value != null) thisExpr = value
+            thisExpr = value ?: ""
         }
 
     fun pointedParameter(name: String, pointer: String = thisExpr, isComplex: Boolean = false): String {

@@ -1,47 +1,31 @@
 package eu.vendeli.rethis.types.common
 
 import eu.vendeli.rethis.ReThis
-import eu.vendeli.rethis.command.scripting.eval
+import eu.vendeli.rethis.command.pubsub.subscribe
+import eu.vendeli.rethis.command.pubsub.unsubscribe
 import eu.vendeli.rethis.shared.types.LockLostException
-import eu.vendeli.rethis.shared.utils.unwrap
 import eu.vendeli.rethis.types.interfaces.ReDistributedLock
+import eu.vendeli.rethis.utils.LockUtils.ACQUIRE_LUA
+import eu.vendeli.rethis.utils.LockUtils.REFRESH_LUA
+import eu.vendeli.rethis.utils.LockUtils.RELEASE_LUA
+import eu.vendeli.rethis.utils.evalAsInt
 import kotlinx.coroutines.*
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import kotlinx.io.Buffer
 import kotlin.concurrent.atomics.AtomicReference
 import kotlin.concurrent.atomics.ExperimentalAtomicApi
-import kotlin.random.Random
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
-import kotlin.time.DurationUnit
 import kotlin.time.TimeSource
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
 /**
- * Standard distributed reentrant lock with per-coroutine ownership.
- *
- * Ownership is determined by the specific coroutine (Job) that acquired the lock:
- * - Same coroutine can call lock() multiple times (reentrant)
- * - Different coroutines block each other, even when sharing the same lock instance
- *
- * This behavior matches the standard ReentrantLock semantics.
- *
- * Implementation notes:
- * - Redis representation is a HASH at `key` with fields:
- *     - owner: string (token)
- *     - count: integer
- *     - ver: 1 (format version)
- * - Scripts return codes (by convention):
- *     1 -> success
- *     0 -> absent / not-acquired (for acquire: means someone else holds it)
- *    -1 -> token mismatch (caller is not owner)
- *    -2 -> corrupted state (malformed fields)
- */
-
-/**
- * Holds the current lock ownership state.
- * Immutable - create new instance for state changes.
+ * Internal state representing the local ownership of the lock.
+ * * @param ownerJob The specific Coroutine Job that acquired the lock.
+ * @param token The unique string identifier stored in Redis to verify ownership.
+ * @param depth The reentrancy level (how many times the same Job called lock()).
  */
 private data class LockState(
     val ownerJob: Job,
@@ -49,210 +33,144 @@ private data class LockState(
     val depth: Int,
 )
 
-@OptIn(ExperimentalAtomicApi::class)
+@OptIn(ExperimentalAtomicApi::class, ExperimentalUuidApi::class)
 internal class ReReentrantLock(
     private val client: ReThis,
     private val key: String,
     private val defaultLeaseMs: Long = 30_000L,
     private val backoffBaseMs: Long = 50L,
-    private val backoffCapMs: Long = 1000L,
 ) : ReDistributedLock {
-    @OptIn(ExperimentalUuidApi::class)
-    private val instanceId = "inst:${Uuid.random()}"
-
-    // Single atomic holding all ownership state (null = not owned)
+    private val channelName = "lock_channel:{$key}"
+    private val instanceId = Uuid.random().toString()
     private val state = AtomicReference<LockState?>(null)
-
     private val localMutex = Mutex()
-
-    // Watchdog scope + job
-    private val watchdogScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
     private val watchdogJob = AtomicReference<Job?>(null)
+    private val watchdogScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+
+    /**
+     * Standard lock: waits indefinitely (or until coroutine cancellation)
+     * to acquire the lock.
+     */
+    override suspend fun lock(leaseTime: Duration) {
+        val lease = if (leaseTime.isPositive()) leaseTime else defaultLeaseMs.milliseconds
+        // tryLock with INFINITE handles the Pub/Sub waiting and cancellation internally
+        tryLock(Duration.INFINITE, lease)
+    }
 
     override suspend fun tryLock(waitTime: Duration, leaseTime: Duration): Boolean {
-        currentCoroutineContext().ensureActive()
         val currentJob = currentCoroutineContext()[Job] ?: error("No Job in context")
+        val leaseMs = if (leaseTime.isPositive()) leaseTime.inWholeMilliseconds else defaultLeaseMs
+        val timeoutMark = TimeSource.Monotonic.markNow() + waitTime
 
-        val waitMs = waitTime.toLong(DurationUnit.MILLISECONDS).coerceAtLeast(0)
-        val leaseMs = leaseTime.toLong(DurationUnit.MILLISECONDS).let { if (it > 0) it else defaultLeaseMs }
-        val start = TimeSource.Monotonic.markNow()
-
-        // Fast-path: if THIS coroutine already owns the lock, it's reentrant
+        // 1. Fast-path: Local Reentrancy
         val currentState = state.load()
-        if (currentState != null && currentState.ownerJob === currentJob) {
-            val r = acquireScript(currentState.token, leaseMs)
-            when (r) {
-                1 -> {
-                    state.store(currentState.copy(depth = currentState.depth + 1))
-                    return true
-                }
-
-                else -> throw LockLostException("Lock lost during reentrant acquire for key=$key, code=$r")
+        if (currentState?.ownerJob === currentJob) {
+            return if (acquireScript(currentState.token, leaseMs) == 1) {
+                state.store(currentState.copy(depth = currentState.depth + 1))
+                true
+            } else {
+                throw LockLostException("Lock state mismatch in Redis for $key")
             }
         }
 
-        // Different coroutine or first acquisition - serialize via local mutex
-        return localMutex.withLock {
-            // Double-check after acquiring mutex
-            val recheckState = state.load()
-            if (recheckState != null && recheckState.ownerJob === currentJob) {
-                val r = acquireScript(recheckState.token, leaseMs)
-                if (r == 1) {
-                    state.store(recheckState.copy(depth = recheckState.depth + 1))
-                    return@withLock true
+        // 2. Local Serialization
+        // We don't 'return' the withLock; we let the withLock execute returns directly
+        localMutex.withLock {
+            // Re-check state after acquiring mutex (double-check locking)
+            val stateAfterMutex = state.load()
+            if (stateAfterMutex?.ownerJob === currentJob) {
+                if (acquireScript(stateAfterMutex.token, leaseMs) == 1) {
+                    state.store(stateAfterMutex.copy(depth = stateAfterMutex.depth + 1))
+                    return true // Non-local return: exits tryLock entirely
                 }
             }
 
-            var lastBackoff = backoffBaseMs
-
-            @OptIn(ExperimentalUuidApi::class)
-            val token = "$instanceId:${currentJob.hashCode()}:${Uuid.random()}"
+            val token = "$instanceId:${Uuid.random()}"
 
             while (true) {
                 currentCoroutineContext().ensureActive()
 
-                when (val r = acquireScript(token, leaseMs)) {
+                when (acquireScript(token, leaseMs)) {
                     1 -> {
-                        state.store(LockState(ownerJob = currentJob, token = token, depth = 1))
+                        state.store(LockState(currentJob, token, 1))
                         startWatchdog(token, leaseMs)
-                        return@withLock true
+                        return true // Exits tryLock with success
                     }
 
-                    0 -> { /* someone else holds it in Redis */
+                    0 -> { /* Keep trying */
                     }
 
-                    -1, -2 -> throw LockLostException("Lock error for key=$key, code=$r")
+                    else -> throw LockLostException("Corrupted lock state in Redis for $key")
                 }
 
-                if (waitMs == 0L || start.elapsedNow().inWholeMilliseconds >= waitMs) {
-                    return@withLock false
+                val remaining = timeoutMark - TimeSource.Monotonic.markNow()
+                if (remaining <= Duration.ZERO) {
+                    return false // Exits tryLock with failure
                 }
 
-                val delayMs = decorrelatedExponentialJitter(lastBackoff).coerceAtMost(backoffCapMs)
-                lastBackoff = delayMs
-                delay(delayMs)
+                // Wait for Pub/Sub signal or a small fallback delay
+                waitForNotification(remaining)
             }
-            @Suppress("UNREACHABLE_CODE")
-            false
-        }
-    }
-
-    override suspend fun lock(leaseTime: Duration) {
-        val leaseMs = leaseTime.toLong(DurationUnit.MILLISECONDS).let { if (it > 0) it else defaultLeaseMs }
-        while (true) {
-            currentCoroutineContext().ensureActive()
-            if (tryLock(Duration.ZERO, leaseMs.milliseconds)) return
-            delay(decorrelatedExponentialJitter(backoffBaseMs))
         }
     }
 
     override suspend fun unlock(): Boolean {
-        currentCoroutineContext().ensureActive()
+        val currentState = state.load() ?: throw LockLostException("Lock not held locally")
+        val isFinal = currentState.depth == 1
 
-        val currentState = state.load()
-            ?: throw LockLostException("Unlock called but lock not held for key=$key")
-
-        val newDepth = currentState.depth - 1
-        val isFinal = newDepth == 0
-
-        when (val r = releaseScript(currentState.token, defaultLeaseMs)) {
+        return when (val result = releaseScript(currentState.token, defaultLeaseMs)) {
             1 -> {
                 if (isFinal) {
                     stopWatchdog()
                     state.store(null)
                 } else {
-                    state.store(currentState.copy(depth = newDepth))
+                    state.store(currentState.copy(depth = currentState.depth - 1))
                 }
-                return true
+                true
             }
 
-            0 -> throw LockLostException("Lock already missing/expired for key=$key during unlock")
-            -1 -> throw LockLostException("Unlock attempted by non-owner for key=$key")
-            -2 -> throw LockLostException("Corrupted lock state for key=$key during unlock")
-            else -> throw IllegalStateException("Unexpected unlock script response: $r for key=$key")
+            0 -> throw LockLostException("Lock expired in Redis")
+            -1 -> throw LockLostException("Attempted to unlock a lock owned by another process")
+            else -> throw IllegalStateException("Unexpected Redis response: $result")
         }
     }
 
-    /**
-     * Checks if currentJob is the ownerJob or a child/descendant of ownerJob.
-     * This allows unlock from withContext(NonCancellable) which creates a child job.
-     */
-    @OptIn(ExperimentalCoroutinesApi::class)
-    private fun isOwnerOrChild(currentJob: Job, ownerJob: Job): Boolean = when {
-        currentJob === ownerJob -> true
-        currentJob === NonCancellable && currentJob.parent == ownerJob -> true
-        else -> false
+    private suspend fun waitForNotification(timeout: Duration) {
+        withTimeoutOrNull(timeout) {
+            client.subscribe(channelName) { rc, _: Buffer ->
+                rc.unsubscribe(channelName)
+            }
+        } ?: delay(backoffBaseMs) // Fallback if Pub/Sub fails/times out
     }
 
     private fun startWatchdog(token: String, leaseMs: Long) {
         stopWatchdog()
-        watchdogJob.compareAndSet(
-            null,
+        val renewalInterval = leaseMs / 3
+        watchdogJob.store(
             watchdogScope.launch {
-                val base = (leaseMs / 3).coerceAtLeast(50L)
                 while (isActive) {
-                    val jitter = Random.nextLong(0, base / 5 + 1)
-                    delay(base + jitter)
-                    try {
-                        val r = refreshScript(token, leaseMs)
-                        if (r != 1) {
-                            throw LockLostException("Watchdog failed to refresh key=$key response=$r")
-                        }
-                    } catch (t: Throwable) {
-                        stopWatchdog()
-                        cancel("Watchdog stopped due to error: ${t.message}")
+                    delay(renewalInterval)
+                    if (refreshScript(token, leaseMs) != 1) {
+                        this@ReReentrantLock.state.store(null)
+                        cancel("Lock lost in Redis")
                     }
                 }
             },
         )
     }
 
-    private fun stopWatchdog() {
-        watchdogJob.exchange(null)?.cancel()
-    }
+    private fun stopWatchdog() = watchdogJob.exchange(null)?.cancel()
 
-    // ------------------------
-    // Helpers
-    // ------------------------
+    // -------------------------------------------------------------------------
+    // Optimized Lua Scripts
+    // -------------------------------------------------------------------------
 
-    private fun decorrelatedExponentialJitter(prev: Long): Long {
-        val previous = prev * 3
-        val newDelay = Random.nextLong(backoffBaseMs, previous.coerceAtLeast(backoffBaseMs + 1))
-        return newDelay.coerceAtMost(backoffCapMs)
-    }
+    private suspend fun acquireScript(token: String, lease: Long): Int =
+        client.evalAsInt(ACQUIRE_LUA, arrayOf(key), listOf(token, lease.toString()))
 
-    // Remove the verifyTTL method entirely - it's redundant with watchdog and causes flaky tests
+    private suspend fun releaseScript(token: String, lease: Long): Int =
+        client.evalAsInt(RELEASE_LUA, arrayOf(key), listOf(token, lease.toString(), channelName))
 
-    // ------------------------
-    // Redis script wrappers
-    // ------------------------
-
-    private suspend fun acquireScript(token: String, leaseMs: Long): Int =
-        runCatching {
-            val r = client.eval(ACQUIRE_SCRIPT, key = arrayOf(key), arg = listOf(token, leaseMs.toString()))
-            r.unwrap<Long?>()?.toInt() ?: -2
-        }.getOrElse { -2 }
-
-    private suspend fun releaseScript(token: String, leaseMs: Long): Int =
-        runCatching {
-            val r = client.eval(RELEASE_SCRIPT, key = arrayOf(key), arg = listOf(token, leaseMs.toString()))
-            r.unwrap<Long?>()?.toInt() ?: -2
-        }.getOrElse { -2 }
-
-    private suspend fun refreshScript(token: String, leaseMs: Long): Int =
-        runCatching {
-            val r = client.eval(REFRESH_SCRIPT, key = arrayOf(key), arg = listOf(token, leaseMs.toString()))
-            r.unwrap<Long?>()?.toInt() ?: -2
-        }.getOrElse { -2 }
-
-    companion object {
-        private const val ACQUIRE_SCRIPT =
-            "local key=KEYS[1];local token=ARGV[1];local lease=tonumber(ARGV[2])or 0;local owner=redis.call('HGET',key,'owner');local count=redis.call('HGET',key,'count');local ver=redis.call('HGET',key,'ver');if count and type(count)=='string'then count=tonumber(count)end;if ver and type(ver)=='string'then ver=tonumber(ver)end;if not owner then redis.call('HSET',key,'owner',token);redis.call('HSET',key,'count',1);redis.call('HSET',key,'ver',1);redis.call('PEXPIRE',key,lease);return 1 end;if(not count)or(ver~=1)then return -2 end;if owner==token then local newc=count+1;redis.call('HSET',key,'count',newc);redis.call('PEXPIRE',key,lease);return 1 end;return 0"
-
-        private const val RELEASE_SCRIPT =
-            "local key=KEYS[1];local token=ARGV[1];local lease=tonumber(ARGV[2])or 0;local owner=redis.call('HGET',key,'owner');if not owner then return 0 end;local count=redis.call('HGET',key,'count');local ver=redis.call('HGET',key,'ver');if type(count)=='string' then count=tonumber(count) end;if type(ver)=='string' then ver=tonumber(ver) end;if not count or ver~=1 then return -2 end;if owner~=token then return -1 end;local newc=count-1;if newc>0 then redis.call('HSET',key,'count',newc);redis.call('PEXPIRE',key,lease);return 1 else redis.call('DEL',key);return 1 end"
-
-        private const val REFRESH_SCRIPT =
-            "local key=KEYS[1];local token=ARGV[1];local lease=tonumber(ARGV[2])or 0;local owner=redis.call('HGET',key,'owner');if not owner then return 0 end;if owner~=token then return -1 end;redis.call('PEXPIRE',key,lease);return 1"
-    }
+    private suspend fun refreshScript(token: String, lease: Long): Int =
+        client.evalAsInt(REFRESH_LUA, arrayOf(key), listOf(token, lease.toString()))
 }

@@ -7,6 +7,7 @@ import eu.vendeli.rethis.utils.CLIENT_NAME
 import eu.vendeli.rethis.utils.IO_OR_UNCONFINED
 import io.ktor.network.sockets.*
 import io.ktor.util.logging.*
+import io.ktor.utils.io.InternalAPI
 import io.ktor.utils.io.charsets.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
@@ -55,11 +56,13 @@ internal class ConnectionPool(
         repeat(cfg.pool.minIdleConnections) {
             launch(Job(populationJob)) {
                 val conn = connectionFactory.createConnOrNull(address) ?: return@launch
-                idleConnections.trySend(conn).onSuccess {
-                    idleConnectionsCount.incrementAndFetch()
-                }.onFailure {
-                    connectionFactory.dispose(conn)
-                }
+                idleConnections
+                    .trySend(conn)
+                    .onSuccess {
+                        idleConnectionsCount.incrementAndFetch()
+                    }.onFailure {
+                        connectionFactory.dispose(conn)
+                    }
             }
         }
         populationJob.invokeOnCompletion { logger.info("Connection pool initialized") }
@@ -87,7 +90,12 @@ internal class ConnectionPool(
         return@aq deferred.await()
     }
 
+    @OptIn(InternalAPI::class)
     fun release(conn: RConnection) {
+        if (!conn.input.readBuffer.exhausted()) {
+            connectionFactory.dispose(conn)
+            return
+        }
         pending.tryReceive().onSuccess {
             it.complete(conn)
             return
@@ -129,7 +137,10 @@ internal class ConnectionPool(
 
     // borrows per second
     private fun getBurstRate(): Float =
-        borrowCount.load().toFloat() / (cfg.pool.checkInterval.inWholeSeconds.toFloat())
+        borrowCount.load().toFloat() / (
+            cfg.pool.checkInterval.inWholeSeconds
+                .toFloat()
+        )
 
     private suspend fun adjustPoolSize() {
         val burstRate = getBurstRate()
@@ -143,13 +154,15 @@ internal class ConnectionPool(
     }
 
     private suspend fun expandPool(by: Int) {
-        if (!connectionFactory.isReachedLimit()) repeat(by) {
-            val conn = connectionFactory.createConnOrNull(address) ?: return
-            pending.tryReceive().onSuccess {
-                it.complete(conn)
-                return
+        if (!connectionFactory.isReachedLimit()) {
+            repeat(by) {
+                val conn = connectionFactory.createConnOrNull(address) ?: return
+                pending.tryReceive().onSuccess {
+                    it.complete(conn)
+                    return
+                }
+                conn.fillPool()
             }
-            conn.fillPool()
         } else {
             logger.debug { "Pool expanding attempt failed. Max connections reached." }
         }
@@ -170,18 +183,20 @@ internal class ConnectionPool(
     }
 
     private fun RConnection.fillPool() {
-        idleConnections.trySend(this).onSuccess {
-            idleConnectionsCount.incrementAndFetch()
-        }.onFailure {
-            connectionFactory.dispose(this)
-        }
+        idleConnections
+            .trySend(this)
+            .onSuccess {
+                idleConnectionsCount.incrementAndFetch()
+            }.onFailure {
+                connectionFactory.dispose(this)
+            }
     }
 
     private suspend inline fun RConnection.healthyOrNull(): RConnection? {
         if (!cfg.pool.connectionHealthCheck) return this
 
         runCatching {
-            doRequest(PingCommandCodec.encode(charset = Charsets.UTF_8, message = null).buffer)
+            doRequest(PingCommandCodec.encode(charset = Charsets.UTF_8, message = null).data)
         }.onFailure {
             connectionFactory.dispose(this)
             return null

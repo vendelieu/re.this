@@ -1,66 +1,53 @@
 package eu.vendeli.rethis.api.spec.benchmarks
 
-import com.redis.testcontainers.RedisContainer
 import io.lettuce.core.ExperimentalLettuceCoroutinesApi
 import io.lettuce.core.RedisClient
 import io.lettuce.core.api.coroutines
 import io.lettuce.core.api.coroutines.RedisCoroutinesCommands
-import kotlinx.benchmark.*
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import org.openjdk.jmh.annotations.BenchmarkMode
-import org.openjdk.jmh.annotations.Fork
-import org.openjdk.jmh.annotations.Measurement
-import org.openjdk.jmh.annotations.Mode
-import org.openjdk.jmh.annotations.Scope
-import org.openjdk.jmh.annotations.State
-import org.openjdk.jmh.annotations.Threads
-import org.openjdk.jmh.annotations.Timeout
-import org.openjdk.jmh.annotations.Warmup
-import org.testcontainers.utility.DockerImageName
-import java.util.concurrent.TimeUnit
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.runBlocking
+import org.openjdk.jmh.annotations.Benchmark
+import org.openjdk.jmh.annotations.Level
+import org.openjdk.jmh.annotations.Setup
+import org.openjdk.jmh.annotations.TearDown
+import org.openjdk.jmh.infra.Blackhole
 
-@OptIn(DelicateCoroutinesApi::class, ExperimentalLettuceCoroutinesApi::class)
-@BenchmarkMode(Mode.Throughput)
-@State(Scope.Benchmark)
-@Threads(16)
-@Warmup(iterations = 5, time = 1000, timeUnit = TimeUnit.MILLISECONDS)
-@Measurement(iterations = 5, time = 1000, timeUnit = TimeUnit.MILLISECONDS)
-@Timeout(time = 10, timeUnit = TimeUnit.SECONDS)
-@Fork(1, jvmArgsAppend = ["-Xms12g", "-Xmx12g", "-XX:MaxMetaspaceSize=1g"])
-class LettuceBenchmark {
+@ExperimentalLettuceCoroutinesApi
+class LettuceBenchmark : JMHBenchmark() {
     private lateinit var lettuce: RedisCoroutinesCommands<String, String>
-    private val redis = RedisContainer(
-        DockerImageName.parse("redis:7.4.0"),
-    )
+    private lateinit var client: RedisClient
 
-    @Setup
+    @Setup(Level.Trial)
     fun setup() {
         redis.start()
-        lettuce = RedisClient.create("redis://${redis.host}:${redis.firstMappedPort}").connect().coroutines()
+        client = RedisClient.create("redis://${redis.host}:${redis.firstMappedPort}")
+        lettuce = client.connect().coroutines()
 
-        GlobalScope.launch {
+        runBlocking {
             lettuce.ping()
         }
     }
 
-    @TearDown
+    @TearDown(Level.Trial)
     fun tearDown() {
+        client.shutdown()
         redis.stop()
-        GlobalScope.launch {
-            lettuce.shutdown(false)
-        }
+        benchScope.cancel()
     }
 
     @Benchmark
-    fun lettuceSetGet(bh: Blackhole) {
-        val randInt = (1..10_000).random()
+    fun lettuceSetGet(bh: Blackhole) = runBlocking {
+        // Launch concurrent coroutines within benchScope
+        val jobs = List(opsCount) { // number of parallel coroutines
+            val randInt = random.nextInt()
+            val key = "keyLettuce$randInt"
+            val value = "value$randInt"
 
-        GlobalScope.launch {
-            bh.consume(lettuce.set("keyLettuce$randInt", "value$randInt"))
-            val value = lettuce.get("key")
-            assert(value == "value$randInt")
+            bh.consume(lettuce.set(key, value))
+            val redisValue = lettuce.get(key)
+            assert(redisValue == value)
         }
+        bh.consume(jobs)
     }
 }

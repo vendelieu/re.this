@@ -6,6 +6,7 @@ import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.processing.SymbolProcessor
 import com.google.devtools.ksp.symbol.KSAnnotated
 import com.google.devtools.ksp.symbol.KSClassDeclaration
+import eu.vendeli.rethis.api.processor.context.CollectedTokens
 import eu.vendeli.rethis.api.processor.context.ProcessorContext
 import eu.vendeli.rethis.api.processor.context.ResolvedSpecs
 import eu.vendeli.rethis.api.processor.core.RedisProcessor.process
@@ -34,13 +35,15 @@ class RedisCommandProcessor(
         // DEBUG: Log ALL found command specs
         logger.warn("=== KSP FOUND ${resolvedCommands.size} COMMAND SPECS ===")
         resolvedCommands.forEach { (cmd, klass) ->
-            logger.warn("  - ${klass.joinToString { it.simpleName.toString() }} -> ${cmd.name}")
+            logger.warn("  - ${klass.joinToString { it.simpleName.asString() }} -> ${cmd.name}")
         }
         logger.warn("=== END OF FOUND SPECS ===")
 
         if (resolvedCommands.isEmpty()) return emptyList()
 
         context += ResolvedSpecs(resolvedCommands)
+        context += CollectedTokens()
+
         loadGlobalCtx()
 
         // Iterate over each command and ALL its specs

@@ -1,9 +1,13 @@
 package eu.vendeli.rethis.api.processor.utils
 
 import com.google.devtools.ksp.KspExperimental
+import com.google.devtools.ksp.getAnnotationsByType
+import com.google.devtools.ksp.symbol.KSClassDeclaration
 import eu.vendeli.rethis.api.processor.context.CodeGenContext
+import eu.vendeli.rethis.api.processor.context.CollectedTokens
 import eu.vendeli.rethis.api.processor.core.RedisCommandProcessor.Companion.context
 import eu.vendeli.rethis.api.processor.types.*
+import eu.vendeli.rethis.shared.annotations.RedisOption
 
 internal fun buildWritePlan(root: EnrichedNode): List<WriteOp> = recurse(root)
 
@@ -36,21 +40,31 @@ private fun recurse(node: EnrichedNode): List<WriteOp> {
         val name = nearestName(node)!!
         val directCall = WriteOp.DirectCall(
             node = node,
-            slotBlock = {
+            slotBlock = { parentPointer ->
                 val toString = if (
                     kt.name != "String" &&
                     kt.arguments.firstOrNull { t -> t.type?.resolve()?.name == "String" } == null
                 ) ".toString()" else ""
+                val pName = when {
+                    blockStack.isNotEmpty() -> {
+                        val iteratorVar = pointer ?: name
+                        val isChildOfBlockField = parentPointer != null && parentPointer == blockStack.last().second
+                        if ((blockStack.last().second != name || isChildOfBlockField) && iteratorVar != name) {
+                            "$iteratorVar.$name"
+                        } else {
+                            iteratorVar
+                        }
+                    }
+
+                    !parentPointer.isNullOrBlank() -> "$parentPointer.$name"
+                    else -> name
+                }
                 appendLine(
-                    "slot = validateSlot(slot, CRC16.lookup(${
-                        pointedParameter(
-                            name,
-                            isComplex = it,
-                        )
-                    }$toString.toByteArray(charset)))",
+                    "slot = validateSlot(slot, CRC16.lookup(%L$toString.toByteArray(charset)))",
+                    pName,
                 )
             },
-            encodeBlock = { inferWriting(name, node, it) },
+            encodeBlock = { parentPointer, phase -> inferWriting(name, node, parentPointer, phase) },
         )
         return wrapIfNeeded(node, directCall)
     }
@@ -76,47 +90,96 @@ private fun nearestName(node: EnrichedNode?): String? = node?.attr
 private fun CodeGenContext.inferWriting(
     fieldAccess: String,
     node: EnrichedNode,
-    complex: Boolean,
+    parentPointer: String?,
+    phase: EncodePhase,
 ) {
     val resolvedType = node.type.collectionAwareType()
 
-    writeTokens(node, node.tokens)
+    writeTokens(node, node.tokens, phase)
     if (resolvedType.declaration.isBool()) return
 
-    val writeFn = "write${resolvedType.declaration.simpleName.asString()}Arg"
-    val pName = if (complex) "$pointer.$fieldAccess" else pointedParameter(fieldAccess)
-
-    if (context.currentCommand.haveVaryingSize) builder.addStatement("size += 1")
-
-    when {
-        resolvedType.declaration.isStdType() -> {
-            addImport("eu.vendeli.rethis.utils.$writeFn")
-            val additionalParams = buildList {
-                when {
-                    resolvedType.declaration.isTimeType() -> {
-                        addImport("eu.vendeli.rethis.shared.types.TimeUnit")
-                        add("TimeUnit.${resolvedType.getTimeUnit()}")
-                    }
-                }
-            }.joinToString(prefix = ", ")
-            appendLine("buffer.%L(%L, charset$additionalParams)", writeFn, pName)
-        }
-
-        resolvedType.declaration.isDataObject() -> {
-            addImport("eu.vendeli.rethis.utils.writeStringArg")
-            val actualTokens = node.tokens.map { it.name }
-            val declarationToken = resolvedType.declaration.effectiveName()
-
-            if (actualTokens.singleOrNull() == declarationToken) {
-                appendLine("buffer.writeStringArg(%L.toString(), charset)", pointer ?: fieldAccess)
-            } else actualTokens.forEach {
-                appendLine("buffer.writeStringArg(\"$it\", charset)")
+    // Build the parameter name based on context
+    val pName = when {
+        // Inside a block (forEach, let, when) - use iterator.fieldName or just iterator if same name
+        blockStack.isNotEmpty() -> {
+            val iteratorVar = pointer ?: fieldAccess
+            val isChildOfBlockField = parentPointer != null && parentPointer == blockStack.last().second
+            if ((blockStack.last().second != fieldAccess || isChildOfBlockField) && iteratorVar != fieldAccess) {
+                "$iteratorVar.$fieldAccess"
+            } else {
+                iteratorVar
             }
         }
+        // Has explicit parent pointer (e.g., streams.key)
+        !parentPointer.isNullOrBlank() -> "$parentPointer.$fieldAccess"
+        // Top level - just use the parameter name
+        else -> fieldAccess
+    }
 
-        resolvedType.declaration.isEnum() -> {
-            addImport("eu.vendeli.rethis.utils.writeStringArg")
-            appendLine("buffer.writeStringArg(%L.toString(), charset)", pointedParameter(fieldAccess))
+    if (phase == EncodePhase.SIZE) {
+        if (context.currentCommand.haveVaryingSize) builder.addStatement("argCount += 1")
+    } else if (phase == EncodePhase.WRITE) {
+        addImport("eu.vendeli.rethis.utils.writeBulkString")
+        addImport("io.ktor.utils.io.core.toByteArray")
+        when {
+            resolvedType.declaration.isStdType() -> {
+                when {
+                    resolvedType.declaration.isString() -> {
+                        appendLine("buffer.writeBulkString(%L.toByteArray(charset))", pName)
+                    }
+
+                    resolvedType.declaration.isInstant() -> {
+                        val timeUnit = resolvedType.getTimeUnit()
+                        val expr = if (timeUnit == "MILLISECONDS") "toEpochMilliseconds()" else "epochSeconds"
+                        appendLine("buffer.writeBulkString(%L.%L.toString().toByteArray(charset))", pName, expr)
+                    }
+
+                    resolvedType.declaration.isDuration() -> {
+                        val timeUnit = resolvedType.getTimeUnit()
+                        val expr = if (timeUnit == "MILLISECONDS") "inWholeMilliseconds" else "inWholeSeconds"
+                        appendLine("buffer.writeBulkString(%L.%L.toString().toByteArray(charset))", pName, expr)
+                    }
+
+                    resolvedType.declaration.isByteArray() -> {
+                        appendLine("buffer.writeBulkString(%L)", pName)
+                    }
+
+                    resolvedType.declaration.isCharArray() -> {
+                        appendLine("buffer.writeBulkString(%L.concatToString().toByteArray(charset))", pName)
+                    }
+
+                    else -> appendLine("buffer.writeBulkString(%L.toString().toByteArray(charset))", pName)
+                }
+            }
+
+            resolvedType.declaration.isDataObject() -> {
+                // For data objects, get token from the declaration itself
+                @OptIn(KspExperimental::class)
+                val declTokens = (resolvedType.declaration as? KSClassDeclaration)
+                    ?.getAnnotationsByType(RedisOption.Token::class)?.map { it.name }?.toList()
+                val actualTokens = if (!declTokens.isNullOrEmpty()) declTokens else node.tokens.map { it.name }
+                val declarationToken = resolvedType.declaration.effectiveName()
+
+                if (actualTokens.singleOrNull() == declarationToken) {
+                    appendLine(
+                        "buffer.writeBulkString(%L.toString().toByteArray(charset))",
+                        pointer ?: fieldAccess,
+                    )
+                } else {
+                    actualTokens.forEach { tokenName ->
+                        // Collect token and use RedisToken
+                        context[CollectedTokens]?.addToken(tokenName)
+                        val tokenProperty = tokenToRedisTokenPropertyName(tokenName)
+                        addImport("eu.vendeli.rethis.utils.RedisToken")
+                        addImport("eu.vendeli.rethis.utils.writeBulkString")
+                        appendLine("buffer.writeBulkString(RedisToken.%L)", tokenProperty)
+                    }
+                }
+            }
+
+            resolvedType.declaration.isEnum() -> {
+                appendLine("buffer.writeBulkString(%L.toString().toByteArray(charset))", pName)
+            }
         }
     }
 }

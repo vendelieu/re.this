@@ -2,6 +2,7 @@ package eu.vendeli.rethis.commands.server
 
 import eu.vendeli.rethis.ReThisTestCtx
 import eu.vendeli.rethis.command.server.*
+import eu.vendeli.rethis.shared.types.RType
 import io.kotest.matchers.shouldNotBe
 
 class ServerAclCommandTest : ReThisTestCtx() {
@@ -38,7 +39,7 @@ class ServerAclCommandTest : ReThisTestCtx() {
     @Test
     suspend fun `ACL LOG returns entries or empty list`() {
         val res = client.aclLog()
-        res shouldNotBe null
+        res shouldNotBe RType.Null
     }
 
     @Test

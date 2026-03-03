@@ -1,54 +1,51 @@
 package eu.vendeli.rethis.api.spec.benchmarks
 
-import com.redis.testcontainers.RedisContainer
 import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.command.connection.ping
 import eu.vendeli.rethis.command.string.get
 import eu.vendeli.rethis.command.string.set
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.runBlocking
-import org.openjdk.jmh.annotations.*
+import org.openjdk.jmh.annotations.Benchmark
+import org.openjdk.jmh.annotations.Level
+import org.openjdk.jmh.annotations.Setup
+import org.openjdk.jmh.annotations.TearDown
 import org.openjdk.jmh.infra.Blackhole
-import org.testcontainers.utility.DockerImageName
-import java.util.concurrent.TimeUnit
 
-@DelicateCoroutinesApi
-@BenchmarkMode(Mode.Throughput)
-@State(Scope.Benchmark)
-@Threads(16)
-@Warmup(iterations = 5, time = 1000, timeUnit = TimeUnit.MILLISECONDS)
-@Measurement(iterations = 5, time = 1000, timeUnit = TimeUnit.MILLISECONDS)
-@Timeout(time = 10, timeUnit = TimeUnit.SECONDS)
-@Fork(1, jvmArgsAppend = ["-Xms12g", "-Xmx12g", "-XX:MaxMetaspaceSize=1g"])
-class RethisBenchmark {
+class RethisBenchmark : JMHBenchmark() {
     private lateinit var rethis: ReThis
-    private val redis = RedisContainer(
-        DockerImageName.parse("redis:7.4.0"),
-    )
 
-    @Setup
+    @Setup(Level.Trial)
     fun setup() {
+        // Start Redis container once per trial
         redis.start()
         rethis = ReThis(redis.host, redis.firstMappedPort)
-        GlobalScope.launch { rethis.ping("test") }
+        runBlocking { rethis.ping("test") }
     }
 
-    @TearDown
+    @TearDown(Level.Trial)
     fun tearDown() {
-        redis.stop()
         rethis.close()
+        redis.stop()
+        benchScope.cancel()
     }
 
     @Benchmark
-    fun rethisSetGet(bh: Blackhole) {
-        val randInt = (1..10_000).random()
+    fun rethisSetGet(bh: Blackhole) = runBlocking {
+        // Launch concurrent coroutines within benchScope
+        val jobs = List(opsCount) { // number of parallel coroutines
+            benchScope.async {
+                val randInt = random.nextInt()
+                val key = "keyReThis$randInt"
+                val value = "value$randInt"
 
-        GlobalScope.launch {
-            bh.consume(rethis.set("keyReThis$randInt", "value$randInt"))
-            val value = rethis.get("keyReThis$randInt")
-            assert(value == "value$randInt")
+                bh.consume(rethis.set(key, value))
+                val redisValue = rethis.get(key)
+                assert(redisValue == value)
+            }
         }
+        jobs.awaitAll() // wait for all coroutines to finish before JMH counts the iteration
     }
 }

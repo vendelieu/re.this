@@ -1,6 +1,9 @@
 package eu.vendeli.rethis.shared.types
 
 import com.ionspin.kotlin.bignum.integer.BigInteger
+import kotlinx.io.Buffer
+import kotlinx.io.snapshot
+import kotlinx.io.writeString
 
 sealed class RType {
     open val value: Any? get() = null
@@ -47,8 +50,18 @@ data class VerbatimString(
 }
 
 data class BulkString(
-    override val value: String,
-) : RPrimitive()
+    override val value: Buffer,
+) : RPrimitive() {
+    constructor(value: String) : this(Buffer().apply { writeString(value) })
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is BulkString) return false
+        return value.snapshot() == other.value.snapshot()
+    }
+
+    override fun hashCode(): Int = value.snapshot().hashCode()
+}
 
 data class RArray(
     override val value: List<RType>,
@@ -59,9 +72,9 @@ data class RMap(
 ) : RType()
 
 data class RSet(
-    override val value: Set<RPrimitive>,
+    override val value: Set<RType>,
 ) : RType()
 
 data class Push(
-    override val value: List<RPrimitive>,
+    override val value: List<RType>,
 ) : RType()

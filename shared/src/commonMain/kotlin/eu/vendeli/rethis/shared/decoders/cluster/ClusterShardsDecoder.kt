@@ -14,7 +14,7 @@ import kotlinx.io.readLine
 import kotlinx.io.readLineStrict
 
 object ClusterShardsDecoder : ResponseDecoder<List<Shard>> {
-    override suspend fun decode(
+    override fun decode(
         input: Buffer,
         charset: Charset,
         code: RespCode?,

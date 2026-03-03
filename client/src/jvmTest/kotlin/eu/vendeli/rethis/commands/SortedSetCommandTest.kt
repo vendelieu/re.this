@@ -2,15 +2,22 @@ package eu.vendeli.rethis.commands
 
 import eu.vendeli.rethis.ReThisTestCtx
 import eu.vendeli.rethis.command.sortedset.*
+import eu.vendeli.rethis.safeCast
 import eu.vendeli.rethis.shared.request.sortedset.ZPopCommonOption
 import eu.vendeli.rethis.shared.response.common.MPopResult
 import eu.vendeli.rethis.shared.response.common.ScanResult
-import eu.vendeli.rethis.shared.response.stream.ZMember
-import eu.vendeli.rethis.shared.response.stream.ZPopResult
+import eu.vendeli.rethis.shared.response.sortedset.ZMember
+import eu.vendeli.rethis.shared.response.sortedset.ZPopResult
 import eu.vendeli.rethis.shared.types.BulkString
+import eu.vendeli.rethis.shared.types.F64
+import eu.vendeli.rethis.shared.types.RArray
+import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.collections.shouldNotBeEmpty
+import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeTypeOf
+import kotlinx.io.readString
+import kotlin.math.roundToInt
 
 class SortedSetCommandTest : ReThisTestCtx() {
     @Test
@@ -42,7 +49,14 @@ class SortedSetCommandTest : ReThisTestCtx() {
     @Test
     suspend fun `test ZMSCORE command`() {
         client.zAdd("testSet25", ZMember("testValue25", 1.0))
-        client.zMScore("testSet25", "testValue25") shouldBe listOf(BulkString("1"))
+        client.zMScore("testSet25", "testValue25").shouldNotBeNull().first().also {
+            val score = if(it is BulkString) {
+                it.value.readString()
+            } else {
+                (it as F64).value.roundToInt().toString()
+            }
+            score shouldBe "1"
+        }
     }
 
     @Test
@@ -60,13 +74,28 @@ class SortedSetCommandTest : ReThisTestCtx() {
             .shouldNotBeEmpty()
             .first()
             .shouldBeTypeOf<BulkString>()
-            .value shouldBe "testValue27"
+            .value.readString() shouldBe "testValue27"
     }
 
     @Test
     suspend fun `test ZPOPMIN command with count`() {
         client.zAdd("testSet27", ZMember("testValue27", 1.0))
-        client.zPopMin("testSet27", 2) shouldBe listOf(BulkString("testValue27"), BulkString("1"))
+        val data = client.zPopMin("testSet27", 2)
+        val result = if (data.first() is BulkString) {
+            data
+        } else {
+            data.first().shouldBeTypeOf<RArray>().value
+        }
+
+        result shouldHaveSize 2
+        result.first().safeCast<BulkString>()?.value?.readString() shouldBe "testValue27"
+        result.last().let {
+            if (it is BulkString) {
+                it.value.readString()
+            } else {
+                (it as F64).value.roundToInt().toString()
+            }
+        } shouldBe "1"
     }
 
     @Test
@@ -84,7 +113,12 @@ class SortedSetCommandTest : ReThisTestCtx() {
     @Test
     suspend fun `test ZRANDMEMBER command with count + scores`() {
         client.zAdd("testSet28", ZMember("testValue28", 1.0))
-        client.zRandMemberCount("testSet28", 1, true) shouldBe listOf("testValue28", "1")
+        val result = client.zRandMemberWithScores("testSet28", 1, true)
+            .first() // unwrapping array
+            .shouldBeTypeOf<RArray>()
+            .value
+        result.first().shouldBeTypeOf<BulkString>().value.readString() shouldBe "testValue28"
+        result.last().shouldBeTypeOf<F64>().value shouldBe 1.0
     }
 
     @Test

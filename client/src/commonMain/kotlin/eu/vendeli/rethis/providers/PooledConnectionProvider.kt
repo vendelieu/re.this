@@ -16,7 +16,7 @@ internal class PooledConnectionProvider(
         ConnectionPool(node.socket, cfg, connectionFactory, rootJob)
     }
 
-    override suspend fun execute(request: CommandRequest): Buffer = withConnection { it.doRequest(request.buffer) }
+    override suspend fun execute(request: CommandRequest): Buffer = withConnection { it.doRequest(request.data) }
 
     override fun close() {
         if (client.cfg.pool.closeGracefully) coRunBlocking { pool.closeGracefully() }
@@ -25,6 +25,7 @@ internal class PooledConnectionProvider(
 
     override suspend fun borrowConnection(): RConnection = pool.acquire()
     override suspend fun releaseConnection(conn: RConnection) = pool.release(conn)
+    override fun disposeConnection(conn: RConnection) = client.connectionFactory.dispose(conn)
 
     override fun hasSpareConnection() = pool.haveIdleConnections()
 }

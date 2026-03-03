@@ -11,7 +11,7 @@ import kotlinx.io.readLine
 
 
 object SimpleErrorDecoder : ResponseDecoder<Nothing> {
-    override suspend fun decode(input: Buffer, charset: Charset, code: RespCode?,): Nothing {
+    override fun decode(input: Buffer, charset: Charset, code: RespCode?,): Nothing {
         if (input == EMPTY_BUFFER) throw NotImplementedError()
         if (code == null) input.resolveToken(RespCode.SIMPLE_ERROR)
 

@@ -31,7 +31,6 @@ internal fun TypeSpec.Builder.addDecodeFunction(
         FunSpec.builder("decode")
             .addParameter("input", Buffer::class)
             .addParameter("charset", charsetClassName)
-            .addModifiers(KModifier.SUSPEND)
             .returns(type.copy(isNullableResponse))
             .addCode(
                 CodeBlock.builder().apply {
@@ -56,7 +55,6 @@ internal fun TypeSpec.Builder.addDecodeFunction(
 
     addFunction(
         FunSpec.builder("decode")
-            .addModifiers(KModifier.SUSPEND)
             .addParameter("input", Buffer::class)
             .addParameter("charset", charsetClassName)
             .returns(type.copy(isNullableResponse))
@@ -64,9 +62,8 @@ internal fun TypeSpec.Builder.addDecodeFunction(
                 CodeBlock.builder().apply {
                     if (respCode.isEmpty()) return@apply
                     addImport("eu.vendeli.rethis.utils.parseCode")
-                    addStatement("val code = input.parseCode(RespCode.%L)", respCode.first())
 
-                    beginControlFlow("return when(code)")
+                    beginControlFlow("return when(val code = input.parseCode(RespCode.%L))", respCode.first())
                     respCode.forEach { writeDecoder(it) }
                     beginControlFlow("else ->")
                     addImport("eu.vendeli.rethis.shared.utils.tryInferCause")
@@ -94,24 +91,16 @@ internal fun buildStaticCommandParts(
     val size = commandSize + parametersSize
 
     val commandPart = mainCommandPart.joinToString("\\r\\n") { "$${it.length}\\r\\n$it" }
-    val sizePart = if (context.currentCommand.haveVaryingSize) "" else "*$size"
-    return "$sizePart\\r\\n$commandPart\\r\\n"
+    val sizePart = if (context.currentCommand.haveVaryingSize) "" else "*$size\\r\\n"
+    return "$sizePart$commandPart\\r\\n"
 }
 
 internal fun buildStaticHeaderInitializer(header: String): CodeBlock = CodeBlock.Builder().apply {
-    beginControlFlow("Buffer().apply")
-    addStatement("writeString(\"%L\")", header)
-    endControlFlow()
+    add("\"%L\".encodeToByteArray()", header)
 }.build()
 
 internal fun CodeBlock.Builder.addCommandSpecDeclaration() {
     addStatement("")
-    if (context.currentCommand.haveVaryingSize) {
-        beginControlFlow("buffer = Buffer().apply")
-        addStatement($$"writeString(\"*$size\")")
-        addStatement("transferFrom(buffer)")
-        endControlFlow()
-    }
     addStatement(
         "return CommandRequest(buffer, %T.%L, BLOCKING_STATUS)",
         RedisOperation::class,

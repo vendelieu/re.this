@@ -1,6 +1,7 @@
 package eu.vendeli.rethis.api.processor.utils
 
 import com.google.devtools.ksp.symbol.*
+import com.squareup.kotlinpoet.BYTE_ARRAY
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.LONG
 import com.squareup.kotlinpoet.STRING
@@ -12,11 +13,12 @@ import eu.vendeli.rethis.shared.decoders.general.*
 import eu.vendeli.rethis.shared.types.CommandRequest
 import eu.vendeli.rethis.shared.types.RType
 import eu.vendeli.rethis.shared.types.RespCode
+import eu.vendeli.rethis.shared.types.stream.XReadGroupResponse
 
 internal val charsetClassName = ClassName("io.ktor.utils.io.charsets", "Charset")
 internal val commandRequestClassName = CommandRequest::class.asClassName()
 internal val RTYPE = RType::class.asClassName()
-internal val BYTE_ARRAY = ByteArray::class.asClassName()
+internal val XREADGROUP_RESPONSE = XReadGroupResponse::class.asClassName()
 
 internal val plainDecoders = mapOf(
     RespCode.SIMPLE_STRING to SimpleStringDecoder::class.qualifiedName,
@@ -37,6 +39,7 @@ internal val collectionDecoders = mapOf(
         RTYPE to ArrayRTypeDecoder::class.qualifiedName,
         STRING to ArrayStringDecoder::class.qualifiedName,
         BYTE_ARRAY to ArrayByteArrayDecoder::class.qualifiedName,
+        XREADGROUP_RESPONSE to XReadGroupDecoder::class.qualifiedName,
     ),
     RespCode.SET to mapOf(
         STRING to SetStringDecoder::class.qualifiedName,
@@ -73,11 +76,30 @@ internal fun KSDeclaration.isSealed() =
 internal fun KSAnnotated.isStdType() =
     this is KSClassDeclaration && qualifiedName?.getQualifier()?.startsWith("kotlin") == true
 
-internal fun KSDeclaration.isTimeType() = qualifiedName?.getQualifier()?.startsWith("kotlin.time") == true
+internal fun KSDeclaration.isInstant() = qualifiedName?.asString() == "kotlin.time.Instant"
+internal fun KSDeclaration.isDuration() = qualifiedName?.asString() == "kotlin.time.Duration"
+internal fun KSDeclaration.isCharArray() = qualifiedName?.asString() == "kotlin.CharArray"
+internal fun KSDeclaration.isString() = qualifiedName?.asString() == "kotlin.String"
+internal fun KSDeclaration.isByteArray() = qualifiedName?.asString() == "kotlin.ByteArray"
 
 internal fun KSDeclaration.isEnum() = this is KSClassDeclaration && classKind == ClassKind.ENUM_CLASS
 internal fun KSDeclaration.isBool() = qualifiedName?.asString().let { it == "kotlin.Boolean" || it == "boolean" }
 
 internal fun List<CommandArgument>.flattenArguments(): List<CommandArgument> = flatMap { argument ->
     listOf(argument) + argument.arguments.flattenArguments()
+}
+
+/**
+ * Maps a Kotlin parameter type to the Redis spec type string used in command arguments.
+ * Used as a tie-breaker when multiple RSpec nodes match the same parameter name and bounds.
+ */
+internal fun KSType.toSpecType(): String? {
+    val name = declaration.qualifiedName?.asString() ?: return null
+    return when (name) {
+        "kotlin.String" -> "string"
+        "kotlin.Long", "kotlin.Int" -> "integer"
+        "kotlin.Double", "kotlin.Float" -> "double"
+        "kotlin.Boolean" -> "boolean"
+        else -> null
+    }
 }

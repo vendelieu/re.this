@@ -5,24 +5,25 @@ import eu.vendeli.rethis.command.json.*
 import eu.vendeli.rethis.shared.types.BulkString
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeTypeOf
+import kotlinx.io.readString
 
-class JsonCommandTest : ReThisTestCtx(true) {
+class JsonCommandTest : ReThisTestCtx() {
     @Test
     suspend fun `test JSON_ARRAPPEND command`() {
         client.jsonSet("testKey1", "[1, 2, 3]", ".")
-        client.jsonArrAppend("testKey1", ".", "4", "5") shouldBe 5L
+        client.jsonArrAppend("testKey1", "4", "5", path = ".") shouldBe 5L
     }
 
     @Test
     suspend fun `test JSON_ARRINDEX command`() {
         client.jsonSet("testKey2", "[1, 2, 3]", ".")
-        client.jsonArrIndex("testKey2", ".", "2") shouldBe 1L
+        client.jsonArrIndex("testKey2", "2", ".") shouldBe 1L
     }
 
     @Test
     suspend fun `test JSON_ARRINSERT command`() {
         client.jsonSet("testKey3", "[1, 2, 3]", ".")
-        client.jsonArrInsert("testKey3", ".", 1, "4", "5") shouldBe 5L
+        client.jsonArrInsert("testKey3", 1, "4", "5", path = ".") shouldBe 5L
     }
 
     @Test
@@ -34,14 +35,14 @@ class JsonCommandTest : ReThisTestCtx(true) {
     @Test
     suspend fun `test JSON_ARRPOP command`() {
         client.jsonSet("testKey5", "[1, 2, 3]", ".")
-        client.jsonArrPop("testKey5", ".").shouldBeTypeOf<BulkString>().value shouldBe "3"
+        client.jsonArrPop("testKey5").shouldBeTypeOf<BulkString>().value.readString() shouldBe "3"
     }
 
     @Test
     suspend fun `test JSON_ARRTRIM command`() {
         client.jsonSet("testKey6", "[1, 2, 3]", ".")
 
-        client.jsonArrTrim("testKey6", ".", 1, 1) shouldBe 1L
+        client.jsonArrTrim("testKey6", 1, 1, ".") shouldBe 1L
     }
 
     @Test
@@ -71,6 +72,6 @@ class JsonCommandTest : ReThisTestCtx(true) {
     @Test
     suspend fun `test JSON_MERGE command`() {
         client.jsonSet("testKey12", "[1, 2, 3]", ".")
-        client.jsonMerge("testKey12", ".", "[4, 5, 6]") shouldBe true
+        client.jsonMerge("testKey12", "[4, 5, 6]", ".") shouldBe true
     }
 }

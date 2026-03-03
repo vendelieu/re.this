@@ -20,8 +20,10 @@ suspend fun <T : Any> ReThis.hGet(
     format: SerializationFormat = cfg.serializationFormat,
 ): T? {
     if (isInTx()) {
-        logger.warn("Be aware that in transaction commands return `QUEUED`" +
-            " which is for type safety substituted with default value, so serde operations will fail")
+        logger.warn(
+            "Be aware that in transaction commands return `QUEUED`" +
+                " which is for type safety substituted with default value, so serde operations will fail",
+        )
     }
     val raw: String = hGet(key, field) ?: return null
     return try {
@@ -30,4 +32,3 @@ suspend fun <T : Any> ReThis.hGet(
         throw DataProcessingException("Failed to deserialize hGet for key \"$key\" field \"$field\"", ex)
     }
 }
-

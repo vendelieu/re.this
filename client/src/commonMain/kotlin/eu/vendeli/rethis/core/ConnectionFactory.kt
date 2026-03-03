@@ -27,7 +27,7 @@ internal class ConnectionFactory(
     private val logger = cfg.loggerFactory.get("eu.vendeli.rethis.core.ConnectionFactory")
     private val connections = Semaphore(cfg.maxConnections)
     private val scope = CoroutineScope(
-        cfg.connectionDispatcher + CoroutineName("$CLIENT_NAME|ConnectionFactory") + Job(rootJob),
+        cfg.generalDispatcher + CoroutineName("$CLIENT_NAME|ConnectionFactory") + Job(rootJob),
     )
     private val selector = SelectorManager(scope.coroutineContext)
 
@@ -38,7 +38,7 @@ internal class ConnectionFactory(
             logger.debug { "Creating connection attempt failed. Max connections reached." }
             return null
         }
-        
+
         return try {
             aSocket(selector)
                 .tcp()
@@ -53,7 +53,8 @@ internal class ConnectionFactory(
                     cfg.tls?.let {
                         socket.tls(selector.coroutineContext, it)
                     } ?: socket
-                }.rConnection().also {
+                }.rConnection()
+                .also {
                     prepareConnection(it)
                 }
         } catch (e: Exception) {
@@ -67,17 +68,18 @@ internal class ConnectionFactory(
         val cfgDb = cfg.db
         if (cfg.protocol != RespVer.V3 && cfgAuth == null && (cfgDb == null || cfgDb <= 0)) return
 
-        val helloBuffer = HelloCommandCodec.encode(
-            Charsets.UTF_8,
-            cfg.protocol.literal.toLong(),
-            cfgAuth?.let { HelloAuth(it.username ?: "default", it.password) },
-            CLIENT_NAME.takeIf { cfg.pool.setClientName },
-        ).buffer
+        val helloData = HelloCommandCodec
+            .encode(
+                Charsets.UTF_8,
+                cfg.protocol.literal.toLong(),
+                cfgAuth?.let { HelloAuth(it.username ?: "default", it.password) },
+                CLIENT_NAME.takeIf { cfg.pool.setClientName },
+            ).data
 
         if (cfgDb != null && cfgDb > 0) {
             val request = listOf(
-                helloBuffer,
-                SelectCommandCodec.encode(cfg.charset, cfgDb.toLong()).buffer,
+                helloData,
+                SelectCommandCodec.encode(cfg.charset, cfgDb.toLong()).data,
             )
             val responseBuffer = conn.doBatchRequest(request)
             repeat(request.size) {
@@ -85,7 +87,7 @@ internal class ConnectionFactory(
                 if (response is RType.Error) throw response.exception
             }
         } else {
-            val response = RTypeDecoder.decode(conn.doRequest(helloBuffer), cfg.charset)
+            val response = RTypeDecoder.decode(conn.doRequest(helloData), cfg.charset)
             if (response is RType.Error) throw response.exception
         }
     }

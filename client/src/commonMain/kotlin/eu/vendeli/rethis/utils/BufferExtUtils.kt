@@ -2,15 +2,31 @@ package eu.vendeli.rethis.utils
 
 import eu.vendeli.rethis.shared.types.RespCode
 import eu.vendeli.rethis.shared.types.TimeUnit
+import eu.vendeli.rethis.shared.utils.BYTE_0
+import eu.vendeli.rethis.shared.utils.BYTE_MINUS
+import eu.vendeli.rethis.shared.utils.CARRIAGE_RETURN_BYTE
+import eu.vendeli.rethis.shared.utils.NEWLINE_BYTE
 import io.ktor.utils.io.charsets.*
 import io.ktor.utils.io.core.*
 import kotlinx.io.Buffer
+import kotlinx.io.DelicateIoApi
+import kotlinx.io.UnsafeIoApi
+import kotlinx.io.unsafe.UnsafeBufferOperations
+import kotlinx.io.writeDecimalLong
 import kotlinx.io.writeString
+import kotlinx.io.writeToInternalBuffer
 import kotlin.time.Duration
 import kotlin.time.Instant
 
+@OptIn(DelicateIoApi::class, UnsafeIoApi::class)
 private fun Buffer.appendEOL() {
-    writeFully(EOL)
+    writeToInternalBuffer { buffer ->
+        UnsafeBufferOperations.writeToTail(buffer, 2) { ctx, segment ->
+            ctx.setUnchecked(segment, 0, CARRIAGE_RETURN_BYTE)
+            ctx.setUnchecked(segment, 1, NEWLINE_BYTE)
+            2
+        }
+    }
 }
 
 private fun Buffer.append(type: RespCode) {
@@ -19,7 +35,7 @@ private fun Buffer.append(type: RespCode) {
 
 private fun Buffer.writeBA(value: ByteArray) {
     append(RespCode.BULK)
-    writeString(value.size.toString())
+    writeDecimalLong(value.size.toLong())
     appendEOL()
     writeFully(value)
     appendEOL()
@@ -44,10 +60,12 @@ fun Buffer.writeInstantArg(value: Instant, charset: Charset, timeUnit: TimeUnit)
 fun Buffer.writeBooleanArg(value: Boolean, charset: Charset) =
     writeBA(value.let { if (it) "t" else "f" }.toByteArray(charset))
 
-fun Buffer.writeCharArrayArg(value: CharArray, charset: Charset) {
-    append(RespCode.BULK)
-    writeString(value.size.toString())
+fun Buffer.writeArrayHeader(count: Int) {
+    append(RespCode.ARRAY)
+    writeDecimalLong(count.toLong())
     appendEOL()
-    writeText(value, charset = charset)
-    appendEOL()
+}
+
+fun Buffer.writeBulkString(data: ByteArray) {
+    writeBA(data)
 }

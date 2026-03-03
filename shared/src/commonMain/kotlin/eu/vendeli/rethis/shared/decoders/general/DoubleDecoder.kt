@@ -11,7 +11,7 @@ import kotlinx.io.readLineStrict
 
 
 object DoubleDecoder : ResponseDecoder<Double> {
-    override suspend fun decode(input: Buffer, charset: Charset, code: RespCode?): Double {
+    override fun decode(input: Buffer, charset: Charset, code: RespCode?): Double {
         if (input == EMPTY_BUFFER) return Double.NaN
         if (code == null) input.resolveToken(RespCode.DOUBLE)
 

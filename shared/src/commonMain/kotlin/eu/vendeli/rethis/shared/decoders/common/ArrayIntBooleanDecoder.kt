@@ -10,7 +10,7 @@ import kotlinx.io.Buffer
 import kotlinx.io.readLineStrict
 
 object ArrayIntBooleanDecoder : ResponseDecoder<List<Boolean>> {
-    override suspend fun decode(
+    override fun decode(
         input: Buffer,
         charset: Charset,
         code: RespCode?,

@@ -1,48 +1,64 @@
 package eu.vendeli.rethis.core
 
 import eu.vendeli.rethis.providers.ConnectionProvider
-import eu.vendeli.rethis.types.common.Subscription
-import eu.vendeli.rethis.types.common.SubscriptionWorker
-import eu.vendeli.rethis.types.interfaces.SubscriptionEventHandler
+import eu.vendeli.rethis.types.common.ActiveSubscription
+import eu.vendeli.rethis.types.common.SubscribeTarget
+import eu.vendeli.rethis.types.interfaces.PubSubHandler
 import io.ktor.util.collections.*
+import kotlinx.coroutines.Job
 
 class SubscriptionManager {
-    internal val subscriptionJobs = ConcurrentMap<String, MutableSet<SubscriptionWorker>>()
-    internal val subscriptionsHandlers = mutableMapOf<String, MutableSet<Subscription>>()
-    internal var eventHandler: SubscriptionEventHandler? = null
+    internal val activeSubscriptions = ConcurrentMap<SubscribeTarget, ActiveSubscription>()
+    internal val globalHandlers = ConcurrentSet<PubSubHandler>()
 
-    val size
-        get() = subscriptionsHandlers.values.fold(0) { i, j -> i + j.size }
+    val size: Int get() = activeSubscriptions.size
 
-    fun registerSubscription(id: String, subscription: Subscription) {
-        subscriptionsHandlers.getOrPut(id) { mutableSetOf() }.add(subscription)
+    fun unsubscribe(target: SubscribeTarget) {
+        val removed = activeSubscriptions.remove(target) ?: return
+        removed.handlers.values.flatten().forEach { it.cancel() }
     }
 
-    fun unsubscribe(id: String): Boolean {
-        subscriptionJobs.remove(id)?.forEach { it.job.cancel() } // remove job and cancel it
-
-        subscriptionsHandlers.remove(id)
-
-        return !subscriptionsHandlers.contains(id)
+    fun unsubscribeAll() {
+        activeSubscriptions.keys.toList().forEach { unsubscribe(it) }
     }
 
-    fun unsubscribeAll(): Boolean {
-        subscriptionsHandlers.toMap().forEach { unsubscribe(it.key) }
-        return subscriptionsHandlers.isEmpty()
+    fun registerGlobalHandler(handler: PubSubHandler) {
+        globalHandlers.add(handler)
     }
 
-    fun setEventHandler(eventHandler: SubscriptionEventHandler) {
-        this.eventHandler = eventHandler
+    fun unregisterGlobalHandler(handler: PubSubHandler) {
+        globalHandlers.remove(handler)
     }
 
-    internal fun isHandlerRegistered(id: String, provider: ConnectionProvider): Boolean =
-        subscriptionJobs.containsKey(id) && subscriptionJobs[id]?.any { it.connectionProvider == provider } == true
+    fun isActiveHandlers(target: SubscribeTarget) = activeSubscriptions[target]?.handlers?.isNotEmpty() ?: false
 
-    internal fun registerHandler(id: String, worker: SubscriptionWorker) {
-        subscriptionJobs.getOrPut(id) { mutableSetOf() }.add(worker)
+    internal fun registerSubscription(
+        target: SubscribeTarget,
+        provider: ConnectionProvider,
+        handler: PubSubHandler,
+        worker: Job,
+    ) {
+        activeSubscriptions
+            .getOrPut(target) {
+                ActiveSubscription(provider)
+            }.handlers
+            .getOrPut(handler) { ConcurrentSet() }
+            .add(worker)
     }
 
-    internal fun unregisterHandler(id: String, subscription: Subscription) {
-        subscriptionsHandlers[id]?.remove(subscription)
+    internal fun unregisterHandler(
+        target: SubscribeTarget,
+        handler: PubSubHandler,
+        worker: Job,
+    ) {
+        val subscription = activeSubscriptions[target] ?: return
+        val jobs = subscription.handlers[handler] ?: return
+        jobs.remove(worker)
+        if (jobs.isEmpty()) {
+            subscription.handlers.remove(handler)
+            if (subscription.handlers.isEmpty()) {
+                activeSubscriptions.remove(target)
+            }
+        }
     }
 }

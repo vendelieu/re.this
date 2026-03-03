@@ -69,7 +69,22 @@ internal object LibTreePlanter {
 
         val rNode = when {
             nodesByName.size == 1 -> nodesByName.first()
-            nodesByName.size > 1 -> nodesByName.singleOrNull { it.path.isWithinBounds(parentBounds) }
+            nodesByName.size > 1 -> {
+                val withinBounds = nodesByName.filter { it.path.isWithinBounds(parentBounds) }
+                when {
+                    withinBounds.size == 1 -> withinBounds.single()
+                    withinBounds.size > 1 -> {
+                        val specType = pType.toSpecType()
+                        if (specType != null) {
+                            withinBounds.singleOrNull { it.arg.type == specType }
+                                ?: withinBounds.firstOrNull()
+                        } else {
+                            withinBounds.firstOrNull()
+                        }
+                    }
+                    else -> null
+                }
+            }
             else -> null
         }
 
@@ -127,12 +142,15 @@ internal object LibTreePlanter {
 
     private fun KSClassDeclaration.saveDeclarationToken(node: EnrichedNode) {
         val name = tokenName()
-        val rSpec = context.currentRSpec.allNodes.find { it.arg.token == name } ?: run {
-            context.logger.warn("Token `$name` not found in RSpec [${context.currentCommand.command.name}]")
-            return
-        }
+        val rSpec = context.currentRSpec.allNodes.find { it.arg.token == name }
 
-        node.attr.add(EnrichedTreeAttr.RelatedRSpec(rSpec))
-        node.attr.add(EnrichedTreeAttr.Token(name, rSpec.arg.multipleToken))
+        if (rSpec != null) {
+            node.attr.add(EnrichedTreeAttr.RelatedRSpec(rSpec))
+            node.attr.add(EnrichedTreeAttr.Token(name, rSpec.arg.multipleToken))
+        } else {
+            // Token not in RSpec, but still add it so it gets written in codecs
+            context.logger.warn("Token `$name` not found in RSpec [${context.currentCommand.command.name}], adding anyway")
+            node.attr.add(EnrichedTreeAttr.Token(name, false))
+        }
     }
 }

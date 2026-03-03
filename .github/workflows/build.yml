@@ -7,7 +7,7 @@ on:
     paths-ignore:
       - '.editorconfig'
       - '.gitignore'
-      - 'CHANGELOG.md'
+      # CHANGELOG.md included so release merges (CHANGELOG-only) trigger build
       - 'CODE_OF_CONDUCT.md'
       - 'CONTRIBUTING.md'
       - 'FUNDING.yml'
@@ -43,7 +43,8 @@ permissions:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: namespace-profile-rthis
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@v6
 
@@ -63,17 +64,24 @@ jobs:
         uses: actions/cache@v5
         with:
           path: ~/.konan
-          key: ${{ runner.os }}-gradle-${{ hashFiles('*.gradle.kts') }}
+          key: ${{ runner.os }}-gradle-${{ hashFiles('gradle/libs.versions.toml', '**.gradle.kts', 'gradle.properties') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
 
+      - name: Cache KSP generated sources
+        uses: actions/cache@v5
+        with:
+          path: client/build/generated/ksp
+          key: ${{ runner.os }}-ksp-generated-${{ hashFiles('api-processor/**', 'client/src/commonMain/kotlin/eu/vendeli/rethis/api/spec/**') }}
+
       - name: Build artifact
         run: ./gradlew koverXmlReport
+        timeout-minutes: 20
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v5
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
         with:
-          files: re.this/build/reports/kover/report.xml
+          files: "**/build/reports/kover/report.xml"
           verbose: true

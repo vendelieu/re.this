@@ -15,7 +15,7 @@ import kotlinx.io.Buffer
 
 object PairScanDecoder : ResponseDecoder<ScanResult<Pair<String, String>>> {
     private val EMPTY_SCAN_RESULT = ScanResult<Pair<String, String>>(cursor = "", keys = emptyList())
-    override suspend fun decode(
+    override fun decode(
         input: Buffer,
         charset: Charset,
         code: RespCode?,

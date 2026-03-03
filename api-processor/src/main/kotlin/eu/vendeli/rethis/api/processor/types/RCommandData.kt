@@ -18,15 +18,17 @@ data class RCommandData(
 fun KSAnnotated.getCommandData(): RCommandData = annotations.filter {
     it.shortName.getShortName() == RedisCommand::class.simpleName && it.annotationType.resolve().declaration
         .qualifiedName?.asString() == RedisCommand::class.qualifiedName
-}.first().let { a ->
-    val name = a.arguments.first { it.name?.getShortName() == RedisCommand::name.name }.value.toString()
-    val operation = a.arguments.first {
+}.firstOrNull()?.let { a ->
+    val name = a.arguments.firstOrNull { it.name?.getShortName() == RedisCommand::name.name }?.value?.toString()
+        ?: throw IllegalStateException("No 'name' argument found in @RedisCommand annotation on $this")
+    val operation = a.arguments.firstOrNull {
         it.name?.getShortName() == RedisCommand::operation.name
-    }.value?.let { RedisOperation.valueOf(it.inferEnumValue()) }!!
+    }?.value?.let { RedisOperation.valueOf(it.inferEnumValue()) }
+        ?: throw IllegalStateException("No 'operation' argument found in @RedisCommand annotation on $this")
     val responseTypes = a.arguments.parseResponseTypes()
-    val isBlocking = a.arguments.first {
+    val isBlocking = a.arguments.firstOrNull {
         it.name?.getShortName() == RedisCommand::isBlocking.name
-    }.value.safeCast<Boolean>()
+    }?.value.safeCast<Boolean>()
 
     RCommandData(
         name = name,
@@ -34,4 +36,4 @@ fun KSAnnotated.getCommandData(): RCommandData = annotations.filter {
         responseTypes = responseTypes.orEmpty(),
         isBlocking = isBlocking ?: false,
     )
-}
+} ?: throw IllegalStateException("No @RedisCommand annotation found on $this. Available annotations: ${annotations.map { it.shortName.getShortName() }}")

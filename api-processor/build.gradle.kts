@@ -9,7 +9,7 @@ group = "eu.vendeli"
 
 dependencies {
     implementation(project(":shared"))
-    implementation(project(":client"))
+    implementation(libs.kotlinx.io.core)
     implementation(libs.ksp)
     implementation(libs.poet)
     implementation(libs.poet.ksp)
@@ -22,5 +22,5 @@ tasks.test {
     useJUnitPlatform()
 }
 kotlin {
-    jvmToolchain(22)
+    jvmToolchain(JVM_TARGET)
 }

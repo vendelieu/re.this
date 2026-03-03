@@ -38,4 +38,5 @@ class ReThisSet(
     override fun isEmpty(): Boolean = size == 0
 }
 
+@Suppress("FunctionName")
 fun ReThis.Set(key: String) = ReThisSet(this, key)

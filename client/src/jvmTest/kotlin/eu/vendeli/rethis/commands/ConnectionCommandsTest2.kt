@@ -74,8 +74,9 @@ class ConnectionCommandsTest2 : ReThisTestCtx() {
     @Test
     suspend fun `test CLIENT TRACKING ON and OFF`() {
         // Turn ON without special modes, then OFF
-        client.clientTracking(ClientStandby.ON, ClientTrackingMode.NOLOOP).shouldBeTrue()
-        client.clientTracking(ClientStandby.OFF).shouldBeTrue()
+        val separateClient = createClient()
+        separateClient.clientTracking(ClientStandby.ON, ClientTrackingMode.NOLOOP).shouldBeTrue()
+        separateClient.clientTracking(ClientStandby.OFF).shouldBeTrue()
     }
 
     @Test

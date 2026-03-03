@@ -17,12 +17,12 @@ abstract class ConnectionProvider {
 
     abstract suspend fun borrowConnection(): RConnection
     abstract suspend fun releaseConnection(conn: RConnection)
+    abstract fun disposeConnection(conn: RConnection)
     abstract fun hasSpareConnection(): Boolean
 
     override fun equals(other: Any?): Boolean = node == (other as? ConnectionProvider)?.node
     override fun hashCode(): Int = node.hashCode()
 }
-
 
 internal suspend inline fun <R> withConn(
     provider: ConnectionProvider,
@@ -52,8 +52,9 @@ internal suspend inline fun <R> ConnectionProvider.withConnection(block: (RConne
 
 private suspend fun ConnectionProvider.closeFinally(connection: RConnection, cause: Throwable?): Unit = when {
     cause == null -> releaseConnection(connection)
+
     else -> try {
-        releaseConnection(connection)
+        disposeConnection(connection)
     } catch (closeException: Throwable) {
         cause.addSuppressed(closeException)
     }

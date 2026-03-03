@@ -1,13 +1,15 @@
 package eu.vendeli.rethis.commands
 
 import eu.vendeli.rethis.ReThisTestCtx
+import eu.vendeli.rethis.cast
 import eu.vendeli.rethis.command.json.*
 import eu.vendeli.rethis.shared.request.json.JsonEntry
 import eu.vendeli.rethis.shared.types.*
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeTypeOf
+import kotlinx.io.readString
 
-class JsonCommandTest2 : ReThisTestCtx(true) {
+class JsonCommandTest2 : ReThisTestCtx() {
     @Test
     suspend fun `test JSON_MGET command`() {
         client.jsonSet("testKey13", "[1, 2, 3]", ".")
@@ -23,13 +25,38 @@ class JsonCommandTest2 : ReThisTestCtx(true) {
     @Test
     suspend fun `test JSON_NUMINCRBY command`() {
         client.jsonSet("testKey15", "{\"a\":\"b\",\"b\":[{\"a\":2}, {\"a\":5}, {\"a\":\"c\"}]}", ".")
-        client.jsonNumIncrBy("testKey15", "..a", 2.0) shouldBe BulkString("7.0")
+        val result = client.jsonNumIncrBy("testKey15", 2.0, "..a")
+        if (result is BulkString) {
+            result shouldBe BulkString(value = "7.0") // 7.4 behavior
+            return
+        }
+
+        result.cast<RArray>().value.run {
+            first() shouldBe RType.Null
+            get(1) shouldBe F64(value = 4.0)
+            get(2) shouldBe F64(value = 7.0)
+            last() shouldBe RType.Null
+        }
     }
 
     @Test
     suspend fun `test JSON_NUMMULTBY command`() {
-        client.jsonSet("testKey16", "{\"a\":\"b\",\"b\":[{\"a\":2}, {\"a\":5}, {\"a\":\"c\"}]}", ".")
-        client.jsonNumMultBy("testKey16", "..a", 2.0) shouldBe BulkString(value = "10.0")
+        client.jsonSet(
+            "testKey16",
+            "{\"a\":\"b\",\"b\":[{\"a\":2}, {\"a\":5}, {\"a\":\"c\"}]}",
+            ".",
+        )
+        val result = client.jsonNumMultBy("testKey16", 2.0, "..a")
+        if (result is BulkString) {
+            result shouldBe BulkString(value = "10.0") // 7.4 behavior
+            return
+        }
+        result.cast<RArray>().value.run {
+            first() shouldBe RType.Null
+            get(1) shouldBe F64(value = 4.0)
+            get(2) shouldBe F64(value = 10.0)
+            last() shouldBe RType.Null
+        }
     }
 
     @Test
@@ -85,6 +112,12 @@ class JsonCommandTest2 : ReThisTestCtx(true) {
     @Test
     suspend fun `test JSON_TYPE command`() {
         client.jsonSet("testKey24", "[1, 2, 3]", ".")
-        client.jsonType("testKey24", ".") shouldBe BulkString(value = "array")
+        client.jsonType("testKey24", ".").let {
+            if (it is BulkString) {
+                it.value.readString()
+            } else {
+                it.cast<RArray>().value.first().cast<BulkString>().value.readString()
+            }
+        } shouldBe "array"
     }
 }

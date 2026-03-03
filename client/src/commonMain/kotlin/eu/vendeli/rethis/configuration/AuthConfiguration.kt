@@ -13,5 +13,5 @@ internal class AuthConfiguration(
     var password: CharArray,
     var username: String? = null,
 ) {
-    override fun toString(): String = "AuthConfiguration(username=$username)"
+    override fun toString(): String = "AuthConfiguration(username=$username, password=*)"
 }

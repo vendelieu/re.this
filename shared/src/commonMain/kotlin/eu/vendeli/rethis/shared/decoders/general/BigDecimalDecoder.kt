@@ -12,7 +12,7 @@ import kotlinx.io.readLineStrict
 
 
 object BigDecimalDecoder : ResponseDecoder<BigDecimal> {
-    override suspend fun decode(input: Buffer, charset: Charset, code: RespCode?,): BigDecimal {
+    override fun decode(input: Buffer, charset: Charset, code: RespCode?,): BigDecimal {
         if (input == EMPTY_BUFFER) return BigDecimal.ZERO
         if (code == null) input.resolveToken(RespCode.BIG_NUMBER)
 
