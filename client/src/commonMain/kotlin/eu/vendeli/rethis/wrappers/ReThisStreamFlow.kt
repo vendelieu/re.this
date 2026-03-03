@@ -54,11 +54,7 @@ fun ReThis.StreamFlow(
     val streams = XReadGroupKeyIds(listOf(key), listOf(">"))
 
     while (coroutineContext.isActive) {
-        val response = try {
-            xReadGroup(group, consumer, streams, *options)
-        } catch (_: Exception) {
-            null
-        }
+        val response = xReadGroup(group, consumer, streams, *options)
 
         if (response.isNullOrEmpty()) {
             if (!block.isPositive()) delay(100)

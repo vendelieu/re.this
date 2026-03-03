@@ -6,6 +6,7 @@ import eu.vendeli.rethis.shared.types.stream.XReadGroupMessage
 import eu.vendeli.rethis.shared.types.stream.XReadGroupResponse
 import eu.vendeli.rethis.shared.utils.EMPTY_BUFFER
 import eu.vendeli.rethis.shared.utils.readResponseWrapped
+import eu.vendeli.rethis.shared.utils.safeCast
 import eu.vendeli.rethis.shared.utils.tryInferCause
 import io.ktor.utils.io.charsets.*
 import kotlinx.io.Buffer
@@ -36,14 +37,32 @@ object XReadGroupDecoder : ResponseDecoder<List<XReadGroupResponse>> {
 
         return buildList {
             repeat(size) {
-                val streamArray = (input.readResponseWrapped(charset) as? RArray)?.value ?: return@repeat
-                if (streamArray.size < 2) return@repeat
-                val streamName = when (val sNameType = streamArray[0]) {
-                    is BulkString -> sNameType.value.readString()
-                    else -> sNameType.value.toString()
+                var streamName: String? = null
+                var messagesArray: List<RType>? = null
+                when (actualCode) {
+                    RespCode.ARRAY -> {
+                        val streamArray = input.readResponseWrapped(charset).safeCast<RArray>()?.value ?: return@repeat
+                        if (streamArray.size < 2) return@repeat
+                        streamName = when (val sNameType = streamArray[0]) {
+                            is BulkString -> sNameType.value.readString()
+                            else -> sNameType.value.toString()
+                        }
+                        messagesArray = streamArray[1].safeCast<RArray>()?.value ?: return@repeat
+                    }
+                    RespCode.MAP -> {
+                        val keyType = input.readResponseWrapped(charset)
+                        val valueType = input.readResponseWrapped(charset)
+                        streamName = when (keyType) {
+                            is BulkString -> keyType.value.readString()
+                            else -> keyType.toString()
+                        }
+                        messagesArray = (valueType as? RArray)?.value ?: return@repeat
+                    }
+                    else -> return@repeat
                 }
-                val messagesArray = (streamArray[1] as? RArray)?.value ?: return@repeat
-                val messages = messagesArray.mapNotNull { msg ->
+                val name = streamName
+                val arr = messagesArray
+                val messages = arr.mapNotNull { msg ->
                     val msgArray = (msg as? RArray)?.value ?: return@mapNotNull null
                     if (msgArray.size < 2) return@mapNotNull null
 
@@ -52,8 +71,7 @@ object XReadGroupDecoder : ResponseDecoder<List<XReadGroupResponse>> {
                         else -> idType.value.toString()
                     }
 
-                    val dataRaw = msgArray[1]
-                    val data = when (dataRaw) {
+                    val data = when (val dataRaw = msgArray[1]) {
                         is RMap -> dataRaw.value.entries.associate {
                             val k = when (val kType = it.key) {
                                 is BulkString -> kType.value.readString()
@@ -79,11 +97,19 @@ object XReadGroupDecoder : ResponseDecoder<List<XReadGroupResponse>> {
                     }
                     XReadGroupMessage(id, data)
                 }
-                add(XReadGroupResponse(streamName, messages))
+                add(XReadGroupResponse(name, messages))
             }
         }
     }
 
-    fun decodeNullable(input: Buffer, charset: Charset, code: RespCode?): List<XReadGroupResponse>? =
-        decode(input, charset, code).ifEmpty { if (code == RespCode.NULL) null else emptyList() }
+    fun decodeNullable(
+        input: Buffer,
+        charset: Charset,
+        code: RespCode?
+    ): List<XReadGroupResponse>? =
+        decode(
+            input,
+            charset,
+            code
+        ).ifEmpty { if (code == RespCode.NULL) null else emptyList() }
 }
