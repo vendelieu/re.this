@@ -44,6 +44,7 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@v6
 
@@ -75,6 +76,7 @@ jobs:
 
       - name: Build artifact
         run: ./gradlew koverXmlReport
+        timeout-minutes: 20
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v5

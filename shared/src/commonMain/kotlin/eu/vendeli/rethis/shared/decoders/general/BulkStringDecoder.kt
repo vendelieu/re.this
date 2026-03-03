@@ -21,7 +21,7 @@ object BulkStringDecoder : ResponseDecoder<String> {
             "Invalid response structure, expected string token got null",
         )
         val output = input.readText(charset, size)
-        input.readBytes(2)
+        input.skip(2)
 
         return output
     }

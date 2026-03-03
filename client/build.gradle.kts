@@ -1,5 +1,6 @@
 @file:Suppress("PropertyName")
 
+import java.time.Duration
 import kotlinx.validation.ExperimentalBCVApi
 import org.jmailen.gradle.kotlinter.tasks.FormatTask
 import org.jmailen.gradle.kotlinter.tasks.LintTask
@@ -60,7 +61,10 @@ libraryData {
     description = "Kotlin Multiplatform Redis Client: coroutine-based, DSL-powered, and easy to use."
 }
 
-tasks.withType<Test> { useJUnitPlatform() }
+tasks.withType<Test> {
+    useJUnitPlatform()
+    timeout.set(Duration.ofMinutes(20))
+}
 
 @OptIn(ExperimentalBCVApi::class)
 apiValidation.klib.enabled = true
