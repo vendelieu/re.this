@@ -46,7 +46,7 @@ abstract class ReThisTestCtx : TestCtx() {
         protocol: RespVer = RespVer.V3,
         cfg: StandaloneConfiguration.() -> Unit = {},
     ): ReThis = ReThis(host, port, protocol) {
-        DEFAULT_TEST_CFG()
+        DEFAULT_SIMPLE_TEST_CFG()
         cfg()
     }
 
@@ -62,6 +62,14 @@ abstract class ReThisTestCtx : TestCtx() {
             }
             retry {
                 times = 1
+            }
+        }
+
+        @JvmStatic
+        protected val DEFAULT_SIMPLE_TEST_CFG: StandaloneConfiguration.() -> Unit = {
+            DEFAULT_TEST_CFG()
+            pool {
+                minIdleConnections = 1
             }
         }
 
