@@ -15,7 +15,7 @@ import kotlin.js.JsFileName
 
 public suspend fun ReThis.pSubscribe(vararg pattern: String, callback: PubSubHandler) {
     pattern.forEach {
-        registerSubscription(
+        subscriptions.registerSubscription(
             SubscribeTarget.Pattern(it),
             callback,
         )
@@ -24,7 +24,7 @@ public suspend fun ReThis.pSubscribe(vararg pattern: String, callback: PubSubHan
 
 public suspend fun ReThis.pSubscribe(vararg pattern: String, callback: MessageEventHandler) {
     pattern.forEach {
-        registerSubscription(
+        subscriptions.registerSubscription(
             SubscribeTarget.Pattern(it),
             callback.toPubSubHandler(this),
         )
@@ -33,7 +33,7 @@ public suspend fun ReThis.pSubscribe(vararg pattern: String, callback: MessageEv
 
 public suspend fun ReThis.pSubscribe(vararg pattern: String, callback: MessageBufferEventHandler) {
     pattern.forEach {
-        registerSubscription(
+        subscriptions.registerSubscription(
             SubscribeTarget.Pattern(it),
             callback.toPubSubHandler(this),
         )

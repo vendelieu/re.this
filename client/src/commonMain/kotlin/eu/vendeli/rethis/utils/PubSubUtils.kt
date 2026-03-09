@@ -1,7 +1,7 @@
 package eu.vendeli.rethis.utils
 
-import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.annotations.ReThisInternal
+import eu.vendeli.rethis.core.SubscriptionManager
 import eu.vendeli.rethis.providers.ConnectionProvider
 import eu.vendeli.rethis.shared.decoders.general.RTypeDecoder
 import eu.vendeli.rethis.shared.types.Push
@@ -21,12 +21,12 @@ import kotlinx.io.InternalIoApi
 
 @ReThisInternal
 @OptIn(InternalIoApi::class, InternalAPI::class)
-suspend fun ReThis.registerSubscription(
+suspend fun SubscriptionManager.registerSubscription(
     target: SubscribeTarget,
     handler: PubSubHandler,
     provider: ConnectionProvider? = null,
-) {
-    val providerResolved = provider ?: topology.route(target.encode(cfg.charset))
+) = client.run {
+    val providerResolved = provider ?: client.topology.route(target.encode(cfg.charset))
     val connection = providerResolved.borrowConnection()
     val ctx = currentCoroutineContext() + CoroutineName("pubsub-handler#$target") + Job(rootJob)
 
@@ -55,7 +55,11 @@ suspend fun ReThis.registerSubscription(
                             runCatching { it.onMessage(event.kind, event.channel, event.payload, event.pattern) }
                                 .onFailure { e -> logger.warn("Global handler threw in onMessage", e) }
                         }
-                        handler.onMessage(event.kind, event.channel, event.payload, event.pattern)
+                        runCatching {
+                            handler.onMessage(event.kind, event.channel, event.payload, event.pattern)
+                        }.onFailure {
+                            logger.warn("Handler threw in onMessage", it)
+                        }
                     }
 
                     is PubSubEvent.Subscribed -> {
@@ -63,7 +67,11 @@ suspend fun ReThis.registerSubscription(
                             runCatching { it.onSubscribe(event.kind, event.target, event.activeCount) }
                                 .onFailure { e -> logger.warn("Global handler threw in onSubscribe", e) }
                         }
-                        handler.onSubscribe(event.kind, event.target, event.activeCount)
+                        runCatching {
+                            handler.onSubscribe(event.kind, event.target, event.activeCount)
+                        }.onFailure {
+                            logger.warn("Handler threw in onSubscribe", it)
+                        }
                     }
 
                     is PubSubEvent.Unsubscribed -> {
@@ -71,7 +79,11 @@ suspend fun ReThis.registerSubscription(
                             runCatching { it.onUnsubscribe(event.kind, event.target, event.activeCount) }
                                 .onFailure { e -> logger.warn("Global handler threw in onUnsubscribe", e) }
                         }
-                        handler.onUnsubscribe(event.kind, event.target, event.activeCount)
+                        runCatching {
+                            handler.onUnsubscribe(event.kind, event.target, event.activeCount)
+                        }.onFailure {
+                            logger.warn("Handler threw in onUnsubscribe", it)
+                        }
                     }
                 }
             }

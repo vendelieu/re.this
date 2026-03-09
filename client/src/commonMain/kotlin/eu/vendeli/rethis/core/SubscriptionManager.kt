@@ -1,5 +1,6 @@
 package eu.vendeli.rethis.core
 
+import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.providers.ConnectionProvider
 import eu.vendeli.rethis.types.common.ActiveSubscription
 import eu.vendeli.rethis.types.common.SubscribeTarget
@@ -7,7 +8,9 @@ import eu.vendeli.rethis.types.interfaces.PubSubHandler
 import io.ktor.util.collections.*
 import kotlinx.coroutines.Job
 
-class SubscriptionManager {
+class SubscriptionManager internal constructor(
+    internal val client: ReThis,
+) {
     internal val activeSubscriptions = ConcurrentMap<SubscribeTarget, ActiveSubscription>()
     internal val globalHandlers = ConcurrentSet<PubSubHandler>()
 

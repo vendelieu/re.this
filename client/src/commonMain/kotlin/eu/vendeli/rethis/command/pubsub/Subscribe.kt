@@ -1,5 +1,4 @@
-@file:OptIn(ExperimentalJsFileName::class)
-@file:JsFileName("_Subscribe.kt")
+@file:OptIn(ExperimentalJsFileName::class) @file:JsFileName("_Subscribe.kt")
 
 package eu.vendeli.rethis.command.pubsub
 
@@ -14,13 +13,28 @@ import kotlin.js.ExperimentalJsFileName
 import kotlin.js.JsFileName
 
 public suspend fun ReThis.subscribe(vararg channel: String, callback: PubSubHandler) {
-    channel.forEach { registerSubscription(SubscribeTarget.Channel(it), callback) }
+    channel.forEach {
+        subscriptions.registerSubscription(
+            SubscribeTarget.Channel(it),
+            callback,
+        )
+    }
 }
 
 public suspend fun ReThis.subscribe(vararg channel: String, callback: MessageEventHandler) {
-    channel.forEach { registerSubscription(SubscribeTarget.Channel(it), callback.toPubSubHandler(this)) }
+    channel.forEach {
+        subscriptions.registerSubscription(
+            SubscribeTarget.Channel(it),
+            callback.toPubSubHandler(this),
+        )
+    }
 }
 
 public suspend fun ReThis.subscribe(vararg channel: String, callback: MessageBufferEventHandler) {
-    channel.forEach { registerSubscription(SubscribeTarget.Channel(it), callback.toPubSubHandler(this)) }
+    channel.forEach {
+        subscriptions.registerSubscription(
+            SubscribeTarget.Channel(it),
+            callback.toPubSubHandler(this),
+        )
+    }
 }

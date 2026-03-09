@@ -41,7 +41,7 @@ class ReThis internal constructor(
     internal val topology = topologyBlock()
     internal val scope = CoroutineScope(rootJob + cfg.executionDispatcher + CoroutineName(CLIENT_NAME))
 
-    val subscriptions = SubscriptionManager()
+    val subscriptions = SubscriptionManager(this)
     val isActive get() = rootJob.isActive
 
     init {
