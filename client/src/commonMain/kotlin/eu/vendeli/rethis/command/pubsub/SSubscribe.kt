@@ -14,13 +14,23 @@ import kotlin.js.ExperimentalJsFileName
 import kotlin.js.JsFileName
 
 public suspend fun ReThis.sSubscribe(vararg shardChannel: String, callback: PubSubHandler) {
-    shardChannel.forEach { registerSubscription(SubscribeTarget.Shard(it), callback) }
+    shardChannel.forEach { subscriptions.registerSubscription(SubscribeTarget.Shard(it), callback) }
 }
 
 public suspend fun ReThis.sSubscribe(vararg shardChannel: String, callback: MessageEventHandler) {
-    shardChannel.forEach { registerSubscription(SubscribeTarget.Shard(it), callback.toPubSubHandler(this)) }
+    shardChannel.forEach {
+        subscriptions.registerSubscription(
+            SubscribeTarget.Shard(it),
+            callback.toPubSubHandler(this),
+        )
+    }
 }
 
 public suspend fun ReThis.sSubscribe(vararg shardChannel: String, callback: MessageBufferEventHandler) {
-    shardChannel.forEach { registerSubscription(SubscribeTarget.Shard(it), callback.toPubSubHandler(this)) }
+    shardChannel.forEach {
+        subscriptions.registerSubscription(
+            SubscribeTarget.Shard(it),
+            callback.toPubSubHandler(this),
+        )
+    }
 }

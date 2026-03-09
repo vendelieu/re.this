@@ -56,7 +56,7 @@ class SentinelTopologyManager(
             reactiveRefresh()
         }.toPubSubHandler(client)
         snapshot.load()?.providers?.forEach {
-            client.registerSubscription(
+            client.subscriptions.registerSubscription(
                 SubscribeTarget.Channel(ClusterEventNames.SWITCH_MASTER.name),
                 handler,
                 it,
