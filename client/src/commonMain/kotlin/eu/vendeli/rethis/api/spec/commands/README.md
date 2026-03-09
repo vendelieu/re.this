@@ -216,4 +216,4 @@ The specs depend on types from the `shared` module:
 
 ## Further Reading
 
-- [api-processor README](../../../../../../../api-processor/README.md) — Full documentation of the KSP processing pipeline, enriched tree construction, write plan generation, codec/command generation, and all configuration details
+- [api-processor README](../../../../../../../../../../api-processor/README.md) — Full documentation of the KSP processing pipeline, enriched tree construction, write plan generation, codec/command generation, and all configuration details
