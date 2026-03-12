@@ -9,18 +9,17 @@
  import eu.vendeli.rethis.types.common.RConnection
  import eu.vendeli.rethis.types.common.SubscribeTarget
  import eu.vendeli.rethis.types.interfaces.PubSubHandler
-import io.kotest.matchers.nulls.shouldNotBeNull
-import io.kotest.matchers.shouldBe
-import kotlinx.coroutines.Job
-import kotlinx.io.Buffer
-import org.junit.jupiter.api.BeforeEach
+ import io.kotest.matchers.nulls.shouldNotBeNull
+ import io.kotest.matchers.shouldBe
+ import kotlinx.coroutines.Job
+ import kotlinx.io.Buffer
 
-class SubscriptionManagerTest : ReThisTestCtx() {
-    private var manager = SubscriptionManager()
+ class SubscriptionManagerTest : ReThisTestCtx() {
+    private var manager = SubscriptionManager(client)
 
     @BeforeEach
     fun setUp() {
-        manager = SubscriptionManager()
+        manager = SubscriptionManager(client)
     }
 
      private val testHandler = object : PubSubHandler {
