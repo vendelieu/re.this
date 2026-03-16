@@ -4,7 +4,7 @@ import java.util.*
 
 plugins {
     kotlin("jvm")
-    kotlin("plugin.allopen") version "2.3.10"
+    kotlin("plugin.allopen") version "2.3.20"
     id("org.jetbrains.kotlinx.benchmark") version "0.4.16"
 }
 
