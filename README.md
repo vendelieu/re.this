@@ -93,6 +93,7 @@ See more detailed [report](benchmarks/report.json).
 * 📖 [KDocs API Reference](https://vendelieu.github.io/re.this/)
 * 💬 [GitHub Discussions](https://github.com/vendelieu/re.this/discussions)
 * 🐞 [Issue Tracker](https://github.com/vendelieu/re.this/issues)
+* 📗 [Code Wiki](https://codewiki.google/github.com/vendelieu/re.this)
 
 ## Acknowledgements
 
