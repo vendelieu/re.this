@@ -15,7 +15,7 @@ repositories {
 dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-benchmark-runtime:0.4.16")
     implementation(project(":client"))
-    implementation("redis.clients:jedis:7.4.0")
+    implementation("redis.clients:jedis:7.4.1")
     implementation("io.lettuce:lettuce-core:7.5.1.RELEASE")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactive:1.10.2")
     implementation("io.github.crackthecodeabhi:kreds:0.9.1")
