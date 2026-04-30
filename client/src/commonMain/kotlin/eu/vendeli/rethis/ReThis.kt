@@ -156,6 +156,7 @@ class ReThis internal constructor(
     }
 }
 
+@Suppress("ktlint:standard:function-naming")
 fun ReThis(
     host: String = DEFAULT_HOST,
     port: Int = DEFAULT_PORT,
@@ -163,6 +164,7 @@ fun ReThis(
     configurator: StandaloneConfiguration.() -> Unit = {},
 ) = ReThis.standalone(Address(host, port), protocol, configurator)
 
+@Suppress("ktlint:standard:function-naming")
 fun ReThis(
     address: String,
     protocol: RespVer = RespVer.V2,

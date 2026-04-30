@@ -3,6 +3,21 @@ potential-bugs:
   Deprecation:
     active: true
 
+complexity:
+  LongParameterList:
+    functionThreshold: 8
+    constructorThreshold: 8
+  TooManyFunctions:
+    thresholdInClasses: 15
+    thresholdInInterfaces: 15
+    thresholdInObjects: 15
+  LongMethod:
+    threshold: 80
+  CyclomaticComplexMethod:
+    threshold: 25
+  ComplexCondition:
+    threshold: 5
+
 style:
   MaxLineLength:
     active: true
@@ -10,4 +25,38 @@ style:
   ForbiddenComment:
     active: false
   ReturnCount:
-    max: 3
+    max: 5
+  # Codebase intentionally uses wildcard imports; kotlinter is the source of truth for import style.
+  WildcardImport:
+    active: false
+  # Redis byte/buffer constants make MagicNumber noisy.
+  MagicNumber:
+    active: false
+  LoopWithTooManyJumpStatements:
+    active: false
+  # Throwing IllegalStateException directly is valid; check()/error() is stylistic preference.
+  UseCheckOrError:
+    active: false
+
+exceptions:
+  # Connection/topology layers catch Throwable intentionally for resilience.
+  TooGenericExceptionCaught:
+    active: false
+
+performance:
+  # Redis commands legitimately use spread operator for variadic arguments.
+  SpreadOperator:
+    active: false
+
+empty-blocks:
+  # Empty interface default implementations are idiomatic.
+  EmptyFunctionBlock:
+    active: false
+
+naming:
+  MatchingDeclarationName:
+    active: false
+  # Codebase uses PascalCase factories (`ReThis(...)`, `Address(...)`) and backticked
+  # operator-name extensions (`set`); kotlinter is the source of truth for naming.
+  FunctionNaming:
+    active: false

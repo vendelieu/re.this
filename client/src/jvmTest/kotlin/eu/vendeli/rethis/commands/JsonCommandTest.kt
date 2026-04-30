@@ -35,7 +35,11 @@ class JsonCommandTest : ReThisTestCtx() {
     @Test
     suspend fun `test JSON_ARRPOP command`() {
         client.jsonSet("testKey5", "[1, 2, 3]", ".")
-        client.jsonArrPop("testKey5").shouldBeTypeOf<BulkString>().value.readString() shouldBe "3"
+        client
+            .jsonArrPop("testKey5")
+            .shouldBeTypeOf<BulkString>()
+            .value
+            .readString() shouldBe "3"
     }
 
     @Test

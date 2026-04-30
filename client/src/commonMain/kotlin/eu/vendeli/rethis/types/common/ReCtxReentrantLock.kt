@@ -98,10 +98,12 @@ internal class ReCtxReentrantLock(
                         return true
                     }
 
-                    0 -> { /* Held by a different process/hierarchy */
+                    0 -> { // Held by a different process/hierarchy
                     }
 
-                    else -> throw LockLostException("Corrupted state for key=$key")
+                    else -> {
+                        throw LockLostException("Corrupted state for key=$key")
+                    }
                 }
 
                 val remaining = timeoutMark - TimeSource.Monotonic.markNow()
@@ -128,9 +130,17 @@ internal class ReCtxReentrantLock(
                 true
             }
 
-            0 -> throw LockLostException("Lock expired in Redis")
-            -1 -> throw LockLostException("Token mismatch in Redis for key=$key")
-            else -> throw IllegalStateException("Unexpected Redis response: $result")
+            0 -> {
+                throw LockLostException("Lock expired in Redis")
+            }
+
+            -1 -> {
+                throw LockLostException("Token mismatch in Redis for key=$key")
+            }
+
+            else -> {
+                throw IllegalStateException("Unexpected Redis response: $result")
+            }
         }
     }
 

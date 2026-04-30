@@ -1,4 +1,5 @@
-@file:OptIn(ExperimentalJsFileName::class) @file:JsFileName("_Subscribe.kt")
+@file:OptIn(ExperimentalJsFileName::class)
+@file:JsFileName("_Subscribe.kt")
 
 package eu.vendeli.rethis.command.pubsub
 
