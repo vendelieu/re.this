@@ -72,7 +72,7 @@ internal object RedisProcessor {
         val spec = context.fileSpec.build()
         runCatching {
             context.meta.codeGenerator.createNewFile(
-                Dependencies(false, currentCmd.klass.containingFile!!),
+                Dependencies(aggregating = true, currentCmd.klass.containingFile!!),
                 spec.packageName,
                 spec.name,
             ).bufferedWriter().use { spec.writeTo(it) }
