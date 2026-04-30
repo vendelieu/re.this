@@ -20,13 +20,6 @@ dependencies {
     add("kspCommonMainMetadata", project(":api-processor"))
 }
 
-ksp {
-    arg(
-        "clientProjectDir",
-        layout.buildDirectory.dir("generated/ksp/metadata/commonMain/kotlin").get().asFile.absolutePath,
-    )
-}
-
 configureKotlin {
     sourceSets {
         commonMain {
@@ -40,7 +33,6 @@ configureKotlin {
                 api(libs.bignum)
                 api(libs.coroutines.core)
             }
-            // Include generated codecs and commands
             kotlin.srcDir(layout.buildDirectory.dir("generated/ksp/metadata/commonMain/kotlin"))
         }
 
@@ -86,16 +78,25 @@ detekt {
 }
 
 tasks.withType<io.gitlab.arturbosch.detekt.Detekt>().configureEach {
+    exclude { it.file.absolutePath.replace('\\', '/').contains("/build/generated/") }
     reports {
         sarif.required.set(true)
     }
+}
+
+// The default `detekt` lifecycle task is NO-SOURCE on KMP — aggregate per-target tasks
+// (detektJvmMain, detektMetadataCommonMain, ...) into a single entrypoint for CI.
+val detektAll by tasks.registering {
+    group = "verification"
+    description = "Runs detekt for all Kotlin source sets in this module."
+    dependsOn(tasks.withType<io.gitlab.arturbosch.detekt.Detekt>())
 }
 
 kotlinter {
     reporters = arrayOf("checkstyle", "sarif")
 }
 
-// Ensure platform compilation and source jar tasks run after KSP generates common metadata sources
+// Ensure platform compilation, source jar, lint, and detekt tasks run after KSP generates common metadata sources.
 val kspTaskName = "kspCommonMainKotlinMetadata"
 fun Task.shouldDependOnKsp(): Boolean =
     name != kspTaskName &&
@@ -103,7 +104,8 @@ fun Task.shouldDependOnKsp(): Boolean =
             name.startsWith("compileKotlin") ||
                 name.contains("SourcesJar", ignoreCase = true) ||
                 name.startsWith("lintKotlin") ||
-                name.startsWith("formatKotlin")
+                name.startsWith("formatKotlin") ||
+                name.startsWith("detekt")
             )
 
 tasks.matching { it.shouldDependOnKsp() }
@@ -111,7 +113,6 @@ tasks.matching { it.shouldDependOnKsp() }
         dependsOn(kspTaskName)
     }
 
-// Exclude generated sources from kotlinter
 tasks.withType<LintTask>().configureEach {
     exclude("**/build/generated/**")
 }

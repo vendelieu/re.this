@@ -34,6 +34,6 @@ runs:
       uses: actions/cache@v4
       with:
         path: client/build/generated/ksp
-        key: ${{ runner.os }}-ksp-generated-${{ hashFiles('api-processor/**', 'client/src/commonMain/kotlin/eu/vendeli/rethis/api/spec/**') }}
+        key: ${{ runner.os }}-ksp-generated-${{ hashFiles('api-processor/**', 'shared/src/commonMain/**', 'client/src/commonMain/kotlin/eu/vendeli/rethis/api/spec/**') }}
         restore-keys: |
           ${{ runner.os }}-ksp-generated-

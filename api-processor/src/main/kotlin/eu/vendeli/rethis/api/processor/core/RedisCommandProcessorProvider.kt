@@ -10,7 +10,7 @@ class RedisCommandProcessorProvider : SymbolProcessorProvider {
     override fun create(environment: SymbolProcessorEnvironment): SymbolProcessor {
         return RedisCommandProcessor(
             environment.logger,
-            environment.options,
+            environment.codeGenerator,
         )
     }
 }

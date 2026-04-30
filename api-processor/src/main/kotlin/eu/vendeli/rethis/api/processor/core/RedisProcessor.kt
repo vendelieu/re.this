@@ -1,5 +1,6 @@
 package eu.vendeli.rethis.api.processor.core
 
+import com.google.devtools.ksp.processing.Dependencies
 import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ksp.toTypeName
 import eu.vendeli.rethis.api.processor.context.CodecFileSpec
@@ -8,8 +9,6 @@ import eu.vendeli.rethis.api.processor.context.CurrentCommand
 import eu.vendeli.rethis.api.processor.core.RedisCommandProcessor.Companion.context
 import eu.vendeli.rethis.api.processor.types.RCommandData
 import eu.vendeli.rethis.api.processor.utils.*
-import kotlinx.io.Buffer
-import java.io.File
 
 internal object RedisProcessor {
     fun process(cmd: RCommandData) {
@@ -70,8 +69,13 @@ internal object RedisProcessor {
             responseTypes = rTypes,
         )
 
-        context.fileSpec.build().runCatching {
-            writeTo(File(context.meta.clientDir))
+        val spec = context.fileSpec.build()
+        runCatching {
+            context.meta.codeGenerator.createNewFile(
+                Dependencies(false, currentCmd.klass.containingFile!!),
+                spec.packageName,
+                spec.name,
+            ).bufferedWriter().use { spec.writeTo(it) }
         }.onFailure { it.printStackTrace() }
     }
 
