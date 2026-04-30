@@ -25,6 +25,11 @@ class TransactionInvalidStateException(
     override val cause: Throwable? = null,
 ) : ReThisException()
 
+class CommandTimeoutException(
+    override val message: String? = null,
+    override val cause: Throwable? = null,
+) : ReThisException()
+
 class UnexpectedResponseType(
     override val message: String? = null,
     override val cause: Throwable? = null

@@ -32,7 +32,7 @@ internal suspend fun ReThis.handlePipelinedRequests(
 
 private suspend inline fun RConnection.doRTypeRequest(client: ReThis, payload: List<CommandRequest>): List<RType> {
     val payloadBuffer = payload.map { it.data }
-    val request = doBatchRequest(payloadBuffer)
+    val request = doBatchRequest(payloadBuffer, commandTimeout = client.cfg.commandTimeout)
     return buildList {
         repeat(payloadBuffer.size) {
             add(RTypeDecoder.decode(request, client.cfg.charset))

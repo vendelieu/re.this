@@ -128,6 +128,17 @@ sealed class ReThisConfiguration(
     var connectionAcquireTimeout: Duration = 10.seconds
 
     /**
+     * Maximum duration the client waits for a Redis reply after a command has been written
+     * to the socket. When the deadline elapses the connection is disposed (its read state is
+     * unrecoverable) and a [eu.vendeli.rethis.shared.types.CommandTimeoutException] is thrown.
+     *
+     * `null` (default) disables the per-command deadline; reads block until data arrives,
+     * which matches the historical behaviour. Setup commands (HELLO/SELECT) and the pub/sub
+     * receive loop intentionally bypass this timeout.
+     */
+    var commandTimeout: Duration? = null
+
+    /**
      * Factory used for creating loggers within the configuration.
      *
      * This property allows customization of the logging mechanism by providing
@@ -217,6 +228,7 @@ sealed class ReThisConfiguration(
             appendLine("\tdispatcher=$executionDispatcher")
             appendLine("\tmaxConnections=$maxConnections")
             appendLine("\tconnectionAcquireTimeout=$connectionAcquireTimeout")
+            appendLine("\tcommandTimeout=$commandTimeout")
             appendLine("\tloggerFactory=${loggerFactory::class.simpleName}")
 
             appendLine("}")

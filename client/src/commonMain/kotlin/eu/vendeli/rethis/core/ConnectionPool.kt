@@ -8,7 +8,6 @@ import eu.vendeli.rethis.utils.IO_OR_UNCONFINED
 import io.ktor.network.sockets.*
 import io.ktor.util.logging.*
 import io.ktor.utils.io.InternalAPI
-import io.ktor.utils.io.charsets.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.onFailure
@@ -20,6 +19,7 @@ import kotlin.concurrent.atomics.incrementAndFetch
 import kotlin.math.ceil
 import kotlin.math.min
 import kotlin.math.roundToInt
+import kotlin.time.TimeSource
 
 // todo add metrics
 @OptIn(ExperimentalAtomicApi::class)
@@ -70,6 +70,7 @@ internal class ConnectionPool(
 
     fun haveIdleConnections() = idleConnectionsCount.load() < cfg.pool.maxIdleConnections
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     suspend fun acquire(): RConnection = withTimeout(cfg.connectionAcquireTimeout) aq@{
         borrowCount.incrementAndFetch()
         // fastest path
@@ -87,7 +88,22 @@ internal class ConnectionPool(
         // slow path
         val deferred = CompletableDeferred<RConnection>()
         pending.send(deferred)
-        return@aq deferred.await()
+        try {
+            return@aq deferred.await()
+        } catch (e: Throwable) {
+            // Cancellation/timeout race: a concurrent release() may have completed
+            // `deferred` between our suspension cancellation and this catch. Cancel
+            // the deferred (no-op if already completed) so any later release that
+            // pulls it from `pending` falls through to fillPool, and dispose any
+            // race-delivered connection so it doesn't leak.
+            deferred.cancel()
+            if (deferred.isCompleted && !deferred.isCancelled) {
+                runCatching { deferred.getCompleted() }
+                    .getOrNull()
+                    ?.let { connectionFactory.dispose(it) }
+            }
+            throw e
+        }
     }
 
     @OptIn(InternalAPI::class)
@@ -96,9 +112,12 @@ internal class ConnectionPool(
             connectionFactory.dispose(conn)
             return
         }
-        pending.tryReceive().onSuccess {
-            it.complete(conn)
-            return
+        conn.lastTouchedAt = TimeSource.Monotonic.markNow()
+        // Drain any cancelled awaiters whose `complete(conn)` would silently drop
+        // the connection; hand off to the first live awaiter or fall through.
+        while (true) {
+            val def = pending.tryReceive().getOrNull() ?: break
+            if (def.complete(conn)) return
         }
 
         conn.fillPool()
@@ -194,14 +213,18 @@ internal class ConnectionPool(
 
     private suspend inline fun RConnection.healthyOrNull(): RConnection? {
         if (!cfg.pool.connectionHealthCheck) return this
+        // Skip the PING when the connection is "freshly used"; an active connection
+        // does not silently die between two adjacent borrows.
+        if (lastTouchedAt.elapsedNow() < cfg.pool.connectionHealthCheckInterval) return this
 
         runCatching {
-            doRequest(PingCommandCodec.encode(charset = Charsets.UTF_8, message = null).data)
+            doRequest(PingCommandCodec.encode(charset = cfg.charset, message = null).data)
         }.onFailure {
             connectionFactory.dispose(this)
             return null
         }
 
+        lastTouchedAt = TimeSource.Monotonic.markNow()
         return this
     }
 }

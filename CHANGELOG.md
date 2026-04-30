@@ -1,5 +1,14 @@
 # Re.this Changelog
 
+## 0.4.1
+
+* Added per-command timeout via `commandTimeout` configuration option, throwing `CommandTimeoutException` when a Redis reply exceeds the deadline.
+* Added `connectionHealthCheckInterval` configuration option to skip PING on recently-used connections.
+* Added cluster and sentinel integration tests.
+* Fixed acquire/release cancellation race in `ConnectionPool` that could leak connections delivered to cancelled awaiters.
+* Fixed `ConnectionPool` health-check to use the configured charset instead of hardcoded UTF-8.
+* Fixed pubsub handler exceptions in `onMessage`/`onSubscribe`/`onUnsubscribe` crashing the subscription loop; now centrally routed to `onException` on both the handler and global handlers.
+
 ## 0.4.0
 
 * Fixed `XREADGROUP` decoding.

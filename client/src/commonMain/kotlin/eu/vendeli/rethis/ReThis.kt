@@ -96,7 +96,10 @@ class ReThis internal constructor(
 
         val multiCommand = MultiCommandCodec.encode(cfg.charset)
         return withConn(topology.route(multiCommand), coLocalCon?.connection) { conn ->
-            val tx = MultiCommandCodec.decode(conn.doRequest(multiCommand.data), cfg.charset)
+            val tx = MultiCommandCodec.decode(
+                conn.doRequest(multiCommand.data, commandTimeout = cfg.commandTimeout),
+                cfg.charset,
+            )
             if (!tx) throw TransactionInvalidStateException("Failed to start transaction")
             logger.debug { "Started transaction" }
 
@@ -107,12 +110,12 @@ class ReThis internal constructor(
                 }.join()
 
             if (e != null) {
-                conn.doRequest(DiscardCommandCodec.encode(cfg.charset).data)
+                conn.doRequest(DiscardCommandCodec.encode(cfg.charset).data, commandTimeout = cfg.commandTimeout)
                 logger.error("Transaction canceled", e)
                 throw TransactionInvalidStateException("Transaction canceled due to exception", e)
             }
 
-            val exec = conn.doRequest(ExecCommandCodec.encode(cfg.charset).data)
+            val exec = conn.doRequest(ExecCommandCodec.encode(cfg.charset).data, commandTimeout = cfg.commandTimeout)
             logger.debug { "Transaction completed" }
 
             ExecCommandCodec.decode(exec, cfg.charset)
