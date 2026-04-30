@@ -1,0 +1,126 @@
+name: CI
+
+on:
+  push:
+    branches: [master, dev]
+    paths-ignore:
+      - '.editorconfig'
+      - '.gitignore'
+      - 'CODE_OF_CONDUCT.md'
+      - 'CONTRIBUTING.md'
+      - 'FUNDING.yml'
+      - 'LICENSE'
+      - 'README.md'
+      - 'RELEASE.md'
+      - 'SECURITY.md'
+      - 'gradlew'
+      - 'gradlew.bat'
+      - 'parse_changelog.sh'
+      - 'renovate.json'
+      - 'assets/**'
+      # Note: CHANGELOG.md is intentionally NOT excluded — release commits change only
+      # CHANGELOG and must trigger CI on master.
+  pull_request:
+    branches: [master, dev]
+    paths-ignore:
+      - '.editorconfig'
+      - '.gitignore'
+      - 'CHANGELOG.md'
+      - 'CODE_OF_CONDUCT.md'
+      - 'CONTRIBUTING.md'
+      - 'FUNDING.yml'
+      - 'LICENSE'
+      - 'README.md'
+      - 'RELEASE.md'
+      - 'SECURITY.md'
+      - 'gradlew'
+      - 'gradlew.bat'
+      - 'parse_changelog.sh'
+      - 'renovate.json'
+      - 'assets/**'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.event_name == 'pull_request' && github.head_ref || github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/master' }}
+
+jobs:
+  wrapper:
+    name: Validate Gradle Wrapper
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: gradle/actions/wrapper-validation@v6
+
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      security-events: write
+      actions: read
+    steps:
+      - uses: actions/checkout@v6
+      - uses: ./.github/actions/setup-build
+
+      - name: Run Detekt
+        id: detekt
+        run: ./gradlew detekt --continue
+        continue-on-error: true
+
+      - name: Run Kotlinter
+        id: kotlinter
+        run: ./gradlew lintKotlin --continue
+        continue-on-error: true
+
+      - name: Upload Detekt SARIF
+        if: always()
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: client/build/reports/detekt/
+          category: detekt
+
+      - name: Upload Kotlinter SARIF
+        if: always()
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: client/build/reports/ktlint/
+          category: kotlinter
+
+      - name: Fail if any linter failed
+        if: steps.detekt.outcome == 'failure' || steps.kotlinter.outcome == 'failure'
+        run: |
+          echo "::error::Lint failed (detekt: ${{ steps.detekt.outcome }}, kotlinter: ${{ steps.kotlinter.outcome }})"
+          exit 1
+
+  build:
+    name: Build
+    # Run on all PRs and on master pushes. Skip dev pushes — the PR that produced the
+    # dev push already ran build, and direct pushes to dev are not part of the workflow.
+    if: ${{ github.event_name == 'pull_request' || github.ref == 'refs/heads/master' }}
+    runs-on: namespace-profile-rthis
+    timeout-minutes: 25
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v6
+      - uses: ./.github/actions/setup-build
+        with:
+          # Submit dependency graph only for master pushes (supply-chain). PR builds skip
+          # to avoid noisy submissions per PR commit.
+          dependency-graph: ${{ github.event_name == 'push' && 'generate-and-submit' || 'disabled' }}
+
+      - name: Build with coverage
+        run: ./gradlew koverXmlReport
+        timeout-minutes: 20
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v5
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+        with:
+          files: '**/build/reports/kover/report.xml'
+          verbose: true

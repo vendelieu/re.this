@@ -1,24 +1,32 @@
 {
   "extends": [
     "config:base",
-    ":disableDependencyDashboard",
-    ":automergeMinor"
+    ":disableDependencyDashboard"
   ],
   "baseBranches": ["dev"],
   "branchConcurrentLimit": 10,
   "prHourlyLimit": 20,
+  "automerge": true,
   "automergeType": "branch",
+  "automergeStrategy": "squash",
+  "timezone": "Europe/Berlin",
+  "schedule": ["before 6am on monday"],
+  "lockFileMaintenance": {
+    "enabled": true,
+    "automerge": true,
+    "schedule": ["before 6am on monday"]
+  },
   "packageRules": [
     {
-      "matchPackagePatterns": [
-        "*"
-      ],
-      "matchUpdateTypes": [
-        "minor",
-        "patch"
-      ],
+      "matchPackagePatterns": ["*"],
+      "matchUpdateTypes": ["minor", "patch"],
       "groupName": "all non-major dependencies",
       "groupSlug": "all-minor-patch"
+    },
+    {
+      "matchPackagePatterns": ["*"],
+      "matchUpdateTypes": ["major"],
+      "automerge": true
     }
   ]
 }

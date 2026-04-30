@@ -1,0 +1,28 @@
+queue_rules:
+  - name: default
+    queue_conditions:
+      - check-success=CI / Validate Gradle Wrapper
+      - check-success=CI / Lint
+      - check-success=CI / Build
+      - "#approved-reviews-by>=1"
+      - -draft
+
+pull_request_rules:
+  - name: auto-merge approved human PRs
+    conditions:
+      - "#approved-reviews-by>=1"
+      - -draft
+      - author!=renovate[bot]
+      - author!=dependabot[bot]
+      - check-success=CI / Lint
+      - check-success=CI / Build
+    actions:
+      queue:
+        name: default
+        merge_method: squash
+
+  - name: delete head branch after merge
+    conditions:
+      - merged
+    actions:
+      delete_head_branch: {}

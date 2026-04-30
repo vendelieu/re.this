@@ -1,25 +1,26 @@
 version: 2
 updates:
   # --- GitHub Actions ---
+  # Version updates are handled by Renovate; this entry exists only to scope
+  # Dependabot security updates. open-pull-requests-limit: 0 disables version
+  # update PRs while still allowing security update PRs and alerts.
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       interval: monthly
-    groups:
-      actions:
-        patterns:
-          - "*"
+    open-pull-requests-limit: 0
 
   # --- Gradle ---
+  # Security-only: version updates handled by Renovate. Benchmarks and Dokka
+  # are excluded since they are not part of the published library.
   - package-ecosystem: "gradle"
     directory: "/"
     schedule:
       interval: monthly
+    open-pull-requests-limit: 0
 
-    # Excluding benchmark modules/sources
     exclude-paths:
       - "benchmarks/**"
 
-    # Ignore dokka updates + alerts
     ignore:
       - dependency-name: "org.jetbrains.dokka:*"

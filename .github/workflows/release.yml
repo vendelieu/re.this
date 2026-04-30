@@ -1,108 +1,144 @@
+# One-trigger release: dispatch with a version, the workflow handles everything from
+# dev → master merge through Maven Central publish, tag, README bump, GitHub Release,
+# and Dokka deploy.
+#
+# Usage: Actions → Release → Run workflow → enter version (e.g. 0.4.1).
+# Prereq: `## x.y.z` heading must exist in CHANGELOG.md on `dev` before dispatching.
+
 name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Release version (semver, e.g. 0.4.0)'
+        required: true
+        type: string
 
 permissions:
   contents: write
 
-on:
-  push:
-    tags:
-      - "[0-9]+.[0-9]+.[0-9]+"
+concurrency:
+  group: release
+  cancel-in-progress: false
 
 jobs:
   release:
-    name: Release
-    runs-on: ubuntu-latest
-    outputs:
-      version: ${{ steps.vars.outputs.version }}
+    name: Release ${{ inputs.version }}
+    runs-on: namespace-profile-rthis
+    timeout-minutes: 75
     steps:
-      - uses: actions/checkout@v6
+      - name: Validate version format
+        id: v
+        run: |
+          V="${{ inputs.version }}"
+          if [[ ! "$V" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "::error::Version must be semver (e.g. 0.4.0), got: $V"
+            exit 1
+          fi
+          echo "version=$V" >> "$GITHUB_OUTPUT"
 
-      - name: Set up JDK 17
-        uses: actions/setup-java@v5
+      - name: Checkout dev
+        uses: actions/checkout@v6
         with:
-          distribution: 'zulu'
-          java-version: 17
+          ref: dev
+          token: ${{ secrets.ACCESS_TOKEN }}
+          fetch-depth: 0
 
-      - name: Setup gradle
-        uses: gradle/actions/setup-gradle@v6
-        with:
-          gradle-version: current
+      - name: Verify CHANGELOG entry on dev
+        run: |
+          V="${{ steps.v.outputs.version }}"
+          if ! grep -q "## $V" CHANGELOG.md; then
+            echo "::error::CHANGELOG.md on dev must contain '## $V' heading. Add the section to dev and re-dispatch."
+            exit 1
+          fi
 
-      - name: Cache konan dependencies
-        uses: actions/cache@v5
-        with:
-          path: ~/.konan
-          key: ${{ runner.os }}-gradle-${{ hashFiles('gradle/libs.versions.toml', '**.gradle.kts', 'gradle.properties') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
+      - name: Verify tag does not already exist
+        run: |
+          V="${{ steps.v.outputs.version }}"
+          if git ls-remote --tags origin "refs/tags/$V" | grep -q "refs/tags/$V$"; then
+            echo "::error::Tag $V already exists on origin. Bump to the next patch."
+            exit 1
+          fi
 
-      - name: Cache KSP generated sources
-        uses: actions/cache@v5
-        with:
-          path: client/build/generated/ksp
-          key: ${{ runner.os }}-ksp-generated-${{ hashFiles('api-processor/**', 'client/src/commonMain/kotlin/eu/vendeli/rethis/api/spec/**') }}
+      - name: Verify dev has changes ahead of master
+        run: |
+          git fetch origin master
+          if git merge-base --is-ancestor HEAD origin/master; then
+            echo "::error::dev is not ahead of master — nothing to release."
+            exit 1
+          fi
 
-      - name: Get version number from tag
-        id: vars
-        run: echo "version=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
-        shell: bash
+      - uses: ./.github/actions/setup-build
 
-      - name: Publish with Gradle
+      - name: Build with coverage (verify dev is releasable)
+        run: ./gradlew koverXmlReport
+        timeout-minutes: 25
+
+      - name: Configure git identity
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Fast-forward master to dev
+        run: |
+          git checkout master
+          git merge origin/dev --ff-only
+          git push origin master
+
+      - name: Publish to Maven Central
         env:
-          release: true
-          libVersion: ${{ steps.vars.outputs.version }}
-          ORG_GRADLE_PROJECT_mavenCentralUsername: ${{secrets.SONATYPE_USERNAME}}
-          ORG_GRADLE_PROJECT_mavenCentralPassword: ${{secrets.SONATYPE_PASSWORD}}
-          ORG_GRADLE_PROJECT_signingInMemoryKey: ${{secrets.GPG_KEY_CONTENT}}
-          ORG_GRADLE_PROJECT_signingInMemoryKeyId: ${{secrets.GPG_KEY_ID}}
-          ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{secrets.GPG_KEY_PWD}}
+          release: 'true'
+          libVersion: ${{ steps.v.outputs.version }}
+          ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.SONATYPE_USERNAME }}
+          ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.SONATYPE_PASSWORD }}
+          ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.GPG_KEY_CONTENT }}
+          ORG_GRADLE_PROJECT_signingInMemoryKeyId: ${{ secrets.GPG_KEY_ID }}
+          ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ secrets.GPG_KEY_PWD }}
         run: ./gradlew publishAllPublicationsToMavenCentralRepository --no-parallel
 
-  finalize:
-    name: Finalize
-    runs-on: ubuntu-latest
-    needs: release
-    permissions:
-      contents: write
-    steps:
-      - uses: actions/checkout@v6
+      - name: Tag master HEAD
+        run: |
+          V="${{ steps.v.outputs.version }}"
+          git tag "$V"
+          git push origin "$V"
 
-      - name: Set up JDK 17
-        uses: actions/setup-java@v5
-        with:
-          distribution: 'zulu'
-          java-version: 17
-
-      - name: Setup gradle
-        uses: gradle/actions/setup-gradle@v6
-        with:
-          gradle-version: current
-
-      - name: Replace version in README.md
+      - name: Replace version in README files
         uses: jacobtomlinson/gha-find-replace@v3
         with:
           find: '([:"])([0-9]+\.[0-9]+\.[0-9]+)\"'
-          replace: "${1}${{ needs.release.outputs.version }}\""
-          include: "**README.md"
+          replace: '${1}${{ steps.v.outputs.version }}"'
+          include: '**README.md'
 
-      - name: Run benchmarks
+      - name: Run benchmarks and update README table
         run: ./gradlew :benchmarks:benchmark :benchmarks:updateBenchmarkTableInReadme
 
-      - name: Push changes
-        uses: stefanzweifel/git-auto-commit-action@v7
+      - name: Commit README updates to master
+        uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: "Bump library"
+          commit_message: 'Bump library to ${{ steps.v.outputs.version }}'
           branch: master
+          commit_user_name: 'github-actions[bot]'
+          commit_user_email: '41898282+github-actions[bot]@users.noreply.github.com'
 
-      - name: Extract changelog for version
-        id: changelog
-        run: |
-          bash ./parse_changelog.sh ${{ needs.release.outputs.version }} > release_notes.md
+      - name: Extract changelog section
+        run: bash ./parse_changelog.sh "${{ steps.v.outputs.version }}" > release_notes.md
 
-      - name: Create release
+      - name: Create GitHub Release
         uses: taiki-e/create-gh-release-action@v1
         with:
-          title: ${{ needs.release.outputs.version }}
+          title: ${{ steps.v.outputs.version }}
           changelog: release_notes.md
           branch: master
           token: ${{ secrets.ACCESS_TOKEN }}
+
+      - name: Generate Dokka site
+        env:
+          libVersion: ${{ steps.v.outputs.version }}
+        run: ./gradlew :docs:dokkaGenerate
+
+      - name: Deploy docs to gh-pages
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          branch: gh-pages
+          folder: docs/build/dokka/html

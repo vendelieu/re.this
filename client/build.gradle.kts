@@ -85,6 +85,16 @@ detekt {
     config.from(files("$rootDir/detekt.yml"))
 }
 
+tasks.withType<io.gitlab.arturbosch.detekt.Detekt>().configureEach {
+    reports {
+        sarif.required.set(true)
+    }
+}
+
+kotlinter {
+    reporters = arrayOf("checkstyle", "sarif")
+}
+
 // Ensure platform compilation and source jar tasks run after KSP generates common metadata sources
 val kspTaskName = "kspCommonMainKotlinMetadata"
 fun Task.shouldDependOnKsp(): Boolean =

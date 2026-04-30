@@ -1,0 +1,103 @@
+name: Housekeeping
+
+on:
+  schedule:
+    - cron: '0 0 * * *'   # daily 00:00 UTC — stale triage
+    - cron: '0 6 * * 1'   # Monday 06:00 UTC — package cleanup
+  workflow_dispatch:
+
+jobs:
+  stale:
+    if: github.event_name == 'workflow_dispatch' || github.event.schedule == '0 0 * * *'
+    name: Stale issues and PRs
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      pull-requests: write
+    steps:
+      - uses: actions/stale@v10
+        with:
+          days-before-stale: 60
+          days-before-close: 7
+          stale-issue-label: stale
+          stale-pr-label: stale
+          exempt-issue-labels: 'bug, enhancement, pinned'
+          exempt-pr-labels: 'work in progress, do not merge'
+          stale-issue-message: >
+            This issue has been automatically marked as stale because it has not had
+            recent activity. It will be closed if no further activity occurs.
+            Thank you for your contributions.
+          stale-pr-message: >
+            This pull request has been automatically marked as stale because it has not had
+            recent activity. It will be closed if no further activity occurs.
+            Thank you for your contributions.
+          close-issue-message: 'Closing this stale issue. If this is still an issue, please reopen it.'
+          close-pr-message: 'Closing this stale pull request. If this is still actual, please reopen it.'
+          remove-stale-when-updated: true
+
+  package-cleanup:
+    if: github.event_name == 'workflow_dispatch' || github.event.schedule == '0 6 * * 1'
+    name: Cleanup old Maven snapshots
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    strategy:
+      fail-fast: false
+      matrix:
+        package_name:
+          # rethis (main library)
+          - eu.vendeli.rethis
+          - eu.vendeli.rethis-androidnativearm32
+          - eu.vendeli.rethis-androidnativearm64
+          - eu.vendeli.rethis-androidnativex64
+          - eu.vendeli.rethis-androidnativex86
+          - eu.vendeli.rethis-iosarm64
+          - eu.vendeli.rethis-iossimulatorarm64
+          - eu.vendeli.rethis-iosx64
+          - eu.vendeli.rethis-js
+          - eu.vendeli.rethis-jvm
+          - eu.vendeli.rethis-linuxarm64
+          - eu.vendeli.rethis-linuxx64
+          - eu.vendeli.rethis-macosarm64
+          - eu.vendeli.rethis-macosx64
+          - eu.vendeli.rethis-mingwx64
+          - eu.vendeli.rethis-tvosarm64
+          - eu.vendeli.rethis-tvossimulatorarm64
+          - eu.vendeli.rethis-tvosx64
+          - eu.vendeli.rethis-watchosarm32
+          - eu.vendeli.rethis-watchosarm64
+          - eu.vendeli.rethis-watchossimulatorarm64
+          - eu.vendeli.rethis-watchosx64
+          - eu.vendeli.rethis-wasm-js
+          # rethis-shared
+          - eu.vendeli.rethis-shared
+          - eu.vendeli.rethis-shared-androidnativearm32
+          - eu.vendeli.rethis-shared-androidnativearm64
+          - eu.vendeli.rethis-shared-androidnativex64
+          - eu.vendeli.rethis-shared-androidnativex86
+          - eu.vendeli.rethis-shared-iosarm64
+          - eu.vendeli.rethis-shared-iossimulatorarm64
+          - eu.vendeli.rethis-shared-iosx64
+          - eu.vendeli.rethis-shared-js
+          - eu.vendeli.rethis-shared-jvm
+          - eu.vendeli.rethis-shared-linuxarm64
+          - eu.vendeli.rethis-shared-linuxx64
+          - eu.vendeli.rethis-shared-macosarm64
+          - eu.vendeli.rethis-shared-macosx64
+          - eu.vendeli.rethis-shared-mingwx64
+          - eu.vendeli.rethis-shared-tvosarm64
+          - eu.vendeli.rethis-shared-tvossimulatorarm64
+          - eu.vendeli.rethis-shared-tvosx64
+          - eu.vendeli.rethis-shared-watchosarm32
+          - eu.vendeli.rethis-shared-watchosarm64
+          - eu.vendeli.rethis-shared-watchossimulatorarm64
+          - eu.vendeli.rethis-shared-watchosx64
+          - eu.vendeli.rethis-shared-wasm-js
+    steps:
+      - name: Delete old versions of ${{ matrix.package_name }}
+        uses: actions/delete-package-versions@v5
+        with:
+          package-type: maven
+          package-name: ${{ matrix.package_name }}
+          min-versions-to-keep: 10
