@@ -1,6 +1,7 @@
 package eu.vendeli.rethis.api.processor.core
 
 import com.google.devtools.ksp.KspExperimental
+import com.google.devtools.ksp.processing.CodeGenerator
 import com.google.devtools.ksp.processing.KSPLogger
 import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.processing.SymbolProcessor
@@ -19,9 +20,8 @@ import eu.vendeli.rethis.shared.annotations.RedisCommand
 
 class RedisCommandProcessor(
     internal val logger: KSPLogger,
-    options: Map<String, String>,
+    internal val codeGenerator: CodeGenerator,
 ) : SymbolProcessor {
-    internal val clientDir = options["clientProjectDir"]!!
     internal val codecsPackage = "eu.vendeli.rethis.codecs"
     internal val commandPackage = "eu.vendeli.rethis.command"
 

@@ -55,7 +55,7 @@ internal fun RedisCommandProcessor.loadGlobalCtx() {
 
     context += Logger(logger)
     context += ProcessorMeta(
-        clientDir = clientDir,
+        codeGenerator = codeGenerator,
         codecsPackage = codecsPackage,
         commandPackage = commandPackage,
     )
