@@ -1,7 +1,10 @@
 package eu.vendeli.rethis.api.processor.context
 
+import com.google.devtools.ksp.processing.CodeGenerator
+import com.google.devtools.ksp.processing.Dependencies
 import com.google.devtools.ksp.processing.KSPLogger
 import com.google.devtools.ksp.symbol.KSClassDeclaration
+import com.google.devtools.ksp.symbol.KSFile
 import com.google.devtools.ksp.symbol.KSFunctionDeclaration
 import com.squareup.kotlinpoet.CodeBlock
 import com.squareup.kotlinpoet.FileSpec
@@ -11,7 +14,6 @@ import eu.vendeli.rethis.api.processor.core.RedisCommandProcessor.Companion.cont
 import eu.vendeli.rethis.api.processor.types.*
 import eu.vendeli.rethis.api.processor.utils.*
 import eu.vendeli.rethis.shared.types.RespCode
-import java.io.File
 
 internal interface ContextElement {
     fun onFinish() {}
@@ -30,7 +32,7 @@ internal class RSpecRaw(val specs: Map<String, RedisCommandApiSpec>) : ContextEl
 }
 
 internal class ProcessorMeta(
-    val clientDir: String,
+    val codeGenerator: CodeGenerator,
     val codecsPackage: String,
     val commandPackage: String,
 ) : ContextElement {
@@ -80,38 +82,43 @@ internal class ValidationResult() : ContextElement {
 }
 
 internal class CommandFileSpec(
-    val commandFile: MutableMap<String, FileSpec.Builder> = mutableMapOf(),
+    val commandFile: MutableMap<String, Entry> = mutableMapOf(),
 ) : ContextElement {
     override val key = CommandFileSpec
+
+    internal class Entry(
+        val builder: FileSpec.Builder,
+        val originatingFiles: MutableSet<KSFile> = mutableSetOf(),
+    )
 
     fun getFor(command: String): FileSpec.Builder {
         val normalizedKey = command.uppercase().trim()
         val cmdPackagePart = "." + context.currentCommand.klass.packageName.asString().substringAfterLast(".")
         val fullKey = "$normalizedKey|$cmdPackagePart"
-        
-        return commandFile.getOrPut(fullKey) {
+
+        val entry = commandFile.getOrPut(fullKey) {
             val fileName = context.currentCommand.command.name.toPascalCase()
-            val targetFile = File(context.meta.clientDir)
-                .resolve(context.meta.commandPackage.replace('.', '/') + cmdPackagePart.replace('.', '/'))
-                .resolve("$fileName.kt")
-            
-            // If file already exists, we need to be careful not to overwrite it
-            // Log warning so you know this is happening
-            if (targetFile.exists()) {
-                context.logger.warn("Command file already exists: ${targetFile.absolutePath} - will append new function")
-            }
-            
-            FileSpec.builder(
-                context.meta.commandPackage + cmdPackagePart,
-                fileName,
-            ).indent(" ".repeat(4))
+            Entry(
+                FileSpec.builder(
+                    context.meta.commandPackage + cmdPackagePart,
+                    fileName,
+                ).indent(" ".repeat(4)),
+            )
         }
+        context.currentCommand.klass.containingFile?.let(entry.originatingFiles::add)
+        return entry.builder
     }
 
     override fun onFinish() {
-        commandFile.forEach { spec ->
-            spec.value.build().runCatching {
-                writeTo(File(context.meta.clientDir))
+        val codeGenerator = context.meta.codeGenerator
+        commandFile.values.forEach { entry ->
+            val spec = entry.builder.build()
+            runCatching {
+                codeGenerator.createNewFile(
+                    Dependencies(aggregating = true, *entry.originatingFiles.toTypedArray()),
+                    spec.packageName,
+                    spec.name,
+                ).bufferedWriter().use { spec.writeTo(it) }
             }.onFailure { it.printStackTrace() }
         }
     }
@@ -222,15 +229,12 @@ internal class CollectedTokens(
             appendLine("}")
         }
 
-        // clientDir is the KSP generated directory, e.g.: /path/to/project/client/build/generated/ksp/metadata/commonMain/kotlin
-        // Generate RedisToken.kt in the same generated directory
-        val targetFile = File(context.meta.clientDir)
-            .resolve("eu/vendeli/rethis/utils")
-            .resolve("RedisToken.kt")
-
-        targetFile.parentFile.mkdirs()
-        targetFile.writeText(fileContent)
-        context.logger.warn("Generated RedisToken.kt with ${tokens.size} tokens at: ${targetFile.absolutePath}")
+        context.meta.codeGenerator.createNewFile(
+            Dependencies.ALL_FILES,
+            "eu.vendeli.rethis.utils",
+            "RedisToken",
+        ).bufferedWriter().use { it.write(fileContent) }
+        context.logger.warn("Generated RedisToken.kt with ${tokens.size} tokens")
     }
 
     companion object : ContextKey<CollectedTokens>
