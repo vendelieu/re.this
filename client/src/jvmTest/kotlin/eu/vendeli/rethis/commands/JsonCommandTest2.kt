@@ -116,7 +116,13 @@ class JsonCommandTest2 : ReThisTestCtx() {
             if (it is BulkString) {
                 it.value.readString()
             } else {
-                it.cast<RArray>().value.first().cast<BulkString>().value.readString()
+                it
+                    .cast<RArray>()
+                    .value
+                    .first()
+                    .cast<BulkString>()
+                    .value
+                    .readString()
             }
         } shouldBe "array"
     }

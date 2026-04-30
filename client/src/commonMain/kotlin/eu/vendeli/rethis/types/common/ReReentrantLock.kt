@@ -97,10 +97,12 @@ internal class ReReentrantLock(
                         return true // Exits tryLock with success
                     }
 
-                    0 -> { /* Keep trying */
+                    0 -> { // Keep trying
                     }
 
-                    else -> throw LockLostException("Corrupted lock state in Redis for $key")
+                    else -> {
+                        throw LockLostException("Corrupted lock state in Redis for $key")
+                    }
                 }
 
                 val remaining = timeoutMark - TimeSource.Monotonic.markNow()
@@ -129,9 +131,17 @@ internal class ReReentrantLock(
                 true
             }
 
-            0 -> throw LockLostException("Lock expired in Redis")
-            -1 -> throw LockLostException("Attempted to unlock a lock owned by another process")
-            else -> throw IllegalStateException("Unexpected Redis response: $result")
+            0 -> {
+                throw LockLostException("Lock expired in Redis")
+            }
+
+            -1 -> {
+                throw LockLostException("Attempted to unlock a lock owned by another process")
+            }
+
+            else -> {
+                throw IllegalStateException("Unexpected Redis response: $result")
+            }
         }
     }
 

@@ -1,14 +1,14 @@
- package eu.vendeli.rethis.serde
+package eu.vendeli.rethis.serde
 
- import eu.vendeli.rethis.ReThisTestCtx
- import eu.vendeli.rethis.command.serde.get
- import eu.vendeli.rethis.command.serde.mGet
- import eu.vendeli.rethis.command.serde.mSet
- import eu.vendeli.rethis.command.serde.set
- import eu.vendeli.rethis.utils.serdeModule
- import io.kotest.matchers.shouldBe
+import eu.vendeli.rethis.ReThisTestCtx
+import eu.vendeli.rethis.command.serde.get
+import eu.vendeli.rethis.command.serde.mGet
+import eu.vendeli.rethis.command.serde.mSet
+import eu.vendeli.rethis.command.serde.set
+import eu.vendeli.rethis.utils.serdeModule
+import io.kotest.matchers.shouldBe
 
- class StringSerdeCommandsTest : ReThisTestCtx() {
+class StringSerdeCommandsTest : ReThisTestCtx() {
     private val encodedEntity = """{"first":"testValue","second":2}"""
     private val entity = TestData("testValue", 2)
 
@@ -46,4 +46,4 @@
         val objResults = client.mGet<TestData>(key1, key2)
         objResults shouldBe listOf(entity, value2)
     }
- }
+}

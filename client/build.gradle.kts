@@ -114,10 +114,10 @@ tasks.matching { it.shouldDependOnKsp() }
     }
 
 tasks.withType<LintTask>().configureEach {
-    exclude("**/build/generated/**")
+    exclude { it.file.absolutePath.replace('\\', '/').contains("/build/generated/") }
 }
 
 tasks.withType<FormatTask>().configureEach {
-    exclude("**/build/generated/**")
+    exclude { it.file.absolutePath.replace('\\', '/').contains("/build/generated/") }
 }
 
