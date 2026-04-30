@@ -127,7 +127,7 @@ jobs:
 
       - name: Upload SARIF artifact
         if: always() && hashFiles('sarif-stage/**/*.sarif') != ''
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: lint-sarif
           path: sarif-stage/
@@ -154,7 +154,7 @@ jobs:
       matrix:
         entry: ${{ fromJSON(needs.lint.outputs.sarif-files) }}
     steps:
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         with:
           name: lint-sarif
           path: sarif
