@@ -23,7 +23,7 @@ runs:
         dependency-graph: ${{ inputs.dependency-graph }}
 
     - name: Cache Konan dependencies
-      uses: actions/cache@v4
+      uses: actions/cache@v5
       with:
         path: ~/.konan
         key: ${{ runner.os }}-konan-${{ hashFiles('gradle/libs.versions.toml', '**/*.gradle.kts', 'gradle.properties') }}
