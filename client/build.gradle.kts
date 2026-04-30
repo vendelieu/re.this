@@ -78,18 +78,35 @@ detekt {
 }
 
 tasks.withType<io.gitlab.arturbosch.detekt.Detekt>().configureEach {
-    exclude { it.file.absolutePath.replace('\\', '/').contains("/build/generated/") }
+    // KMP per-target detekt tasks set `source` from Kotlin compilations directly, so the
+    // SourceTask `exclude { ... }` predicate does not fire on those entries. Filter the
+    // input FileCollection itself to drop generated KSP output and api/spec scaffolding.
+    setSource(
+        source.filter {
+            val path = it.absolutePath.replace('\\', '/')
+            !path.contains("/build/generated/") && !path.contains("/eu/vendeli/rethis/api/spec/")
+        },
+    )
     reports {
         sarif.required.set(true)
     }
 }
 
 // The default `detekt` lifecycle task is NO-SOURCE on KMP — aggregate per-target tasks
-// (detektJvmMain, detektMetadataCommonMain, ...) into a single entrypoint for CI.
+// (detektJvmMain, detektMetadataMain, ...) into a single entrypoint for CI.
+// Test source sets are excluded — main-source lint is what CI enforces.
+// `detektMetadataCommonMain` is also excluded: it ignores the source-filter applied above
+// (KMP wires its source from the Kotlin compilation after configureEach), pulling in
+// generated KSP output and api/spec scaffolding. `detektMetadataMain` covers the same
+// commonMain sources with the filter correctly applied.
 val detektAll by tasks.registering {
     group = "verification"
-    description = "Runs detekt for all Kotlin source sets in this module."
-    dependsOn(tasks.withType<io.gitlab.arturbosch.detekt.Detekt>())
+    description = "Runs detekt for all main Kotlin source sets in this module."
+    dependsOn(
+        tasks.withType<io.gitlab.arturbosch.detekt.Detekt>().matching {
+            !it.name.contains("Test") && it.name != "detektMetadataCommonMain"
+        },
+    )
 }
 
 kotlinter {
@@ -114,10 +131,10 @@ tasks.matching { it.shouldDependOnKsp() }
     }
 
 tasks.withType<LintTask>().configureEach {
-    exclude("**/build/generated/**")
+    exclude { it.file.absolutePath.replace('\\', '/').contains("/build/generated/") }
 }
 
 tasks.withType<FormatTask>().configureEach {
-    exclude("**/build/generated/**")
+    exclude { it.file.absolutePath.replace('\\', '/').contains("/build/generated/") }
 }
 

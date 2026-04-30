@@ -19,11 +19,25 @@ class ClusterCommandTest : TestCtx() {
         val result = ClusterSlotsDecoder.decode(TopologyFixtures.validClusterSlotsResponse(), Charsets.UTF_8, null)
 
         result.nodes.size shouldBe 1
-        result.nodes.first().master.host shouldBe "127.0.0.1"
-        result.nodes.first().master.port shouldBe 7000
-        result.nodes.first().replicas.size shouldBe 1
-        result.nodes.first().ranges.single().start shouldBe 0
-        result.nodes.first().ranges.single().end shouldBe 16383
+        result.nodes
+            .first()
+            .master.host shouldBe "127.0.0.1"
+        result.nodes
+            .first()
+            .master.port shouldBe 7000
+        result.nodes
+            .first()
+            .replicas.size shouldBe 1
+        result.nodes
+            .first()
+            .ranges
+            .single()
+            .start shouldBe 0
+        result.nodes
+            .first()
+            .ranges
+            .single()
+            .end shouldBe 16383
     }
 
     @Test

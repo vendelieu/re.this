@@ -36,6 +36,16 @@ suspend fun SubscriptionManager.registerSubscription(
 
         subscriptions.registerSubscription(target, providerResolved, handler, job)
 
+        val notifyException: suspend (Throwable) -> Unit = lambda@{ t ->
+            val ex = t as? Exception ?: return@lambda
+            runCatching { handler.onException(target, ex) }
+                .onFailure { logger.warn("Handler threw in onException", it) }
+            subscriptions.globalHandlers.forEach { gh ->
+                runCatching { gh.onException(target, ex) }
+                    .onFailure { logger.warn("Global handler threw in onException", it) }
+            }
+        }
+
         try {
             conn.doRequest(target.encode(cfg.charset).data)
 
@@ -59,6 +69,7 @@ suspend fun SubscriptionManager.registerSubscription(
                             handler.onMessage(event.kind, event.channel, event.payload, event.pattern)
                         }.onFailure {
                             logger.warn("Handler threw in onMessage", it)
+                            notifyException(it)
                         }
                     }
 
@@ -71,6 +82,7 @@ suspend fun SubscriptionManager.registerSubscription(
                             handler.onSubscribe(event.kind, event.target, event.activeCount)
                         }.onFailure {
                             logger.warn("Handler threw in onSubscribe", it)
+                            notifyException(it)
                         }
                     }
 
@@ -83,6 +95,7 @@ suspend fun SubscriptionManager.registerSubscription(
                             handler.onUnsubscribe(event.kind, event.target, event.activeCount)
                         }.onFailure {
                             logger.warn("Handler threw in onUnsubscribe", it)
+                            notifyException(it)
                         }
                     }
                 }
@@ -91,8 +104,7 @@ suspend fun SubscriptionManager.registerSubscription(
             throw e
         } catch (e: Exception) {
             logger.error("Caught exception in $target channel handler", e)
-            runCatching { handler.onException(target, e) }
-            subscriptions.globalHandlers.forEach { runCatching { it.onException(target, e) } }
+            notifyException(e)
         } finally {
             subscriptions.unregisterHandler(target, handler, job)
             connectionFactory.dispose(conn)

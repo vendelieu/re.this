@@ -49,6 +49,4 @@ internal suspend fun ReThis.evalAsInt(
     script: String,
     keys: Array<String>,
     args: List<String>,
-): Int {
-    return eval(script = script, key = keys, arg = args).unwrap<Long?>()?.toInt() ?: 0
-}
+): Int = eval(script = script, key = keys, arg = args).unwrap<Long?>()?.toInt() ?: 0

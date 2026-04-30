@@ -29,8 +29,14 @@ class ScriptCommandTest : ReThisTestCtx() {
         val result = client.evalRo(script, "testKey1", arg = listOf("testValue1"))
         result.shouldBeTypeOf<RArray>()
         result.value.size shouldBe 2
-        result.value[0].shouldBeTypeOf<BulkString>().value.readString() shouldBe "testKey1"
-        result.value[1].shouldBeTypeOf<BulkString>().value.readString() shouldBe "testValue1"
+        result.value[0]
+            .shouldBeTypeOf<BulkString>()
+            .value
+            .readString() shouldBe "testKey1"
+        result.value[1]
+            .shouldBeTypeOf<BulkString>()
+            .value
+            .readString() shouldBe "testValue1"
     }
 
     @Test
@@ -40,8 +46,14 @@ class ScriptCommandTest : ReThisTestCtx() {
         val result = client.evalSha(sha1, "testKey3", arg = listOf("testValue3")).shouldBeTypeOf<RArray>()
 
         result.value.size shouldBe 2
-        result.value[0].shouldBeTypeOf<BulkString>().value.readString() shouldBe "testKey3"
-        result.value[1].shouldBeTypeOf<BulkString>().value.readString() shouldBe "testValue3"
+        result.value[0]
+            .shouldBeTypeOf<BulkString>()
+            .value
+            .readString() shouldBe "testKey3"
+        result.value[1]
+            .shouldBeTypeOf<BulkString>()
+            .value
+            .readString() shouldBe "testValue3"
     }
 
     @Test
@@ -51,8 +63,14 @@ class ScriptCommandTest : ReThisTestCtx() {
 
         val result = client.evalShaRo(sha1, "testKey4", arg = listOf("testValue4")).shouldBeTypeOf<RArray>()
         result.value.size shouldBe 2
-        result.value[0].shouldBeTypeOf<BulkString>().value.readString() shouldBe "testKey4"
-        result.value[1].shouldBeTypeOf<BulkString>().value.readString() shouldBe "testValue4"
+        result.value[0]
+            .shouldBeTypeOf<BulkString>()
+            .value
+            .readString() shouldBe "testKey4"
+        result.value[1]
+            .shouldBeTypeOf<BulkString>()
+            .value
+            .readString() shouldBe "testValue4"
     }
 
     @Test

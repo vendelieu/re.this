@@ -60,8 +60,9 @@ jobs:
     timeout-minutes: 15
     permissions:
       contents: read
-      security-events: write
       actions: read
+    outputs:
+      sarif-files: ${{ steps.sarif-list.outputs.files }}
     steps:
       - uses: actions/checkout@v6
       - uses: ./.github/actions/setup-build
@@ -85,25 +86,83 @@ jobs:
             mv -- "$f" "${f%.sarif.json}.sarif"
           done
 
-      - name: Upload Detekt SARIF
+      # Stage per-tool SARIFs into a predictable layout so the artifact preserves
+      # the `<tool>/<file>` structure regardless of how many files each tool emits.
+      - name: Stage SARIF files
         if: always()
-        uses: github/codeql-action/upload-sarif@v3
-        with:
-          sarif_file: client/build/reports/detekt/
-          category: detekt
+        run: |
+          shopt -s nullglob
+          mkdir -p sarif-stage/detekt sarif-stage/ktlint
+          for f in client/build/reports/detekt/*.sarif; do
+            cp "$f" sarif-stage/detekt/
+          done
+          for f in client/build/reports/ktlint/*-lint.sarif; do
+            cp "$f" sarif-stage/ktlint/
+          done
 
-      - name: Upload Kotlinter SARIF
+      # Code Scanning rejects multiple SARIF runs sharing one category. Emit one matrix
+      # entry per file so the upload-sarif job uploads each with a unique category.
+      - name: Build SARIF matrix
+        id: sarif-list
         if: always()
-        uses: github/codeql-action/upload-sarif@v3
+        run: |
+          shopt -s nullglob
+          entries=()
+          for f in sarif-stage/detekt/*.sarif; do
+            name=$(basename "$f")
+            base="${name%.sarif}"
+            entries+=("{\"path\":\"detekt/$name\",\"category\":\"detekt-$base\"}")
+          done
+          for f in sarif-stage/ktlint/*-lint.sarif; do
+            name=$(basename "$f")
+            base="${name%-lint.sarif}"
+            entries+=("{\"path\":\"ktlint/$name\",\"category\":\"kotlinter-$base\"}")
+          done
+          if [ ${#entries[@]} -eq 0 ]; then
+            echo "files=[]" >> "$GITHUB_OUTPUT"
+          else
+            IFS=','
+            printf 'files=[%s]\n' "${entries[*]}" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Upload SARIF artifact
+        if: always() && hashFiles('sarif-stage/**/*.sarif') != ''
+        uses: actions/upload-artifact@v4
         with:
-          sarif_file: client/build/reports/ktlint/
-          category: kotlinter
+          name: lint-sarif
+          path: sarif-stage/
+          retention-days: 1
+          if-no-files-found: ignore
 
       - name: Fail if any linter failed
         if: steps.detekt.outcome == 'failure' || steps.kotlinter.outcome == 'failure'
         run: |
           echo "::error::Lint failed (detekt: ${{ steps.detekt.outcome }}, kotlinter: ${{ steps.kotlinter.outcome }})"
           exit 1
+
+  upload-sarif:
+    name: Upload SARIF (${{ matrix.entry.category }})
+    needs: lint
+    if: ${{ always() && needs.lint.result != 'skipped' && needs.lint.outputs.sarif-files != '' && needs.lint.outputs.sarif-files != '[]' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      security-events: write
+      actions: read
+    strategy:
+      fail-fast: false
+      matrix:
+        entry: ${{ fromJSON(needs.lint.outputs.sarif-files) }}
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: lint-sarif
+          path: sarif
+
+      - uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: sarif/${{ matrix.entry.path }}
+          category: ${{ matrix.entry.category }}
 
   build:
     name: Build
