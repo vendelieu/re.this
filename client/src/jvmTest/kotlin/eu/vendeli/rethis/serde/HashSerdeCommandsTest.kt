@@ -1,17 +1,17 @@
- package eu.vendeli.rethis.serde
+package eu.vendeli.rethis.serde
 
- import eu.vendeli.rethis.ReThisTestCtx
- import eu.vendeli.rethis.command.hash.hDel
- import eu.vendeli.rethis.command.serde.hGet
- import eu.vendeli.rethis.command.serde.hMGet
- import eu.vendeli.rethis.command.serde.hSet
- import eu.vendeli.rethis.command.serde.hVals
- import io.kotest.matchers.shouldBe
- import io.ktor.http.*
- import kotlinx.serialization.builtins.PairSerializer
- import kotlinx.serialization.builtins.serializer
+import eu.vendeli.rethis.ReThisTestCtx
+import eu.vendeli.rethis.command.hash.hDel
+import eu.vendeli.rethis.command.serde.hGet
+import eu.vendeli.rethis.command.serde.hMGet
+import eu.vendeli.rethis.command.serde.hSet
+import eu.vendeli.rethis.command.serde.hVals
+import io.kotest.matchers.shouldBe
+import io.ktor.http.*
+import kotlinx.serialization.builtins.PairSerializer
+import kotlinx.serialization.builtins.serializer
 
- class HashSerdeCommandsTest : ReThisTestCtx() {
+class HashSerdeCommandsTest : ReThisTestCtx() {
     private val encodedEntity = """{"first":"testValue","second":2}"""
     private val entity = "testValue" to 2
 
@@ -69,4 +69,4 @@
         val serializedResult = client.hMGet(key, field = listOf(field1, field2).toTypedArray(), serializer)
         serializedResult shouldBe listOf(entity, entity)
     }
- }
+}
