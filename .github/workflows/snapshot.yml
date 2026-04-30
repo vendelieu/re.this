@@ -1,0 +1,51 @@
+name: Snapshot Publish
+
+on:
+  push:
+    branches-ignore:
+      - master
+      - 'renovate/**'
+    paths:
+      - 'buildSrc/**'
+      - 'api-processor/**'
+      - 'api-spec/**'
+      - 'client/**'
+      - 'shared/**'
+
+permissions:
+  contents: read
+  packages: write
+
+concurrency:
+  group: snapshot-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  publish:
+    name: Publish ${{ matrix.module }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        module: [':client', ':shared']
+    steps:
+      - uses: actions/checkout@v6
+      - uses: ./.github/actions/setup-build
+
+      - name: Compute snapshot version
+        id: v
+        run: |
+          BRANCH="${GITHUB_REF#refs/heads/}"
+          BRANCH_SAFE=$(echo "$BRANCH" | tr '/' '-')
+          HASH=$(git rev-parse --short "$GITHUB_SHA")
+          DATE=$(date +'%y%m%d')
+          echo "version=${BRANCH_SAFE}-${DATE}~${HASH}" >> "$GITHUB_OUTPUT"
+
+      - name: Publish to GitHub Packages
+        env:
+          # PAT used because the package namespace `eu.vendeli` is owned by the user
+          # account, not the bot. GITHUB_TOKEN cannot publish to user-owned namespaces.
+          GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+          libVersion: ${{ steps.v.outputs.version }}
+        run: ./gradlew ${{ matrix.module }}:publishAllPublicationsToGHPackagesRepository --no-parallel

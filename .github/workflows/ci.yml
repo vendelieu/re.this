@@ -1,0 +1,194 @@
+name: CI
+
+on:
+  push:
+    branches: [master, dev]
+    paths-ignore:
+      - '.editorconfig'
+      - '.gitignore'
+      - 'CODE_OF_CONDUCT.md'
+      - 'CONTRIBUTING.md'
+      - 'FUNDING.yml'
+      - 'LICENSE'
+      - 'README.md'
+      - 'RELEASE.md'
+      - 'SECURITY.md'
+      - 'gradlew'
+      - 'gradlew.bat'
+      - 'parse_changelog.sh'
+      - 'renovate.json'
+      - 'assets/**'
+      # Note: CHANGELOG.md is intentionally NOT excluded — release commits change only
+      # CHANGELOG and must trigger CI on master.
+  pull_request:
+    branches: [master, dev]
+    paths-ignore:
+      - '.editorconfig'
+      - '.gitignore'
+      - 'CHANGELOG.md'
+      - 'CODE_OF_CONDUCT.md'
+      - 'CONTRIBUTING.md'
+      - 'FUNDING.yml'
+      - 'LICENSE'
+      - 'README.md'
+      - 'RELEASE.md'
+      - 'SECURITY.md'
+      - 'gradlew'
+      - 'gradlew.bat'
+      - 'parse_changelog.sh'
+      - 'renovate.json'
+      - 'assets/**'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.event_name == 'pull_request' && github.head_ref || github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/master' }}
+
+jobs:
+  wrapper:
+    name: Validate Gradle Wrapper
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: gradle/actions/wrapper-validation@v6
+
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      actions: read
+    outputs:
+      sarif-files: ${{ steps.sarif-list.outputs.files }}
+    steps:
+      - uses: actions/checkout@v6
+      - uses: ./.github/actions/setup-build
+
+      - name: Run Detekt
+        id: detekt
+        run: ./gradlew detektAll --continue
+        continue-on-error: true
+
+      - name: Run Kotlinter
+        id: kotlinter
+        run: ./gradlew lintKotlin --continue
+        continue-on-error: true
+
+      # kotlinter writes `<sourceSet>-lint.sarif.json`, but upload-sarif only accepts `.sarif`.
+      - name: Normalize Kotlinter SARIF filenames
+        if: always()
+        run: |
+          shopt -s nullglob
+          for f in client/build/reports/ktlint/*-lint.sarif.json; do
+            mv -- "$f" "${f%.sarif.json}.sarif"
+          done
+
+      # Stage per-tool SARIFs into a predictable layout so the artifact preserves
+      # the `<tool>/<file>` structure regardless of how many files each tool emits.
+      - name: Stage SARIF files
+        if: always()
+        run: |
+          shopt -s nullglob
+          mkdir -p sarif-stage/detekt sarif-stage/ktlint
+          for f in client/build/reports/detekt/*.sarif; do
+            cp "$f" sarif-stage/detekt/
+          done
+          for f in client/build/reports/ktlint/*-lint.sarif; do
+            cp "$f" sarif-stage/ktlint/
+          done
+
+      # Code Scanning rejects multiple SARIF runs sharing one category. Emit one matrix
+      # entry per file so the upload-sarif job uploads each with a unique category.
+      - name: Build SARIF matrix
+        id: sarif-list
+        if: always()
+        run: |
+          shopt -s nullglob
+          entries=()
+          for f in sarif-stage/detekt/*.sarif; do
+            name=$(basename "$f")
+            base="${name%.sarif}"
+            entries+=("{\"path\":\"detekt/$name\",\"category\":\"detekt-$base\"}")
+          done
+          for f in sarif-stage/ktlint/*-lint.sarif; do
+            name=$(basename "$f")
+            base="${name%-lint.sarif}"
+            entries+=("{\"path\":\"ktlint/$name\",\"category\":\"kotlinter-$base\"}")
+          done
+          if [ ${#entries[@]} -eq 0 ]; then
+            echo "files=[]" >> "$GITHUB_OUTPUT"
+          else
+            IFS=','
+            printf 'files=[%s]\n' "${entries[*]}" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Upload SARIF artifact
+        if: always() && hashFiles('sarif-stage/**/*.sarif') != ''
+        uses: actions/upload-artifact@v7
+        with:
+          name: lint-sarif
+          path: sarif-stage/
+          retention-days: 1
+          if-no-files-found: ignore
+
+      - name: Fail if any linter failed
+        if: steps.detekt.outcome == 'failure' || steps.kotlinter.outcome == 'failure'
+        run: |
+          echo "::error::Lint failed (detekt: ${{ steps.detekt.outcome }}, kotlinter: ${{ steps.kotlinter.outcome }})"
+          exit 1
+
+  upload-sarif:
+    name: Upload SARIF (${{ matrix.entry.category }})
+    needs: lint
+    if: ${{ always() && needs.lint.result != 'skipped' && needs.lint.outputs.sarif-files != '' && needs.lint.outputs.sarif-files != '[]' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      security-events: write
+      actions: read
+    strategy:
+      fail-fast: false
+      matrix:
+        entry: ${{ fromJSON(needs.lint.outputs.sarif-files) }}
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          name: lint-sarif
+          path: sarif
+
+      - uses: github/codeql-action/upload-sarif@v4
+        with:
+          sarif_file: sarif/${{ matrix.entry.path }}
+          category: ${{ matrix.entry.category }}
+
+  build:
+    name: Build
+    # Run on all PRs and on master pushes. Skip dev pushes — the PR that produced the
+    # dev push already ran build, and direct pushes to dev are not part of the workflow.
+    if: ${{ github.event_name == 'pull_request' || github.ref == 'refs/heads/master' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v6
+      - uses: ./.github/actions/setup-build
+        with:
+          # Submit dependency graph only for master pushes (supply-chain). PR builds skip
+          # to avoid noisy submissions per PR commit.
+          dependency-graph: ${{ github.event_name == 'push' && 'generate-and-submit' || 'disabled' }}
+
+      - name: Build with coverage
+        run: ./gradlew koverXmlReport
+        timeout-minutes: 20
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v6
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+        with:
+          files: '**/build/reports/kover/report.xml'
+          verbose: true
