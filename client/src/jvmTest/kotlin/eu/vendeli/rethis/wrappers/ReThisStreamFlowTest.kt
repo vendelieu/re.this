@@ -62,7 +62,8 @@ class ReThisStreamFlowTest : ReThisTestCtx() {
         client.xGroupCreate(key, group, XId.Id("0"), mkstream = true)
 
         val deferred = async {
-            client.StreamFlow(key, group, consumer, block = 100.milliseconds)
+            client
+                .StreamFlow(key, group, consumer, block = 100.milliseconds)
                 .take(1)
                 .toList()
         }
@@ -75,7 +76,11 @@ class ReThisStreamFlowTest : ReThisTestCtx() {
 
         eventually(2.seconds) {
             val pending = client.xPending(key, group)
-            pending.first().value.toString().toLong() shouldBe 0L
+            pending
+                .first()
+                .value
+                .toString()
+                .toLong() shouldBe 0L
         }
     }
 
@@ -88,7 +93,8 @@ class ReThisStreamFlowTest : ReThisTestCtx() {
         client.xGroupCreate(key, group, XId.Id("0"), mkstream = true)
 
         val deferred = async {
-            client.StreamFlow(key, group, consumer, acknowledge = false, block = 100.milliseconds)
+            client
+                .StreamFlow(key, group, consumer, acknowledge = false, block = 100.milliseconds)
                 .take(1)
                 .toList()
         }
@@ -100,7 +106,11 @@ class ReThisStreamFlowTest : ReThisTestCtx() {
         }
 
         val pending = client.xPending(key, group)
-        pending.first().value.toString().toLong() shouldBe 1L
+        pending
+            .first()
+            .value
+            .toString()
+            .toLong() shouldBe 1L
     }
 
     @Test
@@ -112,7 +122,8 @@ class ReThisStreamFlowTest : ReThisTestCtx() {
         client.xGroupCreate(key, group, XId.Id("0"), mkstream = true)
 
         val deferred = async {
-            client.StreamFlow(key, group, consumer, batchSize = 2, block = 100.milliseconds)
+            client
+                .StreamFlow(key, group, consumer, batchSize = 2, block = 100.milliseconds)
                 .take(5)
                 .toList()
         }

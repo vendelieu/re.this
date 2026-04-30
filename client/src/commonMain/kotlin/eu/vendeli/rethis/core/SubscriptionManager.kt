@@ -18,7 +18,9 @@ class SubscriptionManager internal constructor(
 
     fun unsubscribe(target: SubscribeTarget) {
         val removed = activeSubscriptions.remove(target) ?: return
-        removed.handlers.values.flatten().forEach { it.cancel() }
+        removed.handlers.values
+            .flatten()
+            .forEach { it.cancel() }
     }
 
     fun unsubscribeAll() {

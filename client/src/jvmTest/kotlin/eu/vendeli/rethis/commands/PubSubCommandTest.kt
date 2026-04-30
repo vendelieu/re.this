@@ -141,7 +141,11 @@ class PubSubCommandTest : ReThisTestCtx() {
         client.subscriptions.registerGlobalHandler(
             object : PubSubHandler {
                 override suspend fun onSubscribe(kind: PubSubKind, target: SubscribeTarget, subscribedChannels: Long) {}
-                override suspend fun onUnsubscribe(kind: PubSubKind, target: SubscribeTarget, subscribedChannels: Long) {
+                override suspend fun onUnsubscribe(
+                    kind: PubSubKind,
+                    target: SubscribeTarget,
+                    subscribedChannels: Long,
+                ) {
                     onUnsub.incrementAndGet()
                 }
                 override suspend fun onMessage(kind: PubSubKind, channel: String, message: RType, pattern: String?) {}
@@ -156,7 +160,11 @@ class PubSubCommandTest : ReThisTestCtx() {
             channelName,
             callback = object : PubSubHandler {
                 override suspend fun onSubscribe(kind: PubSubKind, target: SubscribeTarget, subscribedChannels: Long) {}
-                override suspend fun onUnsubscribe(kind: PubSubKind, target: SubscribeTarget, subscribedChannels: Long) {}
+                override suspend fun onUnsubscribe(
+                    kind: PubSubKind,
+                    target: SubscribeTarget,
+                    subscribedChannels: Long,
+                ) {}
                 override suspend fun onMessage(kind: PubSubKind, channel: String, message: RType, pattern: String?) {
                     handlerRan.set(true)
                     onMessage.incrementAndGet()
@@ -172,7 +180,9 @@ class PubSubCommandTest : ReThisTestCtx() {
         eventually(2.seconds) {
             handlerRan.get() shouldBe true
             onMessage.get() shouldBeGreaterThan 0
-            caughtEx.get().shouldNotBeNull()
+            caughtEx
+                .get()
+                .shouldNotBeNull()
                 .shouldBeTypeOf<DataProcessingException>()
                 .shouldHaveMessage("test")
         }

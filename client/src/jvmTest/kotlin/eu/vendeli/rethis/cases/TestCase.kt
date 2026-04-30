@@ -111,7 +111,8 @@ class TestCase : ReThisTestCtx() {
 
     @Test
     suspend fun `operations in transaction test case`() {
-        runConcurrentHashScenario(REPEAT_COUNT,
+        runConcurrentHashScenario(
+            REPEAT_COUNT,
             setup = { id ->
                 client.transaction {
                     hSet(
@@ -135,7 +136,8 @@ class TestCase : ReThisTestCtx() {
 
     @Test
     suspend fun `script operations test case`() {
-        runConcurrentHashScenario(REPEAT_COUNT,
+        runConcurrentHashScenario(
+            REPEAT_COUNT,
             setup = { id ->
                 client.fastEval(
                     "script1",
@@ -143,9 +145,12 @@ class TestCase : ReThisTestCtx() {
                     keys = arrayOf("some:key:$id", "some:key"),
                     arg = listOf(
                         id.toString(),
-                        "some:field1", "some-value1-$id",
-                        "some:field2", "some-value2-$id",
-                        "some:field3", "some-value3-$id",
+                        "some:field1",
+                        "some-value1-$id",
+                        "some:field2",
+                        "some-value2-$id",
+                        "some:field3",
+                        "some-value3-$id",
                     ),
                 )
             },

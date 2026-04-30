@@ -50,7 +50,7 @@ class SortedSetCommandTest : ReThisTestCtx() {
     suspend fun `test ZMSCORE command`() {
         client.zAdd("testSet25", ZMember("testValue25", 1.0))
         client.zMScore("testSet25", "testValue25").shouldNotBeNull().first().also {
-            val score = if(it is BulkString) {
+            val score = if (it is BulkString) {
                 it.value.readString()
             } else {
                 (it as F64).value.roundToInt().toString()
@@ -74,7 +74,8 @@ class SortedSetCommandTest : ReThisTestCtx() {
             .shouldNotBeEmpty()
             .first()
             .shouldBeTypeOf<BulkString>()
-            .value.readString() shouldBe "testValue27"
+            .value
+            .readString() shouldBe "testValue27"
     }
 
     @Test
@@ -88,7 +89,11 @@ class SortedSetCommandTest : ReThisTestCtx() {
         }
 
         result shouldHaveSize 2
-        result.first().safeCast<BulkString>()?.value?.readString() shouldBe "testValue27"
+        result
+            .first()
+            .safeCast<BulkString>()
+            ?.value
+            ?.readString() shouldBe "testValue27"
         result.last().let {
             if (it is BulkString) {
                 it.value.readString()
@@ -113,11 +118,16 @@ class SortedSetCommandTest : ReThisTestCtx() {
     @Test
     suspend fun `test ZRANDMEMBER command with count + scores`() {
         client.zAdd("testSet28", ZMember("testValue28", 1.0))
-        val result = client.zRandMemberWithScores("testSet28", 1, true)
+        val result = client
+            .zRandMemberWithScores("testSet28", 1, true)
             .first() // unwrapping array
             .shouldBeTypeOf<RArray>()
             .value
-        result.first().shouldBeTypeOf<BulkString>().value.readString() shouldBe "testValue28"
+        result
+            .first()
+            .shouldBeTypeOf<BulkString>()
+            .value
+            .readString() shouldBe "testValue28"
         result.last().shouldBeTypeOf<F64>().value shouldBe 1.0
     }
 

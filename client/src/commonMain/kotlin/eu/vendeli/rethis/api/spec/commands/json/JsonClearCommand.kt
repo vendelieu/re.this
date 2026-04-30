@@ -12,6 +12,6 @@ import eu.vendeli.rethis.utils.JSON_DEFAULT_PATH
 fun interface JsonClearCommand : RedisCommandSpec<Long> {
     suspend fun encode(
         key: String,
-        @RedisMeta.Default("\"$JSON_DEFAULT_PATH\"") path: String?
+        @RedisMeta.Default("\"$JSON_DEFAULT_PATH\"") path: String?,
     ): CommandRequest
 }
