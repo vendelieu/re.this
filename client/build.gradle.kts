@@ -91,6 +91,14 @@ tasks.withType<io.gitlab.arturbosch.detekt.Detekt>().configureEach {
     }
 }
 
+// The default `detekt` lifecycle task is NO-SOURCE on KMP — aggregate per-target tasks
+// (detektJvmMain, detektMetadataCommonMain, ...) into a single entrypoint for CI.
+val detektAll by tasks.registering {
+    group = "verification"
+    description = "Runs detekt for all Kotlin source sets in this module."
+    dependsOn(tasks.withType<io.gitlab.arturbosch.detekt.Detekt>())
+}
+
 kotlinter {
     reporters = arrayOf("checkstyle", "sarif")
 }
@@ -103,7 +111,8 @@ fun Task.shouldDependOnKsp(): Boolean =
             name.startsWith("compileKotlin") ||
                 name.contains("SourcesJar", ignoreCase = true) ||
                 name.startsWith("lintKotlin") ||
-                name.startsWith("formatKotlin")
+                name.startsWith("formatKotlin") ||
+                name.startsWith("detekt")
             )
 
 tasks.matching { it.shouldDependOnKsp() }

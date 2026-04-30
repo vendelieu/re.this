@@ -68,13 +68,22 @@ jobs:
 
       - name: Run Detekt
         id: detekt
-        run: ./gradlew detekt --continue
+        run: ./gradlew detektAll --continue
         continue-on-error: true
 
       - name: Run Kotlinter
         id: kotlinter
         run: ./gradlew lintKotlin --continue
         continue-on-error: true
+
+      # kotlinter writes `<sourceSet>-lint.sarif.json`, but upload-sarif only accepts `.sarif`.
+      - name: Normalize Kotlinter SARIF filenames
+        if: always()
+        run: |
+          shopt -s nullglob
+          for f in client/build/reports/ktlint/*-lint.sarif.json; do
+            mv -- "$f" "${f%.sarif.json}.sarif"
+          done
 
       - name: Upload Detekt SARIF
         if: always()
