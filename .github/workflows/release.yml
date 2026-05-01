@@ -127,13 +127,15 @@ jobs:
         run: bash ./parse_changelog.sh "${{ steps.v.outputs.version }}" > release_notes.md
 
       - name: Create GitHub Release
-        uses: taiki-e/create-gh-release-action@v1
-        with:
-          ref: refs/tags/${{ steps.v.outputs.version }}
-          title: ${{ steps.v.outputs.version }}
-          changelog: release_notes.md
-          branch: master
-          token: ${{ secrets.ACCESS_TOKEN }}
+        env:
+          GH_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+        run: |
+          V="${{ steps.v.outputs.version }}"
+          gh release create "$V" \
+            --title "$V" \
+            --notes-file release_notes.md \
+            --target master \
+            --discussion-category "Announcements"
 
       - name: Generate Dokka site
         env:
