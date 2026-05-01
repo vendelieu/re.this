@@ -39,8 +39,9 @@ internal class ConnectionFactory(
             return null
         }
 
-        return try {
-            aSocket(selector)
+        var socket: Socket? = null
+        try {
+            socket = aSocket(selector)
                 .tcp()
                 .connect(address) {
                     cfg.socket.run {
@@ -49,16 +50,18 @@ internal class ConnectionFactory(
                         this@connect.keepAlive = keepAlive
                         this@connect.noDelay = noDelay
                     }
-                }.let { socket ->
-                    cfg.tls?.let {
-                        socket.tls(selector.coroutineContext, it)
-                    } ?: socket
-                }.rConnection()
-                .also {
-                    prepareConnection(it)
+                }.let { s ->
+                    cfg.tls?.let { s.tls(selector.coroutineContext, it) } ?: s
                 }
-        } catch (e: Exception) {
-            connections.release() // Only release on failure
+            val conn = socket.rConnection()
+            prepareConnection(conn)
+            return conn
+        } catch (e: Throwable) {
+            // Cancellation (e.g. enclosing withTimeout) used to drop the half-built
+            // socket on the floor and only release the permit on GC, eventually
+            // starving the pool / hitting Redis maxclients.
+            socket?.runCatching { dispose() }
+            connections.release()
             throw e
         }
     }
