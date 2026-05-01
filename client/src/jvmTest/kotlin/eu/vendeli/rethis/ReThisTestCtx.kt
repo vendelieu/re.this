@@ -64,6 +64,12 @@ abstract class ReThisTestCtx : TestCtx() {
                 times = 1
             }
             connectionAcquireTimeout = TEST_TIMEOUT
+            pool {
+                // Detect connections that died while idle (CI Docker pauses, Redis
+                // container hiccups) before handing them to a test, instead of
+                // letting reads hang until the 5-minute SO_TIMEOUT fires.
+                connectionHealthCheck = true
+            }
         }
 
         @JvmStatic
