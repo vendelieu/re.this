@@ -167,6 +167,17 @@ fun ReThis(
     configurator: StandaloneConfiguration.() -> Unit = {},
 ) = ReThis.standalone(Address(host, port), protocol, configurator)
 
+
+/**
+ * Creates and configures an instance of the `ReThis` client, which connects to a Redis server in standalone mode.
+ *
+ * @param address The Redis server URL in the format `redis://[username:password@]hostname[:port][/db]`, if failed fallback to default.
+ * @param protocol The RESP (Redis Serialization Protocol) version to use for communication.
+ *                 Defaults to `RespVer.V2`.
+ * @param configurator A lambda to configure the `StandaloneConfiguration`.
+ *                     Defaults to an empty configuration.
+ * @return A new instance of `ReThis` configured for standalone mode.
+ */
 @Suppress("ktlint:standard:function-naming")
 fun ReThis(
     address: String,
