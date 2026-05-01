@@ -80,10 +80,12 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-      - name: Fast-forward master to dev
+      - name: Squash-merge dev into master
         run: |
+          V="${{ steps.v.outputs.version }}"
           git checkout master
-          git merge origin/dev --ff-only
+          git merge --squash origin/dev
+          git commit -m "Release $V"
           git push origin master
 
       - name: Publish to Maven Central
@@ -127,6 +129,7 @@ jobs:
       - name: Create GitHub Release
         uses: taiki-e/create-gh-release-action@v1
         with:
+          ref: refs/tags/${{ steps.v.outputs.version }}
           title: ${{ steps.v.outputs.version }}
           changelog: release_notes.md
           branch: master

@@ -13,9 +13,11 @@ import kotlinx.io.Buffer
 import org.testcontainers.utility.DockerImageName
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Duration.Companion.seconds
 import kotlin.time.Instant
 
 private val TEST_TIMEOUT = 5.minutes
+private val COMMAND_TIMEOUT = 50.seconds
 
 abstract class TestCtx : AnnotationSpec() {
     protected val timestamp: Instant get() = Clock.System.now()
@@ -61,8 +63,9 @@ abstract class ReThisTestCtx : TestCtx() {
                 timeout = TEST_TIMEOUT.inWholeMilliseconds
             }
             retry {
-                times = 1
+                times = 6
             }
+            commandTimeout = COMMAND_TIMEOUT
             connectionAcquireTimeout = TEST_TIMEOUT
             pool {
                 // Detect connections that died while idle (CI Docker pauses, Redis
