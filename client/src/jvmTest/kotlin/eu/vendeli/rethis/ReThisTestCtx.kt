@@ -63,6 +63,7 @@ abstract class ReThisTestCtx : TestCtx() {
             retry {
                 times = 1
             }
+            connectionAcquireTimeout = TEST_TIMEOUT
         }
 
         @JvmStatic

@@ -173,17 +173,23 @@ internal class ConnectionPool(
     }
 
     private suspend fun expandPool(by: Int) {
-        if (!connectionFactory.isReachedLimit()) {
-            repeat(by) {
-                val conn = connectionFactory.createConnOrNull(address) ?: return
-                pending.tryReceive().onSuccess {
-                    it.complete(conn)
-                    return
-                }
-                conn.fillPool()
-            }
-        } else {
+        if (connectionFactory.isReachedLimit()) {
             logger.debug { "Pool expanding attempt failed. Max connections reached." }
+            return
+        }
+        repeat(by) {
+            val conn = connectionFactory.createConnOrNull(address) ?: return
+            // Hand off to the first live awaiter; drain cancelled deferreds left
+            // by acquire() timeouts so they cannot swallow the fresh connection.
+            var delivered = false
+            while (true) {
+                val def = pending.tryReceive().getOrNull() ?: break
+                if (def.complete(conn)) {
+                    delivered = true
+                    break
+                }
+            }
+            if (!delivered) conn.fillPool()
         }
     }
 
