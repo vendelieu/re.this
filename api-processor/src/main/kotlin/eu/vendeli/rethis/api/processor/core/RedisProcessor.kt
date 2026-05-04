@@ -38,6 +38,12 @@ internal object RedisProcessor {
 
         val fileSpec = FileSpec.builder(context.meta.codecsPackage + cmdPackagePart, codecName)
             .indent(" ".repeat(4))
+            .addAnnotation(
+                AnnotationSpec.builder(ClassName("kotlin", "Suppress"))
+                    .useSiteTarget(AnnotationSpec.UseSiteTarget.FILE)
+                    .addMember("%S, %S, %S", "UNUSED_VARIABLE", "UNUSED_PARAMETER", "ASSIGNED_BUT_NEVER_READ_VARIABLE")
+                    .build(),
+            )
         val typeSpec = TypeSpec.objectBuilder(codecName)
         val rTypes = context.currentCommand.command.responseTypes.toSet()
 

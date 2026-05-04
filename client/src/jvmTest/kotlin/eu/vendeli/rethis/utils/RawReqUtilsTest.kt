@@ -11,7 +11,6 @@ import java.util.*
 
 class RawReqUtilsTest : ReThisTestCtx() {
     private fun Buffer.readAllUtf8(): String = readString()
-    private fun ByteArray.readAllUtf8(): String = decodeToString()
 
     @Test
     fun `toRESPByteArray encodes ECHO properly`() {

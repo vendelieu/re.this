@@ -9,7 +9,7 @@ import io.github.cdimascio.dotenv.dotenv
  * Use [get] for string values. Use [getLong] for optional Long (e.g. TELEGRAM_ID).
  */
 object TestEnv {
-    val TARGET_REDIS_VER = "8.2"
+    const val TARGET_REDIS_VER = "8.2"
 
     private val dotenv by lazy {
         dotenv {

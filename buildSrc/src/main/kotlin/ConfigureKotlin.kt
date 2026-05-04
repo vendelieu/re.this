@@ -51,10 +51,13 @@ fun Project.configureKotlin(block: KotlinMultiplatformExtension.() -> Unit) {
         linuxX64()
         linuxArm64()
 
-        macosX64()
         macosArm64()
 
+        // TODO: remove when deprecation process is complete.
+        macosX64()
         watchosX64()
+        tvosX64()
+
         watchosArm32()
         watchosArm64()
         watchosSimulatorArm64()
@@ -63,7 +66,6 @@ fun Project.configureKotlin(block: KotlinMultiplatformExtension.() -> Unit) {
         iosArm64()
         iosSimulatorArm64()
 
-        tvosX64()
         tvosArm64()
         tvosSimulatorArm64()
 

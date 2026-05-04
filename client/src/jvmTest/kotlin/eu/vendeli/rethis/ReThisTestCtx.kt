@@ -20,7 +20,7 @@ import kotlin.time.Instant
 private val TEST_TIMEOUT = 5.minutes
 private val COMMAND_TIMEOUT = 30.seconds
 
-abstract class TestCtx : AnnotationSpec() {
+open class TestCtx : AnnotationSpec() {
     protected val timestamp: Instant get() = Clock.System.now()
     protected val defaultCharset = Charsets.UTF_8
 
@@ -33,7 +33,7 @@ abstract class TestCtx : AnnotationSpec() {
     }
 }
 
-abstract class ReThisTestCtx : TestCtx() {
+open class ReThisTestCtx : TestCtx() {
     init {
         defaultTestConfig = DefaultTestConfig(timeout = TEST_TIMEOUT)
     }
@@ -75,7 +75,7 @@ abstract class ReThisTestCtx : TestCtx() {
             commandTimeout = COMMAND_TIMEOUT
             connectionAcquireTimeout = TEST_TIMEOUT
             pool {
-                maxIdleConnections = 10
+                maxIdleConnections = 20
                 minIdleConnections = 1
                 connectionHealthCheck = true
             }

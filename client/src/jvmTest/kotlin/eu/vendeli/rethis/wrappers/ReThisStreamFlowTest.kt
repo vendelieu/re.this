@@ -143,6 +143,6 @@ class ReThisStreamFlowTest : ReThisTestCtx() {
     private fun RType?.asString(): String = when (this) {
         is BulkString -> value.readString()
         is PlainString -> value
-        else -> this?.value?.toString() ?: ""
+        else -> this?.value?.toString().orEmpty()
     }
 }

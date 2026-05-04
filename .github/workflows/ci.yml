@@ -73,7 +73,9 @@ jobs:
           if [ "${{ github.event_name }}" = "pull_request" ]; then
             ./gradlew detektAll --continue
           else
-            ./gradlew detektJvmMain detektJvmTest --continue
+            # Match detektAll scope: main sources only (test sources are excluded
+            # by the detektAll aggregator in client/build.gradle.kts).
+            ./gradlew detektJvmMain --continue
           fi
         continue-on-error: true
 
