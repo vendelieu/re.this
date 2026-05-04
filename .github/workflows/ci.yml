@@ -69,12 +69,22 @@ jobs:
 
       - name: Run Detekt
         id: detekt
-        run: ./gradlew detektAll --continue
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            ./gradlew detektAll --continue
+          else
+            ./gradlew detektJvmMain detektJvmTest --continue
+          fi
         continue-on-error: true
 
       - name: Run Kotlinter
         id: kotlinter
-        run: ./gradlew lintKotlin --continue
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            ./gradlew lintKotlin --continue
+          else
+            ./gradlew lintKotlinJvmMain lintKotlinJvmTest --continue
+          fi
         continue-on-error: true
 
       # kotlinter writes `<sourceSet>-lint.sarif.json`, but upload-sarif only accepts `.sarif`.
