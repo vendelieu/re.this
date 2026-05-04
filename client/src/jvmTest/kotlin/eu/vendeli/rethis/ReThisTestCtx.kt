@@ -1,6 +1,7 @@
 package eu.vendeli.rethis
 
 import com.redis.testcontainers.RedisContainer
+import eu.vendeli.rethis.TestEnv.TARGET_REDIS_VER
 import eu.vendeli.rethis.codecs.connection.PingCommandCodec
 import eu.vendeli.rethis.command.server.flushAll
 import eu.vendeli.rethis.configuration.StandaloneConfiguration
@@ -17,7 +18,7 @@ import kotlin.time.Duration.Companion.seconds
 import kotlin.time.Instant
 
 private val TEST_TIMEOUT = 5.minutes
-private val COMMAND_TIMEOUT = 50.seconds
+private val COMMAND_TIMEOUT = 30.seconds
 
 abstract class TestCtx : AnnotationSpec() {
     protected val timestamp: Instant get() = Clock.System.now()
@@ -38,6 +39,11 @@ abstract class ReThisTestCtx : TestCtx() {
     }
 
     protected val targetDb = 1L
+
+    protected val client: ReThis by lazy {
+        ReThis(redis.host, redis.firstMappedPort, RespVer.V3, DEFAULT_TEST_CFG)
+    }
+
     protected suspend fun connectionProvider() = client.topology.route(
         PingCommandCodec.encode(Charsets.UTF_8, null),
     )
@@ -54,7 +60,8 @@ abstract class ReThisTestCtx : TestCtx() {
 
     @AfterAll
     fun cleanup() = runBlocking {
-        client.flushAll(FlushType.SYNC)
+        runCatching { client.flushAll(FlushType.SYNC) }
+        runCatching { client.close() }
     }
 
     companion object {
@@ -63,14 +70,13 @@ abstract class ReThisTestCtx : TestCtx() {
                 timeout = TEST_TIMEOUT.inWholeMilliseconds
             }
             retry {
-                times = 6
+                times = 10
             }
             commandTimeout = COMMAND_TIMEOUT
             connectionAcquireTimeout = TEST_TIMEOUT
             pool {
-                // Detect connections that died while idle (CI Docker pauses, Redis
-                // container hiccups) before handing them to a test, instead of
-                // letting reads hang until the 5-minute SO_TIMEOUT fires.
+                maxIdleConnections = 10
+                minIdleConnections = 1
                 connectionHealthCheck = true
             }
         }
@@ -84,12 +90,9 @@ abstract class ReThisTestCtx : TestCtx() {
         }
 
         @JvmStatic
-        protected val redis = RedisContainer(DockerImageName.parse("redis:8.2")).also {
+        protected val redis = RedisContainer(DockerImageName.parse("redis:$TARGET_REDIS_VER")).also {
             it.start()
         }
-
-        @JvmStatic
-        protected val client = ReThis(redis.host, redis.firstMappedPort, RespVer.V3, DEFAULT_TEST_CFG)
     }
 }
 
