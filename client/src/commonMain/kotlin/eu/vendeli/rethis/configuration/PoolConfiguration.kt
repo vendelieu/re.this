@@ -19,6 +19,10 @@ import kotlin.time.Duration.Companion.seconds
  * @property connectionHealthCheck whether to check the health of the connection, defaults to false
  * @property connectionHealthCheckInterval minimum idle duration before a borrowed connection is health-checked
  * with PING; only consulted when [connectionHealthCheck] is true. Defaults to 30 seconds.
+ * @property connectionHealthCheckTimeout maximum time the health-check PING may take before the connection is
+ * considered dead and discarded. Bounded independently of `commandTimeout` / `socket.timeout` so a stale
+ * connection cannot poison the next borrower. Only consulted when [connectionHealthCheck] is true.
+ * Defaults to 1 second.
  * @property setClientName whether to set the client name, defaults to false
  * @property closeGracefully whether to close the pool gracefully, defaults to false
  */
@@ -33,6 +37,7 @@ data class PoolConfiguration(
     var gracefulClosePeriod: Duration = 30.seconds,
     var connectionHealthCheck: Boolean = false,
     var connectionHealthCheckInterval: Duration = 30.seconds,
+    var connectionHealthCheckTimeout: Duration = 1.seconds,
     var setClientName: Boolean = false,
     var closeGracefully: Boolean = false,
 )

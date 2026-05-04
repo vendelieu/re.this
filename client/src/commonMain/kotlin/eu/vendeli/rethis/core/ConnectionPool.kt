@@ -223,8 +223,12 @@ internal class ConnectionPool(
         // does not silently die between two adjacent borrows.
         if (lastTouchedAt.elapsedNow() < cfg.pool.connectionHealthCheckInterval) return this
 
+        // Bound the health-check PING independently of commandTimeout / socket.timeout
+        // so a half-dead connection cannot stall the next borrower.
         runCatching {
-            doRequest(PingCommandCodec.encode(charset = cfg.charset, message = null).data)
+            withTimeout(cfg.pool.connectionHealthCheckTimeout) {
+                doRequest(PingCommandCodec.encode(charset = cfg.charset, message = null).data)
+            }
         }.onFailure {
             connectionFactory.dispose(this)
             return null
