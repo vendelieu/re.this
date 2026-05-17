@@ -13,7 +13,7 @@ import eu.vendeli.rethis.shared.types.RespCode
 fun interface VAddCommand : RedisCommandSpec<Boolean> {
     suspend fun encode(
         key: String,
-        input: VAddInput,
+        @RIgnoreSpecAbsence input: VAddInput,
         element: String,
         @RIgnoreSpecAbsence vararg options: VAddOption,
     ): CommandRequest

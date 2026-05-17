@@ -1,6 +1,6 @@
 package eu.vendeli.rethis.api.processor.types
 
-import eu.vendeli.rethis.api.processor.utils.normalizeParam
+import eu.vendeli.rethis.api.processor.utils.canonicalKey
 
 internal sealed class RSpecNode {
     abstract val name: String
@@ -9,7 +9,7 @@ internal sealed class RSpecNode {
     open val parentNode: RSpecNode? = null
     open val children: MutableList<RSpecNode> = mutableListOf()
 
-    val normalizedName get() = name.normalizeParam()
+    val normalizedName get() = name.canonicalKey()
 
     data class Simple(
         val type: String,

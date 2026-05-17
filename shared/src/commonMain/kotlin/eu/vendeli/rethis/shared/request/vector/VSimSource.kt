@@ -5,13 +5,15 @@ import eu.vendeli.rethis.shared.annotations.RedisOption
 
 sealed class VSimSource {
     @RedisOption.Token("ELE")
-    class Ele(val element: String) : VSimSource()
+    class Ele(@RedisOption.Name("vector_or_element") val element: String) : VSimSource()
 
     @RedisOption.Token("FP32")
-    class Fp32(val blob: ByteArray) : VSimSource()
+    class Fp32(@RedisOption.Name("vector_or_element") val blob: ByteArray) : VSimSource()
 
     @RedisOption.Token("VALUES")
     class Values(
-        @RedisMeta.WithSizeParam("num") vararg val components: Double,
+        @RedisMeta.WithSizeParam("num")
+        @RedisOption.Name("vector_or_element")
+        vararg val components: Double,
     ) : VSimSource()
 }

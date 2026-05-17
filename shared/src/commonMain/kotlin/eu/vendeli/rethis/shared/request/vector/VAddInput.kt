@@ -5,10 +5,12 @@ import eu.vendeli.rethis.shared.annotations.RedisOption
 
 sealed class VAddInput {
     @RedisOption.Token("FP32")
-    class Fp32(val blob: ByteArray) : VAddInput()
+    class Fp32(@RedisOption.Name("vector") val blob: ByteArray) : VAddInput()
 
     @RedisOption.Token("VALUES")
     class Values(
-        @RedisMeta.WithSizeParam("num") vararg val components: Double,
+        @RedisMeta.WithSizeParam("num")
+        @RedisOption.Name("vector")
+        vararg val components: Double,
     ) : VAddInput()
 }

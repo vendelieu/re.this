@@ -17,7 +17,7 @@ import eu.vendeli.rethis.shared.types.RespCode
 fun interface VSimCommand : RedisCommandSpec<RType> {
     suspend fun encode(
         key: String,
-        source: VSimSource,
+        @RIgnoreSpecAbsence source: VSimSource,
         @RIgnoreSpecAbsence vararg options: VSimOption,
     ): CommandRequest
 }
