@@ -41,21 +41,40 @@ private fun Buffer.writeBA(value: ByteArray) {
     appendEOL()
 }
 
+private val LONG_POW10 = longArrayOf(
+    1L, 10L, 100L, 1_000L, 10_000L, 100_000L, 1_000_000L, 10_000_000L,
+    100_000_000L, 1_000_000_000L, 10_000_000_000L, 100_000_000_000L,
+    1_000_000_000_000L, 10_000_000_000_000L, 100_000_000_000_000L,
+    1_000_000_000_000_000L, 10_000_000_000_000_000L, 100_000_000_000_000_000L,
+    1_000_000_000_000_000_000L,
+)
+
+// Hacker's Delight 11-4 / JDK Long.stringSize: digit count from leading zero bits.
+private fun decimalDigits(value: Long): Int {
+    val abs = when {
+        value == Long.MIN_VALUE -> Long.MAX_VALUE
+        value < 0 -> -value
+        else -> value
+    }
+    val approx = ((64 - abs.countLeadingZeroBits()) * 1233) ushr 12
+    val needsBump = approx >= LONG_POW10.size || abs >= LONG_POW10[approx]
+    return (if (needsBump) approx + 1 else approx).coerceAtLeast(1)
+}
+
+private fun Buffer.writeDecimalAsBulk(value: Long) {
+    val byteLen = decimalDigits(value) + if (value < 0) 1 else 0
+    append(RespCode.BULK)
+    writeDecimalLong(byteLen.toLong())
+    appendEOL()
+    writeDecimalLong(value)
+    appendEOL()
+}
+
 fun Buffer.writeStringArg(value: String, charset: Charset) = writeBA(value.toByteArray(charset))
-fun Buffer.writeLongArg(value: Long, charset: Charset) = writeBA(value.toString().toByteArray(charset))
-fun Buffer.writeIntArg(value: Int, charset: Charset) = writeBA(value.toString().toByteArray(charset))
+fun Buffer.writeLongArg(value: Long, charset: Charset) = writeDecimalAsBulk(value)
+fun Buffer.writeIntArg(value: Int, charset: Charset) = writeDecimalAsBulk(value.toLong())
 fun Buffer.writeDoubleArg(value: Double, charset: Charset) = writeBA(value.toString().toByteArray(charset))
 fun Buffer.writeByteArrayArg(value: ByteArray, charset: Charset) = writeBA(value)
-
-fun Buffer.writeDurationArg(value: Duration, charset: Charset, timeUnit: TimeUnit) = when (timeUnit) {
-    TimeUnit.MILLISECONDS -> writeBA(value.inWholeMilliseconds.toString().toByteArray(charset))
-    TimeUnit.SECONDS -> writeBA(value.inWholeSeconds.toString().toByteArray(charset))
-}
-
-fun Buffer.writeInstantArg(value: Instant, charset: Charset, timeUnit: TimeUnit) = when (timeUnit) {
-    TimeUnit.MILLISECONDS -> writeBA(value.toEpochMilliseconds().toString().toByteArray(charset))
-    TimeUnit.SECONDS -> writeBA(value.epochSeconds.toString().toByteArray(charset))
-}
 
 fun Buffer.writeBooleanArg(value: Boolean, charset: Charset) =
     writeBA(value.let { if (it) "t" else "f" }.toByteArray(charset))

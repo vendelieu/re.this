@@ -167,7 +167,6 @@ fun ReThis(
     configurator: StandaloneConfiguration.() -> Unit = {},
 ) = ReThis.standalone(Address(host, port), protocol, configurator)
 
-
 /**
  * Creates and configures an instance of the `ReThis` client, which connects to a Redis server in standalone mode.
  *

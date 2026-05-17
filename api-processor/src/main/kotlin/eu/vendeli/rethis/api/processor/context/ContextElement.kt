@@ -167,7 +167,13 @@ internal class CurrentCommand(val command: RCommandData, val klass: KSClassDecla
             ch.attr.any { attr ->
                 attr.safeCast<EnrichedTreeAttr.Multiple>()?.let { it.vararg || it.collection } == true ||
                     attr.safeCast<EnrichedTreeAttr.Optional>()?.local == OptionalityType.Nullable
-            }
+            } ||
+                // Sealed-class params dispatch on a variant whose constructor arity determines
+                // the per-call wire-element count (e.g. CLIENT SETINFO's LibName(name) emits
+                // <token> + <value>, two elements). Force a dynamic array header so the
+                // precomputed `*N\r\n` doesn't undercount.
+                ch.attr.filterIsInstance<EnrichedTreeAttr.Type>()
+                    .any { it.type.declaration.isSealed() }
         }
     }
 
@@ -240,82 +246,128 @@ internal class CollectedTokens(
     companion object : ContextKey<CollectedTokens>
 }
 
+/**
+ * A handle for a lambda binding (`it0`, `it1`, …) introduced by [CodeGenContext.inFor] or
+ * [CodeGenContext.inLet]. The body receives a `Binding` and produces an [Access.Bound] via [ref];
+ * the binding is registered as **used** the moment that access is rendered into the codec source
+ * (see [Access.render]) — not when [ref] is called. So an [Access.Bound] that's built but never
+ * actually emitted (e.g. a SIZE-phase counting body that ignores its iterator) keeps [isUsed]
+ * false, and the surrounding scope can degrade the lambda parameter to `_`.
+ *
+ * [sourceField] is propagated into the access so [Access.qualify] can elide redundant
+ * qualification when a leaf inside the scope shares the wrapper's field name.
+ */
+internal class Binding internal constructor(
+    internal val name: String,
+    internal val sourceField: String,
+) {
+    private var marked: Boolean = false
+    val isUsed: Boolean get() = marked
+
+    internal fun markUsed() {
+        marked = true
+    }
+
+    /** Produce an access referring to this binding. Render-time consumption is what marks it used. */
+    fun ref(): Access = Access.Bound(this)
+}
+
+/**
+ * Pure code-emission helper: a thin façade over KotlinPoet's [CodeBlock.Builder] plus three
+ * scope openers ([inFor], [inLet], [inWhen]) that follow a typed-access model.
+ *
+ * The previous implementation tracked block state itself (`pointer`, `blockStack`, `BlockType`,
+ * `resolveAccess`, body-capture + regex). All of that is gone — scope context flows through
+ * [Access] passed from caller to caller, and binding usage is declared by the body via
+ * [Binding.ref] instead of detected after the fact.
+ */
 internal class CodeGenContext(
-    val builder: CodeBlock.Builder,
-    private var nameCtr: Int = 0,
+    private var builder: CodeBlock.Builder,
+    private var nameCounter: Int = 0,
 ) : ContextElement {
-    private var thisExpr: String = ""
     override val key = CodeGenContext
-    val blockStack = ArrayDeque<Pair<BlockType, String>>()
 
-    private fun freshName(): String {
-        val newName = "it" + nameCtr++
-        thisExpr = newName
-        return newName
-    }
-
-    fun buildBlock(fieldName: String, type: BlockType, parentPointer: String? = null, block: () -> Unit) {
-        val oldPointer = thisExpr
-        thisExpr = when (type) {
-            BlockType.WHEN if thisExpr.isNotBlank() -> thisExpr
-            BlockType.WHEN -> fieldName
-            else -> freshName()
-        }
-        // before block should be old pointer or param
-
-        val prevName = blockStack.lastOrNull()?.second
-        // Use explicit parentPointer if provided, otherwise use oldPointer only if we're nested
-        val effectivePointer = parentPointer ?: oldPointer.takeIf { blockStack.isNotEmpty() } ?: ""
-        val newName = pointedParameter(fieldName, effectivePointer)
-        val paramPointer = if (prevName != fieldName && newName.substringAfter('.') != fieldName) ".$fieldName" else ""
-
-        val guard = when (type) {
-            BlockType.LET -> "${newName}$paramPointer?.let { $thisExpr ->"
-            BlockType.FOR -> "${newName}$paramPointer.forEach { $thisExpr ->"
-            BlockType.WHEN -> "when (${if (effectivePointer.isNotBlank()) effectivePointer else fieldName}$paramPointer)"
-        }
-
-        blockStack.addLast(type to fieldName)
-        builder.beginControlFlow(guard)
-        block()
-        builder.endControlFlow()
-        require(blockStack.removeLast().first == type)
-
-        thisExpr = oldPointer
-    }
-
+    // ---- KotlinPoet façade ----
 
     fun appendLine(line: String, vararg args: Any?) {
         builder.addStatement(line, *args)
     }
 
-    var pointer: String?
-        get() = thisExpr.takeIf { it.isNotBlank() }
-        set(value) {
-            thisExpr = value ?: ""
-        }
-
-    fun pointedParameter(name: String, pointer: String = thisExpr, isComplex: Boolean = false): String {
-        val parameter = mutableListOf<String?>()
-        when {
-            blockStack.isEmpty() || blockStack.singleOrNull()?.first == BlockType.WHEN -> {
-                parameter.add(pointer.takeIf { it.isNotBlank() })
-                parameter.add(name)
-            }
-
-            blockStack.last().first != BlockType.WHEN -> parameter.add(pointer)
-            else -> {
-                parameter.add(pointer.takeIf { it.isNotBlank() })
-                parameter.add(name)
-            }
-        }
-        if (isComplex && parameter.last() != name) parameter.add(name)
-
-        return parameter.filterNotNull().joinToString(".")
+    fun beginControlFlow(controlFlow: String, vararg args: Any?) {
+        builder.beginControlFlow(controlFlow, *args)
     }
 
-    enum class BlockType {
-        WHEN, LET, FOR
+    fun endControlFlow() {
+        builder.endControlFlow()
+    }
+
+    /** Open a paired control-flow scope and run [block] inside it. */
+    fun inScope(controlFlow: String, vararg args: Any?, block: () -> Unit) {
+        builder.beginControlFlow(controlFlow, *args)
+        block()
+        builder.endControlFlow()
+    }
+
+    /** Emit a `<condition> -> { … }` branch inside an open `when`. */
+    fun inWhenBranch(condition: String, block: () -> Unit) {
+        inScope("$condition -> ") { block() }
+    }
+
+    /** Emit a literal `else -> {}` branch inside an open `when`. */
+    fun appendElseEmpty() {
+        builder.addStatement("else -> {}")
+    }
+
+    // ---- Scope openers ----
+
+    /**
+     * Emit `<target>.forEach { <param> -> … }`. The body runs against a scratch builder so we can
+     * read [Binding.isUsed] before deciding the lambda parameter: if [block] never calls
+     * `binding.ref()`, the parameter is `_`; otherwise it's the binding's name. The counter
+     * advances in either case.
+     *
+     * The new binding inherits its `sourceField` from `target.tailField()` so subsequent leaf
+     * accesses with the same field name resolve to the bare binding (see [Access.qualify]).
+     */
+    fun inFor(target: Access, block: (Binding) -> Unit) {
+        val binding = Binding("it${nameCounter++}", sourceField = target.tailField())
+        val body = captureScratch { block(binding) }
+        val param = if (binding.isUsed) binding.name else "_"
+        inScope("${target.render()}.forEach { $param ->") { builder.add(body) }
+    }
+
+    /** Emit `<target>?.let { <param> -> … }` with the same `_`-on-unused rule as [inFor]. */
+    fun inLet(target: Access, block: (Binding) -> Unit) {
+        val binding = Binding("it${nameCounter++}", sourceField = target.tailField())
+        val body = captureScratch { block(binding) }
+        val param = if (binding.isUsed) binding.name else "_"
+        inScope("${target.render()}?.let { $param ->") { builder.add(body) }
+    }
+
+    /**
+     * Emit `when (<subject>) { … }`. WHEN introduces no binding — children inherit [subject] as
+     * their parent access (Kotlin smart-cast preserves the access path inside `is X -> { … }`).
+     */
+    fun inWhen(subject: Access, block: () -> Unit) {
+        inScope("when (${subject.render()})") { block() }
+    }
+
+    /**
+     * Render [block] into a fresh [CodeBlock] without writing to the live builder. The body's
+     * emissions go to scratch; the caller can then prefix a header and replay the body via
+     * `builder.add(...)`. Used by [inFor] and [inLet] to defer the header until [Binding.isUsed]
+     * is known.
+     */
+    private inline fun captureScratch(block: () -> Unit): CodeBlock {
+        val real = builder
+        val scratch = CodeBlock.builder()
+        builder = scratch
+        try {
+            block()
+        } finally {
+            builder = real
+        }
+        return scratch.build()
     }
 
     companion object : ContextKey<CodeGenContext> {

@@ -6,6 +6,7 @@ data class CommandRequest(
     val data: Buffer,
     val operation: RedisOperation,
     val isBlocking: Boolean = false,
+    val command: String,
 ) {
     private var _key: Int? = null
     val computedSlot: Int? get() = _key

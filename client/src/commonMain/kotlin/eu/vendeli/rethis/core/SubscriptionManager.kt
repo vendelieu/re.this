@@ -4,10 +4,12 @@ import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.providers.ConnectionProvider
 import eu.vendeli.rethis.types.common.ActiveSubscription
 import eu.vendeli.rethis.types.common.SubscribeTarget
+import eu.vendeli.rethis.types.interfaces.ExperimentalReThisMetricsApi
 import eu.vendeli.rethis.types.interfaces.PubSubHandler
 import io.ktor.util.collections.*
 import kotlinx.coroutines.Job
 
+@OptIn(ExperimentalReThisMetricsApi::class)
 class SubscriptionManager internal constructor(
     internal val client: ReThis,
 ) {
@@ -49,6 +51,7 @@ class SubscriptionManager internal constructor(
             }.handlers
             .getOrPut(handler) { ConcurrentSet() }
             .add(worker)
+        client.cfg.metricsRecorder?.onSubscriptionChange(target::class.simpleName ?: "Subscribe", delta = 1)
     }
 
     internal fun unregisterHandler(
@@ -63,6 +66,7 @@ class SubscriptionManager internal constructor(
             subscription.handlers.remove(handler)
             if (subscription.handlers.isEmpty()) {
                 activeSubscriptions.remove(target)
+                client.cfg.metricsRecorder?.onSubscriptionChange(target::class.simpleName ?: "Subscribe", delta = -1)
             }
         }
     }

@@ -26,6 +26,7 @@ internal sealed class EnrichedTreeAttr {
     data object Key : EnrichedTreeAttr()
     data object SizeParam : EnrichedTreeAttr()
 
+    data object IgnoreSpec : EnrichedTreeAttr()
     data class Multiple(val vararg: Boolean = false, val collection: Boolean = false) : EnrichedTreeAttr()
     data class Optional(
         val inherited: OptionalityType? = null,

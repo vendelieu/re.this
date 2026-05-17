@@ -3,6 +3,9 @@ package eu.vendeli.rethis.core
 import eu.vendeli.rethis.codecs.connection.PingCommandCodec
 import eu.vendeli.rethis.configuration.ReThisConfiguration
 import eu.vendeli.rethis.types.common.RConnection
+import eu.vendeli.rethis.types.interfaces.AcquireFailure
+import eu.vendeli.rethis.types.interfaces.DisposeReason
+import eu.vendeli.rethis.types.interfaces.ExperimentalReThisMetricsApi
 import eu.vendeli.rethis.utils.CLIENT_NAME
 import eu.vendeli.rethis.utils.IO_OR_UNCONFINED
 import io.ktor.network.sockets.*
@@ -19,10 +22,10 @@ import kotlin.concurrent.atomics.incrementAndFetch
 import kotlin.math.ceil
 import kotlin.math.min
 import kotlin.math.roundToInt
+import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.TimeSource
 
-// todo add metrics
-@OptIn(ExperimentalAtomicApi::class)
+@OptIn(ExperimentalAtomicApi::class, ExperimentalReThisMetricsApi::class)
 internal class ConnectionPool(
     private val address: SocketAddress,
     private val cfg: ReThisConfiguration,
@@ -31,6 +34,7 @@ internal class ConnectionPool(
 ) {
     private val name = "$CLIENT_NAME|${cfg::class.simpleName}Pool@${this::class.hashCode()}"
     private val logger = cfg.loggerFactory.get("eu.vendeli.rethis.ConnectionPool")
+    private val addressLabel: String = address.toString()
     private val poolJob = Job(rootJob)
     private val scope = CoroutineScope(
         Dispatchers.IO_OR_UNCONFINED + CoroutineName(name) + poolJob,
@@ -55,13 +59,20 @@ internal class ConnectionPool(
         val populationJob = currentCoroutineContext()[Job]!!
         repeat(cfg.pool.minIdleConnections) {
             launch(Job(populationJob)) {
-                val conn = connectionFactory.createConnOrNull(address) ?: return@launch
+                val rec = cfg.metricsRecorder
+                val conn = connectionFactory.createConnOrNull(address)
+                if (conn == null) {
+                    rec?.onConnectionCreated(addressLabel, success = false)
+                    return@launch
+                }
+                rec?.onConnectionCreated(addressLabel, success = true)
                 idleConnections
                     .trySend(conn)
                     .onSuccess {
                         idleConnectionsCount.incrementAndFetch()
                     }.onFailure {
                         connectionFactory.dispose(conn)
+                        rec?.onConnectionDisposed(addressLabel, DisposeReason.CLOSE)
                     }
             }
         }
@@ -70,49 +81,75 @@ internal class ConnectionPool(
 
     fun haveIdleConnections() = idleConnectionsCount.load() < cfg.pool.maxIdleConnections
 
+    // ThrowsCount: each throw routes a distinct failure mode (timeout vs. other) into
+    // the correct AcquireFailure observation reason; consolidating into a single catch
+    // with `is TimeoutCancellationException` triggers the InstanceOfCheckForException rule.
+    @Suppress("ThrowsCount")
     @OptIn(ExperimentalCoroutinesApi::class)
-    suspend fun acquire(): RConnection = withTimeout(cfg.connectionAcquireTimeout) aq@{
-        borrowCount.incrementAndFetch()
-        // fastest path
-        val idleConn = idleConnections.tryReceive().getOrNull()?.healthyOrNull()
-        if (idleConn != null) {
-            return@aq idleConn
-        }
-
-        // medium path
-        val conn = connectionFactory.createConnOrNull(address)
-        if (conn != null) {
-            return@aq conn
-        }
-
-        // slow path
-        val deferred = CompletableDeferred<RConnection>()
-        pending.send(deferred)
+    suspend fun acquire(): RConnection {
+        val rec = cfg.metricsRecorder
+        val obs = rec?.connectionAcquireStarted(addressLabel)
         try {
-            return@aq deferred.await()
-        } catch (e: Throwable) {
-            // Cancellation/timeout race: a concurrent release() may have completed
-            // `deferred` between our suspension cancellation and this catch. Cancel
-            // the deferred (no-op if already completed) so any later release that
-            // pulls it from `pending` falls through to fillPool, and dispose any
-            // race-delivered connection so it doesn't leak.
-            deferred.cancel()
-            if (deferred.isCompleted && !deferred.isCancelled) {
-                runCatching { deferred.getCompleted() }
-                    .getOrNull()
-                    ?.let { connectionFactory.dispose(it) }
+            return withTimeout(cfg.connectionAcquireTimeout) aq@{
+                borrowCount.incrementAndFetch()
+                // fastest path
+                val idleConn = idleConnections.tryReceive().getOrNull()?.healthyOrNull()
+                if (idleConn != null) {
+                    obs?.acquired(fastPath = true)
+                    return@aq idleConn
+                }
+
+                // medium path
+                val conn = connectionFactory.createConnOrNull(address)
+                if (conn != null) {
+                    rec?.onConnectionCreated(addressLabel, success = true)
+                    obs?.acquired(fastPath = false)
+                    return@aq conn
+                }
+                rec?.onConnectionCreated(addressLabel, success = false)
+
+                // slow path
+                val deferred = CompletableDeferred<RConnection>()
+                pending.send(deferred)
+                try {
+                    val acquired = deferred.await()
+                    obs?.acquired(fastPath = false)
+                    return@aq acquired
+                } catch (e: Throwable) {
+                    // Cancellation/timeout race: a concurrent release() may have completed
+                    // `deferred` between our suspension cancellation and this catch. Cancel
+                    // the deferred (no-op if already completed) so any later release that
+                    // pulls it from `pending` falls through to fillPool, and dispose any
+                    // race-delivered connection so it doesn't leak.
+                    deferred.cancel()
+                    if (deferred.isCompleted && !deferred.isCancelled) {
+                        runCatching { deferred.getCompleted() }
+                            .getOrNull()
+                            ?.let { connectionFactory.dispose(it) }
+                    }
+                    throw e
+                }
             }
+        } catch (e: TimeoutCancellationException) {
+            obs?.failed(AcquireFailure.TIMEOUT)
+            throw e
+        } catch (e: Throwable) {
+            obs?.failed(AcquireFailure.OTHER)
             throw e
         }
     }
 
     @OptIn(InternalAPI::class)
     fun release(conn: RConnection) {
+        val rec = cfg.metricsRecorder
         if (!conn.input.readBuffer.exhausted()) {
             connectionFactory.dispose(conn)
+            rec?.onConnectionDisposed(addressLabel, DisposeReason.LEFTOVER_BYTES)
+            rec?.onConnectionReleased(addressLabel)
             return
         }
         conn.lastTouchedAt = TimeSource.Monotonic.markNow()
+        rec?.onConnectionReleased(addressLabel)
         // Drain any cancelled awaiters whose `complete(conn)` would silently drop
         // the connection; hand off to the first live awaiter or fall through.
         while (true) {
@@ -130,7 +167,7 @@ internal class ConnectionPool(
         // Wait 30 seconds for current operations
         withTimeoutOrNull(cfg.pool.gracefulClosePeriod) {
             // it's ok to use isEmpty here because we're not processing pending connections but waiting to close
-            while (!pending.isEmpty) delay(100)
+            while (!pending.isEmpty) delay(100.milliseconds)
         }
         close()
     }
@@ -140,9 +177,11 @@ internal class ConnectionPool(
         idleConnections.cancel()
         scope.cancel()
 
+        val rec = cfg.metricsRecorder
         while (true) {
             val element = idleConnections.tryReceive().getOrNull() ?: break
             connectionFactory.dispose(element)
+            rec?.onConnectionDisposed(addressLabel, DisposeReason.CLOSE)
         }
     }
 
@@ -151,6 +190,7 @@ internal class ConnectionPool(
         while (isActive) {
             delay(cfg.pool.checkInterval)
             adjustPoolSize()
+            cfg.metricsRecorder?.onPoolSample(addressLabel, idleConnectionsCount.load())
         }
     }
 
@@ -173,12 +213,18 @@ internal class ConnectionPool(
     }
 
     private suspend fun expandPool(by: Int) {
+        val rec = cfg.metricsRecorder
         if (connectionFactory.isReachedLimit()) {
             logger.debug { "Pool expanding attempt failed. Max connections reached." }
             return
         }
         repeat(by) {
-            val conn = connectionFactory.createConnOrNull(address) ?: return
+            val conn = connectionFactory.createConnOrNull(address)
+            if (conn == null) {
+                rec?.onConnectionCreated(addressLabel, success = false)
+                return
+            }
+            rec?.onConnectionCreated(addressLabel, success = true)
             // Hand off to the first live awaiter; drain cancelled deferreds left
             // by acquire() timeouts so they cannot swallow the fresh connection.
             var delivered = false
@@ -194,6 +240,7 @@ internal class ConnectionPool(
     }
 
     private fun shrinkPool() {
+        val rec = cfg.metricsRecorder
         val idleNow = idleConnectionsCount.load()
         val excess = idleNow - cfg.pool.minIdleConnections
         if (excess <= 0) return
@@ -203,6 +250,7 @@ internal class ConnectionPool(
             idleConnections.tryReceive().getOrNull()?.let { conn ->
                 connectionFactory.dispose(conn)
                 idleConnectionsCount.decrementAndFetch()
+                rec?.onConnectionDisposed(addressLabel, DisposeReason.SHRINK)
             }
         }
     }
@@ -231,6 +279,7 @@ internal class ConnectionPool(
             }
         }.onFailure {
             connectionFactory.dispose(this)
+            cfg.metricsRecorder?.onConnectionDisposed(addressLabel, DisposeReason.HEALTH_FAIL)
             return null
         }
 

@@ -9,6 +9,9 @@ import eu.vendeli.rethis.shared.types.RedisCommandSpec
 import eu.vendeli.rethis.shared.types.RedisOperation
 import eu.vendeli.rethis.shared.types.RespCode
 
+@Deprecated(
+    message = "CLUSTER SLOTS is deprecated as of Redis 7.0.0. Use CLUSTER SHARDS instead.",
+)
 @RedisCommand("CLUSTER SLOTS", RedisOperation.READ, [RespCode.ARRAY])
 @RedisMeta.CustomCodec(decoder = ClusterSlotsDecoder::class)
 fun interface ClusterSlotsCommand : RedisCommandSpec<Cluster> {

@@ -5,9 +5,7 @@ import eu.vendeli.rethis.core.DefaultLoggerFactory
 import eu.vendeli.rethis.core.JsonSerializationFormat
 import eu.vendeli.rethis.types.common.ReadFrom
 import eu.vendeli.rethis.types.common.RespVer
-import eu.vendeli.rethis.types.interfaces.LoggerFactory
-import eu.vendeli.rethis.types.interfaces.ReadFromStrategy
-import eu.vendeli.rethis.types.interfaces.SerializationFormat
+import eu.vendeli.rethis.types.interfaces.*
 import eu.vendeli.rethis.utils.IO_OR_UNCONFINED
 import io.ktor.network.tls.*
 import io.ktor.utils.io.charsets.*
@@ -160,6 +158,17 @@ sealed class ReThisConfiguration(
     var serializationFormat: SerializationFormat = JsonSerializationFormat()
 
     /**
+     * Optional recorder for runtime metrics (commands, pool, cluster, pub/sub).
+     *
+     * `null` (default) means metrics are off — every instrumentation site short-circuits
+     * via `?.`, paying nothing (no virtual dispatch, no allocations, label arguments
+     * are not evaluated). Provide a custom [MetricsRecorder] to bridge into
+     * Micrometer / OpenTelemetry / Prometheus.
+     */
+    @ExperimentalReThisMetricsApi
+    var metricsRecorder: MetricsRecorder? = null
+
+    /**
      * Configures authentication for the Redis connection by setting the password and optional username.
      *
      * @param password the password to use for authentication
@@ -207,30 +216,31 @@ sealed class ReThisConfiguration(
         socket.block()
     }
 
-    override fun toString(): String = StringBuilder()
-        .apply {
-            appendLine("${this@ReThisConfiguration::class.simpleName} {")
+    override fun toString(): String = buildString {
+        appendLine("${this@ReThisConfiguration::class.simpleName} {")
 
-            appendLine(
-                "\tauth=${
-                    auth?.let {
-                        "{username=${auth?.username}, password=${auth?.password?.size?.let { "*".repeat(it) }}}"
-                    }
-                }",
-            )
-            appendLine("\ttls=$tls")
-            appendLine("\t$socket")
-            appendLine("\t$retry")
-            appendLine("\tusePooling=$usePooling")
-            if (usePooling) appendLine("\tpool=$pool")
-            appendLine("\tdb=${db ?: 0}")
-            appendLine("\tcharset=$charset")
-            appendLine("\tdispatcher=$executionDispatcher")
-            appendLine("\tmaxConnections=$maxConnections")
-            appendLine("\tconnectionAcquireTimeout=$connectionAcquireTimeout")
-            appendLine("\tcommandTimeout=$commandTimeout")
-            appendLine("\tloggerFactory=${loggerFactory::class.simpleName}")
+        appendLine(
+            "\tauth=${
+                auth?.let {
+                    "{username=${auth?.username}, password=${auth?.password?.let { "*" }}}"
+                }
+            }",
+        )
+        appendLine("\ttls=$tls")
+        appendLine("\t$socket")
+        appendLine("\t$retry")
+        appendLine("\tusePooling=$usePooling")
+        if (usePooling) appendLine("\tpool=$pool")
+        appendLine("\tdb=${db ?: 0}")
+        appendLine("\tcharset=$charset")
+        appendLine("\tdispatcher=$executionDispatcher")
+        appendLine("\tmaxConnections=$maxConnections")
+        appendLine("\tconnectionAcquireTimeout=$connectionAcquireTimeout")
+        appendLine("\tcommandTimeout=$commandTimeout")
+        appendLine("\tloggerFactory=${loggerFactory::class.simpleName}")
+        @OptIn(ExperimentalReThisMetricsApi::class)
+        appendLine("\tmetricsRecorder=${metricsRecorder?.let { it::class.simpleName } ?: "null"}")
 
-            appendLine("}")
-        }.toString()
+        appendLine("}")
+    }
 }

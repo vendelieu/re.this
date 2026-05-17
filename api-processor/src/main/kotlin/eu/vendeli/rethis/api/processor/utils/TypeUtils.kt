@@ -80,6 +80,8 @@ internal fun KSDeclaration.isInstant() = qualifiedName?.asString() == "kotlin.ti
 internal fun KSDeclaration.isDuration() = qualifiedName?.asString() == "kotlin.time.Duration"
 internal fun KSDeclaration.isCharArray() = qualifiedName?.asString() == "kotlin.CharArray"
 internal fun KSDeclaration.isString() = qualifiedName?.asString() == "kotlin.String"
+internal fun KSDeclaration.isLong() = qualifiedName?.asString() == "kotlin.Long"
+internal fun KSDeclaration.isInt() = qualifiedName?.asString() == "kotlin.Int"
 internal fun KSDeclaration.isByteArray() = qualifiedName?.asString() == "kotlin.ByteArray"
 
 internal fun KSDeclaration.isEnum() = this is KSClassDeclaration && classKind == ClassKind.ENUM_CLASS

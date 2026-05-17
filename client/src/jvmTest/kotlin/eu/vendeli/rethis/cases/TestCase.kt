@@ -52,7 +52,7 @@ class TestCase : ReThisTestCtx() {
         scriptId: String,
         script: String,
         keys: Array<out String>,
-        arg: List<String>,
+        arg: List<String> = emptyList(),
     ): RType {
         val sha1 = scriptsSha1Map[scriptId] ?: scriptLoadMutex.withLock {
             scriptsSha1Map[scriptId] ?: scriptLoad(script).also {

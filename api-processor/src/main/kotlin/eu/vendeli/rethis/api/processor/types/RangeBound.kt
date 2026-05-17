@@ -21,7 +21,15 @@ internal fun EnrichedNode.rangeBounds(): Pair<RangeBound, RangeBound> {
     }
 
     if (children.isEmpty()) {
-        val b = RangeBound(myPath)
+        // Spec-less leaves marked with `IgnoreSpec` (i.e. `@RIgnoreSpecAbsence` value-params)
+        // sort AFTER spec-bound siblings so synthetic post-spec args land at the end of the
+        // wire array. Spec-less option-class FIELDS (no IgnoreSpec marker) keep declaration
+        // order to preserve MSET-style codec behaviour.
+        val b = when {
+            myPath.isNotEmpty() -> RangeBound(myPath)
+            attr.contains(EnrichedTreeAttr.IgnoreSpec) -> RangeBound(listOf(Int.MAX_VALUE))
+            else -> RangeBound(myPath)
+        }
         return b to b
     }
 

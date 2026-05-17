@@ -4,9 +4,11 @@ import com.google.devtools.ksp.KspExperimental
 import com.google.devtools.ksp.getAnnotationsByType
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSType
+import eu.vendeli.rethis.api.processor.context.Access
 import eu.vendeli.rethis.api.processor.context.CodeGenContext
-import eu.vendeli.rethis.api.processor.context.CodeGenContext.BlockType
 import eu.vendeli.rethis.api.processor.context.CollectedTokens
+import eu.vendeli.rethis.api.processor.context.qualify
+import eu.vendeli.rethis.api.processor.context.render
 import eu.vendeli.rethis.api.processor.core.RedisCommandProcessor.Companion.context
 import eu.vendeli.rethis.api.processor.utils.*
 import eu.vendeli.rethis.shared.annotations.RedisOption
@@ -20,13 +22,13 @@ internal sealed class WriteOp {
 
     data class DirectCall(
         override val node: EnrichedNode,
-        val slotBlock: CodeGenContext.(String?) -> Unit,
-        val encodeBlock: CodeGenContext.(String?, EncodePhase) -> Unit,
+        val slotBlock: CodeGenContext.(Access) -> Unit,
+        val encodeBlock: CodeGenContext.(Access, EncodePhase) -> Unit,
     ) : WriteOp()
 
     data class WrappedCall(
         override val node: EnrichedNode,
-        val props: MutableSet<WriteOpProps>,
+        val props: Set<WriteOpProps>,
         val inner: List<WriteOp>,
         val tokens: MutableList<EnrichedTreeAttr.Token>,
     ) : WriteOp()
@@ -56,139 +58,185 @@ internal fun WriteOp.filterWithoutKey(): WriteOp? = when (this) {
     }
 }
 
-@OptIn(KspExperimental::class)
-internal fun WriteOp.emitOp(phase: EncodePhase, parentPointer: String? = null) {
+internal fun WriteOp.emitOp(phase: EncodePhase, parent: Access = Access.Top) {
     val ctx = context[CodeGenContext] ?: run {
         context.logger.error("CodeGenContext not found")
         return
     }
-
     when (this) {
-        is WriteOp.DirectCall -> when (phase) {
-            EncodePhase.SLOT -> if (node.attr.contains(EnrichedTreeAttr.Key)) slotBlock(ctx, parentPointer)
-            EncodePhase.SIZE, EncodePhase.WRITE -> encodeBlock(ctx, parentPointer, phase)
-        }
-
-        is WriteOp.Dispatch -> ctx.buildBlock(node.nameOrNull ?: ctx.pointer!!, BlockType.WHEN, parentPointer) {
-            branches.forEach { (subType, branchOps) ->
-                addImport(subType.declaration.qualifiedName!!.asString())
-                ctx.builder.beginControlFlow("is ${subType.name} -> ")
-                val processedTokens = mutableSetOf<String>()
-                if (phase != EncodePhase.SLOT) {
-                    val tokens = subType.declaration.getAnnotationsByType(RedisOption.Token::class).toList()
-                    tokens.forEach {
-                        // Always collect tokens for RedisToken generation
-                        if (phase == EncodePhase.WRITE) {
-                            context[CollectedTokens]?.addToken(it.name)
-                        }
-
-                        // Write tokens for non-data-objects (data objects are handled in WriteUtils.kt)
-                        if (!subType.declaration.isDataObject()) {
-                            if (phase == EncodePhase.SIZE) {
-                                if (context.currentCommand.haveVaryingSize) ctx.appendLine("argCount += 1")
-                            } else if (phase == EncodePhase.WRITE) {
-                                addImport("eu.vendeli.rethis.utils.writeBulkString")
-                                val tokenProperty = tokenToRedisTokenPropertyName(it.name)
-                                addImport("eu.vendeli.rethis.utils.RedisToken")
-                                ctx.appendLine("buffer.writeBulkString(RedisToken.%L)", tokenProperty)
-                            }
-                        }
-                        processedTokens.add(it.name)
-                    }
-                }
-                branchOps.forEach {
-                    it.handleTokens(processedTokens)
-                    it.emitOp(phase, ctx.pointer)
-                }
-                ctx.builder.endControlFlow()
-            }
-            if (phase == EncodePhase.SLOT) ctx.builder.addStatement("else -> {}")
-        }
-
-        is WriteOp.WrappedCall -> {
-            val isComplex = !node.type.declaration.isStdType() &&
-                !node.type.declaration.isEnum() &&
-                node.type.declaration.safeCast<KSClassDeclaration>()?.primaryConstructor?.parameters?.size?.let {
-                    it > 0
-                } == true
-
-            val isCollection = props.contains(WriteOpProps.COLLECTION)
-            
-            // Get the node's name explicitly
-            val nodeName = node.attr.filterIsInstance<EnrichedTreeAttr.Name>().singleOrNull()?.name
-            
-            // Calculate the pointer for children
-            val childPointer = when {
-                isComplex && !isCollection && nodeName != null -> nodeName
-                else -> parentPointer
-            }
-
-            val thisNodePointer = parentPointer
-
-            var collectionGuard = false
-            fun handleWrapping(type: ArrayDeque<WriteOpProps>) {
-                val action = {
-                    when {
-                        type.isNotEmpty() -> handleWrapping(type)
-                        else -> {
-                            inner.forEach { it.emitOp(phase, childPointer) }
-                        }
-                    }
-                }
-
-                when (type.removeFirstOrNull()) {
-                    WriteOpProps.NULLABLE -> ctx.buildBlock(node.name, BlockType.LET, thisNodePointer) { action() }
-
-                    WriteOpProps.SINGLE_TOKEN -> {
-                        if (phase != EncodePhase.SLOT) {
-                            if (type.contains(WriteOpProps.COLLECTION)) {
-                                collectionGuard = true
-                                val pName = if (thisNodePointer.isNullOrBlank()) node.name else "$thisNodePointer.${node.name}"
-                                ctx.builder.beginControlFlow("if (%L.isNotEmpty())", pName)
-                            }
-
-                            ctx.writeTokens(node, tokens, phase) { t -> !t.multiple }
-
-                            if (collectionGuard && !type.contains(WriteOpProps.WITH_SIZE)) {
-                                collectionGuard = false
-                                ctx.builder.endControlFlow()
-                            }
-                        }
-                        action()
-                    }
-
-                    WriteOpProps.WITH_SIZE -> {
-                        if (phase != EncodePhase.SLOT) {
-                            val pName = if (thisNodePointer.isNullOrBlank()) node.name else "$thisNodePointer.${node.name}"
-                            if (phase == EncodePhase.SIZE) {
-                                ctx.appendLine("argCount += 1")
-                            } else if (phase == EncodePhase.WRITE) {
-                                addImport("eu.vendeli.rethis.utils.writeBulkString")
-                                // Size is always dynamic, use toByteArray(charset)
-                                ctx.appendLine("buffer.writeBulkString(%L.size.toString().toByteArray(charset))", pName)
-                            }
-
-                            if (collectionGuard) ctx.builder.endControlFlow()
-                        }
-                        action()
-                    }
-
-                    WriteOpProps.COLLECTION -> ctx.buildBlock(node.name, BlockType.FOR, thisNodePointer) {
-                        action()
-                    }
-
-                    WriteOpProps.MULTIPLE_TOKEN -> {
-                        if (phase != EncodePhase.SLOT) ctx.writeTokens(node, tokens, phase) { t -> t.multiple }
-                        action()
-                    }
-
-                    else -> action()
-                }
-            }
-            handleWrapping(ArrayDeque(props))
-        }
+        is WriteOp.DirectCall -> emit(ctx, phase, parent)
+        is WriteOp.Dispatch -> emit(ctx, phase, parent)
+        is WriteOp.WrappedCall -> emit(ctx, phase, parent)
     }
 }
+
+// region DirectCall
+
+private fun WriteOp.DirectCall.emit(ctx: CodeGenContext, phase: EncodePhase, parent: Access) {
+    when (phase) {
+        EncodePhase.SLOT -> if (node.attr.contains(EnrichedTreeAttr.Key)) slotBlock(ctx, parent)
+        EncodePhase.SIZE, EncodePhase.WRITE -> encodeBlock(ctx, parent, phase)
+    }
+}
+
+// endregion
+
+// region Dispatch
+
+@OptIn(KspExperimental::class)
+private fun WriteOp.Dispatch.emit(ctx: CodeGenContext, phase: EncodePhase, parent: Access) {
+    // Top-level dispatch like `when (subcommand)` uses the node's own name; nested dispatch over a
+    // binding (e.g. `when (it0)` inside `forEach` over a sealed element type) inherits `parent`.
+    val subject = node.nameOrNull?.let { parent.qualify(it) } ?: parent
+    require(subject != Access.Top) { "Dispatch requires a named subject" }
+    ctx.inWhen(subject) {
+        branches.forEach { (subType, branchOps) ->
+            addImport(subType.declaration.qualifiedName!!.asString())
+            ctx.inWhenBranch("is ${subType.name}") {
+                val processedTokens = ctx.emitDispatchBranchPivot(phase, subType)
+                // Inside `is X -> { … }` Kotlin smart-casts the subject to X — same access path.
+                branchOps.forEach {
+                    it.handleTokens(processedTokens)
+                    it.emitOp(phase, subject)
+                }
+            }
+        }
+        if (phase == EncodePhase.SLOT) ctx.appendElseEmpty()
+    }
+}
+
+@OptIn(KspExperimental::class)
+private fun CodeGenContext.emitDispatchBranchPivot(
+    phase: EncodePhase,
+    subType: KSType,
+): Set<String> {
+    if (phase == EncodePhase.SLOT) return emptySet()
+    val processed = mutableSetOf<String>()
+    val isDataObject = subType.declaration.isDataObject()
+    subType.declaration.getAnnotationsByType(RedisOption.Token::class).forEach { tok ->
+        if (phase == EncodePhase.WRITE) context[CollectedTokens]?.addToken(tok.name)
+        // For data objects the bound value itself stringifies to the token, so the pivot
+        // contributes no extra arg/byte — only mark the token name as processed.
+        if (!isDataObject) {
+            when (phase) {
+                EncodePhase.SIZE ->
+                    if (context.currentCommand.haveVaryingSize) appendLine("argCount += 1")
+
+                EncodePhase.WRITE -> {
+                    addImport("eu.vendeli.rethis.utils.writeBulkString")
+                    addImport("eu.vendeli.rethis.utils.RedisToken")
+                    appendLine(
+                        "buffer.writeBulkString(RedisToken.%L)",
+                        tokenToRedisTokenPropertyName(tok.name),
+                    )
+                }
+            }
+        }
+        processed.add(tok.name)
+    }
+    return processed
+}
+
+// endregion
+
+// region WrappedCall
+
+private fun WriteOp.WrappedCall.emit(ctx: CodeGenContext, phase: EncodePhase, parent: Access) {
+    val shape = WrapShape.of(props)
+    val isComplex = node.isComplexType()
+    val nodeName = node.nameOrNull
+    // `node.name` (single Name attr) is only guaranteed when one of these props demands it.
+    // Path-4 complex-with-children WrappedCalls can lack a Name, so guard the access.
+    val needsSelfAccess = shape.nullable || shape.collection || shape.withSize
+    val selfAccess: Access? = if (needsSelfAccess) parent.qualify(node.name) else null
+    val childParent: Access =
+        if (isComplex && !shape.collection && nodeName != null) parent.qualify(nodeName) else parent
+
+    fun emitTokensAndSize(current: Access) {
+        if (phase == EncodePhase.SLOT) return
+        if (shape.singleToken) ctx.writeTokens(node, tokens, current, phase) { !it.multiple }
+        if (shape.withSize) ctx.emitSizePrefix(selfAccess!!, phase)
+    }
+
+    fun emitGuarded(current: Access) {
+        if (shape.needsGuard && phase != EncodePhase.SLOT) {
+            ctx.inScope("if (%L.isNotEmpty())", selfAccess!!.render()) { emitTokensAndSize(current) }
+        } else {
+            emitTokensAndSize(current)
+        }
+    }
+
+    fun emitTail(current: Access) {
+        if (shape.multipleToken && phase != EncodePhase.SLOT) {
+            ctx.writeTokens(node, tokens, current, phase) { it.multiple }
+        }
+        inner.forEach { it.emitOp(phase, current) }
+    }
+
+    fun emitBody(current: Access, forTarget: Access) {
+        emitGuarded(current)
+        if (shape.collection) ctx.inFor(forTarget) { binding -> emitTail(binding.ref()) }
+        else emitTail(current)
+    }
+
+    if (shape.nullable) {
+        ctx.inLet(selfAccess!!) { binding ->
+            // For `Foo?` of a complex (data class) wrapper, children read `foo.field` via Kotlin
+            // smart-cast inside the let — the LET binding stays unused → param `_`. For everything
+            // else, children read `binding.field`.
+            val current = if (isComplex && !shape.collection) childParent else binding.ref()
+            emitBody(current, binding.ref())
+        }
+    } else {
+        emitBody(childParent, selfAccess ?: childParent)
+    }
+}
+
+private class WrapShape(
+    val nullable: Boolean,
+    val singleToken: Boolean,
+    val withSize: Boolean,
+    val collection: Boolean,
+    val multipleToken: Boolean,
+) {
+    // Wraps SINGLE_TOKEN's tokens + WITH_SIZE's size emission; the subsequent forEach is OUTSIDE
+    // the guard so an empty collection does not emit a stray "TOKEN 0" arg.
+    val needsGuard: Boolean get() = singleToken && collection
+
+    companion object {
+        fun of(props: Set<WriteOpProps>) = WrapShape(
+            nullable = WriteOpProps.NULLABLE in props,
+            singleToken = WriteOpProps.SINGLE_TOKEN in props,
+            withSize = WriteOpProps.WITH_SIZE in props,
+            collection = WriteOpProps.COLLECTION in props,
+            multipleToken = WriteOpProps.MULTIPLE_TOKEN in props,
+        )
+    }
+}
+
+private fun EnrichedNode.isComplexType(): Boolean {
+    val decl = type.declaration
+    if (decl.isStdType() || decl.isEnum()) return false
+    val ctorParams = decl.safeCast<KSClassDeclaration>()?.primaryConstructor?.parameters?.size
+    return ctorParams != null && ctorParams > 0
+}
+
+private fun CodeGenContext.emitSizePrefix(access: Access, phase: EncodePhase) {
+    when (phase) {
+        EncodePhase.SIZE -> appendLine("argCount += 1")
+        EncodePhase.WRITE -> {
+            addImport("eu.vendeli.rethis.utils.writeBulkString")
+            appendLine(
+                "buffer.writeBulkString(%L.size.toString().toByteArray(charset))",
+                access.render(),
+            )
+        }
+
+        EncodePhase.SLOT -> Unit
+    }
+}
+
+// endregion
 
 private fun WriteOp.handleTokens(processedTokens: Set<String>) {
     node.attr.removeIf { attr -> attr is EnrichedTreeAttr.Token && processedTokens.contains(attr.name) }
@@ -200,15 +248,16 @@ private fun WriteOp.handleTokens(processedTokens: Set<String>) {
 internal fun CodeGenContext.writeTokens(
     node: EnrichedNode,
     tokens: List<EnrichedTreeAttr.Token>,
+    parent: Access,
     phase: EncodePhase,
-    filterPredicate: (EnrichedTreeAttr.Token) -> Boolean = { true }
+    filterPredicate: (EnrichedTreeAttr.Token) -> Boolean = { true },
 ) {
     val filteredTokens = tokens.filter(filterPredicate)
     val typeDecl = node.type.declaration
     if (typeDecl.isEnum() || typeDecl.isDataObject()) return
 
     val isBoolToken = typeDecl.isBool() && filteredTokens.isNotEmpty()
-    if (isBoolToken) builder.beginControlFlow("if(${pointedParameter(node.name)})")
+    if (isBoolToken) beginControlFlow("if(${parent.qualify(node.name).render()})")
 
     filteredTokens.forEach {
         if (phase == EncodePhase.SIZE) {
@@ -223,5 +272,5 @@ internal fun CodeGenContext.writeTokens(
         node.attr.remove(it)
     }
 
-    if (isBoolToken) builder.endControlFlow()
+    if (isBoolToken) endControlFlow()
 }

@@ -89,7 +89,10 @@ internal object LibTreePlanter {
         }
 
         if (rNode == null) {
-            if (!p.hasAnnotation<RIgnoreSpecAbsence>()) {
+            if (p.hasAnnotation<RIgnoreSpecAbsence>()) {
+                // Mark synthetic post-spec params so the writer sorts them after spec-bound siblings.
+                paramNode.attr.add(EnrichedTreeAttr.IgnoreSpec)
+            } else {
                 context.logger.warn("Param `${p.effectiveName()}` not found in RSpec [${context.currentCommand.command.name}, ${context.currentCommand.klass.simpleName.asString()}]")
             }
             return

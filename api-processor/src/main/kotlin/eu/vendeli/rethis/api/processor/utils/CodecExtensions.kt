@@ -102,8 +102,9 @@ internal fun buildStaticHeaderInitializer(header: String): CodeBlock = CodeBlock
 internal fun CodeBlock.Builder.addCommandSpecDeclaration() {
     addStatement("")
     addStatement(
-        "return CommandRequest(buffer, %T.%L, BLOCKING_STATUS)",
+        "return CommandRequest(buffer, %T.%L, BLOCKING_STATUS, %S)",
         RedisOperation::class,
         context.currentCommand.command.operation.name,
+        context.currentCommand.command.name,
     )
 }

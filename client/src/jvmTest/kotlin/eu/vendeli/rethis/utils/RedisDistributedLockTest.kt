@@ -6,6 +6,7 @@ import eu.vendeli.rethis.shared.types.LockLostException
 import eu.vendeli.rethis.types.interfaces.ReDistributedLock
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.annotation.Ignored
+import io.kotest.core.test.config.DefaultTestConfig
 import io.kotest.matchers.booleans.shouldBeFalse
 import io.kotest.matchers.booleans.shouldBeTrue
 import io.kotest.matchers.ints.shouldBeExactly
@@ -22,6 +23,9 @@ import kotlin.time.Duration.Companion.seconds
  */
 @Ignored
 class RedisDistributedLockTest : ReThisTestCtx() {
+    init {
+        defaultTestConfig = DefaultTestConfig(timeout = 60.seconds)
+    }
     // ==================== REENTRANCY TESTS ====================
 
     @Test

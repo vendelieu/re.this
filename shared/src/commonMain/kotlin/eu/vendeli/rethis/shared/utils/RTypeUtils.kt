@@ -30,8 +30,8 @@ fun Buffer.readResponseWrapped(
         RespCode.SET -> {
             val size = readLineStrict().toInt()
             if (size < 0) RType.Null else {
-                val set = mutableSetOf<RPrimitive>()
-                repeat(size) { set += readResponseWrapped(charset, rawOnly) as RPrimitive }
+                val set = mutableSetOf<RType>()
+                repeat(size) { set += readResponseWrapped(charset, rawOnly) }
                 RSet(set)
             }
         }
@@ -39,8 +39,8 @@ fun Buffer.readResponseWrapped(
         RespCode.PUSH -> {
             val size = readLineStrict().toInt()
             if (size < 0) RType.Null else {
-                val list = mutableListOf<RPrimitive>()
-                repeat(size) { list += readResponseWrapped(charset, rawOnly) as RPrimitive }
+                val list = mutableListOf<RType>()
+                repeat(size) { list += readResponseWrapped(charset, rawOnly) }
                 Push(list)
             }
         }

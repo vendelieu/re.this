@@ -33,15 +33,18 @@ internal fun addEncoderCode() {
     val ops = buildWritePlan(context.enrichedTree)
 
     if (!context.currentCommand.hasCustomEncoder) {
-        val baseSize = context.currentCommand.command.name.split(' ').size
-        encodeCode.addStatement("var argCount = $baseSize")
+        val hasVaryingSize = context.currentCommand.haveVaryingSize
+        if (hasVaryingSize) {
+            val baseSize = context.currentCommand.command.name.split(' ').size
+            encodeCode.addStatement("var argCount = $baseSize")
+        }
 
         context += CodeGenContext(encodeCode)
         ops.forEach { it.emitOp(EncodePhase.SIZE) }
 
         addImport("kotlinx.io.Buffer")
         encodeCode.addStatement("val buffer = Buffer()")
-        if (context.currentCommand.haveVaryingSize) {
+        if (hasVaryingSize) {
             addImport("eu.vendeli.rethis.utils.writeArrayHeader")
             encodeCode.addStatement("buffer.writeArrayHeader(argCount)")
         }

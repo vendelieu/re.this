@@ -1,5 +1,20 @@
 # Re.this Changelog
 
+## 0.4.2
+
+* Added metrics reporting through `metricsRecorder` configuration option.
+* Added cluster commands: `CLUSTER MIGRATION`, `CLUSTER SLAVES`, `CLUSTER SLOT-STATS`, `CLUSTER SLOTS`, `CLUSTER SYNC-SLOTS`.
+* Added connection commands: `CLIENT CACHING`, `CLIENT GETREDIR`, `CLIENT NO-EVICT`, `CLIENT NO-TOUCH`, `CLIENT SETINFO`, `CLIENT TRACKINGINFO`, `CLIENT UNPAUSE`, `ECHO`, `QUIT`, `RESET`.
+* Added hash commands: `HGETDEL`, `HGETEX`, `HMSET`, `HPEXPIRE`, `HPEXPIREAT`, `HPEXPIRETIME`, `HSETEX`.
+* Added JSON commands: `JSON.NUMMULTBY`, `JSON.RESP`.
+* Added sentinel commands: `SENTINEL DEBUG`, `SENTINEL IS-MASTER-DOWN-BY-ADDR`.
+* Added server commands: `COMMAND DOCS`, `COMMAND INFO`, `COMMAND LIST`, `CONFIG GET`, `CONFIG RESETSTAT`, `CONFIG SET`, `DBSIZE`, `DEBUG`, `HOTKEYS GET/RESET/START/STOP`, `INFO`, `LOLWUT`, `SFLUSH`, `TRIM-SLOTS`.
+* Added stream commands: `XACKDEL`, `XCFGSET`, `XDELEX`, `XNACK`.
+* Added string commands: `DELEX`, `DIGEST`, `MSETEX`.
+* Added vector commands: `VADD`, `VCARD`, `VDIM`, `VEMB`, `VGETATTR`, `VINFO`, `VISMEMBER`, `VLINKS`, `VRANDMEMBER`, `VRANGE`, `VREM`, `VSETATTR`, `VSIM`.
+* Improved int/long/duration/instant encoding in codecs.
+* Improved internal codecs building logic.
+
 ## 0.4.1
 
 * Added per-command timeout via `commandTimeout` configuration option, throwing `CommandTimeoutException` when a Redis reply exceeds the deadline.

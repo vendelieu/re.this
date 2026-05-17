@@ -3,8 +3,7 @@ package eu.vendeli.rethis.api.processor.utils
 import com.google.devtools.ksp.KspExperimental
 import com.google.devtools.ksp.getAnnotationsByType
 import com.google.devtools.ksp.symbol.KSClassDeclaration
-import eu.vendeli.rethis.api.processor.context.CodeGenContext
-import eu.vendeli.rethis.api.processor.context.CollectedTokens
+import eu.vendeli.rethis.api.processor.context.*
 import eu.vendeli.rethis.api.processor.core.RedisCommandProcessor.Companion.context
 import eu.vendeli.rethis.api.processor.types.*
 import eu.vendeli.rethis.shared.annotations.RedisOption
@@ -28,6 +27,36 @@ private fun recurse(node: EnrichedNode): List<WriteOp> {
         val childOps = node.children
             .sortedWith(compareBy({ it.rangeBounds().first }, { it.rangeBounds().second }))
             .flatMap { recurse(it) }
+        // Fallback for spec-less primitive params (e.g. `@RIgnoreSpecAbsence vararg X: String`):
+        // emit a per-element DirectCall so the variadic args actually reach the wire.
+        // Data-object sealed subtypes have no Name attr but still need the DirectCall path so
+        // their `@RedisOption.Token` is emitted when the upstream spec doesn't carry that token.
+        if (childOps.isEmpty() && node.children.isEmpty() && node.ks.type != SymbolType.Function) {
+            val typeAttr = node.attr.filterIsInstance<EnrichedTreeAttr.Type>().singleOrNull()
+            val hasName = node.attr.any { it is EnrichedTreeAttr.Name }
+            val isSpeclessDataObject = typeAttr?.type?.declaration?.isDataObject() == true
+            if (typeAttr != null && (hasName || isSpeclessDataObject)) {
+                val kt = typeAttr.type
+                if (kt.declaration.isEnum() || kt.declaration.isDataObject() || kt.declaration.isStdType()) {
+                    val name = nearestName(node)!!
+                    val directCall = WriteOp.DirectCall(
+                        node = node,
+                        slotBlock = { parent ->
+                            val toString = if (
+                                kt.name != "String" &&
+                                kt.arguments.firstOrNull { t -> t.type?.resolve()?.name == "String" } == null
+                            ) ".toString()" else ""
+                            appendLine(
+                                "slot = validateSlot(slot, CRC16.lookup(%L$toString.toByteArray(charset)))",
+                                parent.qualify(name).render(),
+                            )
+                        },
+                        encodeBlock = { parent, phase -> inferWriting(name, node, parent, phase) },
+                    )
+                    return wrapIfNeeded(node, directCall)
+                }
+            }
+        }
         if (node.ks.type == SymbolType.Function || node.attr.none { it is EnrichedTreeAttr.Name }) return childOps
         return listOf(handleWrappedCall(node, childOps))
     }
@@ -40,31 +69,17 @@ private fun recurse(node: EnrichedNode): List<WriteOp> {
         val name = nearestName(node)!!
         val directCall = WriteOp.DirectCall(
             node = node,
-            slotBlock = { parentPointer ->
+            slotBlock = { parent ->
                 val toString = if (
                     kt.name != "String" &&
                     kt.arguments.firstOrNull { t -> t.type?.resolve()?.name == "String" } == null
                 ) ".toString()" else ""
-                val pName = when {
-                    blockStack.isNotEmpty() -> {
-                        val iteratorVar = pointer ?: name
-                        val isChildOfBlockField = parentPointer != null && parentPointer == blockStack.last().second
-                        if ((blockStack.last().second != name || isChildOfBlockField) && iteratorVar != name) {
-                            "$iteratorVar.$name"
-                        } else {
-                            iteratorVar
-                        }
-                    }
-
-                    !parentPointer.isNullOrBlank() -> "$parentPointer.$name"
-                    else -> name
-                }
                 appendLine(
                     "slot = validateSlot(slot, CRC16.lookup(%L$toString.toByteArray(charset)))",
-                    pName,
+                    parent.qualify(name).render(),
                 )
             },
-            encodeBlock = { parentPointer, phase -> inferWriting(name, node, parentPointer, phase) },
+            encodeBlock = { parent, phase -> inferWriting(name, node, parent, phase) },
         )
         return wrapIfNeeded(node, directCall)
     }
@@ -88,98 +103,108 @@ private fun nearestName(node: EnrichedNode?): String? = node?.attr
 
 @OptIn(KspExperimental::class)
 private fun CodeGenContext.inferWriting(
-    fieldAccess: String,
+    field: String,
     node: EnrichedNode,
-    parentPointer: String?,
+    parent: Access,
     phase: EncodePhase,
 ) {
     val resolvedType = node.type.collectionAwareType()
 
-    writeTokens(node, node.tokens, phase)
+    writeTokens(node, node.tokens, parent, phase)
     if (resolvedType.declaration.isBool()) return
 
-    // Build the parameter name based on context
-    val pName = when {
-        // Inside a block (forEach, let, when) - use iterator.fieldName or just iterator if same name
-        blockStack.isNotEmpty() -> {
-            val iteratorVar = pointer ?: fieldAccess
-            val isChildOfBlockField = parentPointer != null && parentPointer == blockStack.last().second
-            if ((blockStack.last().second != fieldAccess || isChildOfBlockField) && iteratorVar != fieldAccess) {
-                "$iteratorVar.$fieldAccess"
-            } else {
-                iteratorVar
-            }
-        }
-        // Has explicit parent pointer (e.g., streams.key)
-        !parentPointer.isNullOrBlank() -> "$parentPointer.$fieldAccess"
-        // Top level - just use the parameter name
-        else -> fieldAccess
-    }
-
     if (phase == EncodePhase.SIZE) {
-        if (context.currentCommand.haveVaryingSize) builder.addStatement("argCount += 1")
-    } else if (phase == EncodePhase.WRITE) {
-        addImport("eu.vendeli.rethis.utils.writeBulkString")
-        addImport("io.ktor.utils.io.core.toByteArray")
-        when {
-            resolvedType.declaration.isStdType() -> {
-                when {
-                    resolvedType.declaration.isString() -> {
-                        appendLine("buffer.writeBulkString(%L.toByteArray(charset))", pName)
-                    }
-
-                    resolvedType.declaration.isInstant() -> {
-                        val timeUnit = resolvedType.getTimeUnit()
-                        val expr = if (timeUnit == "MILLISECONDS") "toEpochMilliseconds()" else "epochSeconds"
-                        appendLine("buffer.writeBulkString(%L.%L.toString().toByteArray(charset))", pName, expr)
-                    }
-
-                    resolvedType.declaration.isDuration() -> {
-                        val timeUnit = resolvedType.getTimeUnit()
-                        val expr = if (timeUnit == "MILLISECONDS") "inWholeMilliseconds" else "inWholeSeconds"
-                        appendLine("buffer.writeBulkString(%L.%L.toString().toByteArray(charset))", pName, expr)
-                    }
-
-                    resolvedType.declaration.isByteArray() -> {
-                        appendLine("buffer.writeBulkString(%L)", pName)
-                    }
-
-                    resolvedType.declaration.isCharArray() -> {
-                        appendLine("buffer.writeBulkString(%L.concatToString().toByteArray(charset))", pName)
-                    }
-
-                    else -> appendLine("buffer.writeBulkString(%L.toString().toByteArray(charset))", pName)
-                }
-            }
-
-            resolvedType.declaration.isDataObject() -> {
-                // For data objects, get token from the declaration itself
-                @OptIn(KspExperimental::class)
-                val declTokens = (resolvedType.declaration as? KSClassDeclaration)
-                    ?.getAnnotationsByType(RedisOption.Token::class)?.map { it.name }?.toList()
+        // Counting bodies don't need the access path — skip rendering it so the binding stays unmarked.
+        if (context.currentCommand.haveVaryingSize) {
+            val argInc = if (resolvedType.declaration.isDataObject()) {
+                val declTokens = resolvedType.declaration
+                    .safeCast<KSClassDeclaration>()
+                    ?.getAnnotationsByType(RedisOption.Token::class)
+                    ?.map { it.name }
+                    ?.toList()
                 val actualTokens = if (!declTokens.isNullOrEmpty()) declTokens else node.tokens.map { it.name }
                 val declarationToken = resolvedType.declaration.effectiveName()
-
-                if (actualTokens.singleOrNull() == declarationToken) {
-                    appendLine(
-                        "buffer.writeBulkString(%L.toString().toByteArray(charset))",
-                        pointer ?: fieldAccess,
-                    )
-                } else {
-                    actualTokens.forEach { tokenName ->
-                        // Collect token and use RedisToken
-                        context[CollectedTokens]?.addToken(tokenName)
-                        val tokenProperty = tokenToRedisTokenPropertyName(tokenName)
-                        addImport("eu.vendeli.rethis.utils.RedisToken")
-                        addImport("eu.vendeli.rethis.utils.writeBulkString")
-                        appendLine("buffer.writeBulkString(RedisToken.%L)", tokenProperty)
-                    }
+                when {
+                    actualTokens.isEmpty() -> 1
+                    actualTokens.singleOrNull() == declarationToken -> 1
+                    else -> actualTokens.size
                 }
-            }
+            } else 1
+            appendLine("argCount += $argInc")
+        }
+        return
+    }
+    if (phase != EncodePhase.WRITE) return
 
-            resolvedType.declaration.isEnum() -> {
-                appendLine("buffer.writeBulkString(%L.toString().toByteArray(charset))", pName)
+    val pName = parent.qualify(field).render()
+    addImport("eu.vendeli.rethis.utils.writeBulkString")
+    addImport("io.ktor.utils.io.core.toByteArray")
+    when {
+        resolvedType.declaration.isStdType() -> {
+            when {
+                resolvedType.declaration.isString() -> {
+                    appendLine("buffer.writeBulkString(%L.toByteArray(charset))", pName)
+                }
+
+                resolvedType.declaration.isInt() -> {
+                    addImport("eu.vendeli.rethis.utils.writeIntArg")
+                    appendLine("buffer.writeIntArg(%L, charset)", pName)
+                }
+
+                resolvedType.declaration.isLong() -> {
+                    addImport("eu.vendeli.rethis.utils.writeLongArg")
+                    appendLine("buffer.writeLongArg(%L, charset)", pName)
+                }
+
+                resolvedType.declaration.isInstant() -> {
+                    addImport("eu.vendeli.rethis.utils.writeLongArg")
+                    val timeUnit = resolvedType.getTimeUnit()
+                    val expr = if (timeUnit == "MILLISECONDS") "toEpochMilliseconds()" else "epochSeconds"
+                    appendLine("buffer.writeLongArg(%L.%L, charset)", pName, expr)
+                }
+
+                resolvedType.declaration.isDuration() -> {
+                    addImport("eu.vendeli.rethis.utils.writeLongArg")
+                    val timeUnit = resolvedType.getTimeUnit()
+                    val expr = if (timeUnit == "MILLISECONDS") "inWholeMilliseconds" else "inWholeSeconds"
+                    appendLine("buffer.writeLongArg(%L.%L, charset)", pName, expr)
+                }
+
+                resolvedType.declaration.isByteArray() -> {
+                    appendLine("buffer.writeBulkString(%L)", pName)
+                }
+
+                resolvedType.declaration.isCharArray() -> {
+                    appendLine("buffer.writeBulkString(%L.concatToString().toByteArray(charset))", pName)
+                }
+
+                else -> appendLine("buffer.writeBulkString(%L.toString().toByteArray(charset))", pName)
             }
+        }
+
+        resolvedType.declaration.isDataObject() -> {
+            // For data objects, get token from the declaration itself
+            val declTokens = resolvedType.declaration
+                .safeCast<KSClassDeclaration>()
+                ?.getAnnotationsByType(RedisOption.Token::class)
+                ?.map { it.name }
+                ?.toList()
+            val actualTokens = if (!declTokens.isNullOrEmpty()) declTokens else node.tokens.map { it.name }
+
+            actualTokens.forEach { tokenName ->
+                // Use the pre-baked RedisToken constant — even when the token name happens to
+                // match the declaration's class name (e.g. Q8), avoid runtime `toString()`
+                // allocation in favour of the cached ByteArray.
+                context[CollectedTokens]?.addToken(tokenName)
+                val tokenProperty = tokenToRedisTokenPropertyName(tokenName)
+                addImport("eu.vendeli.rethis.utils.RedisToken")
+                addImport("eu.vendeli.rethis.utils.writeBulkString")
+                appendLine("buffer.writeBulkString(RedisToken.%L)", tokenProperty)
+            }
+        }
+
+        resolvedType.declaration.isEnum() -> {
+            appendLine("buffer.writeBulkString(%L.toString().toByteArray(charset))", pName)
         }
     }
 }
@@ -240,11 +265,26 @@ private fun wrapIfNeeded(node: EnrichedNode, innerOp: WriteOp): List<WriteOp> =
 private fun handleWrappedCall(
     node: EnrichedNode,
     innerOps: List<WriteOp>,
-): WriteOp.WrappedCall = node.children.singleOrNull()?.tokens.orEmpty().let {
-    WriteOp.WrappedCall(
+): WriteOp.WrappedCall {
+    // Prefer the single child's own tokens when present (LCS/MinMatchLen-style classes carry
+    // their own `@RedisOption.Token`, which "bubble up" to be emitted at the parent wrap).
+    // Otherwise fall back to the param's own tokens — but ONLY at the value-param level so
+    // recursive inner class wraps don't re-emit the same token already handled by their
+    // parent. This covers `vararg data: HFieldValue`-style params where the outer-block
+    // token (HSETEX's `[FIELDS]`) is annotated on the param itself and the value class has
+    // no tokens of its own.
+    val childTokens = node.children.singleOrNull()?.tokens.orEmpty()
+    val isParamLevel = node.attr.filterIsInstance<EnrichedTreeAttr.Symbol>()
+        .any { it.type == SymbolType.ValueParam }
+    val effectiveTokens = when {
+        childTokens.isNotEmpty() -> childTokens
+        isParamLevel -> node.tokens
+        else -> emptyList()
+    }
+    return WriteOp.WrappedCall(
         node = node,
-        props = node.collectWriteOps(it).toMutableSet(),
+        props = node.collectWriteOps(effectiveTokens).toMutableSet(),
         inner = innerOps,
-        tokens = it.toMutableList(),
+        tokens = effectiveTokens.toMutableList(),
     )
 }

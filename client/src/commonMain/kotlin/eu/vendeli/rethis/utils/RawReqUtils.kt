@@ -15,13 +15,15 @@ import kotlinx.io.writeString
  * @param request [RESP](https://redis.io/docs/latest/develop/reference/protocol-spec/) encoded payload.
  * @param operationKind hint for routing about the operation type.
  * @param isBlocking hint for routing about the blocking mode.
+ * @param command optional Redis verb used for metric labelling (defaults to empty for raw payloads).
  */
 @ReThisInternal
 suspend fun ReThis.execute(
     request: Buffer,
     operationKind: RedisOperation = RedisOperation.READ,
     isBlocking: Boolean = false,
-): Buffer = CommandRequest(request, operationKind, isBlocking).let {
+    command: String = "",
+): Buffer = CommandRequest(request, operationKind, isBlocking, command).let {
     topology
         .route(it)
         .execute(it)

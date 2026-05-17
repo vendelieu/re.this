@@ -10,6 +10,8 @@ import eu.vendeli.rethis.shared.response.cluster.ClusterNode
 import eu.vendeli.rethis.shared.types.*
 import eu.vendeli.rethis.types.common.Address
 import eu.vendeli.rethis.types.common.ClusterSnapshot
+import eu.vendeli.rethis.types.interfaces.ExperimentalReThisMetricsApi
+import eu.vendeli.rethis.types.interfaces.RedirectKind
 import eu.vendeli.rethis.utils.toAddress
 import eu.vendeli.rethis.utils.toHostAndPort
 import eu.vendeli.rethis.utils.withRetry
@@ -20,7 +22,7 @@ import kotlinx.io.Buffer
 import kotlin.concurrent.atomics.AtomicReference
 import kotlin.concurrent.atomics.ExperimentalAtomicApi
 
-@OptIn(ExperimentalAtomicApi::class)
+@OptIn(ExperimentalAtomicApi::class, ExperimentalReThisMetricsApi::class)
 class ClusterTopologyManager(
     private val initialNodes: List<Address>,
     private val client: ReThis,
@@ -48,85 +50,97 @@ class ClusterTopologyManager(
     }
 
     private suspend fun fullRefresh() = refreshMutex.withLock {
-        if (!scope.isActive) throw ClusterException("Topology is closed")
-        // 1) Fetch CLUSTER SLOTS
-        val entries = fetchClusterSlots()
+        val obs = client.cfg.metricsRecorder?.topologyRefreshStarted()
+        var success = false
+        try {
+            if (!scope.isActive) throw ClusterException("Topology is closed")
+            // 1) Fetch CLUSTER SLOTS
+            val entries = fetchClusterSlots()
 
-        // 2) Build new providers array
-        val oldSnap = snapshotRef.load()
-        val oldProviders = oldSnap?.providers.orEmpty()
-        val oldNodeToIdx = oldProviders.mapIndexed { i, p -> p.node to i }.toMap()
-        val allNodes = entries.flatMap { listOf(it.master) + it.replicas }.distinct()
-        val newProviders = allNodes
-            .mapIndexed { _, node ->
-                oldNodeToIdx[node.toAddress()]?.let {
-                    oldProviders[it]
-                } ?: client.connectionProviderFactory.create(node.toAddress())
-            }.toTypedArray()
+            // 2) Build new providers array
+            val oldSnap = snapshotRef.load()
+            val oldProviders = oldSnap?.providers.orEmpty()
+            val oldNodeToIdx = oldProviders.mapIndexed { i, p -> p.node to i }.toMap()
+            val allNodes = entries.flatMap { listOf(it.master) + it.replicas }.distinct()
+            val newProviders = allNodes
+                .mapIndexed { _, node ->
+                    oldNodeToIdx[node.toAddress()]?.let {
+                        oldProviders[it]
+                    } ?: client.connectionProviderFactory.create(node.toAddress())
+                }.toTypedArray()
 
-        // cool-down old orphans
-        oldProviders
-            .filter { c ->
-                c.node.toHostAndPort()?.let { it !in allNodes } ?: false
-            }.forEach {
-                scope.launch { it.close() }
+            // cool-down old orphans
+            oldProviders
+                .filter { c ->
+                    c.node.toHostAndPort()?.let { it !in allNodes } ?: false
+                }.forEach {
+                    scope.launch { it.close() }
+                }
+
+            // 3) Dense slotOwner
+            val slotOwner = IntArray(16_384)
+            val nodeIdxMap = allNodes.mapIndexed { i, n -> n to i }.toMap()
+            entries.forEach { (master, ranges, _) ->
+                val mIdx = nodeIdxMap[master]!!
+                ranges.forEach {
+                    for (s in it.start..it.end) slotOwner[s.toInt()] = mIdx
+                }
             }
 
-        // 3) Dense slotOwner
-        val slotOwner = IntArray(16_384)
-        val nodeIdxMap = allNodes.mapIndexed { i, n -> n to i }.toMap()
-        entries.forEach { (master, ranges, _) ->
-            val mIdx = nodeIdxMap[master]!!
-            ranges.forEach {
-                for (s in it.start..it.end) slotOwner[s.toInt()] = mIdx
+            // 4) Precompute replicas
+            val replicaIndices = Array(newProviders.size) { IntArray(0) }
+            entries.forEach { (master, _, replicas) ->
+                val mIdx = nodeIdxMap[master]!!
+                replicaIndices[mIdx] = replicas.map { nodeIdxMap[it]!! }.toIntArray()
             }
-        }
 
-        // 4) Precompute replicas
-        val replicaIndices = Array(newProviders.size) { IntArray(0) }
-        entries.forEach { (master, _, replicas) ->
-            val mIdx = nodeIdxMap[master]!!
-            replicaIndices[mIdx] = replicas.map { nodeIdxMap[it]!! }.toIntArray()
+            // 5) Publish
+            snapshotRef.store(
+                ClusterSnapshot(
+                    slotOwner = slotOwner,
+                    providers = newProviders,
+                    replicaIndices = replicaIndices,
+                ),
+            )
+            success = true
+        } finally {
+            obs?.completed(success)
         }
-
-        // 5) Publish
-        snapshotRef.store(
-            ClusterSnapshot(
-                slotOwner = slotOwner,
-                providers = newProviders,
-                replicaIndices = replicaIndices,
-            ),
-        )
     }
 
-    override suspend fun handleFailure(request: CommandRequest, exception: Throwable): Buffer = when (exception) {
-        is RedirectAskException -> {
-            route(request).withConnection { conn ->
-                conn.doBatchRequest(listOf(AskingCommandCodec.encode(cfg.charset).data, request.data))
-            }
-        }
-
-        is RedirectMovedException -> {
-            snapshotRef.load()?.also { snap ->
-                val target = Address(exception.host, exception.port)
-                val idx = snap.providers.indexOfFirst { it.node == target }.takeIf { it >= 0 } ?: run {
-                    // on-demand add
-                    val newProvider = client.connectionProviderFactory.create(target)
-                    val providers = snap.providers + newProvider
-                    val slots = snap.slotOwner.apply { this[exception.slot] = providers.lastIndex }
-                    val replicas = snap.replicaIndices + IntArray(0)
-                    snapshotRef.store(ClusterSnapshot(slots, replicas, providers))
-                    providers.lastIndex
+    override suspend fun handleFailure(request: CommandRequest, exception: Throwable): Buffer {
+        val rec = cfg.metricsRecorder
+        return when (exception) {
+            is RedirectAskException -> {
+                rec?.onClusterRedirect(RedirectKind.ASK)
+                route(request).withConnection { conn ->
+                    conn.doBatchRequest(listOf(AskingCommandCodec.encode(cfg.charset).data, request.data))
                 }
-                snap.slotOwner[exception.slot] = idx
             }
-            delay(cfg.movedBackoffPeriod)
-            throw exception
-        }
 
-        else -> {
-            delay(cfg.movedBackoffPeriod)
-            throw exception
+            is RedirectMovedException -> {
+                rec?.onClusterRedirect(RedirectKind.MOVED)
+                snapshotRef.load()?.also { snap ->
+                    val target = Address(exception.host, exception.port)
+                    val idx = snap.providers.indexOfFirst { it.node == target }.takeIf { it >= 0 } ?: run {
+                        // on-demand add
+                        val newProvider = client.connectionProviderFactory.create(target)
+                        val providers = snap.providers + newProvider
+                        val slots = snap.slotOwner.apply { this[exception.slot] = providers.lastIndex }
+                        val replicas = snap.replicaIndices + IntArray(0)
+                        snapshotRef.store(ClusterSnapshot(slots, replicas, providers))
+                        providers.lastIndex
+                    }
+                    snap.slotOwner[exception.slot] = idx
+                }
+                delay(cfg.movedBackoffPeriod)
+                throw exception
+            }
+
+            else -> {
+                delay(cfg.movedBackoffPeriod)
+                throw exception
+            }
         }
     }
 
