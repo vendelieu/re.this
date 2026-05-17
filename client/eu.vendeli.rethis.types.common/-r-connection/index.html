@@ -18,7 +18,6 @@
         }
       }
     </script>
-<script type="text/javascript" src="https://unpkg.com/kotlin-playground@1/dist/playground.min.js" async></script>
 <script type="text/javascript" src="../../../scripts/sourceset_dependencies.js" async></script>
 <link href="../../../styles/style.css" rel="Stylesheet">
 <link href="../../../styles/main.css" rel="Stylesheet">
@@ -40,7 +39,7 @@
             </a>        <button class="navigation-controls--btn navigation-controls--btn_toc ui-kit_mobile-only" id="toc-toggle" type="button">Toggle table of contents
         </button>
         <div class="navigation-controls--break ui-kit_mobile-only"></div>
-        <div class="library-version" id="library-version">0.4.0
+        <div class="library-version" id="library-version">0.4.2
         </div>
         <div class="navigation-controls">
         <ul class="filter-section filter-section_loading" id="filter-section" aria-label="Target filter">
@@ -96,7 +95,7 @@
   <div class="breadcrumbs"><a href="../../index.html">client</a><span class="delimiter">/</span><a href="../index.html">eu.vendeli.rethis.types.common</a><span class="delimiter">/</span><span class="current">RConnection</span></div>
   <div class="cover ">
     <h1 class="cover"><span><span>RConnection</span></span></h1>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":client/commonMain"><div class="symbol monospace"><span class="token keyword">data </span><span class="token keyword">class </span><a href="index.html">RConnection</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">val </span>socket<span class="token operator">: </span><span data-unresolved-link="io.ktor.network.sockets/Socket///PointingToDeclaration/">Socket</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>input<span class="token operator">: </span><span data-unresolved-link="io.ktor.utils.io/ByteReadChannel///PointingToDeclaration/">ByteReadChannel</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>output<span class="token operator">: </span><span data-unresolved-link="io.ktor.utils.io/ByteWriteChannel///PointingToDeclaration/">ByteWriteChannel</span></span></span><span class="token punctuation">)</span><span class="source-link-wrapper"><span class="source-link" data-element-type="source-link">(<a href="https://github.com/vendelieu/re.this/blob/master/client/src/commonMain/kotlin/eu/vendeli/rethis/types/common/RConnection.kt#L13">source</a>)</span></span></div></div></div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":client/commonMain"><div class="symbol monospace"><span class="token keyword">data </span><span class="token keyword">class </span><a href="index.html">RConnection</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">val </span>socket<span class="token operator">: </span><span data-unresolved-link="io.ktor.network.sockets/Socket///PointingToDeclaration/">Socket</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>input<span class="token operator">: </span><span data-unresolved-link="io.ktor.utils.io/ByteReadChannel///PointingToDeclaration/">ByteReadChannel</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>output<span class="token operator">: </span><span data-unresolved-link="io.ktor.utils.io/ByteWriteChannel///PointingToDeclaration/">ByteWriteChannel</span></span></span><span class="token punctuation">)</span><span class="source-link-wrapper"><span class="source-link" data-element-type="source-link">(<a href="https://github.com/vendelieu/re.this/blob/master/client/src/commonMain/kotlin/eu/vendeli/rethis/types/common/RConnection.kt#L18">source</a>)</span></span></div></div></div>
   </div>
   <div class="tabbedcontent">
     <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
@@ -137,6 +136,21 @@
               </div>
             </div>
           </div>
+<a data-name="1714986050%2FProperties%2F121649622" anchor-label="lastTouchedAt" id="1714986050%2FProperties%2F121649622" data-filterable-set=":client/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="last-touched-at.html"><span>last</span><wbr><span>Touched</span><wbr><span><span>At</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1714986050%2FProperties%2F121649622"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":client/commonMain"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="../../eu.vendeli.rethis.annotations/-re-this-internal/index.html"><span class="token annotation builtin">ReThisInternal</span></a></div></div><span class="token keyword">var </span><a href="last-touched-at.html">lastTouchedAt</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.time/-time-source/-monotonic/-value-time-mark/index.html">TimeSource.Monotonic.ValueTimeMark</a></div><div class="brief "><p class="paragraph">Monotonic timestamp of the last successful release back to the pool. Used by the pool's lazy health-check to skip PINGs on freshly-returned connections. Mutated on the hot path; reads are not synchronised because each connection is owned by a single coroutine at a time.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
 <a data-name="-1799068996%2FProperties%2F121649622" anchor-label="output" id="-1799068996%2FProperties%2F121649622" data-filterable-set=":client/commonMain"></a>
           <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
@@ -171,32 +185,32 @@
       </div>
       <div data-togglable="FUNCTION">
         <h2 class="tableheader">Functions</h2>
-        <div class="table"><a data-name="165328858%2FFunctions%2F121649622" anchor-label="doBatchRequest" id="165328858%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
+        <div class="table"><a data-name="-1572300506%2FFunctions%2F121649622" anchor-label="doBatchRequest" id="-1572300506%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
           <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="do-batch-request.html"><span>do</span><wbr><span>Batch</span><wbr><span><span>Request</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="165328858%2FFunctions%2F121649622"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1572300506%2FFunctions%2F121649622"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":client/commonMain"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="../../eu.vendeli.rethis.annotations/-re-this-internal/index.html"><span class="token annotation builtin">ReThisInternal</span></a></div></div><span class="token keyword">suspend </span><span class="token keyword">fun </span><a href="do-batch-request.html"><span class="token function">doBatchRequest</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">payload<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><span data-unresolved-link="kotlinx.io/Buffer///PointingToDeclaration/">Buffer</span><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><span data-unresolved-link="kotlinx.io/Buffer///PointingToDeclaration/">Buffer</span></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":client/commonMain"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="../../eu.vendeli.rethis.annotations/-re-this-internal/index.html"><span class="token annotation builtin">ReThisInternal</span></a></div></div><span class="token keyword">suspend </span><span class="token keyword">fun </span><a href="do-batch-request.html"><span class="token function">doBatchRequest</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">payload<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><span data-unresolved-link="kotlinx.io/Buffer///PointingToDeclaration/">Buffer</span><span class="token operator">&gt;</span><span class="token punctuation">, </span></span><span class="parameter ">commandTimeout<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.time/-duration/index.html">Duration</a><span class="token operator">?</span><span class="token operator"> = </span>null</span></span><span class="token punctuation">)</span><span class="token operator">: </span><span data-unresolved-link="kotlinx.io/Buffer///PointingToDeclaration/">Buffer</span></div></div></div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="-1701360423%2FFunctions%2F121649622" anchor-label="doRequest" id="-1701360423%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
+<a data-name="1376113893%2FFunctions%2F121649622" anchor-label="doRequest" id="1376113893%2FFunctions%2F121649622" data-filterable-set=":client/commonMain"></a>
           <div class="table-row table-row_content" data-filterable-current=":client/commonMain" data-filterable-set=":client/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="do-request.html"><span>do</span><wbr><span><span>Request</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1701360423%2FFunctions%2F121649622"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1376113893%2FFunctions%2F121649622"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":client/commonMain"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="../../eu.vendeli.rethis.annotations/-re-this-internal/index.html"><span class="token annotation builtin">ReThisInternal</span></a></div></div><span class="token keyword">suspend </span><span class="token keyword">fun </span><a href="do-request.html"><span class="token function">doRequest</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">payload<span class="token operator">: </span><span data-unresolved-link="kotlinx.io/Buffer///PointingToDeclaration/">Buffer</span><span class="token punctuation">, </span></span><span class="parameter ">attributesOut<span class="token operator">: </span><span data-unresolved-link="kotlinx.io/Buffer///PointingToDeclaration/">Buffer</span><span class="token operator">?</span><span class="token operator"> = </span>null</span></span><span class="token punctuation">)</span><span class="token operator">: </span><span data-unresolved-link="kotlinx.io/Buffer///PointingToDeclaration/">Buffer</span></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":client/commonMain"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="../../eu.vendeli.rethis.annotations/-re-this-internal/index.html"><span class="token annotation builtin">ReThisInternal</span></a></div></div><span class="token keyword">suspend </span><span class="token keyword">fun </span><a href="do-request.html"><span class="token function">doRequest</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">payload<span class="token operator">: </span><span data-unresolved-link="kotlinx.io/Buffer///PointingToDeclaration/">Buffer</span><span class="token punctuation">, </span></span><span class="parameter ">attributesOut<span class="token operator">: </span><span data-unresolved-link="kotlinx.io/Buffer///PointingToDeclaration/">Buffer</span><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">commandTimeout<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.time/-duration/index.html">Duration</a><span class="token operator">?</span><span class="token operator"> = </span>null</span></span><span class="token punctuation">)</span><span class="token operator">: </span><span data-unresolved-link="kotlinx.io/Buffer///PointingToDeclaration/">Buffer</span></div></div></div>
                 </div>
               </div>
             </div>
