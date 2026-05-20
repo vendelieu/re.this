@@ -42,9 +42,6 @@ sealed class ClientType : ClientKillOptions() {
     @RedisOption.Token("MASTER")
     data object Master : ClientType()
 
-    @RedisOption.Token("SLAVE")
-    data object Slave : ClientType()
-
     @RedisOption.Token("REPLICA")
     data object Replica : ClientType()
 

@@ -1,5 +1,19 @@
 # Re.this Changelog
 
+## 0.4.3
+
+* Added Redis Bloom commands: `BF.ADD`, `BF.CARD`, `BF.EXISTS`, `BF.INFO`, `BF.INSERT`, `BF.LOADCHUNK`, `BF.MADD`, `BF.MEXISTS`, `BF.RESERVE`, `BF.SCANDUMP`.
+* Added Redis Cuckoo Filter commands: `CF.ADD`, `CF.ADDNX`, `CF.COUNT`, `CF.DEL`, `CF.EXISTS`, `CF.INFO`, `CF.INSERT`, `CF.INSERTNX`, `CF.LOADCHUNK`, `CF.MEXISTS`, `CF.RESERVE`, `CF.SCANDUMP`.
+* Added Redis Count-Min Sketch commands: `CMS.INCRBY`, `CMS.INFO`, `CMS.INITBYDIM`, `CMS.INITBYPROB`, `CMS.MERGE`, `CMS.QUERY`.
+* Added Redis t-digest commands: `TDIGEST.ADD`, `TDIGEST.BYRANK`, `TDIGEST.BYREVRANK`, `TDIGEST.CDF`, `TDIGEST.CREATE`, `TDIGEST.INFO`, `TDIGEST.MAX`, `TDIGEST.MERGE`, `TDIGEST.MIN`, `TDIGEST.QUANTILE`, `TDIGEST.RANK`, `TDIGEST.RESET`, `TDIGEST.REVRANK`, `TDIGEST.TRIMMED_MEAN`.
+* Added Redis TopK commands: `TOPK.ADD`, `TOPK.INCRBY`, `TOPK.INFO`, `TOPK.LIST`, `TOPK.QUERY`, `TOPK.RESERVE`.
+* Added Redis TimeSeries commands: `TS.ADD`, `TS.ALTER`, `TS.CREATE`, `TS.CREATERULE`, `TS.DECRBY`, `TS.DEL`, `TS.DELETERULE`, `TS.GET`, `TS.INCRBY`, `TS.INFO`, `TS.MADD`, `TS.MGET`, `TS.MRANGE`, `TS.MREVRANGE`, `TS.QUERYINDEX`, `TS.RANGE`, `TS.REVRANGE`.
+* Added RediSearch commands: `FT.AGGREGATE`, `FT.ALIASADD`, `FT.ALIASDEL`, `FT.ALIASUPDATE`, `FT.ALTER`, `FT.CREATE`, `FT.CURSOR DEL`, `FT.CURSOR READ`, `FT.DICTADD`, `FT.DICTDEL`, `FT.DICTDUMP`, `FT.DROPINDEX`, `FT.EXPLAIN`, `FT.EXPLAINCLI`, `FT.HYBRID`, `FT.INFO`, `FT.PROFILE`, `FT.SEARCH`, `FT.SPELLCHECK`, `FT.SUGADD`, `FT.SUGDEL`, `FT.SUGGET`, `FT.SUGLEN`, `FT.SYNDUMP`, `FT.SYNUPDATE`, `FT.TAGVALS`, `FT._LIST`.
+* Added JSON command: `JSON.DEBUG MEMORY`.
+* Removed deprecated `ClientType.Slave` alias; use `ClientType.Replica`.
+* Fixed KSP processor `isWithinBounds` IndexOutOfBoundsException when matching nested option params with empty parent bounds.
+* Improved KSP token-to-identifier translation to safely handle tokens containing `.`, `+`, `-`, and quote characters (renamed the generated empty-token constant from `EMPTY` to `EMPTY_STRING`).
+
 ## 0.4.2
 
 * Added metrics reporting through `metricsRecorder` configuration option.

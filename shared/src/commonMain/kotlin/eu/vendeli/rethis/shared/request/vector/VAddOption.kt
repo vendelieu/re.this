@@ -21,11 +21,11 @@ sealed class VAddOption {
     }
 
     @RedisOption.Token("EF")
-    class Ef(val buildExpansion: Long) : VAddOption()
+    class Ef(@RedisOption.Name("build-exploration-factor") val buildExpansion: Long) : VAddOption()
 
     @RedisOption.Token("SETATTR")
     class SetAttr(val attributes: String) : VAddOption()
 
     @RedisOption.Token("M")
-    class MaxConn(val m: Long) : VAddOption()
+    class MaxConn(@RedisOption.Name("numlinks") val m: Long) : VAddOption()
 }

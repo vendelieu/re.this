@@ -7,10 +7,10 @@ sealed class VSimOption {
     data object WithScores : VSimOption()
 
     @RedisOption.Token("COUNT")
-    class Count(val n: Long) : VSimOption()
+    class Count(@RedisOption.Name("count") val n: Long) : VSimOption()
 
     @RedisOption.Token("EF")
-    class Ef(val maxSearchExpansion: Long) : VSimOption()
+    class Ef(@RedisOption.Name("search-exploration-factor") val maxSearchExpansion: Long) : VSimOption()
 
     @RedisOption.Token("FILTER")
     class Filter(val expression: String) : VSimOption()
@@ -18,12 +18,12 @@ sealed class VSimOption {
     @RedisOption.Token("FILTER-EF")
     class FilterEf(val maxFilteringEffort: Long) : VSimOption()
 
-    @RedisOption.Token("TRUTHY")
-    data object Truthy : VSimOption()
+    @RedisOption.Token("TRUTH")
+    data object Truth : VSimOption()
 
     @RedisOption.Token("NOTHREAD")
     data object NoThread : VSimOption()
 
     @RedisOption.Token("EPSILON")
-    class Epsilon(val delta: Double) : VSimOption()
+    class Epsilon(@RedisOption.Name("max_distance") val delta: Double) : VSimOption()
 }

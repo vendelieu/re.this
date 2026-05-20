@@ -15,10 +15,20 @@ internal fun String.toPascalCase(): String {
     }
 }
 
-/** kebab-case or UPPER-SPACE → camelCase */
-internal fun String.normalizeParam(): String =
-    lowercase()
-        .split('-', ' ', '_')
-        .mapIndexed { i, part ->
-            if (i == 0) part else part.replaceFirstChar { it.uppercase() }
-        }.joinToString("")
+private val canonicalSplit = Regex(
+    "[^\\p{Alnum}]+|" +
+        "(?<=\\p{Lower})(?=\\p{Upper})|" +
+        "(?<=\\p{Upper})(?=\\p{Upper}\\p{Lower})|" +
+        "(?<=\\p{Alpha})(?=\\d)|" +
+        "(?<=\\d)(?=\\p{Alpha})",
+)
+
+/**
+ * Splits on any non-alphanumeric separator AND on camelCase boundaries, then lowercases each part.
+ * Lets Kotlin parameter names match RSpec field names regardless of original casing
+ * (`startSlot` ↔ `start-slot` ↔ `start_slot` ↔ `STARTSLOT` all collapse to `startslot`).
+ */
+internal fun String.canonicalKey(): String =
+    split(canonicalSplit)
+        .filter { it.isNotEmpty() }
+        .joinToString("") { it.lowercase() }

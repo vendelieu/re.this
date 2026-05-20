@@ -15,21 +15,6 @@ sealed class DebugOption {
     @RedisOption.Token("SDSLEN")
     class Sdslen(val key: String) : DebugOption()
 
-    @RedisOption.Token("JMAP")
-    data object Jmap : DebugOption()
-
-    @RedisOption.Token("RELOAD")
-    data object Reload : DebugOption()
-
-    @RedisOption.Token("LOADAOF")
-    data object LoadAof : DebugOption()
-
-    @RedisOption.Token("FLUSHALL")
-    data object FlushAll : DebugOption()
-
-    @RedisOption.Token("CHANGE-REPL-ID")
-    data object ChangeReplId : DebugOption()
-
     @RedisOption.Token("QUICKLIST-PACKED-THRESHOLD")
     class QuicklistPackedThreshold(val bytes: Long) : DebugOption()
 

@@ -53,7 +53,7 @@ internal fun KSType.collectionAwareType(): KSType =
 @OptIn(KspExperimental::class)
 internal fun KSAnnotated.saveTokens(node: EnrichedNode) {
     getAnnotationsByType(RedisOption.Token::class).forEach { t ->
-        val spec = context.currentRSpec.allNodes.find { it.arg.token == t.name }
+        val spec = context.currentRSpec.allNodes.find { specTokenMatches(it.arg.token, t.name) }
         val multipleToken = spec?.arg?.multipleToken
 
         if (spec != null) {
@@ -71,6 +71,7 @@ internal fun KSAnnotated.saveTokens(node: EnrichedNode) {
 }
 
 internal fun List<Int>.isWithinBounds(bounds: List<Int>): Boolean {
+    if (bounds.size < size - 1) return false
     repeat(size - 1) { idx ->
         if (get(idx) != bounds[idx]) return false
     }

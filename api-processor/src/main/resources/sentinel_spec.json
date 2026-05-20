@@ -164,6 +164,16 @@
         "name": "port",
         "type": "integer",
         "display_text": "port"
+      },
+      {
+        "name": "current-epoch",
+        "type": "integer",
+        "display_text": "current-epoch"
+      },
+      {
+        "name": "runid",
+        "type": "string",
+        "display_text": "runid"
       }
     ],
     "command_flags": [

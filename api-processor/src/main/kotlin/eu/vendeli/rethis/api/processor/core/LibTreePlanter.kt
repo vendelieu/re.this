@@ -29,7 +29,7 @@ internal object LibTreePlanter {
     }
 
     @OptIn(KspExperimental::class)
-    fun handleParameter(p: KSValueParameter, parent: EnrichedNode) {
+    fun handleParameter(p: KSValueParameter, parent: EnrichedNode, inheritedIgnoreSpec: Boolean = false) {
         val paramNode = EnrichedNode(parent = parent)
         parent.children += paramNode
 
@@ -62,10 +62,13 @@ internal object LibTreePlanter {
             ),
         )
 
-        if (!pType.declaration.isStdType()) handleDeclaration(pType, paramNode)
+        val effectiveIgnoreSpec = inheritedIgnoreSpec || p.hasAnnotation<RIgnoreSpecAbsence>()
+
+        if (!pType.declaration.isStdType()) handleDeclaration(pType, paramNode, effectiveIgnoreSpec)
 
         val parentBounds = parent.rangeBounds().second.path
-        val nodesByName = context.currentRSpec.allNodes.filter { it.normalizedName == p.effectiveName() }
+        val effectiveKey = p.effectiveName().canonicalKey()
+        val nodesByName = context.currentRSpec.allNodes.filter { it.normalizedName == effectiveKey }
 
         val rNode = when {
             nodesByName.size == 1 -> nodesByName.first()
@@ -89,11 +92,15 @@ internal object LibTreePlanter {
         }
 
         if (rNode == null) {
-            if (p.hasAnnotation<RIgnoreSpecAbsence>()) {
-                // Mark synthetic post-spec params so the writer sorts them after spec-bound siblings.
-                paramNode.attr.add(EnrichedTreeAttr.IgnoreSpec)
-            } else {
-                context.logger.warn("Param `${p.effectiveName()}` not found in RSpec [${context.currentCommand.command.name}, ${context.currentCommand.klass.simpleName.asString()}]")
+            when {
+                p.hasAnnotation<RIgnoreSpecAbsence>() ->
+                    // Explicit local marker: synthetic post-spec params sort after spec-bound siblings.
+                    paramNode.attr.add(EnrichedTreeAttr.IgnoreSpec)
+                inheritedIgnoreSpec -> Unit // Suppress warning only; preserve declaration order.
+                else -> context.logger.warn(
+                    "Param `${p.effectiveName()}` not found in RSpec " +
+                        "[${context.currentCommand.command.name}, ${context.currentCommand.klass.simpleName.asString()}]",
+                )
             }
             return
         }
@@ -102,10 +109,10 @@ internal object LibTreePlanter {
     }
 
     @OptIn(KspExperimental::class)
-    fun handleDeclaration(type: KSType, parent: EnrichedNode) {
+    fun handleDeclaration(type: KSType, parent: EnrichedNode, inheritedIgnoreSpec: Boolean = false) {
         type.arguments.forEach { arg ->
             arg.type?.resolve()?.let {
-                handleDeclaration(it, parent)
+                handleDeclaration(it, parent, inheritedIgnoreSpec)
             }
         }
 
@@ -122,7 +129,7 @@ internal object LibTreePlanter {
                 .safeCast<KSClassDeclaration>()
                 ?.getSealedSubclasses()
                 ?.forEach { sub ->
-                    handleDeclaration(sub.asStarProjectedType(), node)
+                    handleDeclaration(sub.asStarProjectedType(), node, inheritedIgnoreSpec)
                 }
 
             type.declaration.isEnum() -> decl?.declarations
@@ -138,14 +145,14 @@ internal object LibTreePlanter {
 
             decl?.classKind == ClassKind.CLASS -> decl.primaryConstructor?.parameters?.forEach {
                 if (!it.isVal) context.logger.error("Parameter `${it.name?.asString()}` in `${it.parent?.parent}` should be val")
-                handleParameter(it, node)
+                handleParameter(it, node, inheritedIgnoreSpec)
             }
         }
     }
 
     private fun KSClassDeclaration.saveDeclarationToken(node: EnrichedNode) {
         val name = tokenName()
-        val rSpec = context.currentRSpec.allNodes.find { it.arg.token == name }
+        val rSpec = context.currentRSpec.allNodes.find { specTokenMatches(it.arg.token, name) }
 
         if (rSpec != null) {
             node.attr.add(EnrichedTreeAttr.RelatedRSpec(rSpec))
