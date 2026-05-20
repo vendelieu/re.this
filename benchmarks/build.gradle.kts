@@ -30,8 +30,10 @@ tasks.register("updateBenchmarkTableInReadme") {
     group = "benchmark"
     description = "Updates the benchmark table in README.md between markers from latest JSON"
 
+    val benchmarkDir = layout.buildDirectory.dir("reports/benchmarks").get().asFile
+    val readmeFile = layout.projectDirectory.file("../README.md").asFile
+
     doLast {
-        val benchmarkDir = file("build/reports/benchmarks")
         if (!benchmarkDir.exists()) {
             println("No benchmark output directory found: $benchmarkDir")
             return@doLast
@@ -78,7 +80,6 @@ tasks.register("updateBenchmarkTableInReadme") {
         }
 
         // Read README and replace content between markers
-        val readmeFile = file("../README.md")
         val readmeText = readmeFile.readText()
 
         val newReadme = readmeText.replace(
