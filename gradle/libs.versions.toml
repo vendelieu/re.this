@@ -1,7 +1,7 @@
 [versions]
 ktor = "3.5.0"
 
-kotlin = "2.3.21"
+kotlin = "2.4.0"
 coroutines = "1.11.0"
 io = "0.9.0"
 bignum = "0.3.10"
@@ -15,10 +15,10 @@ binvalid = "0.18.1"
 kover = "0.9.8"
 
 kotest = "6.1.11"
-logback = "1.5.32"
+logback = "1.5.34"
 rtestcontainers = "2.2.4"
 
-ksp = "2.3.8"
+ksp = "2.3.9"
 poet = "2.3.0"
 autoservice-annotations = "1.1.1"
 autoservice-ksp = "1.2.0"
