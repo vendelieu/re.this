@@ -39,7 +39,7 @@ jobs:
           echo "version=$V" >> "$GITHUB_OUTPUT"
 
       - name: Checkout dev
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           ref: dev
           token: ${{ secrets.ACCESS_TOKEN }}
