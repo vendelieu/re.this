@@ -2,7 +2,10 @@ package eu.vendeli.rethis.commands.cluster
 
 import eu.vendeli.rethis.TestCtx
 import eu.vendeli.rethis.commands.support.TopologyFixtures
+import eu.vendeli.rethis.shared.decoders.cluster.ClusterShardsDecoder
 import eu.vendeli.rethis.shared.decoders.cluster.ClusterSlotsDecoder
+import eu.vendeli.rethis.shared.response.cluster.ShardNode
+import eu.vendeli.rethis.shared.response.common.HostAndPort
 import eu.vendeli.rethis.shared.types.RedirectAskException
 import eu.vendeli.rethis.shared.types.RedirectMovedException
 import eu.vendeli.rethis.shared.types.RespCode
@@ -38,6 +41,50 @@ class ClusterCommandTest : TestCtx() {
             .ranges
             .single()
             .end shouldBe 16383
+    }
+
+    @Test
+    suspend fun `decode resp3 payload with metadata map and merged ranges`() {
+        val result = ClusterSlotsDecoder.decode(TopologyFixtures.resp3ClusterSlotsResponse(), Charsets.UTF_8, null)
+
+        result.nodes.size shouldBe 1
+        val node = result.nodes.single()
+        node.master shouldBe HostAndPort("127.0.0.1", 7000)
+        node.ranges.map { it.start to it.end } shouldBe listOf(0L to 8191L, 8192L to 16383L)
+        node.replicas shouldBe emptyList()
+    }
+
+    @Test
+    suspend fun `decode resp2 cluster shards payload`() {
+        val shards = ClusterShardsDecoder.decode(TopologyFixtures.resp2ClusterShardsResponse(), Charsets.UTF_8, null)
+
+        shards.size shouldBe 1
+        val shard = shards.single()
+        shard.slots.single().let { it.start to it.end } shouldBe (0L to 16383L)
+        shard.nodes.size shouldBe 2
+
+        val master = shard.nodes.first()
+        master.id shouldBe "shard-node-1"
+        master.port shouldBe 7000
+        master.ip shouldBe "127.0.0.1"
+        master.role shouldBe "master"
+        master.replicationOffset shouldBe 72156L
+        master.health shouldBe ShardNode.HealthStatus.ONLINE
+
+        shard.nodes.last().role shouldBe "replica"
+    }
+
+    @Test
+    suspend fun `decode resp3 cluster shards payload`() {
+        val shards = ClusterShardsDecoder.decode(TopologyFixtures.resp3ClusterShardsResponse(), Charsets.UTF_8, null)
+
+        val node = shards.single().nodes.single()
+        node.id shouldBe "shard-node-1"
+        node.port shouldBe 6379
+        node.tlsPort shouldBe 7443
+        node.hostname shouldBe null
+        node.role shouldBe "replica"
+        node.health shouldBe ShardNode.HealthStatus.LOADING
     }
 
     @Test

@@ -5,11 +5,12 @@ import eu.vendeli.rethis.shared.decoders.general.BulkStringDecoder
 import eu.vendeli.rethis.shared.types.RespCode
 import eu.vendeli.rethis.shared.types.ResponseParsingException
 import eu.vendeli.rethis.shared.utils.EMPTY_BUFFER
+import eu.vendeli.rethis.shared.utils.decodeNullableStringElement
+import eu.vendeli.rethis.shared.utils.decodeStringElement
+import eu.vendeli.rethis.shared.utils.readDecimalCrlf
 import eu.vendeli.rethis.shared.utils.tryInferCause
 import io.ktor.utils.io.charsets.*
 import kotlinx.io.Buffer
-import kotlinx.io.readLine
-import kotlinx.io.readLineStrict
 
 object MapStringDecoder : ResponseDecoder<Map<String, String>> {
     override fun decode(
@@ -23,14 +24,13 @@ object MapStringDecoder : ResponseDecoder<Map<String, String>> {
             "Invalid response structure, expected map token, given $code", input.tryInferCause(code),
         )
 
-        val size = input.readLineStrict().toInt().let { if (code == RespCode.MAP) it else it / 2 }
+        val size = input.readDecimalCrlf().toInt().let { if (code == RespCode.MAP) it else it / 2 }
         if (size == 0) return emptyMap()
 
         return buildMap {
             repeat(size) {
                 val key = BulkStringDecoder.decode(input, charset)
-                input.readLine() // skip value code and size line
-                val value = input.readLineStrict()
+                val value = decodeStringElement(input, charset)
                 put(key, value)
             }
         }
@@ -47,7 +47,7 @@ object MapStringDecoder : ResponseDecoder<Map<String, String>> {
             "Invalid response structure, expected map token, given $code", input.tryInferCause(code),
         )
 
-        val size = input.readLineStrict().toInt().let { if (code == RespCode.MAP) it else it / 2 }
+        val size = input.readDecimalCrlf().toInt().let { if (code == RespCode.MAP) it else it / 2 }
         if (size == 0) return emptyMap()
 
         return buildMap {
@@ -56,8 +56,7 @@ object MapStringDecoder : ResponseDecoder<Map<String, String>> {
                     "Invalid response structure, expected string token got null",
                     input.tryInferCause(code),
                 )
-                input.readLine() // skip value code and size line
-                val value = input.readLine()
+                val value = decodeNullableStringElement(input, charset)
                 put(key, value)
             }
         }

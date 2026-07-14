@@ -19,7 +19,7 @@ fun Buffer.readResponseWrapped(
 
     return when (code) {
         RespCode.ARRAY -> {
-            val size = readLineStrict().toInt()
+            val size = readDecimalCrlf().toInt()
             if (size < 0) RType.Null else {
                 val list = mutableListOf<RType>()
                 repeat(size) { list += readResponseWrapped(charset, rawOnly) }
@@ -28,7 +28,7 @@ fun Buffer.readResponseWrapped(
         }
 
         RespCode.SET -> {
-            val size = readLineStrict().toInt()
+            val size = readDecimalCrlf().toInt()
             if (size < 0) RType.Null else {
                 val set = mutableSetOf<RType>()
                 repeat(size) { set += readResponseWrapped(charset, rawOnly) }
@@ -37,7 +37,7 @@ fun Buffer.readResponseWrapped(
         }
 
         RespCode.PUSH -> {
-            val size = readLineStrict().toInt()
+            val size = readDecimalCrlf().toInt()
             if (size < 0) RType.Null else {
                 val list = mutableListOf<RType>()
                 repeat(size) { list += readResponseWrapped(charset, rawOnly) }
@@ -46,7 +46,7 @@ fun Buffer.readResponseWrapped(
         }
 
         RespCode.MAP -> {
-            val size = readLineStrict().toInt()
+            val size = readDecimalCrlf().toInt()
             if (size < 0) RType.Null else {
                 val map = mutableMapOf<RPrimitive, RType>()
                 repeat(size) {
@@ -80,12 +80,12 @@ private fun Buffer.readSimpleResponseWrapped(
     return when (code) {
         RespCode.SIMPLE_STRING -> PlainString(readPartLine(charset))
         RespCode.SIMPLE_ERROR -> RType.Error(readPartLine(charset))
-        RespCode.INTEGER -> Int64(readLineCRLF().readDecimalLong())
+        RespCode.INTEGER -> Int64(readDecimalCrlf())
         RespCode.BOOLEAN -> when (readByte()) {
             TRUE_BYTE -> Bool(true)
             FALSE_BYTE -> Bool(false)
             else -> throw ResponseParsingException("Invalid boolean format")
-        }.also { readLineCRLF() }
+        }.also { skip(2) }
 
         RespCode.DOUBLE -> F64(readLineStrict().toDouble())
         RespCode.BIG_NUMBER -> try {
@@ -95,10 +95,9 @@ private fun Buffer.readSimpleResponseWrapped(
         }
 
         RespCode.BULK -> {
-            val size = readLineStrict().toInt()
+            val size = readDecimalCrlf().toInt()
             if (size < 0) return RType.Null
             else if (size == 0) {
-                CARRIAGE_RETURN_BYTE
                 skip(2) // skip crlf
                 return BulkString(EMPTY_BUFFER)
             }
@@ -114,7 +113,7 @@ private fun Buffer.readSimpleResponseWrapped(
         }
 
         RespCode.VERBATIM_STRING -> {
-            val size = readLineStrict().toInt()
+            val size = readDecimalCrlf().toInt()
             if (size < 0) return RType.Null
             val encoding = readByteArray(3).decodeToString()
             readByte() // skip ':' byte
@@ -165,6 +164,7 @@ inline fun <reified T> RType.unwrap(): T? {
     return when {
         T::class == RType::class -> this as T
         T::class == RPrimitive::class -> this as? T
+        this is RType.Null -> null
         this is PlainString -> if (T::class == String::class) value as T else null
         this is Int64 -> if (T::class == Long::class) value as T else null
         this is Bool -> if (T::class == Boolean::class) value as T else null
@@ -173,6 +173,16 @@ inline fun <reified T> RType.unwrap(): T? {
         this is VerbatimString -> if (T::class == String::class) value as T else null
         this is BulkString && T::class == Buffer::class -> value as T
         this is BulkString && T::class == String::class -> value.readString() as T
+        this is RArray || this is Push -> throw ResponseParsingException(
+            "unwrap() cannot unwrap aggregate ${this::class.simpleName} reply, " +
+                "use unwrapList() or unwrapRESPAgnosticMap() for key-value pair arrays",
+        )
+        this is RSet -> throw ResponseParsingException(
+            "unwrap() cannot unwrap aggregate RSet reply, use unwrapSet()",
+        )
+        this is RMap -> throw ResponseParsingException(
+            "unwrap() cannot unwrap aggregate RMap reply, use unwrapMap() or unwrapRESPAgnosticMap()",
+        )
         else -> {
             __ParserLogger.warn("Wrong unwrapping [common] method used for $this")
             null

@@ -5,88 +5,63 @@ import eu.vendeli.rethis.shared.request.cluster.SlotRange
 import eu.vendeli.rethis.shared.response.cluster.Cluster
 import eu.vendeli.rethis.shared.response.cluster.ClusterNode
 import eu.vendeli.rethis.shared.response.common.HostAndPort
+import eu.vendeli.rethis.shared.types.RType
 import eu.vendeli.rethis.shared.types.RespCode
 import eu.vendeli.rethis.shared.types.ResponseParsingException
 import eu.vendeli.rethis.shared.utils.EMPTY_BUFFER
-import eu.vendeli.rethis.shared.utils.resolveToken
+import eu.vendeli.rethis.shared.utils.readResponseWrapped
+import eu.vendeli.rethis.shared.utils.unwrap
 import io.ktor.utils.io.charsets.*
 import kotlinx.io.Buffer
-import kotlinx.io.readLineStrict
 
 object ClusterSlotsDecoder : ResponseDecoder<Cluster> {
     private val EMPTY_CLUSTER = Cluster(emptyList())
+    private const val RANGE_FIELDS = 2 // start and end precede the node entries in a slot block
+
     override fun decode(
         input: Buffer,
         charset: Charset,
         code: RespCode?,
     ): Cluster {
         if (input == EMPTY_BUFFER) return EMPTY_CLUSTER
-        // Read top-level array header
-        if (code == null) input.resolveToken(RespCode.ARRAY)
+        val reply = input.readResponseWrapped(charset, code = code)
+        if (reply is RType.Null) return EMPTY_CLUSTER
 
-        val total = input.readLineStrict().toInt()
-        val nodeEntries = mutableListOf<ClusterNode>()
-
-        repeat(total) {
-            // each slot entry
-            if (input.readByte() != RespCode.ARRAY.code) throw ResponseParsingException(
-                "Expected ARRAY token for slot block",
+        val nodeEntries = reply.asArray("CLUSTER SLOTS reply").map { entry ->
+            val fields = entry.asArray("slot block")
+            if (fields.size <= RANGE_FIELDS) throw ResponseParsingException(
+                "Invalid slot block: expected start, end and at least a master node, got ${fields.size} elements",
             )
-            // count of elements
-            val elements = input.readLineStrict().toInt()
 
-            val start = input.readLineStrict().toLong()
-            val end = input.readLineStrict().toLong()
-            val range = SlotRange(start, end)
+            val range = SlotRange(fields[0].asLong("slot range start"), fields[1].asLong("slot range end"))
+            val nodes = fields.drop(RANGE_FIELDS).map { it.toHostAndPort() }
 
-            // master info
-            val masterHost = input.readLineStrict()
-            val masterPort = input.readLineStrict().toInt()
-            input.readLineStrict()  // ignored here
-            // skip metadata array
-            skipMetadata(input)
-            val master = HostAndPort(masterHost, masterPort)
-            val replicas = mutableListOf<HostAndPort>()
-
-            // replicas
-            val replicasCount = elements - 3
-            repeat(replicasCount) {
-                val host = input.readLineStrict()
-                val port = input.readLineStrict().toInt()
-                // skip id and metadata
-                input.readLineStrict() // id
-                skipMetadata(input)
-                replicas += HostAndPort(host, port)
-            }
-
-            nodeEntries += ClusterNode(master = master, ranges = listOf(range), replicas = replicas)
+            ClusterNode(master = nodes.first(), ranges = listOf(range), replicas = nodes.drop(1))
         }
 
-        // merge by HostAndPort
+        // merge slot ranges and replicas of blocks served by the same master
         val merged = linkedMapOf<HostAndPort, ClusterNode>()
-        for (n in nodeEntries) {
-            val entry = merged[n.master]
-            if (entry != null) {
-                merged[n.master] = ClusterNode(
-                    entry.master,
-                    entry.ranges.toMutableList().apply { addAll(n.ranges) }.toList(),
-                    entry.replicas.toMutableList().apply { addAll(n.replicas) }.toList(),
-                )
-            } else {
-                merged[n.master] = n
-            }
+        for (node in nodeEntries) {
+            val entry = merged[node.master]
+            merged[node.master] = if (entry == null) node else ClusterNode(
+                entry.master,
+                entry.ranges + node.ranges,
+                entry.replicas + node.replicas,
+            )
         }
         return Cluster(merged.values.toList())
     }
 
-    private fun skipMetadata(input: Buffer) {
-        // may be nested metadata array, read and discard
-        val b = input.readByte()
-        if (b == RespCode.ARRAY.code) {
-            val count = input.readLineStrict().toInt()
-            repeat(count) { input.readLineStrict() }
-        } else {
-            input.writeByte(b)
-        }
+    // node description: [host, port, node-id, metadata] — id and metadata (array in RESP2, map in RESP3) are ignored
+    private fun RType.toHostAndPort(): HostAndPort {
+        val node = asArray("node description")
+        if (node.size < 2) throw ResponseParsingException(
+            "Invalid node description: expected at least host and port, got ${node.size} elements",
+        )
+        val host = node[0].unwrap<String>() ?: throw ResponseParsingException(
+            "Invalid node host: ${node[0]}",
+        )
+        return HostAndPort(host, node[1].asLong("node port").toInt())
     }
+
 }

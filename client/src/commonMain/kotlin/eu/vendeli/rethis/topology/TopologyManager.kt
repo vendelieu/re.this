@@ -28,7 +28,7 @@ internal interface TopologyManager {
 }
 
 @OptIn(ExperimentalReThisMetricsApi::class)
-internal suspend inline fun TopologyManager.handle(request: CommandRequest): Buffer {
+internal suspend fun TopologyManager.handle(request: CommandRequest): Buffer {
     // Decide once whether this request is wire-bound; pipeline-accumulated and tx-QUEUED
     // requests don't reach the wire and shouldn't open an observation.
     val initialCtx = currentCoroutineContext()
@@ -53,11 +53,18 @@ internal suspend inline fun TopologyManager.handle(request: CommandRequest): Buf
                         coLocalConn.connection
                             .doRequest(request.data)
                             .also {
-                                val peekedByte = it.readByte()
-                                when (val code = RespCode.fromCode(peekedByte)) {
-                                    RespCode.SIMPLE_ERROR -> SimpleErrorDecoder.decode(it, cfg.charset, code)
-                                    RespCode.BULK_ERROR -> BulkErrorDecoder.decode(it, cfg.charset, code)
-                                    else -> it.writeByte(peekedByte)
+                                // peek the type byte without consuming: reads move the buffer head,
+                                // and writeByte would append the byte to the tail, corrupting the frame
+                                if (!it.exhausted()) when (val code = RespCode.fromCode(it.peek().readByte())) {
+                                    RespCode.SIMPLE_ERROR -> {
+                                        SimpleErrorDecoder.decode(it.apply { skip(1) }, cfg.charset, code)
+                                    }
+
+                                    RespCode.BULK_ERROR -> {
+                                        BulkErrorDecoder.decode(it.apply { skip(1) }, cfg.charset, code)
+                                    }
+
+                                    else -> {}
                                 }
                             }.takeIf { !coLocalConn.isTx } ?: run {
                             warnOfSubstitution(cfg)

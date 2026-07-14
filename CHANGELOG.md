@@ -1,5 +1,17 @@
 # Re.this Changelog
 
+## 0.4.4
+
+* Fixed multi-element reply decoding (`HGETALL` and other map/array string replies) misplacing the read cursor after large, multi-line, or null bulk-string values: bulk and verbatim string payloads are now consumed by their declared RESP byte size instead of line-based reads or charset-dependent `readText` limits, which caused `IllegalArgumentException: No suitable message type found` mid-payload (notably on Kotlin/Native with values ~30 KB+).
+* Fixed RESP3 null elements (`_\r\n`) in nullable array/map decoding leaving their trailing CRLF unconsumed, corrupting the position of subsequent elements.
+* Changed `unwrap()` to throw `ResponseParsingException` when called on an aggregate reply (`RArray`, `RSet`, `Push`, `RMap`) instead of silently returning `null`; the message points to `unwrapList()`/`unwrapSet()`/`unwrapMap()`/`unwrapRESPAgnosticMap()`. `RType.Null` now unwraps to `null` without a misleading warning log.
+* Fixed `zMPop`/`bzMPop`/`zPopMax` silently returning empty `poppedElements`: popped members and their scores are now included (scores rendered as strings).
+* Fixed commands issued inside pub/sub handlers (localized-connection scope) corrupting the reply frame: the internal error-peek consumed the reply's type byte and re-appended it to the buffer tail.
+* Fixed `ClusterSlotsDecoder` being unable to parse a real `CLUSTER SLOTS` reply (it expected lines without RESP type prefixes and flat node fields instead of nested node arrays), which broke cluster topology discovery; it now decodes the actual wire format for both RESP2 (metadata array) and RESP3 (metadata map) and merges slot ranges per master.
+* Fixed `ClusterShardsDecoder` (`clusterShards()`) with the same defect: it expected prefix-less lines and an uppercase `health` value; it now decodes real RESP2 key-value-array and RESP3 map shard replies, including null/empty `endpoint`/`hostname` and lowercase `health`.
+* Performance: the response framing reader now scans buffered spans instead of issuing per-byte channel reads; RESP size lines are parsed directly from bytes without an intermediate `String`; bulk-string payload decoding takes a zero-copy UTF-8 fast path; `BulkString.equals`/`hashCode` memoize the payload snapshot (also making them stable after the buffer is consumed).
+* Added in-memory RESP framing/decode benchmarks (`benchmarks:mainDecodeBenchmark`).
+
 ## 0.4.3
 
 * Added Redis Bloom commands: `BF.ADD`, `BF.CARD`, `BF.EXISTS`, `BF.INFO`, `BF.INSERT`, `BF.LOADCHUNK`, `BF.MADD`, `BF.MEXISTS`, `BF.RESERVE`, `BF.SCANDUMP`.

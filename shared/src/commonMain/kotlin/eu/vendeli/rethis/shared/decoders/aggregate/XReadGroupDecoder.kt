@@ -5,12 +5,12 @@ import eu.vendeli.rethis.shared.types.*
 import eu.vendeli.rethis.shared.types.stream.XReadGroupMessage
 import eu.vendeli.rethis.shared.types.stream.XReadGroupResponse
 import eu.vendeli.rethis.shared.utils.EMPTY_BUFFER
+import eu.vendeli.rethis.shared.utils.readDecimalCrlf
 import eu.vendeli.rethis.shared.utils.readResponseWrapped
 import eu.vendeli.rethis.shared.utils.safeCast
 import eu.vendeli.rethis.shared.utils.tryInferCause
 import io.ktor.utils.io.charsets.*
 import kotlinx.io.Buffer
-import kotlinx.io.readLineStrict
 import kotlinx.io.readString
 
 object XReadGroupDecoder : ResponseDecoder<List<XReadGroupResponse>> {
@@ -29,7 +29,7 @@ object XReadGroupDecoder : ResponseDecoder<List<XReadGroupResponse>> {
             )
         }
         val size = try {
-            input.readLineStrict().toInt()
+            input.readDecimalCrlf().toInt()
         } catch (_: Exception) {
             0
         }

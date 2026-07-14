@@ -2,6 +2,7 @@ package eu.vendeli.rethis.shared.types
 
 import com.ionspin.kotlin.bignum.integer.BigInteger
 import kotlinx.io.Buffer
+import kotlinx.io.bytestring.ByteString
 import kotlinx.io.snapshot
 import kotlinx.io.writeString
 
@@ -54,13 +55,19 @@ data class BulkString(
 ) : RPrimitive() {
     constructor(value: String) : this(Buffer().apply { writeString(value) })
 
+    // memoized: snapshot() copies the payload, and map-shaped replies hash every key;
+    // also keeps equals/hashCode stable after the buffer is consumed by unwrap()
+    private var snapshotCache: ByteString? = null
+
+    private fun snapshot(): ByteString = snapshotCache ?: value.snapshot().also { snapshotCache = it }
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other !is BulkString) return false
-        return value.snapshot() == other.value.snapshot()
+        return snapshot() == other.snapshot()
     }
 
-    override fun hashCode(): Int = value.snapshot().hashCode()
+    override fun hashCode(): Int = snapshot().hashCode()
 }
 
 data class RArray(

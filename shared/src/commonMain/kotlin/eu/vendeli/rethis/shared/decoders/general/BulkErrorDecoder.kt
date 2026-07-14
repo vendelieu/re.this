@@ -4,10 +4,10 @@ import eu.vendeli.rethis.shared.decoders.ResponseDecoder
 import eu.vendeli.rethis.shared.types.ReThisException
 import eu.vendeli.rethis.shared.types.RespCode
 import eu.vendeli.rethis.shared.utils.EMPTY_BUFFER
+import eu.vendeli.rethis.shared.utils.readDecimalCrlf
 import eu.vendeli.rethis.shared.utils.resolveToken
 import io.ktor.utils.io.charsets.*
 import kotlinx.io.Buffer
-import kotlinx.io.readLineStrict
 
 
 object BulkErrorDecoder : ResponseDecoder<Nothing> {
@@ -17,7 +17,7 @@ object BulkErrorDecoder : ResponseDecoder<Nothing> {
 
         val message = StringBuilder()
 
-        val size = input.readLineStrict().toInt()
+        val size = input.readDecimalCrlf().toInt()
         repeat(size) {
             message.appendLine(BulkStringDecoder.decode(input, charset))
         }

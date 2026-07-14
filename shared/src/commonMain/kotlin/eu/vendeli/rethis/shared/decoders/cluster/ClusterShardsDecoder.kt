@@ -4,14 +4,14 @@ import eu.vendeli.rethis.shared.decoders.ResponseDecoder
 import eu.vendeli.rethis.shared.request.cluster.SlotRange
 import eu.vendeli.rethis.shared.response.cluster.Shard
 import eu.vendeli.rethis.shared.response.cluster.ShardNode
+import eu.vendeli.rethis.shared.types.RType
 import eu.vendeli.rethis.shared.types.RespCode
 import eu.vendeli.rethis.shared.types.ResponseParsingException
 import eu.vendeli.rethis.shared.utils.EMPTY_BUFFER
-import eu.vendeli.rethis.shared.utils.resolveToken
+import eu.vendeli.rethis.shared.utils.readResponseWrapped
+import eu.vendeli.rethis.shared.utils.unwrap
 import io.ktor.utils.io.charsets.*
 import kotlinx.io.Buffer
-import kotlinx.io.readLine
-import kotlinx.io.readLineStrict
 
 object ClusterShardsDecoder : ResponseDecoder<List<Shard>> {
     override fun decode(
@@ -20,109 +20,49 @@ object ClusterShardsDecoder : ResponseDecoder<List<Shard>> {
         code: RespCode?,
     ): List<Shard> {
         if (input == EMPTY_BUFFER) return emptyList()
-        if (code == null) input.resolveToken(RespCode.ARRAY)
+        val reply = input.readResponseWrapped(charset, code = code)
+        if (reply is RType.Null) return emptyList()
 
-        val size = input.readLineStrict().toInt()
-        val shards = mutableListOf<Shard>()
+        return reply.asArray("CLUSTER SHARDS reply").map { entry ->
+            val fields = entry.asFields("shard block")
 
-        repeat(size) {
-            // Each entry may be RESP2 array or RESP3 map
-            val nestedType = input.readByte()
-            if (nestedType != RespCode.ARRAY.code && nestedType != RespCode.MAP.code) {
-                throw ResponseParsingException(
-                    "Invalid response structure, expected ARRAY or MAP token for shard block, given ${
-                        nestedType.toInt().toChar()
-                    }",
-                )
-            }
-            // Delegate to unified unwrapper
-            shards += unwrapShard(input)
+            // slots come as a flat array of start-end integer pairs
+            val slotBounds = fields["slots"]?.asArray("shard slots")?.map { it.asLong("slot bound") }
+                ?: throw ResponseParsingException("Missing 'slots' field in shard block")
+            if (slotBounds.size % 2 != 0) throw ResponseParsingException(
+                "Invalid shard slots: expected start-end pairs, got ${slotBounds.size} bounds",
+            )
+
+            val nodes = fields["nodes"]?.asArray("shard nodes")?.map { it.toShardNode() }
+                ?: throw ResponseParsingException("Missing 'nodes' field in shard block")
+
+            Shard(
+                slots = slotBounds.chunked(2).map { SlotRange(it[0], it[1]) },
+                nodes = nodes,
+            )
         }
-
-        return shards
     }
 
-    /**
-     * Handles both RESP2 array-of-fields and RESP3 map-of-fields; expects container size next.
-     * Reads exactly one Shard: slots and nodes.
-     */
-    private fun unwrapShard(input: Buffer): Shard {
-        // Read and ignore the count of inner elements
-        input.readLine()
+    private fun RType.toShardNode(): ShardNode {
+        val fields = asFields("node description")
 
-        // ---- Slots ----
-        val key1 = input.readLineStrict()
-        if (key1 != "slots") {
-            throw ResponseParsingException(
-                "Invalid response structure, expected 'slots' field, found '$key1'",
-            )
-        }
-        val slotsSize = input.readLineStrict().toInt()
-        val slots = mutableListOf<SlotRange>()
-        repeat(slotsSize) {
-            val start = input.readLineStrict().toLong()
-            val end = input.readLineStrict().toLong()
-            slots.add(SlotRange(start, end))
-        }
+        fun text(key: String): String? = fields[key]?.unwrap<String>()
+        fun number(key: String): Long? = fields[key]?.takeUnless { it is RType.Null }?.asLong(key)
 
-        // ---- Nodes ----
-        val key2 = input.readLineStrict()
-        if (key2 != "nodes") {
-            throw ResponseParsingException(
-                "Invalid response structure, expected 'nodes' field, found '$key2'",
-            )
-        }
-        // Next line is number of nodes
-        val nodesSize = input.readLineStrict().toInt()
-        val nodes = mutableListOf<ShardNode>()
-
-        repeat(nodesSize) {
-            var id: String? = null
-            var endpoint: String? = null
-            var ip: String? = null
-            var hostname: String? = null
-            var port: Int? = null
-            var tlsPort: Int? = null
-            var role: String? = null
-            var replicationOffset: Long? = null
-            var health: String? = null
-
-            while (true) {
-                val key = input.readLineStrict()
-                if (key.isEmpty()) break
-                val value = input.readLineStrict()
-
-                when (key) {
-                    "id" -> id = value
-                    "endpoint" -> endpoint = if (value == "NULL" || value.isBlank()) null else value
-                    "ip" -> ip = value.ifBlank { null }
-                    "hostname" -> hostname = value
-                    "port" -> port = value.toInt()
-                    "tls-port" -> tlsPort = value.toInt()
-                    "role" -> role = value
-                    "replication-offset" -> replicationOffset = value.toLong()
-                    "health" -> health = value
-                }
-
-                val type = input.readByte()
-                if (type == RespCode.ARRAY.code || type == RespCode.MAP.code) break // End
-            }
-
-            nodes.add(
-                ShardNode(
-                    id = id!!,
-                    endpoint = endpoint,
-                    ip = ip!!,
-                    hostname = hostname,
-                    port = port,
-                    tlsPort = tlsPort,
-                    role = role!!,
-                    replicationOffset = replicationOffset!!,
-                    health = ShardNode.HealthStatus.valueOf(health!!),
-                ),
-            )
-        }
-
-        return Shard(slots, nodes)
+        val health = text("health") ?: throw ResponseParsingException("Missing 'health' in node description")
+        return ShardNode(
+            id = text("id") ?: throw ResponseParsingException("Missing 'id' in node description"),
+            endpoint = text("endpoint")?.takeUnless { it.isBlank() || it == "NULL" },
+            ip = text("ip")?.takeUnless { it.isBlank() },
+            hostname = text("hostname")?.takeUnless { it.isBlank() },
+            port = number("port")?.toInt(),
+            tlsPort = number("tls-port")?.toInt(),
+            role = text("role") ?: throw ResponseParsingException("Missing 'role' in node description"),
+            replicationOffset = number("replication-offset") ?: throw ResponseParsingException(
+                "Missing 'replication-offset' in node description",
+            ),
+            health = ShardNode.HealthStatus.entries.firstOrNull { it.name.equals(health, ignoreCase = true) }
+                ?: throw ResponseParsingException("Unknown 'health' value: $health"),
+        )
     }
 }

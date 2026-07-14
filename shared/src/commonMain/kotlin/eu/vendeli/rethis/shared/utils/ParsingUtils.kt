@@ -8,8 +8,11 @@ import eu.vendeli.rethis.shared.types.RespUnexpectedEOF
 import eu.vendeli.rethis.shared.types.ResponseParsingException
 import io.ktor.utils.io.*
 import io.ktor.utils.io.charsets.*
+import io.ktor.utils.io.core.*
 import kotlinx.io.Buffer
 import kotlinx.io.InternalIoApi
+import kotlinx.io.indexOf
+import kotlinx.io.readString
 import kotlin.jvm.JvmName
 
 private const val MAX_NESTING_DEPTH = 64 // Limit for RESP nesting (incl. ATTRIBUTE maps and deep replies)
@@ -27,41 +30,91 @@ internal inline fun <reified R> Any?.safeCast(): R? = this as? R
 @Suppress("UNCHECKED_CAST")
 internal inline fun <reified R> Any?.cast(): R = this as R
 
-internal inline fun MutableCollection<String>.parseStrings(size: Int, input: Buffer, charset: Charset) {
-    repeat(size) {
-        when (val code = RespCode.fromCode(input.readByte())) {
-            RespCode.BULK -> add(
-                BulkStringDecoder.decode(input, charset, code),
-            )
+/**
+ * Reads exactly [size] payload bytes plus the trailing CRLF, decoding the payload with [charset].
+ * RESP sizes are byte counts, so consumption must never depend on charset decoding.
+ */
+internal fun Buffer.readSizedText(size: Int, charset: Charset): String {
+    val text = if (charset == Charsets.UTF_8) {
+        readString(size.toLong())
+    } else {
+        // non-UTF-8 decoders have platform-dependent consumption, so isolate the payload first
+        val payload = Buffer()
+        readTo(payload, size.toLong())
+        payload.readText(charset)
+    }
+    skip(2) // trailing CRLF
+    return text
+}
 
-            RespCode.VERBATIM_STRING -> add(
-                VerbatimStringDecoder.decode(input, charset, code),
-            )
+/**
+ * Parses a decimal integer line (`123\r\n`, `-1\r\n`) directly from bytes,
+ * avoiding the intermediate String that `readLineStrict().toInt()` allocates per element.
+ */
+internal fun Buffer.readDecimalCrlf(): Long {
+    var negative = false
+    var value = 0L
+    var readAny = false
+    while (true) {
+        val b = readByte()
+        when {
+            b == CARRIAGE_RETURN_BYTE -> {
+                if (readByte() != NEWLINE_BYTE) throw ResponseParsingException("Invalid CRLF in decimal line")
+                if (!readAny) throw ResponseParsingException("Empty decimal line")
+                return if (negative) -value else value
+            }
 
-            else -> throw ResponseParsingException(
-                "Invalid response structure, expected string token, given $code",
-                input.tryInferCause(code),
-            )
+            b == BYTE_MINUS -> {
+                if (readAny || negative) throw ResponseParsingException("Unexpected '-' in decimal line")
+                negative = true
+            }
+
+            b in BYTE_0..BYTE_9 -> {
+                readAny = true
+                value = value * 10 + (b - BYTE_0)
+            }
+
+            else -> throw ResponseParsingException("Invalid digit in decimal line: ${b.toInt().toChar()}")
         }
     }
 }
 
+internal fun decodeStringElement(input: Buffer, charset: Charset): String =
+    when (val code = RespCode.fromCode(input.readByte())) {
+        RespCode.BULK -> BulkStringDecoder.decode(input, charset, code)
+
+        RespCode.VERBATIM_STRING -> VerbatimStringDecoder.decode(input, charset, code)
+
+        else -> throw ResponseParsingException(
+            "Invalid response structure, expected string token, given $code",
+            input.tryInferCause(code),
+        )
+    }
+
+internal fun decodeNullableStringElement(input: Buffer, charset: Charset): String? =
+    when (val code = RespCode.fromCode(input.readByte())) {
+        RespCode.NULL -> {
+            input.skip(2) // trailing CRLF of the null marker
+            null
+        }
+
+        RespCode.BULK -> BulkStringDecoder.decodeNullable(input, charset, code)
+
+        RespCode.VERBATIM_STRING -> VerbatimStringDecoder.decodeNullable(input, charset, code)
+
+        else -> throw ResponseParsingException(
+            "Invalid response structure, expected string token, given $code",
+            input.tryInferCause(code),
+        )
+    }
+
+internal inline fun MutableCollection<String>.parseStrings(size: Int, input: Buffer, charset: Charset) {
+    repeat(size) { add(decodeStringElement(input, charset)) }
+}
+
 @JvmName("parseStringsNullable")
 internal inline fun MutableCollection<String?>.parseStrings(size: Int, input: Buffer, charset: Charset) {
-    repeat(size) {
-        when (val code = RespCode.fromCode(input.readByte())) {
-            RespCode.NULL -> add(null)
-
-            RespCode.BULK -> add(BulkStringDecoder.decodeNullable(input, charset, code))
-
-            RespCode.VERBATIM_STRING -> add(VerbatimStringDecoder.decodeNullable(input, charset, code))
-
-            else -> throw ResponseParsingException(
-                "Invalid response structure, expected string token, given $code",
-                input.tryInferCause(code),
-            )
-        }
-    }
+    repeat(size) { add(decodeNullableStringElement(input, charset)) }
 }
 
 internal inline fun Buffer.resolveToken(requiredToken: RespCode): RespCode {
@@ -237,22 +290,28 @@ private suspend fun ByteReadChannel.readUntilCrlfInto(out: Buffer) {
         if (readBuffer.exhausted()) awaitContent()
         if (readBuffer.exhausted()) throw RespUnexpectedEOF()
 
-        val b = readBuffer.buffer.readByte()
-        out.writeByte(b)
-
-        if (b == CARRIAGE_RETURN_BYTE) {
-            // Expect LF next
-            if (readBuffer.exhausted()) awaitContent()
-            if (readBuffer.exhausted()) throw RespUnexpectedEOF()
-
-            val lf = readBuffer.buffer.readByte()
-            out.writeByte(lf)
-
-            if (lf != NEWLINE_BYTE) {
-                throw RespProtocolException("Invalid CRLF sequence")
-            }
-            return
+        // scan the buffered span at once instead of per-byte channel reads
+        val buffered = readBuffer.buffer
+        val crIndex = buffered.indexOf(CARRIAGE_RETURN_BYTE)
+        if (crIndex == -1L) {
+            // no CR buffered yet — the whole span is line content
+            out.write(buffered, buffered.size)
+            continue
         }
+
+        out.write(buffered, crIndex + 1) // content + CR
+
+        // LF may not be buffered yet
+        if (readBuffer.exhausted()) awaitContent()
+        if (readBuffer.exhausted()) throw RespUnexpectedEOF()
+
+        val lf = readBuffer.buffer.readByte()
+        out.writeByte(lf)
+
+        if (lf != NEWLINE_BYTE) {
+            throw RespProtocolException("Invalid CRLF sequence")
+        }
+        return
     }
 }
 
@@ -279,38 +338,40 @@ private suspend fun ByteReadChannel.readDecimalLong(out: Buffer): Long {
     var negative = false
     var value = 0L
     var readAny = false
+    var sawCr = false
 
     while (true) {
         if (readBuffer.exhausted()) awaitContent()
         if (readBuffer.exhausted()) throw RespUnexpectedEOF()
-        val b = readBuffer.buffer.readByte()
-        out.writeByte(b)
 
-        when (b) {
-            BYTE_MINUS -> {
-                if (readAny) throw RespProtocolException("Unexpected '-' in number")
-                negative = true
-            }
+        // drain the buffered span in a tight loop; suspend only at buffer boundaries
+        val buffered = readBuffer.buffer
+        while (!buffered.exhausted()) {
+            val b = buffered.readByte()
+            out.writeByte(b)
 
-            CARRIAGE_RETURN_BYTE -> {
-                if (readBuffer.exhausted()) awaitContent()
-                if (readBuffer.exhausted()) throw RespUnexpectedEOF()
-                val lf = readBuffer.buffer.readByte()
-                out.writeByte(lf)
-                if (lf != NEWLINE_BYTE) {
-                    throw RespProtocolException("Invalid CRLF in number")
-                }
+            if (sawCr) {
+                if (b != NEWLINE_BYTE) throw RespProtocolException("Invalid CRLF in number")
                 return if (negative) -value else value
             }
 
-            in BYTE_0..BYTE_9 -> {
-                readAny = true
-                value = value * 10 + (b - BYTE_0)
-            }
+            when (b) {
+                BYTE_MINUS -> {
+                    if (readAny) throw RespProtocolException("Unexpected '-' in number")
+                    negative = true
+                }
 
-            else -> throw RespProtocolException(
-                "Invalid digit in number: ${b.toInt().toChar()}",
-            )
+                CARRIAGE_RETURN_BYTE -> sawCr = true
+
+                in BYTE_0..BYTE_9 -> {
+                    readAny = true
+                    value = value * 10 + (b - BYTE_0)
+                }
+
+                else -> throw RespProtocolException(
+                    "Invalid digit in number: ${b.toInt().toChar()}",
+                )
+            }
         }
     }
 }

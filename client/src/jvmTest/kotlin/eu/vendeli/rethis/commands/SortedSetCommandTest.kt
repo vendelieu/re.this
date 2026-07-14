@@ -24,7 +24,7 @@ class SortedSetCommandTest : ReThisTestCtx() {
     suspend fun `test BZMPOP command`() {
         client.zAdd("testSet1", ZMember("testValue1", 1.0))
         client.bzMPop(1.0, ZPopCommonOption.MIN, "testSet1", "testSet2") shouldBe listOf(
-            MPopResult("testSet1", listOf()),
+            MPopResult("testSet1", listOf("testValue1", "1.0")),
         )
     }
 
@@ -43,7 +43,8 @@ class SortedSetCommandTest : ReThisTestCtx() {
     @Test
     suspend fun `test ZMPOP command`() {
         client.zAdd("testSet24", ZMember("testValue24", 1.0))
-        client.zMPop(ZPopCommonOption.MIN, "testSet24") shouldBe listOf(MPopResult("testSet24", listOf()))
+        client.zMPop(ZPopCommonOption.MIN, "testSet24") shouldBe
+            listOf(MPopResult("testSet24", listOf("testValue24", "1.0")))
     }
 
     @Test
@@ -62,7 +63,7 @@ class SortedSetCommandTest : ReThisTestCtx() {
     @Test
     suspend fun `test ZPOPMAX command`() {
         client.zAdd("testSet26", ZMember("testValue26", 1.0))
-        client.zPopMax("testSet26") shouldBe listOf(MPopResult("testValue26", listOf()))
+        client.zPopMax("testSet26") shouldBe listOf(MPopResult("testValue26", listOf("1.0")))
     }
 
     @Test

@@ -31,7 +31,7 @@ class SentinelCommandTest : TestCtx() {
 
     @Test
     fun `decode malformed payload`() {
-        shouldThrow<NumberFormatException> {
+        shouldThrow<ResponseParsingException> {
             TopologyFixtures
                 .malformedSentinelMasterAddressResponse()
                 .readResponseWrapped(Charsets.UTF_8)

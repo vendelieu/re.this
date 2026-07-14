@@ -1,6 +1,7 @@
 package eu.vendeli.rethis.commands
 
 import eu.vendeli.rethis.ReThisTestCtx
+import eu.vendeli.rethis.command.connection.ping
 import eu.vendeli.rethis.command.pubsub.*
 import eu.vendeli.rethis.shared.response.common.PubSubNumEntry
 import eu.vendeli.rethis.shared.types.DataProcessingException
@@ -36,6 +37,20 @@ class PubSubCommandTest : ReThisTestCtx() {
         client.subscribe("testChannel") { _, _: String -> }
         eventually(1.seconds) {
             client.publish("testChannel", "testMessage") shouldBe 1L
+        }
+    }
+
+    @Test
+    suspend fun `test command issued inside pubsub handler decodes correctly`() {
+        val pingResult = AtomicReference<Result<String>>()
+        client.subscribe("cmdInHandlerChannel") { _, _: String ->
+            pingResult.set(runCatching { client.ping() })
+        }
+        eventually(1.seconds) {
+            client.publish("cmdInHandlerChannel", "trigger") shouldBe 1L
+        }
+        eventually(5.seconds) {
+            pingResult.get().shouldNotBeNull().getOrThrow() shouldBe "PONG"
         }
     }
 

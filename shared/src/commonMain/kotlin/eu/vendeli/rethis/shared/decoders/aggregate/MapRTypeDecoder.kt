@@ -6,11 +6,11 @@ import eu.vendeli.rethis.shared.types.RType
 import eu.vendeli.rethis.shared.types.RespCode
 import eu.vendeli.rethis.shared.types.ResponseParsingException
 import eu.vendeli.rethis.shared.utils.EMPTY_BUFFER
+import eu.vendeli.rethis.shared.utils.readDecimalCrlf
 import eu.vendeli.rethis.shared.utils.readResponseWrapped
 import eu.vendeli.rethis.shared.utils.tryInferCause
 import io.ktor.utils.io.charsets.*
 import kotlinx.io.Buffer
-import kotlinx.io.readLineStrict
 
 object MapRTypeDecoder : ResponseDecoder<Map<String, RType>> {
     override fun decode(
@@ -24,7 +24,7 @@ object MapRTypeDecoder : ResponseDecoder<Map<String, RType>> {
             "Invalid response structure, expected map token, given $code", input.tryInferCause(code),
         )
 
-        val size = input.readLineStrict().toInt().let { if (code == RespCode.MAP) it else it / 2 }
+        val size = input.readDecimalCrlf().toInt().let { if (code == RespCode.MAP) it else it / 2 }
         if (size == 0) return emptyMap()
 
         return buildMap {
