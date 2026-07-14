@@ -2,6 +2,8 @@
 
 import java.time.Duration
 import kotlinx.validation.ExperimentalBCVApi
+import org.gradle.api.tasks.testing.logging.TestExceptionFormat
+import org.gradle.api.tasks.testing.logging.TestLogEvent
 import org.jmailen.gradle.kotlinter.tasks.FormatTask
 import org.jmailen.gradle.kotlinter.tasks.LintTask
 
@@ -55,7 +57,14 @@ libraryData {
 
 tasks.withType<Test> {
     useJUnitPlatform()
-    timeout.set(Duration.ofMinutes(20))
+    // Keep below the CI step timeout (20 min) so a hung suite fails inside Gradle —
+    // which still writes test reports — instead of the runner killing the JVM.
+    timeout.set(Duration.ofMinutes(10))
+    testLogging {
+        events(TestLogEvent.FAILED, TestLogEvent.SKIPPED)
+        exceptionFormat = TestExceptionFormat.FULL
+        showStackTraces = true
+    }
 }
 
 @OptIn(ExperimentalBCVApi::class)

@@ -17,7 +17,9 @@ import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.Instant
 
-private val TEST_TIMEOUT = 5.minutes
+// Per-test budget. The healthy suite averages well under 1s/test — a hung test must
+// fail fast so a handful of hangs can't consume the whole CI step timeout.
+private val TEST_TIMEOUT = 1.minutes
 private val COMMAND_TIMEOUT = 30.seconds
 
 open class TestCtx : AnnotationSpec() {

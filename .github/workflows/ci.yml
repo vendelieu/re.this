@@ -67,25 +67,17 @@ jobs:
       - uses: actions/checkout@v7
       - uses: ./.github/actions/setup-build
 
-      - name: Run Detekt
-        id: detekt
+      # Single Gradle invocation for both linters — separate invocations pay the
+      # configuration/compilation cost twice (~4 min per run on a warm cache).
+      - name: Run Detekt and Kotlinter
+        id: lint
         run: |
           if [ "${{ github.event_name }}" = "pull_request" ]; then
-            ./gradlew detektAll --continue
+            ./gradlew detektAll lintKotlin --continue
           else
             # Match detektAll scope: main sources only (test sources are excluded
             # by the detektAll aggregator in client/build.gradle.kts).
-            ./gradlew detektJvmMain --continue
-          fi
-        continue-on-error: true
-
-      - name: Run Kotlinter
-        id: kotlinter
-        run: |
-          if [ "${{ github.event_name }}" = "pull_request" ]; then
-            ./gradlew lintKotlin --continue
-          else
-            ./gradlew lintKotlinJvmMain lintKotlinJvmTest --continue
+            ./gradlew detektJvmMain lintKotlinJvmMain lintKotlinJvmTest --continue
           fi
         continue-on-error: true
 
@@ -147,9 +139,9 @@ jobs:
           if-no-files-found: ignore
 
       - name: Fail if any linter failed
-        if: steps.detekt.outcome == 'failure' || steps.kotlinter.outcome == 'failure'
+        if: steps.lint.outcome == 'failure'
         run: |
-          echo "::error::Lint failed (detekt: ${{ steps.detekt.outcome }}, kotlinter: ${{ steps.kotlinter.outcome }})"
+          echo "::error::Lint failed — detekt/kotlinter reported issues, see step log and SARIF artifact"
           exit 1
 
   upload-sarif:
@@ -196,6 +188,19 @@ jobs:
       - name: Build with coverage
         run: ./gradlew koverXmlReport
         timeout-minutes: 20
+
+      # A hung/failed test run must leave diagnostics behind — the Gradle Test timeout
+      # (10 min, client/build.gradle.kts) fires before the step timeout so reports exist.
+      - name: Upload test reports
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: test-reports
+          path: |
+            client/build/reports/tests/
+            client/build/test-results/
+          retention-days: 7
+          if-no-files-found: ignore
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v7
