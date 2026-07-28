@@ -15,7 +15,7 @@ binvalid = "0.18.1"
 kover = "0.9.9"
 
 kotest = "6.2.3"
-logback = "1.5.38"
+logback = "1.6.1"
 rtestcontainers = "2.2.4"
 
 ksp = "2.3.10"
