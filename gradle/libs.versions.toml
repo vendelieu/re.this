@@ -1,5 +1,5 @@
 [versions]
-ktor = "3.5.1"
+ktor = "3.5.2"
 
 kotlin = "2.4.10"
 coroutines = "1.11.0"
@@ -8,17 +8,17 @@ bignum = "0.3.10"
 kotlinx-serialization = "1.11.0"
 
 dokka = "2.2.0"
-kotlinter = "5.6.0"
+kotlinter = "5.7.0"
 deteKT = "1.23.8"
 publisher = "0.37.0"
 binvalid = "0.18.1"
 kover = "0.9.9"
 
-kotest = "6.2.3"
-logback = "1.6.1"
+kotest = "6.2.4"
+logback = "1.6.3"
 rtestcontainers = "2.2.4"
 
-ksp = "2.3.10"
+ksp = "2.3.11"
 poet = "2.3.0"
 autoservice-annotations = "1.1.1"
 autoservice-ksp = "1.2.0"
