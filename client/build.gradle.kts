@@ -122,12 +122,15 @@ kotlinter {
     reporters = arrayOf("checkstyle", "sarif")
 }
 
-// Ensure platform compilation, source jar, lint, and detekt tasks run after KSP generates common metadata sources.
+// Ensure every consumer of the generated common metadata sources runs after KSP produces them.
+// KSP's platform tasks also consume this directory; Gradle 9 validates that relationship
+// and rejects the build unless they explicitly depend on the common metadata task.
 val kspTaskName = "kspCommonMainKotlinMetadata"
 fun Task.shouldDependOnKsp(): Boolean =
     name != kspTaskName &&
         (
             name.startsWith("compileKotlin") ||
+                name.startsWith("kspKotlin") ||
                 name.contains("SourcesJar", ignoreCase = true) ||
                 name.startsWith("lintKotlin") ||
                 name.startsWith("formatKotlin") ||
@@ -146,4 +149,3 @@ tasks.withType<LintTask>().configureEach {
 tasks.withType<FormatTask>().configureEach {
     exclude { it.file.absolutePath.replace('\\', '/').contains("/build/generated/") }
 }
-
