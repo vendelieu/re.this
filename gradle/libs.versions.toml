@@ -11,7 +11,7 @@ dokka = "2.2.0"
 kotlinter = "5.7.0"
 deteKT = "1.23.8"
 publisher = "0.37.0"
-binvalid = "0.18.1"
+binvalid = "0.18.2"
 kover = "0.9.9"
 
 kotest = "6.2.4"
