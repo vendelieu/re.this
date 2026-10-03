@@ -12,10 +12,10 @@ kotlinter = "5.7.0"
 deteKT = "1.23.8"
 publisher = "0.37.0"
 binvalid = "0.18.2"
-kover = "0.9.9"
+kover = "0.9.11"
 
 kotest = "6.2.5"
-logback = "1.6.3"
+logback = "1.6.5"
 rtestcontainers = "2.2.4"
 
 ksp = "2.3.12"
