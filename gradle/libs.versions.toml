@@ -1,11 +1,11 @@
 [versions]
 ktor = "3.6.0"
 
-kotlin = "2.4.20"
+kotlin = "2.4.21"
 coroutines = "1.11.0"
 io = "0.9.1"
 bignum = "0.3.10"
-kotlinx-serialization = "1.11.0"
+kotlinx-serialization = "1.12.0"
 
 dokka = "2.2.0"
 kotlinter = "5.7.0"
@@ -14,7 +14,7 @@ publisher = "0.37.0"
 binvalid = "0.18.2"
 kover = "0.9.11"
 
-kotest = "6.2.5"
+kotest = "6.2.6"
 logback = "1.6.5"
 rtestcontainers = "2.2.4"
 

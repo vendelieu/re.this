@@ -4,7 +4,7 @@ import java.util.*
 
 plugins {
     kotlin("jvm")
-    kotlin("plugin.allopen") version "2.4.20"
+    kotlin("plugin.allopen") version "2.4.21"
     id("org.jetbrains.kotlinx.benchmark") version "0.5.0"
 }
 
@@ -15,8 +15,8 @@ repositories {
 dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-benchmark-runtime:0.5.0")
     implementation(project(":client"))
-    implementation("redis.clients:jedis:8.0.1")
-    implementation("io.lettuce:lettuce-core:7.8.0.RELEASE")
+    implementation("redis.clients:jedis:8.0.2")
+    implementation("io.lettuce:lettuce-core:7.9.0.RELEASE")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactive:1.11.0")
     implementation("io.github.crackthecodeabhi:kreds:0.9.1")
 
