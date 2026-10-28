@@ -16,7 +16,7 @@ kover = "0.9.11"
 
 kotest = "6.2.6"
 logback = "1.6.6"
-rtestcontainers = "2.2.4"
+rtestcontainers = "3.0.1"
 
 ksp = "2.3.12"
 poet = "2.4.0"
