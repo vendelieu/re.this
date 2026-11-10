@@ -9,15 +9,15 @@ import org.openjdk.jmh.annotations.Level
 import org.openjdk.jmh.annotations.Setup
 import org.openjdk.jmh.annotations.TearDown
 import org.openjdk.jmh.infra.Blackhole
-import redis.clients.jedis.JedisPooled
+import redis.clients.jedis.RedisClient
 
 class JedisBenchmark : JMHBenchmark() {
-    private lateinit var jedis: JedisPooled
+    private lateinit var jedis: RedisClient
 
     @Setup(Level.Trial)
     fun setup() {
         redis.start()
-        jedis = JedisPooled(redis.host, redis.firstMappedPort)
+        jedis = RedisClient.create(redis.host, redis.firstMappedPort)
         jedis.ping()
     }
 
