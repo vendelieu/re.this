@@ -38,7 +38,8 @@ data class RConnection(
     ): Buffer {
         COMMON_LOGGER.trace { "Request:\n${payload.copy().readString()}" }
 
-        output.writeBuffer(payload)
+        // write a copy: writing drains the buffer, and a retried attempt must resend the full request
+        output.writeBuffer(payload.copy())
         output.flush()
 
         val response = Buffer()

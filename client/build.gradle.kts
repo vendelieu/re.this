@@ -2,6 +2,8 @@
 
 import java.time.Duration
 import kotlinx.validation.ExperimentalBCVApi
+import org.gradle.api.tasks.testing.logging.TestExceptionFormat
+import org.gradle.api.tasks.testing.logging.TestLogEvent
 import org.jmailen.gradle.kotlinter.tasks.FormatTask
 import org.jmailen.gradle.kotlinter.tasks.LintTask
 
@@ -55,7 +57,14 @@ libraryData {
 
 tasks.withType<Test> {
     useJUnitPlatform()
-    timeout.set(Duration.ofMinutes(20))
+    // Keep below the CI step timeout (20 min) so a hung suite fails inside Gradle —
+    // which still writes test reports — instead of the runner killing the JVM.
+    timeout.set(Duration.ofMinutes(10))
+    testLogging {
+        events(TestLogEvent.FAILED, TestLogEvent.SKIPPED)
+        exceptionFormat = TestExceptionFormat.FULL
+        showStackTraces = true
+    }
 }
 
 @OptIn(ExperimentalBCVApi::class)
@@ -113,12 +122,15 @@ kotlinter {
     reporters = arrayOf("checkstyle", "sarif")
 }
 
-// Ensure platform compilation, source jar, lint, and detekt tasks run after KSP generates common metadata sources.
+// Ensure every consumer of the generated common metadata sources runs after KSP produces them.
+// KSP's platform tasks also consume this directory; Gradle 9 validates that relationship
+// and rejects the build unless they explicitly depend on the common metadata task.
 val kspTaskName = "kspCommonMainKotlinMetadata"
 fun Task.shouldDependOnKsp(): Boolean =
     name != kspTaskName &&
         (
             name.startsWith("compileKotlin") ||
+                name.startsWith("kspKotlin") ||
                 name.contains("SourcesJar", ignoreCase = true) ||
                 name.startsWith("lintKotlin") ||
                 name.startsWith("formatKotlin") ||
@@ -137,4 +149,3 @@ tasks.withType<LintTask>().configureEach {
 tasks.withType<FormatTask>().configureEach {
     exclude { it.file.absolutePath.replace('\\', '/').contains("/build/generated/") }
 }
-

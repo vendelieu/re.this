@@ -1,5 +1,12 @@
 # Re.this Changelog
 
+## 0.4.5
+
+* Fixed retries resending an empty request: the first attempt's socket write drained the request buffer, so every retry sent 0 bytes and waited for a reply until the connection dropped or the command timed out. `doRequest` now writes a copy of the payload, so each attempt sends the full command ([#168](https://github.com/vendelieu/re.this/issues/168)).
+* Fixed `retry { times = N }` making the wrong number of attempts (1 for `N = 1` or `2`, `N - 1` for `N >= 3`) and sleeping once more after the last failed attempt before throwing. It now makes exactly `N` attempts (at least one) with no backoff after the final one; failures of earlier attempts are attached to the thrown exception as suppressed. This also applies to the cluster topology fetch.
+* Fixed ordering of platform KSP tasks relative to common metadata generation.
+* Updated dependencies: Kotlin 2.4.21, Ktor 3.6.1, kotlinx-io 0.9.2, kotlinx-serialization 1.12.0, KotlinPoet 2.4.0, KSP 2.3.13. Build and test tooling: Gradle 9.9.0, Dokka 2.3.0, kotlinter 5.7.0, Kover 0.9.11, binary-compatibility-validator 0.18.2, Kotest 6.2.6, Logback 1.6.6, testcontainers-redis 3.0.1.
+
 ## 0.4.4
 
 * Fixed multi-element reply decoding (`HGETALL` and other map/array string replies) misplacing the read cursor after large, multi-line, or null bulk-string values: bulk and verbatim string payloads are now consumed by their declared RESP byte size instead of line-based reads or charset-dependent `readText` limits, which caused `IllegalArgumentException: No suitable message type found` mid-payload (notably on Kotlin/Native with values ~30 KB+).

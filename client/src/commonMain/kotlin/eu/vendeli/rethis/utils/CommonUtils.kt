@@ -23,24 +23,25 @@ internal suspend inline fun <T> withRetry(
     val logger = cfg.loggerFactory.get("eu.vendeli.rethis.ReThis")
     var currentDelay = cfg.retry.initialDelay.inWholeMilliseconds
     var ex: Exception? = null
-    repeat(cfg.retry.times - 1) {
-        val attempt = it + 1
-        logger.trace { "Attempt $attempt of ${cfg.retry.times}" }
+    val totalAttempts = cfg.retry.times.coerceAtLeast(1)
+    for (attempt in 0 until totalAttempts) {
+        logger.trace { "Attempt ${attempt + 1} of $totalAttempts" }
         try {
-            return block(it)
+            return block(attempt)
         } catch (e: Exception) {
-            logger.debug("Caught exception at $attempt attempt", e)
+            logger.debug("Caught exception at ${attempt + 1} attempt", e)
             if (ex == null) {
                 ex = e
             } else {
                 ex.addSuppressed(e)
             }
         }
+        // no backoff after the final attempt, just surface the failure
+        if (attempt == totalAttempts - 1) break
         delay(currentDelay)
         currentDelay = (currentDelay * cfg.retry.factor).toLong().coerceAtMost(cfg.retry.maxDelay.inWholeMilliseconds)
     }
-    if (ex != null) throw ex
-    return block(cfg.retry.times)
+    throw ex!!
 }
 
 internal inline fun HostAndPort.toAddress(): Address = Address(host, port)

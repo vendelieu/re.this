@@ -1,7 +1,12 @@
 name: Sync dev with master
 
+# Runs after CI succeeds on a master push (not on the push itself): the dev ruleset
+# requires a passing `Build` check on pushed commits, and master HEAD only has one
+# once CI completes. Syncing earlier would be rejected.
 on:
-  push:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
     branches: [master]
 
 permissions:
@@ -14,17 +19,33 @@ concurrency:
 jobs:
   sync:
     name: Force-reset dev to master
+    # `event == 'push'` guards against fork PRs whose head branch is named `master` —
+    # workflow_run's `branches` filter matches head-branch names, not the base repo ref.
+    if: >-
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.event == 'push' &&
+      github.event.workflow_run.head_branch == 'master'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
-      - name: Force-reset dev to master HEAD
+      # Reset to the exact SHA whose CI passed, not current master HEAD: master may have
+      # moved to a paths-ignored commit (e.g. the release README bump) that carries no
+      # `Build` check, and pushing such a SHA to dev would be rejected by the ruleset.
+      # Any skipped commits reach dev on the next CI-covered master push.
+      - name: Force-reset dev to the CI-verified master SHA
+        env:
+          VERIFIED_SHA: ${{ github.event.workflow_run.head_sha }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git fetch origin
+          if ! git merge-base --is-ancestor "$VERIFIED_SHA" origin/master; then
+            echo "::notice::$VERIFIED_SHA is no longer on master (rewritten or stale run) — skipping sync"
+            exit 0
+          fi
           git checkout dev
-          git reset origin/master --hard
+          git reset --hard "$VERIFIED_SHA"
           git push origin dev --force
