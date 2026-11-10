@@ -39,7 +39,7 @@
             </a>        <button class="navigation-controls--btn navigation-controls--btn_toc ui-kit_mobile-only" id="toc-toggle" type="button">Toggle table of contents
         </button>
         <div class="navigation-controls--break ui-kit_mobile-only"></div>
-        <div class="library-version" id="library-version">0.4.4
+        <div class="library-version" id="library-version">0.4.5
         </div>
         <div class="navigation-controls">
         <ul class="filter-section filter-section_loading" id="filter-section" aria-label="Target filter">
@@ -176,7 +176,7 @@
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":client/commonMain"><div class="symbol monospace"><span class="token keyword">var </span><a href="connection-health-check-interval.html">connectionHealthCheckInterval</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.time/-duration/index.html">Duration</a></div><div class="brief "><p class="paragraph">minimum idle duration before a borrowed connection is health-checked with PING; only consulted when <a href="../../../client/eu.vendeli.rethis.configuration/-pool-configuration/--root--.html">connectionHealthCheck</a> is true. Defaults to 30 seconds.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":client/commonMain"><div class="symbol monospace"><span class="token keyword">var </span><a href="connection-health-check-interval.html">connectionHealthCheckInterval</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.time/-duration/index.html">Duration</a></div><div class="brief "><p class="paragraph">minimum idle duration before a borrowed connection is health-checked with PING; only consulted when <a href="connection-health-check.html">connectionHealthCheck</a> is true. Defaults to 30 seconds.</p></div></div></div>
                 </div>
               </div>
             </div>
@@ -191,7 +191,7 @@
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":client/commonMain"><div class="symbol monospace"><span class="token keyword">var </span><a href="connection-health-check-timeout.html">connectionHealthCheckTimeout</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.time/-duration/index.html">Duration</a></div><div class="brief "><p class="paragraph">maximum time the health-check PING may take before the connection is considered dead and discarded. Bounded independently of <code class="lang-kotlin">commandTimeout</code> / <code class="lang-kotlin">socket.timeout</code> so a stale connection cannot poison the next borrower. Only consulted when <a href="../../../client/eu.vendeli.rethis.configuration/-pool-configuration/--root--.html">connectionHealthCheck</a> is true. Defaults to 1 second.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":client/commonMain"><div class="symbol monospace"><span class="token keyword">var </span><a href="connection-health-check-timeout.html">connectionHealthCheckTimeout</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.time/-duration/index.html">Duration</a></div><div class="brief "><p class="paragraph">maximum time the health-check PING may take before the connection is considered dead and discarded. Bounded independently of <code class="lang-kotlin">commandTimeout</code> / <code class="lang-kotlin">socket.timeout</code> so a stale connection cannot poison the next borrower. Only consulted when <a href="connection-health-check.html">connectionHealthCheck</a> is true. Defaults to 1 second.</p></div></div></div>
                 </div>
               </div>
             </div>
