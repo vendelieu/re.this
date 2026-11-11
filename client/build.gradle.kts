@@ -7,21 +7,12 @@ import org.gradle.api.tasks.testing.logging.TestLogEvent
 import org.jmailen.gradle.kotlinter.tasks.FormatTask
 import org.jmailen.gradle.kotlinter.tasks.LintTask
 
-// Kover's coverage reporter drags in a vulnerable freemarker on the plugin classpath.
-buildscript {
-    dependencies {
-        constraints {
-            classpath("org.freemarker:freemarker:2.3.35") { because("CVE-2026-84939") }
-        }
-    }
-}
-
 plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.deteKT)
     alias(libs.plugins.ktlinter)
     alias(libs.plugins.kotlin.binvalid)
-    alias(libs.plugins.kover)
+    id("org.jetbrains.kotlinx.kover")
     alias(libs.plugins.kotlin.serde)
     dokka
     publish

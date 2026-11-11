@@ -16,6 +16,16 @@
     "automerge": true,
     "schedule": ["before 6am on monday"]
   },
+  "customManagers": [
+    {
+      "customType": "regex",
+      "description": "npm security pins in the version catalog (Renovate's gradle manager can't see npm packages)",
+      "fileMatch": ["^gradle/libs\\.versions\\.toml$"],
+      "matchStrings": [
+        "# renovate: datasource=(?<datasource>\\S+) depName=(?<depName>\\S+)\\s*\\n\\S+\\s*=\\s*\"(?<currentValue>[^\"]+)\""
+      ]
+    }
+  ],
   "vulnerabilityAlerts": {
     "enabled": true,
     "labels": ["security"],
