@@ -16,6 +16,12 @@
     "automerge": true,
     "schedule": ["before 6am on monday"]
   },
+  "vulnerabilityAlerts": {
+    "enabled": true,
+    "labels": ["security"],
+    "schedule": ["at any time"],
+    "automerge": false
+  },
   "packageRules": [
     {
       "matchManagers": ["github-actions"],
