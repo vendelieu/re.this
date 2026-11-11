@@ -1,6 +1,6 @@
 # One-trigger release: dispatch with a version, the workflow handles everything from
 # dev → master merge through Maven Central publish, tag, README bump, GitHub Release,
-# and Dokka deploy.
+# and multi-version Dokka deploy.
 #
 # Usage: Actions → Release → Run workflow → enter version (e.g. 0.4.1).
 # Prereq: `## x.y.z` heading must exist in CHANGELOG.md on `dev` before dispatching.
@@ -137,10 +137,21 @@ jobs:
             --target master \
             --discussion-category "Announcements"
 
+      # Multi-version docs: gh-pages holds the latest release at its root and earlier ones under older/.
+      # Lay them out as <dir>/<version>/ so the Dokka versioning plugin can merge them into the new site.
+      - name: Collect previously published docs versions
+        run: |
+          V="${{ steps.v.outputs.version }}"
+          git fetch origin gh-pages
+          git worktree add --detach "$RUNNER_TEMP/published-docs" origin/gh-pages
+          # Only used when the published root has no version.json (docs published before multi-versioning).
+          PREV="$(git tag --list '[0-9]*.[0-9]*.[0-9]*' --sort=-v:refname | grep -vx "$V" | head -1 || true)"
+          ./scripts/prepare-older-docs.sh "$RUNNER_TEMP/published-docs" "$RUNNER_TEMP/older-docs" "$V" "$PREV"
+
       - name: Generate Dokka site
         env:
           libVersion: ${{ steps.v.outputs.version }}
-        run: ./gradlew :docs:dokkaGenerate
+        run: ./gradlew :docs:dokkaGenerate -PdokkaOlderVersionsDir="$RUNNER_TEMP/older-docs"
 
       - name: Deploy docs to gh-pages
         uses: JamesIves/github-pages-deploy-action@v4

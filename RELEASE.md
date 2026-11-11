@@ -4,7 +4,7 @@ A new version of `rethis` is shipped via a single dispatch-driven workflow. You
 do all your work on `dev` (including the changelog entry); when you're ready,
 trigger the workflow with a version number and it handles the rest:
 `dev → master` merge, build, publish to Maven Central, tag, README bump,
-benchmarks, GitHub Release, and Dokka deploy.
+benchmarks, GitHub Release, and multi-version Dokka deploy.
 
 ## Versioning
 
@@ -49,7 +49,10 @@ That's it. The workflow:
 7. Replaces the version string in `README.md`, runs benchmarks, updates the
    benchmark table, commits the result back to `master`.
 8. Extracts the matching CHANGELOG section and creates a GitHub Release.
-9. Generates the Dokka site and deploys it to `gh-pages`.
+9. Generates the Dokka site and deploys it to `gh-pages`. The docs are multi-version: the
+   latest release is at the site root and earlier ones live under `older/<version>/`, linked from
+   a version dropdown (Dokka versioning plugin). Before generating, `scripts/prepare-older-docs.sh`
+   lays the already-published versions out for the plugin, and the previous root is archived.
 10. `dev-sync.yml` fires automatically on each `master` push and keeps `dev`
     aligned with `master`.
 
@@ -69,11 +72,16 @@ version shows up (propagation typically takes a few minutes).
 * **Maven publish failed mid-flight**: re-run the failed step from the Actions
   UI. If the staging repo is in a bad state, drop it from Sonatype Central and
   re-run.
-* **Docs deploy failed but everything else succeeded**: re-run only the Dokka
-  steps locally with `libVersion=x.y.z ./gradlew :docs:dokkaGenerate`, then
-  push the output to `gh-pages` manually — or re-dispatch the workflow with the
-  same version (the early "tag already exists" check will block it; a tiny
-  `docs-redeploy.yml` workflow can be added if you find this happens often).
+* **Docs deploy failed but everything else succeeded**: re-run only the Dokka steps locally, then
+  push the output to `gh-pages` manually — or re-dispatch the workflow with the same version (the early
+  "tag already exists" check will block it; a tiny `docs-redeploy.yml` workflow can be added if you find
+  this happens often). To keep the older versions when doing it by hand:
+  ```bash
+  git fetch origin gh-pages && git worktree add --detach /tmp/published-docs origin/gh-pages
+  scripts/prepare-older-docs.sh /tmp/published-docs /tmp/older-docs x.y.z <previous-version>
+  libVersion=x.y.z ./gradlew :docs:dokkaGenerate -PdokkaOlderVersionsDir=/tmp/older-docs
+  ```
+  The output is in `docs/build/dokka/html`.
 
 ## Troubleshooting
 
