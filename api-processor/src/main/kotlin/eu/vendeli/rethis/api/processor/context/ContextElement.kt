@@ -113,13 +113,12 @@ internal class CommandFileSpec(
         val codeGenerator = context.meta.codeGenerator
         commandFile.values.forEach { entry ->
             val spec = entry.builder.build()
-            runCatching {
-                codeGenerator.createNewFile(
-                    Dependencies(aggregating = true, *entry.originatingFiles.toTypedArray()),
-                    spec.packageName,
-                    spec.name,
-                ).bufferedWriter().use { spec.writeTo(it) }
-            }.onFailure { it.printStackTrace() }
+            writeGeneratedFile(
+                codeGenerator,
+                context.logger,
+                Dependencies(aggregating = true, *entry.originatingFiles.toTypedArray()),
+                spec,
+            )
         }
     }
 

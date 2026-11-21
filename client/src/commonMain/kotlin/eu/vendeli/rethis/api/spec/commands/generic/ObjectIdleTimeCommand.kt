@@ -6,6 +6,9 @@ import eu.vendeli.rethis.shared.types.RedisCommandSpec
 import eu.vendeli.rethis.shared.types.RedisOperation
 import eu.vendeli.rethis.shared.types.RespCode
 
+/**
+ * Returns the time the key has been idle, in seconds.
+ */
 @RedisCommand("OBJECT IDLETIME", RedisOperation.READ, [RespCode.INTEGER, RespCode.NULL])
 fun interface ObjectIdleTimeCommand : RedisCommandSpec<Long> {
     suspend fun encode(key: String): CommandRequest

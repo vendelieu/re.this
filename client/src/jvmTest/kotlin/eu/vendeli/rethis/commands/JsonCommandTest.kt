@@ -1,13 +1,21 @@
 package eu.vendeli.rethis.commands
 
 import eu.vendeli.rethis.ReThisTestCtx
+import eu.vendeli.rethis.codecs.json.JsonArrIndexCommandCodec
 import eu.vendeli.rethis.command.json.*
 import eu.vendeli.rethis.shared.types.BulkString
+import eu.vendeli.rethis.shared.types.RedisOperation
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeTypeOf
 import kotlinx.io.readString
 
 class JsonCommandTest : ReThisTestCtx() {
+    @Test
+    suspend fun `test JSON_ARRINDEX is routed as a read`() {
+        JsonArrIndexCommandCodec.encode(Charsets.UTF_8, "k", "1", "$", null, null).operation shouldBe
+            RedisOperation.READ
+    }
+
     @Test
     suspend fun `test JSON_ARRAPPEND command`() {
         client.jsonSet("testKey1", "[1, 2, 3]", ".")

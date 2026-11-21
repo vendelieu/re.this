@@ -13,6 +13,7 @@ import eu.vendeli.rethis.shared.types.BulkString
 import eu.vendeli.rethis.shared.types.F64
 import eu.vendeli.rethis.shared.types.Int64
 import eu.vendeli.rethis.shared.types.RArray
+import eu.vendeli.rethis.types.common.RespVer
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import kotlinx.io.readString
@@ -108,5 +109,22 @@ class GeoCommandTest : ReThisTestCtx() {
             any = true,
             storedist = true,
         ) shouldBe 2L
+    }
+
+    @Test
+    suspend fun `test GEOHASH returns null for a missing member on RESP3`() {
+        client.geoAdd("geoHashMissing", GeoMember(1.0, 1.0, "present"))
+        client.geoHash("geoHashMissing", "present", "missing") shouldBe listOf("s00twy01mt0", null)
+    }
+
+    @Test
+    suspend fun `test GEOHASH returns null for a missing member on RESP2`() {
+        val resp2 = createClient(protocol = RespVer.V2)
+        try {
+            resp2.geoAdd("geoHashMissing2", GeoMember(1.0, 1.0, "present"))
+            resp2.geoHash("geoHashMissing2", "present", "missing") shouldBe listOf("s00twy01mt0", null)
+        } finally {
+            resp2.close()
+        }
     }
 }

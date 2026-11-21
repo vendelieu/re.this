@@ -7,6 +7,9 @@ import eu.vendeli.rethis.shared.types.RedisCommandSpec
 import eu.vendeli.rethis.shared.types.RedisOperation
 import eu.vendeli.rethis.shared.types.RespCode
 
+/**
+ * @param timeout pause duration in milliseconds.
+ */
 @RedisCommand("CLIENT PAUSE", RedisOperation.WRITE, [RespCode.SIMPLE_STRING])
 fun interface ClientPauseCommand : RedisCommandSpec<Boolean> {
     suspend fun encode(

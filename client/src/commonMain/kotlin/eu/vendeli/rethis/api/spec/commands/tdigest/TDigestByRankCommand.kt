@@ -12,5 +12,5 @@ import eu.vendeli.rethis.shared.types.RespCode
 @RedisCommand("TDIGEST.BYRANK", RedisOperation.READ, [RespCode.ARRAY])
 @RedisMeta.CustomCodec(decoder = RTypeDecoder::class)
 fun interface TDigestByRankCommand : RedisCommandSpec<RType> {
-    suspend fun encode(key: String, vararg rank: Double): CommandRequest
+    suspend fun encode(key: String, vararg rank: Long): CommandRequest
 }

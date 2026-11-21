@@ -2,6 +2,7 @@ package eu.vendeli.rethis.core
 
 import eu.vendeli.rethis.codecs.connection.PingCommandCodec
 import eu.vendeli.rethis.configuration.ReThisConfiguration
+import eu.vendeli.rethis.shared.types.CommandTimeoutException
 import eu.vendeli.rethis.types.common.RConnection
 import eu.vendeli.rethis.types.interfaces.AcquireFailure
 import eu.vendeli.rethis.types.interfaces.DisposeReason
@@ -13,8 +14,6 @@ import io.ktor.util.logging.*
 import io.ktor.utils.io.InternalAPI
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.channels.onFailure
-import kotlinx.coroutines.channels.onSuccess
 import kotlin.concurrent.atomics.AtomicInt
 import kotlin.concurrent.atomics.ExperimentalAtomicApi
 import kotlin.concurrent.atomics.decrementAndFetch
@@ -22,7 +21,9 @@ import kotlin.concurrent.atomics.incrementAndFetch
 import kotlin.math.ceil
 import kotlin.math.min
 import kotlin.math.roundToInt
+import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.DurationUnit
 import kotlin.time.TimeSource
 
 @OptIn(ExperimentalAtomicApi::class, ExperimentalReThisMetricsApi::class)
@@ -32,6 +33,12 @@ internal class ConnectionPool(
     private val connectionFactory: ConnectionFactory,
     rootJob: Job,
 ) {
+    init {
+        require(cfg.pool.checkInterval > Duration.ZERO) {
+            "pool.checkInterval must be positive, got ${cfg.pool.checkInterval}"
+        }
+    }
+
     private val name = "$CLIENT_NAME|${cfg::class.simpleName}Pool@${this::class.hashCode()}"
     private val logger = cfg.loggerFactory.get("eu.vendeli.rethis.ConnectionPool")
     private val addressLabel: String = address.toString()
@@ -42,9 +49,8 @@ internal class ConnectionPool(
     private val idleConnectionsCount = AtomicInt(0)
     private val borrowCount = AtomicInt(0)
 
-    private val idleConnections = Channel<RConnection>(
-        cfg.pool.maxIdleConnections.coerceAtMost(cfg.maxConnections),
-    ) { connectionFactory.dispose(it) }
+    private val idleCapacity = cfg.pool.maxIdleConnections.coerceAtMost(cfg.maxConnections)
+    private val idleConnections = Channel<RConnection>(idleCapacity) { connectionFactory.dispose(it) }
     private val pending = Channel<CompletableDeferred<RConnection>>(cfg.pool.maxPendingConnections) {
         it.completeExceptionally(IllegalStateException("Pool is closed"))
     }
@@ -58,28 +64,38 @@ internal class ConnectionPool(
     private fun populatePool() = scope.launch(Dispatchers.IO_OR_UNCONFINED + Job(poolJob)) {
         val populationJob = currentCoroutineContext()[Job]!!
         repeat(cfg.pool.minIdleConnections) {
-            launch(Job(populationJob)) {
-                val rec = cfg.metricsRecorder
-                val conn = connectionFactory.createConnOrNull(address)
-                if (conn == null) {
-                    rec?.onConnectionCreated(addressLabel, success = false)
-                    return@launch
-                }
-                rec?.onConnectionCreated(addressLabel, success = true)
-                idleConnections
-                    .trySend(conn)
-                    .onSuccess {
-                        idleConnectionsCount.incrementAndFetch()
-                    }.onFailure {
-                        connectionFactory.dispose(conn)
-                        rec?.onConnectionDisposed(addressLabel, DisposeReason.CLOSE)
-                    }
-            }
+            launch(Job(populationJob)) { prepopulateOne() }
         }
         populationJob.invokeOnCompletion { logger.info("Connection pool initialized") }
     }
 
-    fun haveIdleConnections() = idleConnectionsCount.load() < cfg.pool.maxIdleConnections
+    // A failed attempt (refused connection, handshake error) must not escape into the uncaught-exception handler.
+    private suspend fun prepopulateOne() {
+        val rec = cfg.metricsRecorder
+        val conn = try {
+            connectionFactory.createConnOrNull(address)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            logger.warn("Failed to prepopulate a connection to $address", e)
+            null
+        }
+        if (conn == null) {
+            rec?.onConnectionCreated(addressLabel, success = false)
+            return
+        }
+        rec?.onConnectionCreated(addressLabel, success = true)
+        // an acquire() may already wait for a connection because the factory limit was reached by this very one
+        if (pending.handOff(conn)) return
+        if (!offerIdle(conn)) {
+            connectionFactory.dispose(conn)
+            rec?.onConnectionDisposed(addressLabel, DisposeReason.CLOSE)
+        }
+    }
+
+    internal val idleCount: Int get() = idleConnectionsCount.load()
+
+    fun haveIdleConnections() = idleConnectionsCount.load() > 0
 
     // ThrowsCount: each throw routes a distinct failure mode (timeout vs. other) into
     // the correct AcquireFailure observation reason; consolidating into a single catch
@@ -90,10 +106,14 @@ internal class ConnectionPool(
         val rec = cfg.metricsRecorder
         val obs = rec?.connectionAcquireStarted(addressLabel)
         try {
-            return withTimeout(cfg.connectionAcquireTimeout) aq@{
+            return withAcquireTimeout(cfg.connectionAcquireTimeout) aq@{
                 borrowCount.incrementAndFetch()
                 // fastest path
-                val idleConn = idleConnections.tryReceive().getOrNull()?.healthyOrNull()
+                val idleConn = idleConnections
+                    .tryReceive()
+                    .getOrNull()
+                    ?.also { idleConnectionsCount.decrementAndFetch() }
+                    ?.healthyOrNull()
                 if (idleConn != null) {
                     obs?.acquired(fastPath = true)
                     return@aq idleConn
@@ -131,6 +151,9 @@ internal class ConnectionPool(
                 }
             }
         } catch (e: TimeoutCancellationException) {
+            obs?.failed(AcquireFailure.TIMEOUT)
+            throw e
+        } catch (e: CommandTimeoutException) {
             obs?.failed(AcquireFailure.TIMEOUT)
             throw e
         } catch (e: Throwable) {
@@ -194,20 +217,13 @@ internal class ConnectionPool(
         }
     }
 
-    // borrows per second
-    private fun getBurstRate(): Float =
-        borrowCount.load().toFloat() / (
-            cfg.pool.checkInterval.inWholeSeconds
-                .toFloat()
-        )
-
     private suspend fun adjustPoolSize() {
-        val burstRate = getBurstRate()
+        val burstRate = burstRate(borrowCount.load(), cfg.pool.checkInterval)
         val idleNow = idleConnectionsCount.load()
-        val pressure = burstRate - idleNow
+        val expandBy = expandSize(burstRate, idleNow, idleCapacity)
 
-        if (pressure > 0f) expandPool(ceil(pressure).toInt())
-        else if (idleNow > cfg.pool.minIdleConnections) shrinkPool()
+        if (expandBy > 0) expandPool(expandBy)
+        else if (idleNow > cfg.pool.minIdleConnections && burstRate - idleNow <= 0.0) shrinkPool()
 
         borrowCount.store(0)
     }
@@ -256,13 +272,16 @@ internal class ConnectionPool(
     }
 
     private fun RConnection.fillPool() {
-        idleConnections
-            .trySend(this)
-            .onSuccess {
-                idleConnectionsCount.incrementAndFetch()
-            }.onFailure {
-                connectionFactory.dispose(this)
-            }
+        if (!offerIdle(this)) connectionFactory.dispose(this)
+    }
+
+    // The counter is raised before the send: once the connection is in the channel a concurrent
+    // acquire() may take it and decrement at once, which would otherwise drive the counter negative.
+    private fun offerIdle(conn: RConnection): Boolean {
+        idleConnectionsCount.incrementAndFetch()
+        if (idleConnections.trySend(conn).isSuccess) return true
+        idleConnectionsCount.decrementAndFetch()
+        return false
     }
 
     private suspend inline fun RConnection.healthyOrNull(): RConnection? {
@@ -285,5 +304,26 @@ internal class ConnectionPool(
 
         lastTouchedAt = TimeSource.Monotonic.markNow()
         return this
+    }
+
+    internal companion object {
+        /** Borrows per second over [interval], which may be shorter or fractionally longer than a second. */
+        fun burstRate(borrows: Int, interval: Duration): Double = borrows / interval.toDouble(DurationUnit.SECONDS)
+
+        /** Number of connections to add: the pressure over the idle pool, never past the idle capacity. */
+        fun expandSize(burstRate: Double, idleNow: Int, idleCapacity: Int): Int {
+            val pressure = burstRate - idleNow
+            if (pressure.isNaN() || pressure <= 0.0) return 0
+            val room = (idleCapacity - idleNow).coerceAtLeast(0)
+            return ceil(pressure).coerceAtMost(room.toDouble()).toInt()
+        }
+    }
+}
+
+// Hands [conn] to the first live awaiter, draining cancelled deferreds left by acquire() timeouts.
+private fun Channel<CompletableDeferred<RConnection>>.handOff(conn: RConnection): Boolean {
+    while (true) {
+        val def = tryReceive().getOrNull() ?: return false
+        if (def.complete(conn)) return true
     }
 }

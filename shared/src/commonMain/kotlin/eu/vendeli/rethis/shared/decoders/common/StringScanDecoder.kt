@@ -5,6 +5,7 @@ import eu.vendeli.rethis.shared.decoders.aggregate.ArrayRTypeDecoder
 import eu.vendeli.rethis.shared.response.common.ScanResult
 import eu.vendeli.rethis.shared.types.RArray
 import eu.vendeli.rethis.shared.types.RespCode
+import eu.vendeli.rethis.shared.types.ResponseParsingException
 import eu.vendeli.rethis.shared.types.processingException
 import eu.vendeli.rethis.shared.utils.EMPTY_BUFFER
 import eu.vendeli.rethis.shared.utils.safeCast
@@ -21,7 +22,10 @@ object StringScanDecoder : ResponseDecoder<ScanResult<String>> {
         code: RespCode?,
     ): ScanResult<String> {
         if (input == EMPTY_BUFFER) return EMPTY_SCAN_RESULT
-        val arrResponse = ArrayRTypeDecoder.decode(input, charset)
+        val arrResponse = ArrayRTypeDecoder.decode(input, charset, code)
+        if (arrResponse.size != 2) throw ResponseParsingException(
+            "Invalid response structure, expected cursor and keys, given ${arrResponse.size} elements",
+        )
 
         val newCursor = arrResponse[0].unwrap<String>() ?: processingException { "Missing cursor in response" }
 

@@ -7,16 +7,14 @@ import eu.vendeli.rethis.shared.types.ReThisException
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.collections.shouldNotBeEmpty
 import io.kotest.matchers.longs.shouldBeGreaterThanOrEqual
-import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
-import io.kotest.matchers.shouldNotBe
 
 class ServerGeneralCommandTest : ReThisTestCtx() {
     @Test
     suspend fun `CONFIG REWRITE executes`() {
         shouldThrow<ReThisException> {
             client.configRewrite()
-        }.cause.shouldNotBeNull().message shouldBe "ERR The server is running without a config file"
+        }.message shouldBe "ERR The server is running without a config file"
     }
 
     @Test
@@ -39,7 +37,6 @@ class ServerGeneralCommandTest : ReThisTestCtx() {
 
     @Test
     suspend fun `REPLICAOF NO ONE is accepted`() {
-        val res = client.replicaOf(ReplicaOfArgs.NoOne)
-        res shouldNotBe null
+        client.replicaOf(ReplicaOfArgs.NoOne) shouldBe true
     }
 }

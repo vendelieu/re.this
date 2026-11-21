@@ -98,8 +98,12 @@ class RawReqUtilsTest : ReThisTestCtx() {
     suspend fun `QUIT a temporary client using low-level execute`() {
         val tmp = createClient()
 
-        val resp = tmp.execute(listOf("QUIT").toRESPBuffer()).readAllUtf8()
-        // QUIT returns +OK and then closes the connection
-        resp shouldBe "+OK\r\n"
+        try {
+            val resp = tmp.execute(listOf("QUIT").toRESPBuffer()).readAllUtf8()
+            // QUIT returns +OK and then closes the connection
+            resp shouldBe "+OK\r\n"
+        } finally {
+            tmp.close()
+        }
     }
 }

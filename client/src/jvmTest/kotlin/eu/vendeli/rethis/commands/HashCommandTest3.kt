@@ -11,6 +11,7 @@ import eu.vendeli.rethis.command.hash.hSetEx
 import eu.vendeli.rethis.shared.request.common.FieldValue
 import eu.vendeli.rethis.shared.request.hash.HFieldValue
 import eu.vendeli.rethis.shared.request.hash.HSetExOption
+import eu.vendeli.rethis.types.common.RespVer
 import io.kotest.matchers.booleans.shouldBeTrue
 import io.kotest.matchers.shouldBe
 import kotlin.time.Duration.Companion.seconds
@@ -55,5 +56,24 @@ class HashCommandTest3 : ReThisTestCtx() {
     suspend fun `test HPEXPIRETIME command`() {
         client.hSet("hpexpiretimeKey", FieldValue("f6", "v6"))
         client.hPExpireTime("hpexpiretimeKey", "f6") shouldBe listOf(-1L)
+    }
+
+    @Test
+    suspend fun `test HGETDEL and HGETEX return null for a missing field on RESP3`() {
+        client.hSet("hgetdelMissingKey", FieldValue("f1", "v1"), FieldValue("f2", "v2"))
+        client.hGetDel("hgetdelMissingKey", "f1", "nope") shouldBe listOf("v1", null)
+        client.hGetEx("hgetdelMissingKey", null, "f2", "nope") shouldBe listOf("v2", null)
+    }
+
+    @Test
+    suspend fun `test HGETDEL and HGETEX return null for a missing field on RESP2`() {
+        val resp2 = createClient(protocol = RespVer.V2)
+        try {
+            resp2.hSet("hgetdelMissingKey2", FieldValue("f1", "v1"), FieldValue("f2", "v2"))
+            resp2.hGetDel("hgetdelMissingKey2", "f1", "nope") shouldBe listOf("v1", null)
+            resp2.hGetEx("hgetdelMissingKey2", null, "f2", "nope") shouldBe listOf("v2", null)
+        } finally {
+            resp2.close()
+        }
     }
 }

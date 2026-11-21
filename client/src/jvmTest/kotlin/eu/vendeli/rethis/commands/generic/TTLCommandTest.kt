@@ -10,6 +10,8 @@ import io.kotest.matchers.shouldBe
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.days
 
+private const val TTL_TOLERANCE_SECONDS = 5L
+
 class TTLCommandTest : ReThisTestCtx() {
     @Test
     suspend fun `test TTL command`() {
@@ -25,7 +27,7 @@ class TTLCommandTest : ReThisTestCtx() {
         val ttl = client.ttl("testKey").shouldNotBeNull()
         val leftTime = time.epochSeconds - Clock.System.now().epochSeconds
 
-        ttl shouldBeInRange leftTime.let { it - 1000L..it + 1000L }
+        ttl shouldBeInRange (leftTime - TTL_TOLERANCE_SECONDS)..(leftTime + TTL_TOLERANCE_SECONDS)
     }
 
     @Test

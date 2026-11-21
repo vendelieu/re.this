@@ -7,7 +7,7 @@ import eu.vendeli.rethis.shared.types.RedisOperation
 import eu.vendeli.rethis.shared.types.RespCode
 
 @RedisCommand("GEOHASH", RedisOperation.READ, [RespCode.ARRAY])
-fun interface GeoHashCommand : RedisCommandSpec<List<String>> {
+fun interface GeoHashCommand : RedisCommandSpec<List<String?>> {
     suspend fun encode(
         key: String,
         vararg member: String,

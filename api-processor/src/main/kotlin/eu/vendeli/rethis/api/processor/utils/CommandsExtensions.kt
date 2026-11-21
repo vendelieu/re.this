@@ -20,6 +20,9 @@ fun FileSpec.Builder.addCommandFunctions(
         FunSpec.builder(codecName.removeSuffix("CommandCodec").replaceFirstChar { it.lowercase() })
             .addModifiers(KModifier.SUSPEND)
             .receiver(reThisClassName).apply {
+                context.currentCommand.klass.docString?.trim()?.takeIf { it.isNotEmpty() }?.let {
+                    addKdoc("%L", sanitizeKdoc(it))
+                }
                 parameters.map { p ->
                     ParameterSpec.builder(p.key, p.value.first, p.value.second).also { f ->
                         val parameter = context.currentCommand.encodeFunction.parameters.first {
@@ -54,3 +57,6 @@ fun FileSpec.Builder.addCommandFunctions(
             .build(),
     )
 }
+
+/** Makes spec documentation safe to embed in a generated KDoc: comment delimiters would end or nest the block. */
+internal fun sanitizeKdoc(doc: String): String = doc.replace("*/", "*&#47;").replace("/*", "&#47;*")

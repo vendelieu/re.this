@@ -40,16 +40,29 @@ object ArrayLongDecoder : ResponseDecoder<List<Long>> {
         if (size == 0) return emptyList()
 
         return buildList {
-            when (val code = RespCode.fromCode(input.readByte())) {
-                RespCode.NULL -> add(null)
-
-                RespCode.INTEGER -> add(IntegerDecoder.decode(input, charset))
-
-                else -> throw ResponseParsingException(
-                    "Invalid response structure, expected string token, given $code",
-                    input.tryInferCause(code),
-                )
-            }
+            repeat(size) { add(decodeNullableElement(input, charset)) }
         }
     }
+
+    private fun decodeNullableElement(input: Buffer, charset: Charset): Long? =
+        when (val code = RespCode.fromCode(input.readByte())) {
+            RespCode.NULL -> {
+                input.skip(2) // trailing CRLF of the null marker
+                null
+            }
+
+            RespCode.BULK -> {
+                // RESP2 null bulk string (`$-1`)
+                if (input.readDecimalCrlf() >= 0) throw ResponseParsingException(
+                    "Invalid response structure, expected integer or null token, given $code",
+                )
+                null
+            }
+
+            RespCode.INTEGER -> IntegerDecoder.decode(input, charset, code)
+
+            else -> throw input.tryInferCause(code, charset) ?: ResponseParsingException(
+                "Invalid response structure, expected integer or null token, given $code",
+            )
+        }
 }

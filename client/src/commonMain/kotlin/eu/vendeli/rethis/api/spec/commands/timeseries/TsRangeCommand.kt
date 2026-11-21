@@ -5,6 +5,7 @@ import eu.vendeli.rethis.shared.annotations.RedisMeta
 import eu.vendeli.rethis.shared.annotations.RedisOption
 import eu.vendeli.rethis.shared.decoders.general.RTypeDecoder
 import eu.vendeli.rethis.shared.request.timeseries.TsAggregator
+import eu.vendeli.rethis.shared.request.timeseries.TsBucketTimestamp
 import eu.vendeli.rethis.shared.request.timeseries.TsValueRange
 import eu.vendeli.rethis.shared.types.CommandRequest
 import eu.vendeli.rethis.shared.types.RType
@@ -26,7 +27,7 @@ fun interface TsRangeCommand : RedisCommandSpec<RType> {
         @RedisOption.Token("ALIGN") @RedisOption.Name("value") align: Long?,
         @RedisOption.Name("aggregator") aggregator: TsAggregator?,
         @RedisOption.Name("bucketDuration") bucketDuration: Long?,
-        @RedisOption.Token("BUCKETTIMESTAMP") @RedisOption.Name("buckettimestamp") bucketTimestamp: Boolean?,
+        @RedisOption.Name("bt") bucketTimestamp: TsBucketTimestamp?,
         @RedisOption.Token("EMPTY") empty: Boolean?,
     ): CommandRequest
 }

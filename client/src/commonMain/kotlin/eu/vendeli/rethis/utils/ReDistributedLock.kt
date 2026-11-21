@@ -19,10 +19,26 @@ suspend inline fun <T> ReDistributedLock.withLock(
     crossinline block: suspend () -> T,
 ): T {
     lock(leaseTime)
+    var failure: Throwable? = null
     try {
         return block()
+    } catch (e: Throwable) {
+        failure = e
+        throw e
     } finally {
-        withContext(NonCancellable) { unlock() }
+        withContext(NonCancellable) {
+            val primary = failure
+            if (primary == null) {
+                unlock()
+            } else {
+                // The block's exception is the real failure; an unlock failure must not replace it.
+                try {
+                    unlock()
+                } catch (unlockFailure: Throwable) {
+                    primary.addSuppressed(unlockFailure)
+                }
+            }
+        }
     }
 }
 

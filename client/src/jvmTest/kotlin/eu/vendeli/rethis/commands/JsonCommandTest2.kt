@@ -4,6 +4,10 @@ import eu.vendeli.rethis.ReThisTestCtx
 import eu.vendeli.rethis.cast
 import eu.vendeli.rethis.command.json.*
 import eu.vendeli.rethis.shared.request.json.JsonEntry
+import eu.vendeli.rethis.shared.request.string.UpsertMode
+import eu.vendeli.rethis.types.common.RespVer
+import kotlinx.coroutines.withTimeout
+import kotlin.time.Duration.Companion.seconds
 import eu.vendeli.rethis.shared.types.*
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeTypeOf
@@ -125,5 +129,23 @@ class JsonCommandTest2 : ReThisTestCtx() {
                     .readString()
             }
         } shouldBe "array"
+    }
+
+    @Test
+    suspend fun `test JSON_SET NX and XX return null when the condition fails`() {
+        listOf(RespVer.V2, RespVer.V3).forEach { protocol ->
+            val c = createClient(protocol = protocol)
+            try {
+                withTimeout(30.seconds) {
+                    val key = "jsonSetCond-$protocol"
+                    c.jsonSet(key, "1", ".", UpsertMode.XX) shouldBe null
+                    c.jsonSet(key, "1", ".", UpsertMode.NX) shouldBe "OK"
+                    c.jsonSet(key, "2", ".", UpsertMode.NX) shouldBe null
+                    c.jsonSet(key, "3", ".", UpsertMode.XX) shouldBe "OK"
+                }
+            } finally {
+                c.close()
+            }
+        }
     }
 }

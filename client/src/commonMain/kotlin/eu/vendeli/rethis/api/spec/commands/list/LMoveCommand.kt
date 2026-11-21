@@ -8,7 +8,7 @@ import eu.vendeli.rethis.shared.types.RedisCommandSpec
 import eu.vendeli.rethis.shared.types.RedisOperation
 import eu.vendeli.rethis.shared.types.RespCode
 
-@RedisCommand("LMOVE", RedisOperation.WRITE, [RespCode.BULK])
+@RedisCommand("LMOVE", RedisOperation.WRITE, [RespCode.BULK, RespCode.NULL])
 fun interface LMoveCommand : RedisCommandSpec<String> {
     suspend fun encode(
         source: String,

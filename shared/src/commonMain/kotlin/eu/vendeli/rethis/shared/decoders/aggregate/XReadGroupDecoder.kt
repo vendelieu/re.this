@@ -21,18 +21,16 @@ object XReadGroupDecoder : ResponseDecoder<List<XReadGroupResponse>> {
     ): List<XReadGroupResponse> {
         if (input == EMPTY_BUFFER) return emptyList()
         val actualCode = code ?: RespCode.fromCode(input.readByte())
-        if (actualCode == RespCode.NULL) return emptyList()
+        if (actualCode == RespCode.NULL) {
+            input.skip(2) // trailing CRLF of the null marker
+            return emptyList()
+        }
         if (actualCode != RespCode.ARRAY && actualCode != RespCode.MAP) {
-            throw ResponseParsingException(
+            throw input.tryInferCause(actualCode, charset) ?: ResponseParsingException(
                 "Invalid response structure, expected ARRAY or MAP token, given $actualCode",
-                input.tryInferCause(actualCode),
             )
         }
-        val size = try {
-            input.readDecimalCrlf().toInt()
-        } catch (_: Exception) {
-            0
-        }
+        val size = input.readDecimalCrlf().toInt()
         if (size == 0) return emptyList()
 
         return buildList {
@@ -41,13 +39,15 @@ object XReadGroupDecoder : ResponseDecoder<List<XReadGroupResponse>> {
                 var messagesArray: List<RType>? = null
                 when (actualCode) {
                     RespCode.ARRAY -> {
-                        val streamArray = input.readResponseWrapped(charset).safeCast<RArray>()?.value ?: return@repeat
-                        if (streamArray.size < 2) return@repeat
+                        val streamArray = input.readResponseWrapped(charset).safeCast<RArray>()?.value
+                            ?: throw malformed("stream entry is not an array")
+                        if (streamArray.size < 2) throw malformed("stream entry has ${streamArray.size} elements")
                         streamName = when (val sNameType = streamArray[0]) {
                             is BulkString -> sNameType.value.readString()
                             else -> sNameType.value.toString()
                         }
-                        messagesArray = streamArray[1].safeCast<RArray>()?.value ?: return@repeat
+                        messagesArray = streamArray[1].safeCast<RArray>()?.value
+                            ?: throw malformed("stream messages are not an array")
                     }
                     RespCode.MAP -> {
                         val keyType = input.readResponseWrapped(charset)
@@ -56,15 +56,16 @@ object XReadGroupDecoder : ResponseDecoder<List<XReadGroupResponse>> {
                             is BulkString -> keyType.value.readString()
                             else -> keyType.toString()
                         }
-                        messagesArray = (valueType as? RArray)?.value ?: return@repeat
+                        messagesArray = (valueType as? RArray)?.value
+                            ?: throw malformed("stream messages are not an array")
                     }
-                    else -> return@repeat
+                    else -> throw malformed("unexpected token $actualCode")
                 }
                 val name = streamName
                 val arr = messagesArray
-                val messages = arr.mapNotNull { msg ->
-                    val msgArray = (msg as? RArray)?.value ?: return@mapNotNull null
-                    if (msgArray.size < 2) return@mapNotNull null
+                val messages = arr.map { msg ->
+                    val msgArray = (msg as? RArray)?.value ?: throw malformed("message entry is not an array")
+                    if (msgArray.size < 2) throw malformed("message entry has ${msgArray.size} elements")
 
                     val id = when (val idType = msgArray[0]) {
                         is BulkString -> idType.value.readString()
@@ -106,10 +107,25 @@ object XReadGroupDecoder : ResponseDecoder<List<XReadGroupResponse>> {
         input: Buffer,
         charset: Charset,
         code: RespCode?
-    ): List<XReadGroupResponse>? =
-        decode(
-            input,
-            charset,
-            code
-        ).ifEmpty { if (code == RespCode.NULL) null else emptyList() }
+    ): List<XReadGroupResponse>? {
+        if (input == EMPTY_BUFFER) return emptyList()
+        val actualCode = code ?: RespCode.fromCode(input.readByte())
+        if (actualCode == RespCode.NULL) {
+            input.skip(2) // trailing CRLF of the null marker
+            return null
+        }
+        if (actualCode == RespCode.ARRAY && input.startsWithNullSize()) {
+            input.skip(NULL_SIZE_LINE.size.toLong()) // RESP2 null array, the reply of a timed out BLOCK
+            return null
+        }
+
+        return decode(input, charset, actualCode)
+    }
+
+    private val NULL_SIZE_LINE = "-1\r\n".encodeToByteArray()
+
+    private fun Buffer.startsWithNullSize(): Boolean =
+        size >= NULL_SIZE_LINE.size && NULL_SIZE_LINE.indices.all { this[it.toLong()] == NULL_SIZE_LINE[it] }
+
+    private fun malformed(reason: String) = ResponseParsingException("Invalid XREADGROUP response structure, $reason")
 }

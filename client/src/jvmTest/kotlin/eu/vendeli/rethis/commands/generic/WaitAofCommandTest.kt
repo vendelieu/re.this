@@ -6,6 +6,7 @@ import eu.vendeli.rethis.command.string.set
 import eu.vendeli.rethis.shared.types.ReThisException
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.nulls.shouldNotBeNull
+import io.kotest.matchers.shouldBe
 
 class WaitAofCommandTest : ReThisTestCtx() {
     @Test
@@ -17,6 +18,6 @@ class WaitAofCommandTest : ReThisTestCtx() {
                 1L,
                 1000L,
             )
-        }
+        }.message shouldBe "ERR WAITAOF cannot be used when numlocal is set but appendonly is disabled."
     }
 }

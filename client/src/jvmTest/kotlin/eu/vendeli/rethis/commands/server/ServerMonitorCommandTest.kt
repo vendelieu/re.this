@@ -3,8 +3,9 @@ package eu.vendeli.rethis.commands.server
 import com.redis.testcontainers.RedisContainer
 import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.command.server.monitor
+import eu.vendeli.rethis.shared.types.PlainString
 import io.kotest.core.spec.style.AnnotationSpec
-import io.kotest.matchers.shouldNotBe
+import io.kotest.matchers.shouldBe
 import org.testcontainers.utility.DockerImageName
 
 class ServerMonitorCommandTest : AnnotationSpec() {
@@ -14,9 +15,12 @@ class ServerMonitorCommandTest : AnnotationSpec() {
         try {
             container.start()
             val client = ReThis(container.host, container.firstMappedPort)
-
-            val res = client.monitor()
-            res shouldNotBe null
+            try {
+                val res = client.monitor()
+                res shouldBe PlainString("OK")
+            } finally {
+                client.close()
+            }
         } finally {
             runCatching { container.stop() }
         }

@@ -107,6 +107,7 @@ class VectorCommandTest : ReThisTestCtx() {
     suspend fun `test VRANGE command`() {
         client.vAdd("vrange-k", VAddInput.Values(1.0, 0.0, 0.0), "alpha")
         client.vAdd("vrange-k", VAddInput.Values(0.9, 0.1, 0.0), "beta")
-        client.vRange("vrange-k", "-", "+", null) shouldNotBe null
+        client.vRange("vrange-k", "-", "+", null) shouldBe listOf("alpha", "beta")
+        client.vRange("vrange-k", "[beta", "+", null) shouldBe listOf("beta")
     }
 }

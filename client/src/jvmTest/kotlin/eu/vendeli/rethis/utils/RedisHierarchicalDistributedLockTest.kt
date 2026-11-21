@@ -2,13 +2,17 @@ package eu.vendeli.rethis.utils
 
 import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.ReThisTestCtx
+import eu.vendeli.rethis.command.generic.pTtl
+import eu.vendeli.rethis.command.generic.del
+import eu.vendeli.rethis.command.generic.exists
 import eu.vendeli.rethis.shared.types.LockLostException
 import eu.vendeli.rethis.types.interfaces.ReDistributedLock
 import io.kotest.assertions.throwables.shouldThrow
-import io.kotest.core.annotation.Ignored
 import io.kotest.matchers.booleans.shouldBeFalse
 import io.kotest.matchers.booleans.shouldBeTrue
 import io.kotest.matchers.ints.shouldBeExactly
+import io.kotest.matchers.comparables.shouldBeLessThanOrEqualTo
+import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.*
 import java.util.*
@@ -16,7 +20,6 @@ import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 
-@Ignored
 class RedisHierarchicalDistributedLockTest : ReThisTestCtx() {
     @Test
     suspend fun `reentrancy in same coroutine increments and requires matching unlocks`() {
@@ -241,4 +244,104 @@ class RedisHierarchicalDistributedLockTest : ReThisTestCtx() {
         lock.tryLock(waitTime = 1000.milliseconds, leaseTime = 1.seconds).shouldBeTrue()
         lock.unlock().shouldBeTrue()
     }
+
+    @Test
+    suspend fun `concurrent children each need their own unlock to free the key`() = withTimeout(30.seconds) {
+        val lockName = "rethis:lock:hier-race:${UUID.randomUUID()}"
+        val children = 50
+        coroutineScope {
+            val lock = client.reHierarchicalDistributedLock(lockName)
+            try {
+                // Held once up front so the children all take the reentrant fast path at the same time.
+                lock.lock(30.seconds)
+                (1..children)
+                    .map { async(Dispatchers.Default) { lock.lock(30.seconds) } }
+                    .awaitAll()
+
+                repeat(children) { lock.unlock().shouldBeTrue() }
+                client.exists(lockName) shouldBe 1L
+
+                lock.unlock().shouldBeTrue()
+                client.exists(lockName) shouldBe 0L
+            } finally {
+                client.del(lockName)
+            }
+        }
+    }
+
+    @Test
+    suspend fun `nested unlock keeps the lease the lock was acquired with`() = withTimeout(30.seconds) {
+        val lockName = "rethis:lock:hier-nested-lease:${UUID.randomUUID()}"
+
+        coroutineScope {
+            val lock = client.reHierarchicalDistributedLock(lockName)
+            try {
+                lock.lock(5.seconds)
+                lock.lock(5.seconds)
+                lock.unlock().shouldBeTrue()
+
+                client.pTtl(lockName).shouldNotBeNull() shouldBeLessThanOrEqualTo 5_000L
+            } finally {
+                // Releases the remaining hold so the lease watchdog stops.
+                lock.unlock()
+            }
+        }
+    }
+
+    @Test
+    suspend fun `lock stays held past its lease while children cycle lock and unlock`() = withTimeout(30.seconds) {
+        val lockName = "rethis:lock:hier-cycles:${UUID.randomUUID()}"
+        val leaseMs = 600.milliseconds
+
+        coroutineScope {
+            val lock = client.reHierarchicalDistributedLock(lockName)
+            try {
+                (1..4)
+                    .map {
+                        async(Dispatchers.Default) {
+                            repeat(3) {
+                                lock.lock(leaseMs)
+                                try {
+                                    // Longer than the lease: only a live watchdog keeps the key.
+                                    delay(leaseMs * 2)
+                                    client.exists(lockName) shouldBe 1L
+                                } finally {
+                                    lock.unlock()
+                                }
+                            }
+                        }
+                    }.awaitAll()
+                client.exists(lockName) shouldBe 0L
+            } finally {
+                client.del(lockName)
+            }
+        }
+    }
+
+    @Test
+    suspend fun `unlock keeps working when watchdog refreshes race with release and re-acquire`() =
+        withTimeout(45.seconds) {
+            val lockName = "rethis:lock:hier-watchdog-race:${UUID.randomUUID()}"
+
+            coroutineScope {
+                val lock = client.reHierarchicalDistributedLock(lockName)
+                try {
+                    (1..2)
+                        .map {
+                            async(Dispatchers.Default) {
+                                repeat(150) {
+                                    lock.lock(150.milliseconds)
+                                    try {
+                                        delay(1)
+                                    } finally {
+                                        lock.unlock()
+                                    }
+                                }
+                            }
+                        }.awaitAll()
+                } finally {
+                    client.del(lockName)
+                }
+            }
+        }
 }

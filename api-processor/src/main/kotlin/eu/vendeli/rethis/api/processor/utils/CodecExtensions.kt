@@ -67,7 +67,7 @@ internal fun TypeSpec.Builder.addDecodeFunction(
                     respCode.forEach { writeDecoder(it) }
                     beginControlFlow("else ->")
                     addImport("eu.vendeli.rethis.shared.utils.tryInferCause")
-                    addStatement($$"throw UnexpectedResponseType(\"Expected $$respCode but got $code\", input.tryInferCause(code))")
+                    addStatement($$"throw input.tryInferCause(code) ?: UnexpectedResponseType(\"Expected $$respCode but got $code\")")
                     endControlFlow()
 
                     endControlFlow()

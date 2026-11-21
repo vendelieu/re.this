@@ -13,7 +13,7 @@ import kotlin.time.Duration.Companion.seconds
  * @property shrinkRatio the ratio of idle connections to be dropped, defaults to 0.5
  * @property maxShrinkSize the maximum number of idle connections to be dropped at once, defaults to 5
  *
- * @property checkInterval the interval at which the pool is checked for idle connections, defaults to 1 second
+ * @property checkInterval the interval at which the pool is checked for idle connections, defaults to 1 second; must be positive
  * @property connectionAcquirePeriod the period for which connections are acquired, defaults to 3 seconds
  * @property gracefulClosePeriod the period of time for which the pool is closed gracefully, defaults to 30 seconds
  * @property connectionHealthCheck whether to check the health of the connection, defaults to false
@@ -23,7 +23,8 @@ import kotlin.time.Duration.Companion.seconds
  * considered dead and discarded. Bounded independently of `commandTimeout` / `socket.timeout` so a stale
  * connection cannot poison the next borrower. Only consulted when [connectionHealthCheck] is true.
  * Defaults to 1 second.
- * @property setClientName whether to set the client name, defaults to false
+ * @property setClientName whether to set the client name, defaults to false. The name is sent with `HELLO`, so on
+ * RESP2 connections it requires Redis 6 or newer.
  * @property closeGracefully whether to close the pool gracefully, defaults to false
  */
 @ConfigurationDSL

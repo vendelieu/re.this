@@ -29,7 +29,7 @@ object BulkByteArrayDecoder : ResponseDecoder<ByteArray> {
     }
 
     fun decodeNullable(input: Buffer, charset: Charset, code: RespCode? = null): ByteArray? {
-        if (input == EMPTY_BUFFER) return EMPTY_BYTE_ARRAY
+        if (input == EMPTY_BUFFER) return null
         if (code == null) input.resolveToken(RespCode.BULK)
 
         val size = input.readDecimalCrlf().toInt()

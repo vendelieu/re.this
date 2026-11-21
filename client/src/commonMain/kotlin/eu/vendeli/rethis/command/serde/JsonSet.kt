@@ -14,7 +14,7 @@ suspend inline fun <reified T : Any> ReThis.jsonSet(
     value: T,
     path: String = JSON_DEFAULT_PATH,
     upsertMode: UpsertMode? = null,
-): String = jsonSet(key, value, serializer<T>(), path, upsertMode)
+): String? = jsonSet(key, value, serializer<T>(), path, upsertMode)
 
 suspend fun <T : Any> ReThis.jsonSet(
     key: String,
@@ -23,7 +23,7 @@ suspend fun <T : Any> ReThis.jsonSet(
     path: String = JSON_DEFAULT_PATH,
     upsertMode: UpsertMode? = null,
     format: SerializationFormat = cfg.serializationFormat,
-): String {
+): String? {
     if (isInTx()) {
         logger.warn(
             "Be aware that in transaction commands return `QUEUED`" +

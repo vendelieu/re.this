@@ -43,6 +43,13 @@ data class BigNumber(
     override val value: BigInteger,
 ) : RPrimitive()
 
+/**
+ * RESP3 verbatim string, for example `=15\r\ntxt:Some string\r\n`.
+ *
+ * [encoding] is the three byte format (`txt`, `mkd`) and [data] is the bare content (`Some string`), which is what
+ * the typed decoders and `unwrap<String>()` / `unwrapList<String>()` return. [value] is the whole `encoding:data`
+ * text (`txt:Some string`).
+ */
 data class VerbatimString(
     val encoding: String,
     val data: String,

@@ -29,10 +29,6 @@ internal object RedisProcessor {
             )
         }
 
-//        if (context.validation.getErrors().isNotEmpty()) { // todo return validation
-//            context.logger.error("Validation failed: ${context.validation.getErrors()}")
-//            return
-//        }
         val codecName = "${currentCmd.klass.simpleName.asString()}Codec"
         val cmdPackagePart = "." + currentCmd.klass.packageName.asString().substringAfterLast(".")
 
@@ -76,13 +72,12 @@ internal object RedisProcessor {
         )
 
         val spec = context.fileSpec.build()
-        runCatching {
-            context.meta.codeGenerator.createNewFile(
-                Dependencies(aggregating = true, currentCmd.klass.containingFile!!),
-                spec.packageName,
-                spec.name,
-            ).bufferedWriter().use { spec.writeTo(it) }
-        }.onFailure { it.printStackTrace() }
+        writeGeneratedFile(
+            context.meta.codeGenerator,
+            context.logger,
+            Dependencies(aggregating = true, currentCmd.klass.containingFile!!),
+            spec,
+        )
     }
 
     private fun validate(command: CurrentCommand) {

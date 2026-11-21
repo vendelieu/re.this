@@ -11,7 +11,7 @@ fun interface PExpireCommand : RedisCommandSpec<Boolean> {
     suspend fun encode(
         key: String,
         milliseconds:
-            @RedisMeta.OutgoingTimeUnit(TimeUnit.SECONDS)
+            @RedisMeta.OutgoingTimeUnit(TimeUnit.MILLISECONDS)
             Duration,
         condition: UpdateStrategyOption?,
     ): CommandRequest

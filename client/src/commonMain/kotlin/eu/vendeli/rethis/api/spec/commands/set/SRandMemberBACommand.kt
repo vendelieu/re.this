@@ -6,7 +6,7 @@ import eu.vendeli.rethis.shared.types.RedisCommandSpec
 import eu.vendeli.rethis.shared.types.RedisOperation
 import eu.vendeli.rethis.shared.types.RespCode
 
-@RedisCommand("SRANDMEMBER", RedisOperation.READ, [RespCode.BULK])
+@RedisCommand("SRANDMEMBER", RedisOperation.READ, [RespCode.BULK, RespCode.NULL])
 fun interface SRandMemberBACommand : RedisCommandSpec<ByteArray> {
     suspend fun encode(key: String): CommandRequest
 }

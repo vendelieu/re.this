@@ -2,49 +2,49 @@ package eu.vendeli.rethis.commands.server
 
 import eu.vendeli.rethis.ReThisTestCtx
 import eu.vendeli.rethis.command.server.*
-import eu.vendeli.rethis.shared.types.RType
-import io.kotest.matchers.shouldNotBe
+import eu.vendeli.rethis.shared.types.RArray
+import io.kotest.matchers.collections.shouldContain
+import io.kotest.matchers.maps.shouldContainKey
+import io.kotest.matchers.nulls.shouldNotBeNull
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.string.shouldMatch
+import io.kotest.matchers.types.shouldBeTypeOf
 
 class ServerAclCommandTest : ReThisTestCtx() {
     @Test
     suspend fun `ACL LIST returns a list`() {
-        val res = client.aclList()
-        res shouldNotBe null
+        client.aclList().any { it.startsWith("user default ") } shouldBe true
     }
 
     @Test
     suspend fun `ACL USERS returns users`() {
-        val res = client.aclUsers()
-        res shouldNotBe null
+        client.aclUsers() shouldContain "default"
     }
 
     @Test
     suspend fun `ACL WHOAMI returns current user`() {
-        val res = client.aclWhoAmI()
-        res shouldNotBe null
+        client.aclWhoAmI() shouldBe "default"
     }
 
     @Test
     suspend fun `ACL GENPASS generates password`() {
-        val res = client.aclGenPass()
-        res shouldNotBe null
+        client.aclGenPass() shouldMatch Regex("[0-9a-f]{64}")
+        client.aclGenPass(bits = 16) shouldMatch Regex("[0-9a-f]{4}")
     }
 
     @Test
     suspend fun `ACL CAT returns categories`() {
-        val res = client.aclCat()
-        res shouldNotBe null
+        client.aclCat() shouldContain "read"
     }
 
     @Test
     suspend fun `ACL LOG returns entries or empty list`() {
-        val res = client.aclLog()
-        res shouldNotBe RType.Null
+        client.aclLog().shouldBeTypeOf<RArray>()
     }
 
     @Test
     suspend fun `ACL GETUSER default exists`() {
-        val res = client.aclGetUser("default")
-        res shouldNotBe null
+        client.aclGetUser("default").shouldNotBeNull() shouldContainKey "flags"
+        client.aclGetUser("no-such-user-xyz") shouldBe null
     }
 }

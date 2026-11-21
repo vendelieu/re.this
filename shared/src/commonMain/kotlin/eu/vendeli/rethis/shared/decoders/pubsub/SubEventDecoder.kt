@@ -18,8 +18,8 @@ object SubEventDecoder : ResponseDecoder<List<String>> {
     ): List<String> {
         if (input == EMPTY_BUFFER) return emptyList()
         val code = code ?: RespCode.fromCode(input.readByte())
-        if (code != RespCode.ARRAY && code != RespCode.PUSH) throw ResponseParsingException(
-            "Invalid response structure, expected array/push token, given $code", input.tryInferCause(code),
+        if (code != RespCode.ARRAY && code != RespCode.PUSH) throw input.tryInferCause(code, charset) ?: ResponseParsingException(
+            "Invalid response structure, expected array/push token, given $code",
         )
 
         val size = input.readDecimalCrlf().toInt()

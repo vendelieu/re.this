@@ -39,3 +39,30 @@ internal fun EnrichedNode.rangeBounds(): Pair<RangeBound, RangeBound> {
     val maxs = childBounds.maxByOrNull { it.second }!!.second
     return mins to maxs
 }
+
+internal fun Collection<EnrichedNode>.orderedByBounds(): List<EnrichedNode> = toList().orderedByBounds { it.rangeBounds() }
+
+/**
+ * Orders siblings (given in declaration order) by their spec bounds.
+ *
+ * Items carrying no spec information at all (empty bounds) are positioned right after the closest
+ * preceding sibling that has bounds, so they keep their declaration position next to spec-bound
+ * siblings. Items sorted last on purpose (first bound starting with [Int.MAX_VALUE]) do not move
+ * that position. A composite whose first bound is empty but second is not is keyed by that same
+ * position for its first bound. Ties keep declaration order.
+ */
+internal fun <T> List<T>.orderedByBounds(boundsOf: (T) -> Pair<RangeBound, RangeBound>): List<T> {
+    var carry = RangeBound(emptyList())
+    val keyed = map { item ->
+        val (first, second) = boundsOf(item)
+        val key = if (first.path.isEmpty() && second.path.isEmpty()) {
+            carry to carry
+        } else {
+            val firstKey = if (first.path.isEmpty()) carry else first
+            if (second.path.firstOrNull() != Int.MAX_VALUE && second > carry) carry = second
+            firstKey to second
+        }
+        item to key
+    }
+    return keyed.sortedWith(compareBy({ it.second.first }, { it.second.second })).map { it.first }
+}

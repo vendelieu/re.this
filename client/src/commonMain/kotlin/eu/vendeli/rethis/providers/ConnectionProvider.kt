@@ -33,6 +33,11 @@ internal suspend inline fun <R> withConn(
     return provider.withConnection(block)
 }
 
+/**
+ * Runs [block] on a borrowed connection. The connection is released when [block] returns and disposed when it
+ * throws (transport failure, timeout, cancellation). A server error reply is returned by `doRequest` as data and
+ * raised later by the codec, so it never reaches the catch below and does not cost the connection.
+ */
 @OptIn(ExperimentalContracts::class)
 internal suspend inline fun <R> ConnectionProvider.withConnection(block: (RConnection) -> R): R {
     contract {

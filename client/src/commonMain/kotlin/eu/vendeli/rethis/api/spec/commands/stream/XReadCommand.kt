@@ -4,6 +4,9 @@ import eu.vendeli.rethis.shared.annotations.RedisCommand
 import eu.vendeli.rethis.shared.annotations.RedisOption
 import eu.vendeli.rethis.shared.types.*
 
+/**
+ * @param milliseconds maximum time to block in milliseconds; `0` blocks forever.
+ */
 @RedisCommand(
     "XREAD",
     RedisOperation.READ,

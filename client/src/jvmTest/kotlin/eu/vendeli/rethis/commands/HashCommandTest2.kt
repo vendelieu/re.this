@@ -1,8 +1,10 @@
 package eu.vendeli.rethis.commands
 
 import eu.vendeli.rethis.ReThisTestCtx
+import eu.vendeli.rethis.codecs.hash.HExpireCommandCodec
 import eu.vendeli.rethis.command.hash.*
 import eu.vendeli.rethis.shared.request.common.FieldValue
+import eu.vendeli.rethis.shared.request.common.UpdateStrategyOption
 import eu.vendeli.rethis.shared.types.BulkString
 import eu.vendeli.rethis.shared.types.RArray
 import eu.vendeli.rethis.shared.utils.unwrap
@@ -23,6 +25,35 @@ class HashCommandTest2 : ReThisTestCtx() {
     suspend fun `test HEXPIRE command`() {
         client.hSet("testKey3", FieldValue("testField3", "testValue3"))
         client.hExpire("testKey3", 10.seconds, "testField3") shouldBe listOf(1L)
+    }
+
+    @Test
+    suspend fun `test HEXPIRE writes the condition before FIELDS`() {
+        val conditions = mapOf(
+            "NX" to UpdateStrategyOption.NX,
+            "XX" to UpdateStrategyOption.XX,
+            "GT" to UpdateStrategyOption.GT,
+            "LT" to UpdateStrategyOption.LT,
+        )
+        conditions.forEach { (token, condition) ->
+            HExpireCommandCodec
+                .encode(Charsets.UTF_8, "k", 10.seconds, "f1", "f2", condition = condition)
+                .respArguments() shouldBe listOf("HEXPIRE", "k", "10", token, "FIELDS", "2", "f1", "f2")
+        }
+    }
+
+    @Test
+    suspend fun `test HEXPIRE without condition writes FIELDS directly`() {
+        HExpireCommandCodec
+            .encode(Charsets.UTF_8, "k", 10.seconds, "f", condition = null)
+            .respArguments() shouldBe listOf("HEXPIRE", "k", "10", "FIELDS", "1", "f")
+    }
+
+    @Test
+    suspend fun `test HEXPIRE command with NX condition`() {
+        client.hSet("hexpireCondKey", FieldValue("f", "v"))
+        client.hExpire("hexpireCondKey", 10.seconds, "f", condition = UpdateStrategyOption.NX) shouldBe listOf(1L)
+        client.hExpire("hexpireCondKey", 10.seconds, "f", condition = UpdateStrategyOption.NX) shouldBe listOf(0L)
     }
 
     @Test

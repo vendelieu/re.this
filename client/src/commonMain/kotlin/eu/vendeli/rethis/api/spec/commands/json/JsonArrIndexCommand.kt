@@ -8,7 +8,7 @@ import eu.vendeli.rethis.shared.types.RedisOperation
 import eu.vendeli.rethis.shared.types.RespCode
 import eu.vendeli.rethis.utils.JSON_DEFAULT_PATH
 
-@RedisCommand("JSON.ARRINDEX", RedisOperation.WRITE, [RespCode.INTEGER])
+@RedisCommand("JSON.ARRINDEX", RedisOperation.READ, [RespCode.INTEGER])
 fun interface JsonArrIndexCommand : RedisCommandSpec<Long> {
     suspend fun encode(
         key: String,

@@ -3,6 +3,7 @@ package eu.vendeli.rethis.api.processor.utils
 import com.google.devtools.ksp.KspExperimental
 import com.google.devtools.ksp.getAnnotationsByType
 import com.google.devtools.ksp.symbol.KSAnnotated
+import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSType
 import eu.vendeli.rethis.api.processor.core.RedisCommandProcessor.Companion.context
 import eu.vendeli.rethis.api.processor.types.EnrichedNode
@@ -33,18 +34,37 @@ internal fun KSAnnotated.hasCustomDecoder(): Boolean {
     val customDecoder = getAnnotation<RedisMeta.CustomCodec>()?.get("decoder")
     return customDecoder != null &&
         customDecoder != Nothing::class.simpleName &&
-        !customDecoder.startsWith(ResponseDecoder::class.simpleName!!)
+        !isDefaultDecoderName(customDecoder)
+}
+
+/** The default decoder is `ResponseDecoder`, optionally followed by type arguments (`ResponseDecoder<...>`). */
+internal fun isDefaultDecoderName(name: String): Boolean {
+    val defaultName = ResponseDecoder::class.simpleName!!
+    return name == defaultName || name.startsWith("$defaultName<")
 }
 
 @OptIn(KspExperimental::class)
 internal fun KSAnnotated.getCustom(): RedisMeta.CustomCodec? =
     getAnnotationsByType(RedisMeta.CustomCodec::class).firstOrNull()
 
-internal fun KSType.getTimeUnit(): String = annotations.firstOrNull {
-    it.shortName.asString() == RedisMeta.OutgoingTimeUnit::class.simpleName
-}?.arguments?.firstOrNull()?.value?.toString().let {
-    if (it == "TimeUnit.SECONDS") "SECONDS" else "MILLISECONDS"
+internal enum class OutgoingUnit { SECONDS, MILLISECONDS }
+
+/** Maps an `OutgoingTimeUnit` argument (`TimeUnit.SECONDS` or bare `SECONDS`) to a supported unit, or null. */
+internal fun resolveOutgoingUnit(raw: Any?): OutgoingUnit? {
+    val name = when (raw) {
+        null -> return null
+        is KSType, is KSClassDeclaration -> raw.inferEnumValue()
+        else -> raw.toString()
+    }
+    return OutgoingUnit.entries.firstOrNull { it.name == name.substringAfterLast('.') }
 }
+
+/** The unit declared by `@OutgoingTimeUnit` on this type, or null when absent or unsupported. */
+internal fun KSType.getTimeUnit(): OutgoingUnit? = resolveOutgoingUnit(
+    annotations.firstOrNull {
+        it.shortName.asString() == RedisMeta.OutgoingTimeUnit::class.simpleName
+    }?.arguments?.firstOrNull()?.value,
+)
 
 internal fun KSType.collectionAwareType(): KSType =
     if (isCollection()) arguments.first().type!!.resolve()

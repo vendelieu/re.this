@@ -3,6 +3,7 @@ package eu.vendeli.rethis.api.processor.utils
 import com.google.devtools.ksp.KspExperimental
 import com.google.devtools.ksp.getAnnotationsByType
 import com.google.devtools.ksp.symbol.KSClassDeclaration
+import com.google.devtools.ksp.symbol.KSType
 import eu.vendeli.rethis.api.processor.context.*
 import eu.vendeli.rethis.api.processor.core.RedisCommandProcessor.Companion.context
 import eu.vendeli.rethis.api.processor.types.*
@@ -25,7 +26,7 @@ private fun recurse(node: EnrichedNode): List<WriteOp> {
     // --- 2. Splice abstract grouping nodes ---
     if (node.rSpec == null) {
         val childOps = node.children
-            .sortedWith(compareBy({ it.rangeBounds().first }, { it.rangeBounds().second }))
+            .orderedByBounds()
             .flatMap { recurse(it) }
         // Fallback for spec-less primitive params (e.g. `@RIgnoreSpecAbsence vararg X: String`):
         // emit a per-element DirectCall so the variadic args actually reach the wire.
@@ -38,22 +39,7 @@ private fun recurse(node: EnrichedNode): List<WriteOp> {
             if (typeAttr != null && (hasName || isSpeclessDataObject)) {
                 val kt = typeAttr.type
                 if (kt.declaration.isEnum() || kt.declaration.isDataObject() || kt.declaration.isStdType()) {
-                    val name = nearestName(node)!!
-                    val directCall = WriteOp.DirectCall(
-                        node = node,
-                        slotBlock = { parent ->
-                            val toString = if (
-                                kt.name != "String" &&
-                                kt.arguments.firstOrNull { t -> t.type?.resolve()?.name == "String" } == null
-                            ) ".toString()" else ""
-                            appendLine(
-                                "slot = validateSlot(slot, CRC16.lookup(%L$toString.toByteArray(charset)))",
-                                parent.qualify(name).render(),
-                            )
-                        },
-                        encodeBlock = { parent, phase -> inferWriting(name, node, parent, phase) },
-                    )
-                    return wrapIfNeeded(node, directCall)
+                    return wrapIfNeeded(node, directCallFor(node, kt, nearestName(node)!!))
                 }
             }
         }
@@ -66,35 +52,52 @@ private fun recurse(node: EnrichedNode): List<WriteOp> {
     val kt = typeAttr.type
 
     if (kt.declaration.isEnum() || kt.declaration.isDataObject() || kt.declaration.isStdType()) {
-        val name = nearestName(node)!!
-        val directCall = WriteOp.DirectCall(
-            node = node,
-            slotBlock = { parent ->
-                val toString = if (
-                    kt.name != "String" &&
-                    kt.arguments.firstOrNull { t -> t.type?.resolve()?.name == "String" } == null
-                ) ".toString()" else ""
-                appendLine(
-                    "slot = validateSlot(slot, CRC16.lookup(%L$toString.toByteArray(charset)))",
-                    parent.qualify(name).render(),
-                )
-            },
-            encodeBlock = { parent, phase -> inferWriting(name, node, parent, phase) },
-        )
-        return wrapIfNeeded(node, directCall)
+        return wrapIfNeeded(node, directCallFor(node, kt, nearestName(node)!!))
     }
 
     // --- 4. Complex types with children ---
     if (node.children.isNotEmpty()) {
         val childOps = node.children
-            .sortedWith(compareBy({ it.rangeBounds().first }, { it.rangeBounds().second }))
+            .orderedByBounds()
             .flatMap { recurse(it) }
         return listOf(handleWrappedCall(node, childOps))
     }
 
     // --- 5. Nothing to write ---
+    reportError(
+        context.currentCommand.command.name,
+        "Parameter '${nearestName(node)}' of type '${kt.declaration.qualifiedName?.asString()}' matches a spec " +
+            "node but is not an enum, data object, standard type or a type with children, so it is not written",
+    )
     return emptyList()
 }
+
+/**
+ * Unit for a `Duration`/`Instant` parameter. A missing or unsupported `@OutgoingTimeUnit` is reported
+ * and milliseconds are used.
+ */
+private fun outgoingUnitOf(type: KSType, field: String): OutgoingUnit = type.getTimeUnit() ?: run {
+    reportError(
+        context.currentCommand.command.name,
+        "Parameter '$field' needs an explicit @OutgoingTimeUnit(SECONDS or MILLISECONDS); assuming milliseconds",
+    )
+    OutgoingUnit.MILLISECONDS
+}
+
+private fun directCallFor(node: EnrichedNode, kt: KSType, name: String) = WriteOp.DirectCall(
+    node = node,
+    slotBlock = { parent ->
+        val toString = if (
+            kt.name != "String" &&
+            kt.arguments.firstOrNull { t -> t.type?.resolve()?.name == "String" } == null
+        ) ".toString()" else ""
+        appendLine(
+            "slot = validateSlot(slot, CRC16.slot(%L$toString.toByteArray(charset)))",
+            parent.qualify(name).render(),
+        )
+    },
+    encodeBlock = { parent, phase -> inferWriting(name, node, parent, phase) },
+)
 
 private fun nearestName(node: EnrichedNode?): String? = node?.attr
     ?.filterIsInstance<EnrichedTreeAttr.Name>()
@@ -158,15 +161,19 @@ private fun CodeGenContext.inferWriting(
 
                 resolvedType.declaration.isInstant() -> {
                     addImport("eu.vendeli.rethis.utils.writeLongArg")
-                    val timeUnit = resolvedType.getTimeUnit()
-                    val expr = if (timeUnit == "MILLISECONDS") "toEpochMilliseconds()" else "epochSeconds"
+                    val expr = when (outgoingUnitOf(resolvedType, field)) {
+                        OutgoingUnit.SECONDS -> "epochSeconds"
+                        OutgoingUnit.MILLISECONDS -> "toEpochMilliseconds()"
+                    }
                     appendLine("buffer.writeLongArg(%L.%L, charset)", pName, expr)
                 }
 
                 resolvedType.declaration.isDuration() -> {
                     addImport("eu.vendeli.rethis.utils.writeLongArg")
-                    val timeUnit = resolvedType.getTimeUnit()
-                    val expr = if (timeUnit == "MILLISECONDS") "inWholeMilliseconds" else "inWholeSeconds"
+                    val expr = when (outgoingUnitOf(resolvedType, field)) {
+                        OutgoingUnit.SECONDS -> "inWholeSeconds"
+                        OutgoingUnit.MILLISECONDS -> "inWholeMilliseconds"
+                    }
                     appendLine("buffer.writeLongArg(%L.%L, charset)", pName, expr)
                 }
 
@@ -212,7 +219,7 @@ private fun CodeGenContext.inferWriting(
 private fun handleSealedNode(node: EnrichedNode): List<WriteOp> {
     // Flatten any intermediate wrappers
     val directSubs = node.children
-        .sortedWith(compareBy({ it.rangeBounds().first }, { it.rangeBounds().second }))
+        .orderedByBounds()
         .flatMap { child ->
             if (child.rSpec == null && child.type.declaration.isSealed()) child.children else listOf(
                 child,

@@ -3,6 +3,7 @@ package eu.vendeli.rethis.configuration
 import eu.vendeli.rethis.annotations.ConfigurationDSL
 import eu.vendeli.rethis.core.DefaultLoggerFactory
 import eu.vendeli.rethis.core.JsonSerializationFormat
+import eu.vendeli.rethis.shared.types.CommandRequest
 import eu.vendeli.rethis.types.common.ReadFrom
 import eu.vendeli.rethis.types.common.RespVer
 import eu.vendeli.rethis.types.interfaces.*
@@ -130,11 +131,15 @@ sealed class ReThisConfiguration(
      * to the socket. When the deadline elapses the connection is disposed (its read state is
      * unrecoverable) and a [eu.vendeli.rethis.shared.types.CommandTimeoutException] is thrown.
      *
-     * `null` (default) disables the per-command deadline; reads block until data arrives,
-     * which matches the historical behaviour. Setup commands (HELLO/SELECT) and the pub/sub
-     * receive loop intentionally bypass this timeout.
+     * Defaults to 30 seconds. Set it to `null` to disable the per-command deadline so reads block
+     * until data arrives. Commands that wait on the server by design (BLPOP, BRPOP, BLMOVE, BZPOP*,
+     * XREAD / XREADGROUP, WAIT, WAITAOF and the like) are never subject to this timeout, as their
+     * own server-side timeout bounds them. XREAD and XREADGROUP are flagged blocking whether or not
+     * `BLOCK` is given, so they never have a default timeout either, and a pipeline containing any
+     * blocking command is exempt as a whole. Setup commands (HELLO/SELECT) and the pub/sub
+     * receive loop also bypass it.
      */
-    var commandTimeout: Duration? = null
+    var commandTimeout: Duration? = DEFAULT_COMMAND_TIMEOUT
 
     /**
      * Factory used for creating loggers within the configuration.
@@ -216,6 +221,25 @@ sealed class ReThisConfiguration(
         socket.block()
     }
 
+    /**
+     * Deadline for the reply to [request]: [commandTimeout], except for blocking commands which
+     * wait on the server by design and are bounded by their own server-side timeout.
+     */
+    internal fun commandTimeoutFor(request: CommandRequest): Duration? =
+        if (request.isBlocking) null else commandTimeout
+
+    /** Deadline for a pipeline: [commandTimeout], unless one of [requests] is blocking. */
+    internal fun commandTimeoutFor(requests: List<CommandRequest>): Duration? =
+        if (requests.any { it.isBlocking }) null else commandTimeout
+
+    /**
+     * Enables TLS with the default [TLSConfig] when the connection URL used the `rediss://` scheme.
+     * An explicit [tls] block always wins over this default.
+     */
+    internal fun applyUrlTls(useTls: Boolean) {
+        if (useTls && tls == null) tls = TLSConfigBuilder().build()
+    }
+
     override fun toString(): String = buildString {
         appendLine("${this@ReThisConfiguration::class.simpleName} {")
 
@@ -244,3 +268,5 @@ sealed class ReThisConfiguration(
         appendLine("}")
     }
 }
+
+internal val DEFAULT_COMMAND_TIMEOUT: Duration = 30.seconds

@@ -2,14 +2,17 @@ package eu.vendeli.rethis.utils
 
 import eu.vendeli.rethis.ReThis
 import eu.vendeli.rethis.ReThisTestCtx
+import eu.vendeli.rethis.command.generic.pTtl
+import eu.vendeli.rethis.command.generic.del
 import eu.vendeli.rethis.shared.types.LockLostException
 import eu.vendeli.rethis.types.interfaces.ReDistributedLock
 import io.kotest.assertions.throwables.shouldThrow
-import io.kotest.core.annotation.Ignored
 import io.kotest.core.test.config.DefaultTestConfig
 import io.kotest.matchers.booleans.shouldBeFalse
 import io.kotest.matchers.booleans.shouldBeTrue
 import io.kotest.matchers.ints.shouldBeExactly
+import io.kotest.matchers.comparables.shouldBeLessThanOrEqualTo
+import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.*
 import java.util.*
@@ -21,7 +24,6 @@ import kotlin.time.Duration.Companion.seconds
 /**
  * Tests for standard ReDistributedLock (per-coroutine ownership).
  */
-@Ignored
 class RedisDistributedLockTest : ReThisTestCtx() {
     init {
         defaultTestConfig = DefaultTestConfig(timeout = 60.seconds)
@@ -373,4 +375,84 @@ class RedisDistributedLockTest : ReThisTestCtx() {
         listOf(j1, j2).joinAll()
         completed.get().shouldBeExactly(2)
     }
+
+    // ==================== UNLOCK FAILURE / LEASE ====================
+
+    @Test
+    suspend fun `withLock keeps the block exception when unlock also fails`() = withTimeout(30.seconds) {
+        val lockName = "rethis:lock:with-lock-failure:${UUID.randomUUID()}"
+        val lock = client.reDistributedLock(lockName)
+
+        try {
+            val thrown = shouldThrow<IllegalStateException> {
+                lock.withLock(5.seconds) {
+                    // The lock disappears behind the owner's back, so the unlock in finally fails.
+                    client.del(lockName)
+                    throw IllegalStateException("boom")
+                }
+            }
+
+            thrown.message shouldBe "boom"
+            thrown.suppressed.map { it::class } shouldBe listOf(LockLostException::class)
+        } finally {
+            client.del(lockName)
+        }
+    }
+
+    @Test
+    suspend fun `withLock propagates the unlock failure when the block succeeds`() = withTimeout(30.seconds) {
+        val lockName = "rethis:lock:with-lock-unlock-only:${UUID.randomUUID()}"
+        val lock = client.reDistributedLock(lockName)
+
+        try {
+            shouldThrow<LockLostException> {
+                lock.withLock(5.seconds) { client.del(lockName) }
+            }
+        } finally {
+            client.del(lockName)
+        }
+    }
+
+    @Test
+    suspend fun `nested unlock keeps the lease the lock was acquired with`() = withTimeout(30.seconds) {
+        val lockName = "rethis:lock:nested-lease:${UUID.randomUUID()}"
+        val lock = client.reDistributedLock(lockName)
+
+        try {
+            lock.lock(5.seconds)
+            lock.lock(5.seconds)
+            lock.unlock().shouldBeTrue()
+
+            client.pTtl(lockName).shouldNotBeNull() shouldBeLessThanOrEqualTo 5_000L
+        } finally {
+            // Releases the remaining hold so the lease watchdog stops.
+            lock.unlock()
+        }
+    }
+
+    @Test
+    suspend fun `unlock keeps working when watchdog refreshes race with release and re-acquire`() =
+        withTimeout(45.seconds) {
+            val lockName = "rethis:lock:watchdog-race:${UUID.randomUUID()}"
+            val lock = client.reDistributedLock(lockName)
+
+            try {
+                // The lease is short enough for refreshes to land right around each release and acquire.
+                (1..2)
+                    .map {
+                        async(Dispatchers.Default) {
+                            repeat(150) {
+                                lock.lock(150.milliseconds)
+                                try {
+                                    delay(1)
+                                } finally {
+                                    lock.unlock()
+                                }
+                            }
+                        }
+                    }.awaitAll()
+            } finally {
+                client.del(lockName)
+            }
+        }
 }

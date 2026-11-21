@@ -10,6 +10,7 @@ import eu.vendeli.rethis.shared.utils.resolveToken
 import io.ktor.utils.io.charsets.*
 import kotlinx.io.Buffer
 
+private const val VERBATIM_PREFIX_LENGTH = 4
 
 object VerbatimStringDecoder : ResponseDecoder<String> {
     override fun decode(input: Buffer, charset: Charset, code: RespCode?,): String {
@@ -21,16 +22,24 @@ object VerbatimStringDecoder : ResponseDecoder<String> {
             "Invalid response structure, expected string token got null",
         )
 
-        return input.readSizedText(size, charset)
+        return input.readVerbatimContent(size, charset)
     }
 
     fun decodeNullable(input: Buffer, charset: Charset, code: RespCode?,): String? {
-        if (input == EMPTY_BUFFER) return ""
+        if (input == EMPTY_BUFFER) return null
         if (code == null) input.resolveToken(RespCode.VERBATIM_STRING)
 
         val size = input.readDecimalCrlf().toInt()
         if (size < 0) return null
 
-        return input.readSizedText(size, charset)
+        return input.readVerbatimContent(size, charset)
+    }
+
+    private fun Buffer.readVerbatimContent(size: Int, charset: Charset): String {
+        if (size < VERBATIM_PREFIX_LENGTH) throw ResponseParsingException(
+            "Invalid verbatim string length $size, expected at least $VERBATIM_PREFIX_LENGTH",
+        )
+        skip(VERBATIM_PREFIX_LENGTH.toLong()) // 3-byte format and ':'
+        return readSizedText(size - VERBATIM_PREFIX_LENGTH, charset)
     }
 }

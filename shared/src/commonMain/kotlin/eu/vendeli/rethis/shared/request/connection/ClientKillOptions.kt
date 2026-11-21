@@ -3,7 +3,7 @@ package eu.vendeli.rethis.shared.request.connection
 import eu.vendeli.rethis.shared.annotations.RedisMeta
 import eu.vendeli.rethis.shared.annotations.RedisOption
 import eu.vendeli.rethis.shared.types.TimeUnit
-import kotlin.time.Instant
+import kotlin.time.Duration
 
 
 sealed class ClientKillOptions {
@@ -30,7 +30,7 @@ sealed class ClientKillOptions {
 
     @RedisOption.Token("MAXAGE")
     class MaxAge(
-        @RedisOption.Name("maxage") val instant: @RedisMeta.OutgoingTimeUnit(TimeUnit.SECONDS) Instant,
+        @RedisOption.Name("maxage") val maxAge: @RedisMeta.OutgoingTimeUnit(TimeUnit.SECONDS) Duration,
     ) : ClientKillOptions()
 }
 

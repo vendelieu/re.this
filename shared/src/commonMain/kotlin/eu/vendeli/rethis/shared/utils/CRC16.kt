@@ -16,16 +16,42 @@ object CRC16 {
         }
     }
 
+    private const val SLOT_COUNT = 16_384
+    private const val TAG_OPEN = '{'.code.toByte()
+    private const val TAG_CLOSE = '}'.code.toByte()
+
     /**
      * Calculates CRC16 checksum for given bytes.
      *
      * @param bytes data to be processed
      * @return calculated CRC value
      */
-    fun lookup(bytes: ByteArray): Int {
+    fun lookup(bytes: ByteArray): Int = checksum(bytes, 0, bytes.size)
+
+    /**
+     * Cluster hash slot (0..16383) of [key].
+     *
+     * Only the hash tag is hashed when the key contains one: the bytes between the first `{` and the next `}`,
+     * provided they are not empty. Otherwise the whole key is hashed.
+     */
+    fun slot(key: ByteArray): Int {
+        val open = key.indexOf(TAG_OPEN)
+        if (open >= 0) {
+            val close = key.indexOf(TAG_CLOSE, open + 1)
+            if (close > open + 1) return checksum(key, open + 1, close) % SLOT_COUNT
+        }
+        return checksum(key, 0, key.size) % SLOT_COUNT
+    }
+
+    private fun ByteArray.indexOf(value: Byte, from: Int = 0): Int {
+        for (i in from until size) if (this[i] == value) return i
+        return -1
+    }
+
+    private fun checksum(bytes: ByteArray, from: Int, to: Int): Int {
         var crc = 0
-        for (b in bytes) {
-            val idx = ((crc shr 8) xor (b.toInt() and 0xFF)) and 0xFF
+        for (i in from until to) {
+            val idx = ((crc shr 8) xor (bytes[i].toInt() and 0xFF)) and 0xFF
             crc = (crc shl 8) xor CRC16_TABLE[idx]
         }
         return crc and 0xFFFF

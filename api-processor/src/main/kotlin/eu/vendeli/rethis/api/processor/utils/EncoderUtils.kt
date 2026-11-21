@@ -88,15 +88,22 @@ internal fun addEncoderCode() {
         val slotOps = ops.mapNotNull { it.filterWithoutKey() }
         slotOps.forEach { it.emitOp(EncodePhase.SLOT) }
 
-        slotOps.findWrappedCall { it.props.contains(WriteOpProps.COLLECTION) }?.also {
+        val hasKeyCollection = slotOps.findWrappedCall { it.props.contains(WriteOpProps.COLLECTION) } != null
+        val keylessAllowed = context.currentCommand.command.name in KEYLESS_ALLOWED
+
+        if (hasKeyCollection && !keylessAllowed) {
             addImport("eu.vendeli.rethis.shared.types.KeyAbsentException")
             addStatement("if (slot == null) throw KeyAbsentException(\"Expected key is not provided\")")
         }
 
         addStatement("val request = %L", requestStatement)
-        addStatement(
-            "return request.withSlot(slot %% 16384)",
-        )
+        if (hasKeyCollection && keylessAllowed) {
+            // a keyless call is sent without a slot and can run on any node
+            addStatement("val keySlot = slot ?: return request")
+            addStatement("return request.withSlot(keySlot %% 16384)")
+        } else {
+            addStatement("return request.withSlot(slot %% 16384)")
+        }
     }.build()
 
     context.typeSpec.addFunction(
@@ -112,3 +119,6 @@ internal fun addEncoderCode() {
             .build(),
     )
 }
+
+/** Script and function calls take an explicit key count that may be 0, so an empty key list is not an error. */
+private val KEYLESS_ALLOWED = setOf("EVAL", "EVAL_RO", "EVALSHA", "EVALSHA_RO", "FCALL", "FCALL_RO")

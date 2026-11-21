@@ -6,7 +6,7 @@ import eu.vendeli.rethis.shared.types.RedisCommandSpec
 import eu.vendeli.rethis.shared.types.RedisOperation
 import eu.vendeli.rethis.shared.types.RespCode
 
-@RedisCommand("CLUSTER INFO", RedisOperation.READ, [RespCode.BULK])
+@RedisCommand("CLUSTER INFO", RedisOperation.READ, [RespCode.BULK, RespCode.VERBATIM_STRING])
 fun interface ClusterInfoCommand : RedisCommandSpec<String> {
     suspend fun encode(): CommandRequest
 }

@@ -7,6 +7,7 @@ import eu.vendeli.rethis.shared.types.RArray
 import eu.vendeli.rethis.shared.types.RespCode
 import eu.vendeli.rethis.shared.utils.EMPTY_BUFFER
 import eu.vendeli.rethis.shared.utils.safeCast
+import eu.vendeli.rethis.shared.utils.toRespDouble
 import eu.vendeli.rethis.shared.utils.unwrap
 import io.ktor.utils.io.charsets.*
 import kotlinx.io.Buffer
@@ -23,10 +24,10 @@ object GeoPosDecoder : ResponseDecoder<List<List<GeoPosition>?>> {
             entry.safeCast<RArray>()?.value?.chunked(2) {
                 GeoPosition(
                     it.first().let {
-                        it.unwrap<String>()?.toDouble() ?: it.unwrap<Double>()!!
+                        it.unwrap<String>()?.toRespDouble() ?: it.unwrap<Double>()!!
                     },
                     it.last().let {
-                        it.unwrap<String>()?.toDouble() ?: it.unwrap<Double>()!!
+                        it.unwrap<String>()?.toRespDouble() ?: it.unwrap<Double>()!!
                     }
                 )
             }

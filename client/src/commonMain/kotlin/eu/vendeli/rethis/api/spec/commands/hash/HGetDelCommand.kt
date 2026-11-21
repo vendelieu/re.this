@@ -9,7 +9,7 @@ import eu.vendeli.rethis.shared.types.RedisOperation
 import eu.vendeli.rethis.shared.types.RespCode
 
 @RedisCommand("HGETDEL", RedisOperation.WRITE, [RespCode.ARRAY])
-fun interface HGetDelCommand : RedisCommandSpec<List<String>> {
+fun interface HGetDelCommand : RedisCommandSpec<List<String?>> {
     suspend fun encode(
         key: String,
         @RedisOption.Token("FIELDS") @RedisMeta.WithSizeParam("numfields") vararg field: String,

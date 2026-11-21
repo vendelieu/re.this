@@ -2,6 +2,7 @@ package eu.vendeli.rethis.commands.cluster
 
 import eu.vendeli.rethis.TestCtx
 import eu.vendeli.rethis.commands.support.TopologyFixtures
+import eu.vendeli.rethis.codecs.cluster.ClusterBumpEpochCommandCodec
 import eu.vendeli.rethis.shared.decoders.cluster.ClusterShardsDecoder
 import eu.vendeli.rethis.shared.decoders.cluster.ClusterSlotsDecoder
 import eu.vendeli.rethis.shared.response.cluster.ShardNode
@@ -124,5 +125,23 @@ class ClusterCommandTest : TestCtx() {
         (exception as RedirectAskException).slot shouldBe 128
         exception.host shouldBe "127.0.0.1"
         exception.port shouldBe 7003
+    }
+
+    @Test
+    fun `BUMPEPOCH reports whether the epoch was bumped`() {
+        val bumped = TopologyFixtures.respBuffer("+BUMPED 12\r\n")
+        val still = TopologyFixtures.respBuffer("+STILL 12\r\n")
+
+        ClusterBumpEpochCommandCodec.decode(bumped, Charsets.UTF_8) shouldBe true
+        ClusterBumpEpochCommandCodec.decode(still, Charsets.UTF_8) shouldBe false
+    }
+
+    @Test
+    fun `BUMPEPOCH tolerates bulk string replies`() {
+        val bumped = TopologyFixtures.respBuffer("\$9\r\nBUMPED 12\r\n")
+        val still = TopologyFixtures.respBuffer("\$8\r\nSTILL 12\r\n")
+
+        ClusterBumpEpochCommandCodec.decode(bumped, Charsets.UTF_8) shouldBe true
+        ClusterBumpEpochCommandCodec.decode(still, Charsets.UTF_8) shouldBe false
     }
 }

@@ -75,8 +75,9 @@ interface MetricsRecorder {
     fun onClusterRedirect(kind: RedirectKind) {}
 
     /**
-     * Emitted on subscription register (`delta = +1`) and on full removal of all handlers
-     * for a target (`delta = -1`).
+     * Emitted once when a target becomes active, i.e. on its first registration (`delta = +1`), and once when it
+     * is removed, either by removing all its handlers or by unsubscribing it (`delta = -1`). Further workers
+     * registered for an already active target do not emit.
      */
     fun onSubscriptionChange(targetKind: String, delta: Int) {}
 }

@@ -47,8 +47,34 @@ class ReThisMapTest : ReThisTestCtx() {
     fun `test remove`() {
         val map = client.Hash("testMap6")
         map["testKey"] = "testValue"
-        map.remove("testKey") shouldBe null
+        map.remove("testKey") shouldBe "testValue"
         map.containsKey("testKey") shouldBe false
+        map.remove("testKey") shouldBe null
+    }
+
+    @Test
+    fun `put returns the previous value`() {
+        val map = client.Hash("testMapPut")
+        map.put("k", "v1") shouldBe null
+        map.put("k", "v2") shouldBe "v1"
+        map["k"] shouldBe "v2"
+    }
+
+    @Test
+    fun `remove returns the previous value once`() {
+        val map = client.Hash("testMapRemove")
+        map["k"] = "v2"
+        map.remove("k") shouldBe "v2"
+        map.remove("k") shouldBe null
+    }
+
+    @Test
+    fun `entry setValue returns the previous value`() {
+        val map = client.Hash("testMapSetValue")
+        map["k"] = "v2"
+        val entry = map.entries.single()
+        entry.setValue("v3") shouldBe "v2"
+        map["k"] shouldBe "v3"
     }
 
     @Test
@@ -81,5 +107,19 @@ class ReThisMapTest : ReThisTestCtx() {
             .shouldHaveSize(1)
             .first()
             .toPair() shouldBe ("testKey" to "testValue")
+    }
+
+    @Test
+    fun `clear on a missing key does not throw`() {
+        val map = client.Hash("emptyMap")
+        map.clear()
+        map.isEmpty() shouldBe true
+    }
+
+    @Test
+    fun `putAll with an empty map does not throw`() {
+        val map = client.Hash("emptyMapPutAll")
+        map.putAll(emptyMap())
+        map.isEmpty() shouldBe true
     }
 }

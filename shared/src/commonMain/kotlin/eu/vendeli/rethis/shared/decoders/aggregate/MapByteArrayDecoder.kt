@@ -19,8 +19,8 @@ object MapByteArrayDecoder : ResponseDecoder<Map<String, ByteArray>> {
     ): Map<String, ByteArray> {
         if (input == EMPTY_BUFFER) return emptyMap()
         val code = code ?: RespCode.fromCode(input.readByte())
-        if (code != RespCode.MAP && code != RespCode.ARRAY) throw ResponseParsingException(
-            "Invalid response structure, expected map token, given $code", input.tryInferCause(code),
+        if (code != RespCode.MAP && code != RespCode.ARRAY) throw input.tryInferCause(code, charset) ?: ResponseParsingException(
+            "Invalid response structure, expected map token, given $code",
         )
 
         val size = input.readDecimalCrlf().toInt().let { if (code == RespCode.MAP) it else it / 2 }
@@ -42,8 +42,8 @@ object MapByteArrayDecoder : ResponseDecoder<Map<String, ByteArray>> {
     ): Map<String, ByteArray?> {
         if (input == EMPTY_BUFFER) return emptyMap()
         val code = code ?: RespCode.fromCode(input.readByte())
-        if (code != RespCode.MAP && code != RespCode.ARRAY) throw ResponseParsingException(
-            "Invalid response structure, expected map token, given $code", input.tryInferCause(code),
+        if (code != RespCode.MAP && code != RespCode.ARRAY) throw input.tryInferCause(code, charset) ?: ResponseParsingException(
+            "Invalid response structure, expected map token, given $code",
         )
 
         val size = input.readDecimalCrlf().toInt().let { if (code == RespCode.MAP) it else it / 2 }
@@ -53,7 +53,7 @@ object MapByteArrayDecoder : ResponseDecoder<Map<String, ByteArray>> {
             repeat(size) {
                 val key = BulkStringDecoder.decodeNullable(input, charset) ?: throw ResponseParsingException(
                     "Invalid response structure, expected string token got null",
-                    input.tryInferCause(code),
+                    input.tryInferCause(code, charset),
                 )
                 val value = BulkByteArrayDecoder.decodeNullable(input, charset)
                 put(key, value)

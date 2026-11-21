@@ -8,7 +8,7 @@ import eu.vendeli.rethis.shared.types.RedisCommandSpec
 import eu.vendeli.rethis.shared.types.RedisOperation
 import eu.vendeli.rethis.shared.types.RespCode
 
-@RedisCommand("HPERSIST", RedisOperation.READ, [RespCode.ARRAY])
+@RedisCommand("HPERSIST", RedisOperation.WRITE, [RespCode.ARRAY])
 fun interface HPersistCommand : RedisCommandSpec<List<Long>> {
     suspend fun encode(
         key: String,

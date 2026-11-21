@@ -74,12 +74,7 @@ fun interface SetCommand : RedisCommandSpec<String> {
 
 ### 2. Redis Specification Loading
 
-The processor loads official Redis command specifications from:
-
-* `commands.json` – Core Redis commands
-* `commands_redisjson.json` – RedisJSON module commands
-* `sentinel_spec.json` – Sentinel commands (bundled locally)
-* `resp2_replies.json` / `resp3_replies.json` – Response type mappings
+`RedisSpecLoader` downloads a single bundle, `output/spec.json`, from the `vendelieu/redis-spec` repository at the commit pinned by the `redis-spec` entry in `gradle/libs.versions.toml`. The bundle merges the upstream Redis command specs (including the Redis Stack module commands) with structured reply shapes per command and protocol (RESP2/RESP3). The processor adds the bundled `sentinel_spec.json` overlay on top, because Sentinel commands are not part of the bundle.
 
 These specs provide:
 
@@ -87,6 +82,7 @@ These specs provide:
 * Optional / required flags
 * Token names (`EX`, `PX`, `NX`, …)
 * Key indices
+* Reply types per protocol (used to pick the decoders)
 
 ---
 
@@ -202,15 +198,14 @@ public suspend fun ReThis.set(
 
 ---
 
-## Configuration
+## Running the processor
 
-```kotlin
-ksp {
-    arg(
-        "clientProjectDir",
-        rootDir.resolve("client/src/commonMain/kotlin").absolutePath
-    )
-}
+The processor is attached to the `client` module as `kspCommonMainMetadata`, so codegen runs as the Gradle task `:client:kspCommonMainKotlinMetadata`; the output lands in `client/build/generated/ksp/metadata/commonMain/kotlin`, which is a `commonMain` source directory. The compile, lint and detekt tasks of `client` depend on it.
+
+```bash
+./gradlew :client:kspCommonMainKotlinMetadata   # regenerate codecs and command functions
+./gradlew :api-processor:kspKotlin              # run KSP over the processor module itself (AutoService registration)
+./gradlew :api-processor:test                   # processor unit tests
 ```
 
 ## Additional Details
@@ -227,7 +222,8 @@ The `BA` suffix is automatically handled - the function name is derived from the
 
 `RedisSpecLoader` fetches specs from GitHub **during KSP processing** (not at runtime). This means:
 - Build will fail if network is unavailable and specs aren't cached
-- The URL is pinned to a specific commit hash for stability
+- The URL is pinned to a `vendelieu/redis-spec` commit via the `redis-spec` entry in `gradle/libs.versions.toml` (the build writes it to the `redis_spec_ref.properties` resource that `RedisSpecLoader` reads); to bump it, set that entry to the new commit SHA, run `./gradlew :client:kspCommonMainKotlinMetadata` and review the diff of the regenerated codecs. Renovate proposes the bump as a separate, non-automerged PR
+- The download has a 10s connect timeout and a 60s request timeout, and any non-200 response fails the build with the URL and status
 - Sentinel specs are bundled locally in `resources/sentinel_spec.json` because they're not in the official repo
 
 ### 3. **The `RSpecNode.path` Matching System**
@@ -357,11 +353,12 @@ Generated codecs reference these constants (e.g., `buffer.writeBulkString(RedisT
 
 ### 15. **Spec Validation**
 
-The processor validates each command against the official Redis spec:
+The processor validates each command against the spec:
 - **Operation validation**: Checks that declared `RedisOperation` (READ/WRITE) matches the spec's `commandFlags`. Skipped for JSON and Sentinel commands.
 - **Blocking validation**: Checks that `isBlocking` matches the spec's `blocking` flag. Skipped for Sentinel commands.
+- **Write-plan problems**: a parameter that matches a spec node but cannot be written, or a `Duration`/`Instant` without an explicit `@OutgoingTimeUnit`, is reported as well.
 
-Mismatches are reported as errors via `ValidationResult`.
+Every problem is collected in `ValidationResult` (per command) while commands are processed, and `reportValidationErrors` logs them all through `logger.error` once processing is finished, so a single run lists all mismatches and then fails the KSP round.
 
 ### 16. **Additional Annotations**
 
@@ -372,7 +369,7 @@ Mismatches are reported as errors via `ValidationResult`.
 
 ### 17. **KSP Incremental Processing Caveats**
 
-Despite `ksp.incremental=false` in gradle.properties, you may still encounter issues. Always run `clean` when:
+`ksp.incremental=true` is set in `gradle.properties`, and the processor keeps global state in a static context, so stale output is possible. Run `clean` when:
 - Adding new command specs
 - Modifying shared types used by multiple specs
 - Changing the processor itself

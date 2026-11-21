@@ -1,6 +1,8 @@
 package eu.vendeli.rethis.commands
 
 import eu.vendeli.rethis.ReThisTestCtx
+import eu.vendeli.rethis.codecs.sortedset.ZPopMaxCommandCodec
+import eu.vendeli.rethis.codecs.sortedset.ZRemRangeByScoreCommandCodec
 import eu.vendeli.rethis.command.sortedset.*
 import eu.vendeli.rethis.safeCast
 import eu.vendeli.rethis.shared.request.sortedset.ZPopCommonOption
@@ -11,11 +13,16 @@ import eu.vendeli.rethis.shared.response.sortedset.ZPopResult
 import eu.vendeli.rethis.shared.types.BulkString
 import eu.vendeli.rethis.shared.types.F64
 import eu.vendeli.rethis.shared.types.RArray
+import eu.vendeli.rethis.shared.types.RType
+import eu.vendeli.rethis.shared.utils.toRespDouble
+import eu.vendeli.rethis.shared.utils.unwrap
+import eu.vendeli.rethis.types.common.RespVer
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.collections.shouldNotBeEmpty
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeTypeOf
+import kotlinx.io.Buffer
 import kotlinx.io.readString
 import kotlin.math.roundToInt
 
@@ -63,7 +70,49 @@ class SortedSetCommandTest : ReThisTestCtx() {
     @Test
     suspend fun `test ZPOPMAX command`() {
         client.zAdd("testSet26", ZMember("testValue26", 1.0))
-        client.zPopMax("testSet26") shouldBe listOf(MPopResult("testValue26", listOf("1.0")))
+        client.zPopMax("testSet26").memberScores() shouldBe listOf("testValue26" to 1.0)
+    }
+
+    @Test
+    suspend fun `test ZPOPMAX command with count`() {
+        client.zAdd("testSet26c", ZMember("a", 1.0), ZMember("b", 2.0), ZMember("c", 3.0))
+        client.zPopMax("testSet26c", 2).memberScores() shouldBe listOf("c" to 3.0, "b" to 2.0)
+    }
+
+    @Test
+    suspend fun `test ZPOPMAX command with count over RESP2`() {
+        val resp2 = createClient(protocol = RespVer.V2)
+        try {
+            resp2.zAdd("testSet26r2", ZMember("a", 1.0), ZMember("b", 2.0))
+            resp2.zPopMax("testSet26r2", 2).memberScores() shouldBe listOf("b" to 2.0, "a" to 1.0)
+        } finally {
+            resp2.close()
+        }
+    }
+
+    @Test
+    suspend fun `test ZPOPMAX codec decodes flat RESP2 member and score pairs`() {
+        val reply = Buffer().also {
+            it.write("*4\r\n\$2\r\nm1\r\n\$1\r\n1\r\n\$2\r\nm2\r\n\$1\r\n2\r\n".encodeToByteArray())
+        }
+
+        ZPopMaxCommandCodec.decode(reply, defaultCharset).memberScores() shouldBe listOf("m1" to 1.0, "m2" to 2.0)
+    }
+
+    @Test
+    suspend fun `test ZPOPMAX codec decodes nested RESP3 member and score pairs`() {
+        val reply = Buffer().also {
+            it.write("*2\r\n*2\r\n\$2\r\nm1\r\n,1\r\n*2\r\n\$2\r\nm2\r\n,2\r\n".encodeToByteArray())
+        }
+
+        ZPopMaxCommandCodec.decode(reply, defaultCharset).memberScores() shouldBe listOf("m1" to 1.0, "m2" to 2.0)
+    }
+
+    private fun List<RType>.memberScores(): List<Pair<String, Double>> {
+        val pairs = if (firstOrNull() is RArray) map { (it as RArray).value } else chunked(2)
+        return pairs.map { (member, score) ->
+            member.unwrap<String>()!! to (score.unwrap<Double>() ?: score.unwrap<String>()!!.toRespDouble())
+        }
     }
 
     @Test
@@ -179,7 +228,7 @@ class SortedSetCommandTest : ReThisTestCtx() {
     @Test
     suspend fun `test ZREMRANGEBYSCORE command`() {
         client.zAdd("testSet36", ZMember("testValue36", 1.0))
-        client.zRemRangeByScore("testSet36", 0.0, 2.0) shouldBe 1L
+        client.zRemRangeByScore("testSet36", "0", "2") shouldBe 1L
     }
 
     @Test
@@ -209,5 +258,70 @@ class SortedSetCommandTest : ReThisTestCtx() {
             destination = "testSet44",
             key = arrayOf("testSet42", "testSet43"),
         ) shouldBe 2L
+    }
+
+    @Test
+    suspend fun `test ZREMRANGEBYSCORE command with exclusive bounds`() {
+        client.zAdd("testSetRemBounds", *(1..5).map { ZMember("m$it", it.toDouble()) }.toTypedArray())
+
+        client.zRemRangeByScore("testSetRemBounds", "(1", "(5") shouldBe 3L
+        client.zCard("testSetRemBounds") shouldBe 2L
+    }
+
+    @Test
+    suspend fun `test ZREMRANGEBYSCORE codec writes bounds verbatim`() {
+        ZRemRangeByScoreCommandCodec.encode(defaultCharset, "k", "(1", "-inf").data.readString() shouldBe
+            "*4\r\n\$16\r\nZREMRANGEBYSCORE\r\n\$1\r\nk\r\n\$2\r\n(1\r\n\$4\r\n-inf\r\n"
+    }
+
+    @Test
+    suspend fun `test ZRANDMEMBER returns null for a missing key on RESP3`() {
+        client.zRandMember("missingZRandKey") shouldBe null
+        client.zRandMemberBA("missingZRandKey") shouldBe null
+    }
+
+    @Test
+    suspend fun `test ZRANDMEMBER returns null for a missing key on RESP2`() {
+        val resp2 = createClient(protocol = RespVer.V2)
+        try {
+            resp2.zRandMember("missingZRandKey2") shouldBe null
+            resp2.zRandMemberBA("missingZRandKey2") shouldBe null
+        } finally {
+            resp2.close()
+        }
+    }
+
+    @Test
+    suspend fun `test BZPOPMIN and BZPOPMAX return null on timeout on RESP3`() {
+        client.bzPopMin(0.1, "missingBzKey") shouldBe null
+        client.bzPopMax(0.1, "missingBzKey") shouldBe null
+    }
+
+    @Test
+    suspend fun `test BZPOPMIN and BZPOPMAX return null on timeout on RESP2`() {
+        val resp2 = createClient(protocol = RespVer.V2)
+        try {
+            resp2.bzPopMin(0.1, "missingBzKey2") shouldBe null
+            resp2.bzPopMax(0.1, "missingBzKey2") shouldBe null
+        } finally {
+            resp2.close()
+        }
+    }
+
+    @Test
+    suspend fun `test ZMPOP and BZMPOP return null when no element is available on RESP3`() {
+        client.zMPop(ZPopCommonOption.MIN, "missingZMPopKey") shouldBe null
+        client.bzMPop(0.1, ZPopCommonOption.MIN, "missingZMPopKey") shouldBe null
+    }
+
+    @Test
+    suspend fun `test ZMPOP and BZMPOP return null when no element is available on RESP2`() {
+        val resp2 = createClient(protocol = RespVer.V2)
+        try {
+            resp2.zMPop(ZPopCommonOption.MIN, "missingZMPopKey2") shouldBe null
+            resp2.bzMPop(0.1, ZPopCommonOption.MIN, "missingZMPopKey2") shouldBe null
+        } finally {
+            resp2.close()
+        }
     }
 }

@@ -26,17 +26,24 @@ import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.atomic.AtomicReference
 
+private val CLEAR_TIMEOUT = 5.seconds
+
 class PubSubCommandTest : ReThisTestCtx() {
     @BeforeEach
-    fun clearSubs() {
+    suspend fun clearSubs() {
         client.subscriptions.unsubscribeAll()
+        // unsubscribeAll only fires the unsubscribe requests, so wait until the server has processed them
+        eventually(CLEAR_TIMEOUT) {
+            client.pubSubChannels() shouldBe emptyList()
+            client.pubSubShardChannels() shouldBe emptyList()
+        }
     }
 
     @Test
     suspend fun `test PUBLISH command`() {
-        client.subscribe("testChannel") { _, _: String -> }
+        client.subscribe("publishChannel") { _, _: String -> }
         eventually(1.seconds) {
-            client.publish("testChannel", "testMessage") shouldBe 1L
+            client.publish("publishChannel", "testMessage") shouldBe 1L
         }
     }
 
@@ -56,7 +63,7 @@ class PubSubCommandTest : ReThisTestCtx() {
 
     @Test
     suspend fun `test PUBSUB CHANNELS command`() {
-        client.subscribe("testChannel2") { _, _: String -> }
+        client.subscribe("pubSubChannelsChannel") { _, _: String -> }
         eventually(1.seconds) {
             client.pubSubChannels().shouldNotBeEmpty()
         }
@@ -64,7 +71,7 @@ class PubSubCommandTest : ReThisTestCtx() {
 
     @Test
     suspend fun `test PUBSUB NUMPAT command`() {
-        client.pSubscribe("testP*") { _, _: String -> }
+        client.pSubscribe("numPatTest*") { _, _: String -> }
         eventually(1.seconds) {
             client.pubSubNumPat() shouldBeGreaterThan 0
         }
@@ -72,76 +79,82 @@ class PubSubCommandTest : ReThisTestCtx() {
 
     @Test
     suspend fun `test PUBSUB NUMSUB command`() {
-        client.subscribe("testChannel") { _, _: String -> }
+        client.subscribe("numSubChannel") { _, _: String -> }
         eventually(1.seconds) {
-            client.pubSubNumSub("testChannel") shouldBe listOf(PubSubNumEntry("testChannel", 1))
+            client.pubSubNumSub("numSubChannel") shouldBe listOf(PubSubNumEntry("numSubChannel", 1))
         }
     }
 
     @Test
     suspend fun `test PUBSUB SHARDCHANNELS command`() {
-        client.pubSubShardChannels() shouldBe emptyList()
+        eventually(1.seconds) {
+            client.pubSubShardChannels() shouldBe emptyList()
+        }
     }
 
     @Test
     suspend fun `test PUBSUB SHARDNUMSUB command`() {
-        client.pubSubShardNumSub("testChannel") shouldBe listOf(PubSubNumEntry("testChannel", 0))
+        eventually(1.seconds) {
+            client.pubSubShardNumSub("shardNumSubChannel") shouldBe listOf(PubSubNumEntry("shardNumSubChannel", 0))
+        }
     }
 
     @Test
     suspend fun `test PUNSUBSCRIBE command`() = shouldNotThrowAny {
-        client.pUnsubscribe("testPattern")
+        client.pUnsubscribe("punsubscribePattern")
     }
 
     @Test
     suspend fun `test SPUBLISH command`() {
-        client.sPublish("testShardChannel", "testMessage") shouldBe 0L
+        eventually(1.seconds) {
+            client.sPublish("sPublishShardChannel", "testMessage") shouldBe 0L
+        }
     }
 
     @Test
     suspend fun `test SUNSUBSCRIBE command`() = shouldNotThrowAny {
-        client.sUnsubscribe("testPattern")
+        client.sUnsubscribe("sunsubscribeChannel")
     }
 
     @Test
     suspend fun `test UNSUBSCRIBE command`() = shouldNotThrowAny {
-        client.unsubscribe("testPattern")
+        client.unsubscribe("unsubscribeChannel")
     }
 
     @Test
     suspend fun `test PSUBSCRIBE command`() {
-        client.pSubscribe("testPattern") { _, _: String -> }
+        client.pSubscribe("pSubscribePattern") { _, _: String -> }
         eventually(1.seconds) {
-            client.subscriptions.isActiveHandlers(SubscribeTarget.Pattern("testPattern")).shouldBeTrue()
+            client.subscriptions.isActiveHandlers(SubscribeTarget.Pattern("pSubscribePattern")).shouldBeTrue()
         }
     }
 
     @Test
     suspend fun `test SSUBSCRIBE command`() {
-        client.sSubscribe("testShardChannel") { _, _: String -> }
+        client.sSubscribe("sSubscribeShardChannel") { _, _: String -> }
         eventually(1.seconds) {
-            client.subscriptions.isActiveHandlers(SubscribeTarget.Shard("testShardChannel")).shouldBeTrue()
+            client.subscriptions.isActiveHandlers(SubscribeTarget.Shard("sSubscribeShardChannel")).shouldBeTrue()
         }
     }
 
     @Test
     suspend fun `test SUBSCRIBE command`() {
-        client.subscribe("testChannel") { _, _: String -> }
+        client.subscribe("subscribeChannel") { _, _: String -> }
         eventually(1.seconds) {
-            client.subscriptions.isActiveHandlers(SubscribeTarget.Channel("testChannel")).shouldBeTrue()
+            client.subscriptions.isActiveHandlers(SubscribeTarget.Channel("subscribeChannel")).shouldBeTrue()
         }
     }
 
     @Test
     suspend fun `test unsubscription command`() {
-        client.subscribe("testChannel") { _, _: String -> }
+        client.subscribe("unsubscriptionChannel") { _, _: String -> }
         eventually(1.seconds) {
-            client.subscriptions.isActiveHandlers(SubscribeTarget.Channel("testChannel")).shouldBeTrue()
+            client.subscriptions.isActiveHandlers(SubscribeTarget.Channel("unsubscriptionChannel")).shouldBeTrue()
         }
 
-        client.subscriptions.unsubscribe(SubscribeTarget.Channel("testChannel"))
+        client.subscriptions.unsubscribe(SubscribeTarget.Channel("unsubscriptionChannel"))
         eventually(1.seconds) {
-            client.subscriptions.isActiveHandlers(SubscribeTarget.Channel("testChannel")).shouldBe(false)
+            client.subscriptions.isActiveHandlers(SubscribeTarget.Channel("unsubscriptionChannel")).shouldBe(false)
         }
         client.subscriptions.size shouldBe 0
     }

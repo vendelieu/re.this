@@ -1,14 +1,24 @@
 package eu.vendeli.rethis.commands
 
 import eu.vendeli.rethis.ReThisTestCtx
+import eu.vendeli.rethis.codecs.hash.HExpireAtCommandCodec
+import eu.vendeli.rethis.codecs.hash.HPersistCommandCodec
 import eu.vendeli.rethis.command.hash.*
 import eu.vendeli.rethis.shared.request.common.FieldValue
+import eu.vendeli.rethis.shared.request.common.UpdateStrategyOption
 import eu.vendeli.rethis.shared.response.common.ScanResult
+import eu.vendeli.rethis.shared.types.RedisOperation
 import io.kotest.matchers.shouldBe
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
+import kotlin.time.Instant
 
 class HashCommandTest : ReThisTestCtx() {
+    @Test
+    suspend fun `test HPERSIST is routed as a write`() {
+        HPersistCommandCodec.encode(Charsets.UTF_8, "k", "f").operation shouldBe RedisOperation.WRITE
+    }
+
     @Test
     suspend fun `test HDEL command`() {
         client.hSet("testKey1", FieldValue("testField1", "testValue1"))
@@ -24,6 +34,33 @@ class HashCommandTest : ReThisTestCtx() {
     suspend fun `test HEXPIREAT command`() {
         client.hSet("testKey4", FieldValue("testField4", "testValue4"))
         client.hExpireAt("testKey4", timestamp.plus(10.seconds), "testField4") shouldBe listOf(1L)
+    }
+
+    @Test
+    suspend fun `test HEXPIREAT writes the condition before FIELDS`() {
+        val conditions = mapOf(
+            "NX" to UpdateStrategyOption.NX,
+            "XX" to UpdateStrategyOption.XX,
+            "GT" to UpdateStrategyOption.GT,
+            "LT" to UpdateStrategyOption.LT,
+        )
+        conditions.forEach { (token, condition) ->
+            HExpireAtCommandCodec
+                .encode(Charsets.UTF_8, "k", Instant.fromEpochSeconds(1_800_000_000), "f1", "f2", condition = condition)
+                .respArguments() shouldBe listOf("HEXPIREAT", "k", "1800000000", token, "FIELDS", "2", "f1", "f2")
+        }
+    }
+
+    @Test
+    suspend fun `test HEXPIREAT command with NX condition`() {
+        client.hSet("hexpireatCondKey", FieldValue("f", "v"))
+        client.hExpireAt(
+            "hexpireatCondKey",
+            timestamp.plus(10.seconds),
+            "f",
+            condition = UpdateStrategyOption.NX,
+        ) shouldBe
+            listOf(1L)
     }
 
     @Test

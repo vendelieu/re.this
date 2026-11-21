@@ -74,7 +74,10 @@ internal fun KSDeclaration.isSealed() =
     this is KSClassDeclaration && classKind == ClassKind.CLASS && modifiers.contains(Modifier.SEALED)
 
 internal fun KSAnnotated.isStdType() =
-    this is KSClassDeclaration && qualifiedName?.getQualifier()?.startsWith("kotlin") == true
+    this is KSClassDeclaration && isStdPackage(qualifiedName?.getQualifier())
+
+internal fun isStdPackage(packageName: String?): Boolean =
+    packageName == "kotlin" || packageName?.startsWith("kotlin.") == true
 
 internal fun KSDeclaration.isInstant() = qualifiedName?.asString() == "kotlin.time.Instant"
 internal fun KSDeclaration.isDuration() = qualifiedName?.asString() == "kotlin.time.Duration"

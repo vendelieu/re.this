@@ -9,7 +9,7 @@ import eu.vendeli.rethis.shared.types.RedisOperation
 import eu.vendeli.rethis.shared.types.RespCode
 import eu.vendeli.rethis.utils.JSON_DEFAULT_PATH
 
-@RedisCommand("JSON.SET", RedisOperation.WRITE, [RespCode.SIMPLE_STRING])
+@RedisCommand("JSON.SET", RedisOperation.WRITE, [RespCode.SIMPLE_STRING, RespCode.BULK, RespCode.NULL])
 fun interface JsonSetCommand : RedisCommandSpec<String> {
     suspend fun encode(
         key: String,

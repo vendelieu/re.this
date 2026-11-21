@@ -15,6 +15,8 @@ import eu.vendeli.rethis.api.processor.types.RCommandData
 import eu.vendeli.rethis.api.processor.types.getCommandData
 import eu.vendeli.rethis.api.processor.utils.loadCommandCtx
 import eu.vendeli.rethis.api.processor.utils.loadGlobalCtx
+import eu.vendeli.rethis.api.processor.utils.reportValidationErrors
+import eu.vendeli.rethis.api.processor.utils.validation
 import eu.vendeli.rethis.api.processor.utils.resolvedSpecs
 import eu.vendeli.rethis.shared.annotations.RedisCommand
 
@@ -55,6 +57,7 @@ class RedisCommandProcessor(
             }
         }
 
+        reportValidationErrors(context.validation.getErrors(), logger)
         context.proceedOnFinish()
         context.clearAll()
 

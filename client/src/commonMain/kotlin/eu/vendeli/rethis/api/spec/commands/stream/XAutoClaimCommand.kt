@@ -4,6 +4,9 @@ import eu.vendeli.rethis.shared.annotations.RedisCommand
 import eu.vendeli.rethis.shared.annotations.RedisOption
 import eu.vendeli.rethis.shared.types.*
 
+/**
+ * @param minIdleTime minimum idle time of a pending entry, in milliseconds.
+ */
 @RedisCommand("XAUTOCLAIM", RedisOperation.WRITE, [RespCode.ARRAY])
 fun interface XAutoClaimCommand : RedisCommandSpec<List<RType>> {
     suspend fun encode(

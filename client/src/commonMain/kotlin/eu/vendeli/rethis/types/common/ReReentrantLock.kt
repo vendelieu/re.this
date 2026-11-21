@@ -1,8 +1,6 @@
 package eu.vendeli.rethis.types.common
 
 import eu.vendeli.rethis.ReThis
-import eu.vendeli.rethis.command.pubsub.subscribe
-import eu.vendeli.rethis.command.pubsub.unsubscribe
 import eu.vendeli.rethis.shared.types.LockLostException
 import eu.vendeli.rethis.types.interfaces.ReDistributedLock
 import eu.vendeli.rethis.utils.LockUtils.ACQUIRE_LUA
@@ -12,7 +10,6 @@ import eu.vendeli.rethis.utils.evalAsInt
 import kotlinx.coroutines.*
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import kotlinx.io.Buffer
 import kotlin.concurrent.atomics.AtomicReference
 import kotlin.concurrent.atomics.ExperimentalAtomicApi
 import kotlin.time.Duration
@@ -26,11 +23,13 @@ import kotlin.uuid.Uuid
  * * @param ownerJob The specific Coroutine Job that acquired the lock.
  * @param token The unique string identifier stored in Redis to verify ownership.
  * @param depth The reentrancy level (how many times the same Job called lock()).
+ * @param leaseMs The lease the lock was acquired with, reused when a nested unlock renews the TTL.
  */
 private data class LockState(
     val ownerJob: Job,
     val token: String,
     val depth: Int,
+    val leaseMs: Long,
 )
 
 @OptIn(ExperimentalAtomicApi::class, ExperimentalUuidApi::class)
@@ -86,56 +85,68 @@ internal class ReReentrantLock(
             }
 
             val token = "$instanceId:${Uuid.random()}"
+            val waiter = LockReleaseWaiter(client, channelName)
+            var isSubscribed = false
 
-            while (true) {
-                currentCoroutineContext().ensureActive()
+            try {
+                while (true) {
+                    currentCoroutineContext().ensureActive()
 
-                when (acquireScript(token, leaseMs)) {
-                    1 -> {
-                        state.store(LockState(currentJob, token, 1))
-                        startWatchdog(token, leaseMs)
-                        return true // Exits tryLock with success
+                    when (acquireScript(token, leaseMs)) {
+                        1 -> {
+                            state.store(LockState(currentJob, token, 1, leaseMs))
+                            startWatchdog(token, leaseMs)
+                            return true // Exits tryLock with success
+                        }
+
+                        0 -> { // Keep trying
+                        }
+
+                        else -> {
+                            throw LockLostException("Corrupted lock state in Redis for $key")
+                        }
                     }
 
-                    0 -> { // Keep trying
+                    val remaining = timeoutMark - TimeSource.Monotonic.markNow()
+                    if (remaining <= Duration.ZERO) {
+                        return false // Exits tryLock with failure
                     }
 
-                    else -> {
-                        throw LockLostException("Corrupted lock state in Redis for $key")
+                    val pause = minOf(remaining, backoffBaseMs.coerceAtLeast(1L).milliseconds)
+                    if (isSubscribed) {
+                        waiter.await(pause)
+                    } else {
+                        // Subscribe once, then retry the acquire right away to narrow the window in which a
+                        // release goes unnoticed. open() returns when the worker is launched, not when the
+                        // server processed SUBSCRIBE; a release in that gap is recovered by the bounded wait.
+                        waiter.open()
+                        isSubscribed = true
                     }
                 }
-
-                val remaining = timeoutMark - TimeSource.Monotonic.markNow()
-                if (remaining <= Duration.ZERO) {
-                    return false // Exits tryLock with failure
-                }
-
-                // Wait for Pub/Sub signal or a small fallback delay
-                waitForNotification(remaining)
+            } finally {
+                waiter.close()
             }
         }
     }
 
     override suspend fun unlock(): Boolean {
-        val currentState = state.load() ?: throw LockLostException("Lock not held locally")
-        val isFinal = currentState.depth == 1
+        val loaded = state.load() ?: throw LockLostException("Lock not held locally")
+        // Captured before the release: once the key is free another coroutine may acquire and start its own watchdog.
+        val watchdog = watchdogJob.load()
 
-        return when (val result = releaseScript(currentState.token, defaultLeaseMs)) {
+        return when (val result = releaseScript(loaded.token, loaded.leaseMs)) {
             1 -> {
-                if (isFinal) {
-                    stopWatchdog()
-                    state.store(null)
-                } else {
-                    state.store(currentState.copy(depth = currentState.depth - 1))
-                }
+                decrementDepth(loaded.token, watchdog)
                 true
             }
 
             0 -> {
+                forgetLostLock(loaded, watchdog)
                 throw LockLostException("Lock expired in Redis")
             }
 
             -1 -> {
+                forgetLostLock(loaded, watchdog)
                 throw LockLostException("Attempted to unlock a lock owned by another process")
             }
 
@@ -145,23 +156,55 @@ internal class ReReentrantLock(
         }
     }
 
-    private suspend fun waitForNotification(timeout: Duration) {
-        withTimeoutOrNull(timeout) {
-            client.subscribe(channelName) { rc, _: Buffer ->
-                rc.unsubscribe(channelName)
+    // Only the hold identified by [token] is touched; a newer owner's state and watchdog stay as they are.
+    private fun decrementDepth(token: String, watchdog: Job?) {
+        while (true) {
+            val current = state.load() ?: return
+            if (current.token != token) return
+            val next = if (current.depth <= 1) null else current.copy(depth = current.depth - 1)
+            if (state.compareAndSet(current, next)) {
+                if (next == null) cancelWatchdog(watchdog)
+                return
             }
-        } ?: delay(backoffBaseMs) // Fallback if Pub/Sub fails/times out
+        }
+    }
+
+    // The lock is gone from Redis, so keeping the local state and its watchdog would only refresh nothing forever.
+    private fun forgetLostLock(lostState: LockState, watchdog: Job?) {
+        if (state.compareAndSet(lostState, null)) cancelWatchdog(watchdog)
+    }
+
+    // Clears only the hold this watchdog was started for; a newer owner's state must survive a late refresh result.
+    private fun forgetLostHold(token: String) {
+        while (true) {
+            val current = state.load() ?: return
+            if (current.token != token || state.compareAndSet(current, null)) return
+        }
+    }
+
+    private fun cancelWatchdog(watchdog: Job?) {
+        watchdog?.cancel()
+        watchdogJob.compareAndSet(watchdog, null)
     }
 
     private fun startWatchdog(token: String, leaseMs: Long) {
         stopWatchdog()
-        val renewalInterval = leaseMs / 3
+        val renewalInterval = (leaseMs / 3).coerceAtLeast(1L)
         watchdogJob.store(
             watchdogScope.launch {
                 while (isActive) {
                     delay(renewalInterval)
-                    if (refreshScript(token, leaseMs) != 1) {
-                        this@ReReentrantLock.state.store(null)
+                    val isRefreshed = try {
+                        refreshScript(token, leaseMs) == 1
+                    } catch (e: CancellationException) {
+                        throw e
+                    } catch (e: Exception) {
+                        // A transient failure must not end the watchdog; the next tick retries.
+                        client.logger.warn("Lock lease refresh failed for $key, retrying", e)
+                        continue
+                    }
+                    if (!isRefreshed) {
+                        forgetLostHold(token)
                         cancel("Lock lost in Redis")
                     }
                 }

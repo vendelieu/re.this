@@ -1,11 +1,15 @@
 package eu.vendeli.rethis.commands
 
 import eu.vendeli.rethis.ReThisTestCtx
+import eu.vendeli.rethis.codecs.string.DelExCommandCodec
 import eu.vendeli.rethis.command.string.*
+import eu.vendeli.rethis.shared.request.string.DelExOption
 import eu.vendeli.rethis.shared.request.string.GetExOption
 import io.kotest.core.annotation.EnabledIf
+import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import kotlinx.io.Buffer
+import kotlinx.io.readString
 import kotlin.time.Duration.Companion.seconds
 
 class StringCommandTest2 : ReThisTestCtx() {
@@ -79,5 +83,31 @@ class StringCommandTest2 : ReThisTestCtx() {
 
         client.set(key, bigValue)
         client.get(key) shouldBe bigValue
+    }
+
+    @Test
+    suspend fun `test DELEX with IFDEQ and IFDNE takes the hex digest from DIGEST`() {
+        client.set("delexDigestKey", "v")
+        val digest = client.digest("delexDigestKey").shouldNotBeNull()
+
+        client.delEx("delexDigestKey", DelExOption.IfDigestNe(digest)) shouldBe false
+        client.get("delexDigestKey") shouldBe "v"
+
+        client.delEx("delexDigestKey", DelExOption.IfDigestEq(digest)) shouldBe true
+        client.get("delexDigestKey") shouldBe null
+    }
+
+    @Test
+    suspend fun `test DELEX codec writes the digest verbatim as hex text`() {
+        DelExCommandCodec
+            .encode(defaultCharset, "k", DelExOption.IfDigestEq("00ab12cd34ef5678"))
+            .data
+            .readString() shouldBe
+            "*4\r\n\$5\r\nDELEX\r\n\$1\r\nk\r\n\$5\r\nIFDEQ\r\n\$16\r\n00ab12cd34ef5678\r\n"
+        DelExCommandCodec
+            .encode(defaultCharset, "k", DelExOption.IfDigestNe("00ab12cd34ef5678"))
+            .data
+            .readString() shouldBe
+            "*4\r\n\$5\r\nDELEX\r\n\$1\r\nk\r\n\$5\r\nIFDNE\r\n\$16\r\n00ab12cd34ef5678\r\n"
     }
 }

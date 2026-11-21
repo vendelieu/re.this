@@ -32,7 +32,7 @@ class ResponseUtilsTest : TestCtx() {
         }
 
         val result = channel.readResponseWrapped().unwrap<String>()
-        result shouldBe "txt:Some string"
+        result shouldBe "Some string"
     }
 
     @Test

@@ -2,9 +2,9 @@ package eu.vendeli.rethis.shared.decoders.general
 
 import eu.vendeli.rethis.shared.decoders.ResponseDecoder
 import eu.vendeli.rethis.shared.types.RespCode
-import eu.vendeli.rethis.shared.types.ResponseParsingException
 import eu.vendeli.rethis.shared.utils.EMPTY_BUFFER
 import eu.vendeli.rethis.shared.utils.resolveToken
+import eu.vendeli.rethis.shared.utils.toRespDouble
 import io.ktor.utils.io.charsets.*
 import kotlinx.io.Buffer
 import kotlinx.io.readLineStrict
@@ -16,7 +16,6 @@ object DoubleDecoder : ResponseDecoder<Double> {
         if (code == null) input.resolveToken(RespCode.DOUBLE)
 
         val value = input.readLineStrict()
-        return value.toDoubleOrNull()
-            ?: throw ResponseParsingException("Invalid response structure, expected double, given $value")
+        return value.toRespDouble()
     }
 }

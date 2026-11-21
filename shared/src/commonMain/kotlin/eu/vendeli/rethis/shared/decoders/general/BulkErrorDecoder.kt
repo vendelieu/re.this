@@ -5,6 +5,7 @@ import eu.vendeli.rethis.shared.types.ReThisException
 import eu.vendeli.rethis.shared.types.RespCode
 import eu.vendeli.rethis.shared.utils.EMPTY_BUFFER
 import eu.vendeli.rethis.shared.utils.readDecimalCrlf
+import eu.vendeli.rethis.shared.utils.readSizedText
 import eu.vendeli.rethis.shared.utils.resolveToken
 import io.ktor.utils.io.charsets.*
 import kotlinx.io.Buffer
@@ -15,13 +16,7 @@ object BulkErrorDecoder : ResponseDecoder<Nothing> {
         if (input == EMPTY_BUFFER) throw NotImplementedError()
         if (code == null) input.resolveToken(RespCode.BULK_ERROR)
 
-        val message = StringBuilder()
-
         val size = input.readDecimalCrlf().toInt()
-        repeat(size) {
-            message.appendLine(BulkStringDecoder.decode(input, charset))
-        }
-
-        throw ReThisException(message.toString())
+        throw ReThisException(input.readSizedText(size, charset))
     }
 }

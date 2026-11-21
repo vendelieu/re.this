@@ -15,10 +15,8 @@ import eu.vendeli.rethis.shared.types.RType
 import io.kotest.assertions.nondeterministic.eventually
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.CoroutineName
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.joinAll
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -30,7 +28,7 @@ import java.util.concurrent.ConcurrentHashMap
 private const val REPEAT_COUNT = 1_000
 private val VERIFY_DELAY = 10.seconds
 private val EXPIRE_INTERVAL = 2.seconds
-private val EVENTUALLY_DURATION = 1.seconds
+private val EVENTUALLY_DURATION = 10.seconds
 private val HASH_TTL = 1.minutes
 
 private val HASH_SETUP_SCRIPT = """
@@ -79,34 +77,28 @@ class TestCase : ReThisTestCtx() {
         setup: suspend (id: Int) -> Unit,
         teardown: suspend (id: Int) -> Unit,
     ) {
-        val mainJob = Job()
-        val scope = CoroutineScope(Dispatchers.IO + CoroutineName("HashScenario") + mainJob)
-        val allJobs = mutableListOf<Job>()
+        coroutineScope {
+            repeat(totalRepeats) { id ->
+                setup(id)
 
-        repeat(totalRepeats) { id ->
-            setup(id)
+                val expireJob = launch(Dispatchers.IO + CoroutineName("HashScenarioExpire")) {
+                    repeat(totalRepeats) {
+                        client.hExpire("some:key:$id", HASH_TTL, "some-value1-$id")
+                        delay(EXPIRE_INTERVAL)
+                    }
+                }
 
-            val expireJob = scope.launch {
-                repeat(totalRepeats) {
-                    client.hExpire("some:key:$id", HASH_TTL, "some-value1-$id")
-                    delay(EXPIRE_INTERVAL)
+                launch(Dispatchers.IO + CoroutineName("HashScenarioVerify")) {
+                    try {
+                        delay(VERIFY_DELAY)
+                        assertHashFields(client, id)
+                        teardown(id)
+                    } finally {
+                        expireJob.cancel()
+                    }
                 }
             }
-            allJobs.add(expireJob)
-
-            val verifierJob = scope.launch {
-                try {
-                    delay(VERIFY_DELAY)
-                    assertHashFields(client, id)
-                    teardown(id)
-                } finally {
-                    expireJob.cancel()
-                }
-            }
-            allJobs.add(verifierJob)
         }
-
-        joinAll(*allJobs.toTypedArray())
     }
 
     @Test

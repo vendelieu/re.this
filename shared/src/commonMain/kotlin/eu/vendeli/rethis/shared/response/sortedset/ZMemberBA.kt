@@ -10,7 +10,7 @@ data class ZMemberBA(
 
         other as ZMemberBA
 
-        if (score != other.score) return false
+        if (score.compareTo(other.score) != 0) return false
         if (!member.contentEquals(other.member)) return false
 
         return true

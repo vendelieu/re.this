@@ -72,7 +72,7 @@ class StringCommandTest : ReThisTestCtx() {
         client.set("testKey25", "zbcdfg")
 
         client.lcsDetailed("testKey24", "testKey25", LcsMode.IDX, MinMatchLen(2)).run {
-            matches shouldBe listOf(listOf(LcsResult.LcsMatch(1, 3, length = null)))
+            matches shouldBe listOf(LcsResult.LcsMatch(1L..3L, 1L..3L, length = null))
             totalLength shouldBe 4L
         }
     }
@@ -83,8 +83,25 @@ class StringCommandTest : ReThisTestCtx() {
         client.set("testKey27", "zbcdfg")
 
         client.lcsDetailed("testKey26", "testKey27", LcsMode.IDX, MinMatchLen(2), true).run {
-            matches shouldBe listOf(listOf(LcsResult.LcsMatch(1, 3, 3), LcsResult.LcsMatch(1, 3, 3)))
+            matches shouldBe listOf(LcsResult.LcsMatch(1L..3L, 1L..3L, length = 3))
             totalLength shouldBe 4L
+        }
+    }
+
+    @Test
+    suspend fun `test LCS command keeps both ranges when the match offsets differ`() {
+        client.set("lcsOffsetKey1", "xxabcyyy")
+        client.set("lcsOffsetKey2", "abczzzyyy")
+        val first = LcsResult.LcsMatch(5L..7L, 6L..8L)
+        val second = LcsResult.LcsMatch(2L..4L, 0L..2L)
+
+        client.lcsDetailed("lcsOffsetKey1", "lcsOffsetKey2", LcsMode.IDX, null, null).run {
+            matches shouldBe listOf(first, second)
+            totalLength shouldBe 6L
+        }
+        client.lcsDetailed("lcsOffsetKey1", "lcsOffsetKey2", LcsMode.IDX, null, true).run {
+            matches shouldBe listOf(first.copy(length = 3L), second.copy(length = 3L))
+            totalLength shouldBe 6L
         }
     }
 }

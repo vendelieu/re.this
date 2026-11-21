@@ -20,8 +20,8 @@ object MapRTypeDecoder : ResponseDecoder<Map<String, RType>> {
     ): Map<String, RType> {
         if (input == EMPTY_BUFFER) return emptyMap()
         val code = code ?: RespCode.fromCode(input.readByte())
-        if (code != RespCode.MAP && code != RespCode.ARRAY) throw ResponseParsingException(
-            "Invalid response structure, expected map token, given $code", input.tryInferCause(code),
+        if (code != RespCode.MAP && code != RespCode.ARRAY) throw input.tryInferCause(code, charset) ?: ResponseParsingException(
+            "Invalid response structure, expected map token, given $code",
         )
 
         val size = input.readDecimalCrlf().toInt().let { if (code == RespCode.MAP) it else it / 2 }

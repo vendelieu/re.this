@@ -6,6 +6,7 @@ import eu.vendeli.rethis.shared.request.list.LInsertPlace
 import eu.vendeli.rethis.shared.response.common.MPopResult
 import eu.vendeli.rethis.shared.response.common.MoveDirection
 import eu.vendeli.rethis.shared.response.common.PopResult
+import eu.vendeli.rethis.types.common.RespVer
 import io.kotest.matchers.shouldBe
 
 class ListCommandTest : ReThisTestCtx() {
@@ -102,5 +103,73 @@ class ListCommandTest : ReThisTestCtx() {
         client.lPush("testKey25", "testValue52")
 
         client.rPushx("testKey25", "testValue25") shouldBe 2L
+    }
+
+    @Test
+    suspend fun `test LMOVE returns null for a missing source on RESP3`() {
+        client.lMove("missingMoveSrc", "moveDst", MoveDirection.LEFT, MoveDirection.RIGHT) shouldBe null
+        client.lMoveBA("missingMoveSrc", "moveDst", MoveDirection.LEFT, MoveDirection.RIGHT) shouldBe null
+    }
+
+    @Test
+    suspend fun `test LMOVE returns null for a missing source on RESP2`() {
+        val resp2 = createClient(protocol = RespVer.V2)
+        try {
+            resp2.lMove("missingMoveSrc2", "moveDst", MoveDirection.LEFT, MoveDirection.RIGHT) shouldBe null
+            resp2.lMoveBA("missingMoveSrc2", "moveDst", MoveDirection.LEFT, MoveDirection.RIGHT) shouldBe null
+        } finally {
+            resp2.close()
+        }
+    }
+
+    @Test
+    suspend fun `test LPOP and RPOP with count on a missing key on RESP3`() {
+        client.lPopCount("missingPopKey", 2).orEmpty() shouldBe emptyList()
+        client.rPopCount("missingPopKey", 2).orEmpty() shouldBe emptyList()
+    }
+
+    @Test
+    suspend fun `test LPOP and RPOP with count on a missing key on RESP2`() {
+        val resp2 = createClient(protocol = RespVer.V2)
+        try {
+            resp2.lPopCount("missingPopKey2", 2).orEmpty() shouldBe emptyList()
+            resp2.rPopCount("missingPopKey2", 2).orEmpty() shouldBe emptyList()
+        } finally {
+            resp2.close()
+        }
+    }
+
+    @Test
+    suspend fun `test BLPOP and BRPOP return null on timeout on RESP3`() {
+        client.blPop("missingBlKey", timeout = 0.1) shouldBe null
+        client.brPop("missingBlKey", timeout = 0.1) shouldBe null
+    }
+
+    @Test
+    suspend fun `test BLPOP and BRPOP return null on timeout on RESP2`() {
+        val resp2 = createClient(protocol = RespVer.V2)
+        try {
+            resp2.blPop("missingBlKey2", timeout = 0.1) shouldBe null
+            resp2.brPop("missingBlKey2", timeout = 0.1) shouldBe null
+        } finally {
+            resp2.close()
+        }
+    }
+
+    @Test
+    suspend fun `test LMPOP and BLMPOP return null when no element is available on RESP3`() {
+        client.lmPop(MoveDirection.LEFT, "missingMPopKey") shouldBe null
+        client.blmPop(0.1, "missingMPopKey", where = MoveDirection.LEFT) shouldBe null
+    }
+
+    @Test
+    suspend fun `test LMPOP and BLMPOP return null when no element is available on RESP2`() {
+        val resp2 = createClient(protocol = RespVer.V2)
+        try {
+            resp2.lmPop(MoveDirection.LEFT, "missingMPopKey2") shouldBe null
+            resp2.blmPop(0.1, "missingMPopKey2", where = MoveDirection.LEFT) shouldBe null
+        } finally {
+            resp2.close()
+        }
     }
 }

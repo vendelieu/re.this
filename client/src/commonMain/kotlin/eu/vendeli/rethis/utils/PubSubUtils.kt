@@ -26,11 +26,11 @@ suspend fun SubscriptionManager.registerSubscription(
     handler: PubSubHandler,
     provider: ConnectionProvider? = null,
 ) = client.run {
-    val providerResolved = provider ?: client.topology.route(target.encode(cfg.charset))
+    val providerResolved = provider ?: client.topology.route(target.routingRequest(cfg))
     val connection = providerResolved.borrowConnection()
     val ctx = currentCoroutineContext() + CoroutineName("pubsub-handler#$target") + Job(rootJob)
 
-    scope.launch(CoLocalConn(connection, false) + ctx) {
+    scope.launch(CoLocalConn(connection, isTx = false) + ctx) {
         val conn = currentCoroutineContext()[CoLocalConn]!!.connection
         val job = currentCoroutineContext()[Job]!!
 

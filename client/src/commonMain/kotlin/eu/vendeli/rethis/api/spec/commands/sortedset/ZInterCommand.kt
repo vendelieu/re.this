@@ -13,7 +13,7 @@ import eu.vendeli.rethis.shared.types.RespCode
 fun interface ZInterCommand : RedisCommandSpec<List<String>> {
     suspend fun encode(
         @RedisMeta.WithSizeParam("numkeys") vararg key: String,
-        @RedisOption.Token("WEIGHTS") weight: List<Long>?,
+        @RedisOption.Token("WEIGHTS") weight: List<Double>?,
         aggregate: ZAggregate?,
         @RedisOption.Token("WITHSCORES") @RedisOption.Name("withscores") withScores: Boolean?,
     ): CommandRequest

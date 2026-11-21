@@ -24,6 +24,18 @@
       "matchStrings": [
         "# renovate: datasource=(?<datasource>\\S+) depName=(?<depName>\\S+)\\s*\\n\\S+\\s*=\\s*\"(?<currentValue>[^\"]+)\""
       ]
+    },
+    {
+      "customType": "regex",
+      "description": "redis-spec commit pinned in the version catalog (the KSP processor downloads spec.json from it)",
+      "fileMatch": ["^gradle/libs\\.versions\\.toml$"],
+      "matchStrings": [
+        "(?m)^redis-spec\\s*=\\s*\"(?<currentDigest>[a-f0-9]{40})\""
+      ],
+      "datasourceTemplate": "git-refs",
+      "depNameTemplate": "vendelieu/redis-spec",
+      "packageNameTemplate": "https://github.com/vendelieu/redis-spec",
+      "currentValueTemplate": "master"
     }
   ],
   "vulnerabilityAlerts": {
@@ -49,6 +61,13 @@
       "matchPackagePatterns": ["*"],
       "matchUpdateTypes": ["major"],
       "automerge": true
+    },
+    {
+      "matchDepNames": ["vendelieu/redis-spec"],
+      "groupName": "redis-spec",
+      "groupSlug": "redis-spec",
+      "automerge": false,
+      "labels": ["redis-spec"]
     }
   ]
 }

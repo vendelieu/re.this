@@ -9,6 +9,9 @@ import eu.vendeli.rethis.shared.types.RedisCommandSpec
 import eu.vendeli.rethis.shared.types.RedisOperation
 import eu.vendeli.rethis.shared.types.RespCode
 
+/**
+ * @param timeout maximum time to block in milliseconds; `0` blocks forever.
+ */
 @RedisCommand("WAITAOF", RedisOperation.WRITE, [RespCode.ARRAY], isBlocking = true)
 @RedisMeta.CustomCodec(decoder = WaitAofDecoder::class)
 fun interface WaitAofCommand : RedisCommandSpec<WaitAofResult> {

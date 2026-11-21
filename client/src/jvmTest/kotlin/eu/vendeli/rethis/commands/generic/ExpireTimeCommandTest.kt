@@ -14,15 +14,11 @@ class ExpireTimeCommandTest : ReThisTestCtx() {
     suspend fun `test EXPIRETIME command`() {
         client.set("testKey", "testVal")
 
-        val expireTime = timestamp.epochSeconds + 10L
+        val expectedExpireTime = timestamp.epochSeconds + 10L
         client.expire("testKey", 10.seconds)
 
-        client.expireTime("testKey").shouldNotBeNull().minus(timestamp.epochSeconds) shouldBeInRange expireTime
-            .minus(
-                timestamp.epochSeconds,
-            ).let {
-                it.minus(1).rangeTo(it.plus(1))
-            }
+        client.expireTime("testKey").shouldNotBeNull() shouldBeInRange
+            (expectedExpireTime - 1L)..(expectedExpireTime + 2L)
     }
 
     @Test

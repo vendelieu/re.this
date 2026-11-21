@@ -17,6 +17,10 @@ import kotlin.jvm.JvmName
 
 private const val MAX_NESTING_DEPTH = 64 // Limit for RESP nesting (incl. ATTRIBUTE maps and deep replies)
 
+/**
+ * Sentinel passed to decoders when there is no reply to decode (commands queued in a pipeline or transaction).
+ * Non-nullable decoders return a neutral default for it; `decodeNullable` of string and byte decoders return null.
+ */
 val EMPTY_BUFFER = Buffer()
 
 const val BYTE_MINUS = '-'.code.toByte()
@@ -35,6 +39,10 @@ internal inline fun <reified R> Any?.cast(): R = this as R
  * RESP sizes are byte counts, so consumption must never depend on charset decoding.
  */
 internal fun Buffer.readSizedText(size: Int, charset: Charset): String {
+    // a malformed frame is a decode problem: kotlinx.io would raise an EOFException that retry logic treats as transport
+    if (size < 0 || size.toLong() + 2 > this.size) throw ResponseParsingException(
+        "Invalid string length $size, ${this.size} bytes available including the trailing CRLF",
+    )
     val text = if (charset == Charsets.UTF_8) {
         readString(size.toLong())
     } else {
@@ -85,9 +93,8 @@ internal fun decodeStringElement(input: Buffer, charset: Charset): String =
 
         RespCode.VERBATIM_STRING -> VerbatimStringDecoder.decode(input, charset, code)
 
-        else -> throw ResponseParsingException(
+        else -> throw input.tryInferCause(code, charset) ?: ResponseParsingException(
             "Invalid response structure, expected string token, given $code",
-            input.tryInferCause(code),
         )
     }
 
@@ -102,9 +109,8 @@ internal fun decodeNullableStringElement(input: Buffer, charset: Charset): Strin
 
         RespCode.VERBATIM_STRING -> VerbatimStringDecoder.decodeNullable(input, charset, code)
 
-        else -> throw ResponseParsingException(
+        else -> throw input.tryInferCause(code, charset) ?: ResponseParsingException(
             "Invalid response structure, expected string token, given $code",
-            input.tryInferCause(code),
         )
     }
 
@@ -119,8 +125,8 @@ internal inline fun MutableCollection<String?>.parseStrings(size: Int, input: Bu
 
 internal inline fun Buffer.resolveToken(requiredToken: RespCode): RespCode {
     val code = RespCode.fromCode(readByte())
-    if (code != requiredToken) throw ResponseParsingException(
-        "Invalid response structure, expected ${requiredToken.name} token, given $code", tryInferCause(code),
+    if (code != requiredToken) throw tryInferCause(code) ?: ResponseParsingException(
+        "Invalid response structure, expected ${requiredToken.name} token, given $code",
     )
 
     return code
@@ -151,8 +157,22 @@ suspend fun ByteReadChannel.readCompleteResponseInto(
             initialStackSize = stackSize,
         )
         check(afterAttr == 0) { "RESP framing invariant violated: attribute map did not consume fully" }
-        // Read the next value (actual reply) into target
-        val nextType = readByteRequired(target)
+        // Further attributes may stack before the actual reply: route each one, then read the reply into target
+        var nextType = readTypeByteRequired()
+        while (RespCode.fromCode(nextType) == RespCode.ATTRIBUTE) {
+            attrBuffer.writeByte(nextType)
+            stack[0] = 1
+            check(
+                processValue(
+                    out = attrBuffer,
+                    initialCode = RespCode.ATTRIBUTE,
+                    stack = stack,
+                    initialStackSize = 1,
+                ) == 0,
+            ) { "RESP framing invariant violated: attribute map did not consume fully" }
+            nextType = readTypeByteRequired()
+        }
+        target.writeByte(nextType)
         val nextCode = RespCode.fromCode(nextType)
         stack[0] = 1
         processValue(
@@ -186,6 +206,7 @@ private suspend fun ByteReadChannel.processValue(
 ): Int {
     var stackSize = initialStackSize
     var currentCode: RespCode? = initialCode
+    var isInitialValue = true
 
     while (true) {
         if (currentCode == null) {
@@ -201,6 +222,10 @@ private suspend fun ByteReadChannel.processValue(
 
         val code = currentCode
         currentCode = null
+        // An attribute met inside an aggregate is metadata preceding the real element: pre-credit the
+        // parent so the attribute's own completion leaves its remaining count unchanged.
+        if (code == RespCode.ATTRIBUTE && !isInitialValue) stack[stackSize - 1]++
+        isInitialValue = false
 
         when (code.type) {
             RespCode.Type.SIMPLE -> {
@@ -352,12 +377,13 @@ private suspend fun ByteReadChannel.readDecimalLong(out: Buffer): Long {
 
             if (sawCr) {
                 if (b != NEWLINE_BYTE) throw RespProtocolException("Invalid CRLF in number")
+                if (!readAny) throw RespProtocolException("Empty number")
                 return if (negative) -value else value
             }
 
             when (b) {
                 BYTE_MINUS -> {
-                    if (readAny) throw RespProtocolException("Unexpected '-' in number")
+                    if (readAny || negative) throw RespProtocolException("Unexpected '-' in number")
                     negative = true
                 }
 
@@ -385,12 +411,17 @@ private suspend fun ByteReadChannel.readByteOnly(): Byte {
 
 @OptIn(InternalAPI::class, InternalIoApi::class)
 private suspend fun ByteReadChannel.readByteRequired(out: Buffer): Byte {
+    val b = readTypeByteRequired()
+    out.writeByte(b)
+    return b
+}
+
+@OptIn(InternalAPI::class, InternalIoApi::class)
+private suspend fun ByteReadChannel.readTypeByteRequired(): Byte {
     if (readBuffer.exhausted()) awaitContent()
     if (readBuffer.exhausted()) throw RespUnexpectedEOF()
 
-    val b = readBuffer.buffer.readByte()
-    out.writeByte(b)
-    return b
+    return readBuffer.buffer.readByte()
 }
 
 @OptIn(InternalAPI::class, InternalIoApi::class)

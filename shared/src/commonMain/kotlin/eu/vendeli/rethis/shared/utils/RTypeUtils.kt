@@ -64,6 +64,7 @@ fun Buffer.readResponseWrapped(
 
 private const val TRUE_BYTE = 't'.code.toByte()
 private const val FALSE_BYTE = 'f'.code.toByte()
+private const val VERBATIM_PREFIX_LENGTH = 4 // 3-byte format and ':'
 
 @OptIn(InternalIoApi::class)
 private fun Buffer.readSimpleResponseWrapped(
@@ -87,7 +88,7 @@ private fun Buffer.readSimpleResponseWrapped(
             else -> throw ResponseParsingException("Invalid boolean format")
         }.also { skip(2) }
 
-        RespCode.DOUBLE -> F64(readLineStrict().toDouble())
+        RespCode.DOUBLE -> F64(readLineStrict().toRespDouble())
         RespCode.BIG_NUMBER -> try {
             BigNumber(BigInteger.parseString(readPartLine(charset)))
         } catch (e: NumberFormatException) {
@@ -115,9 +116,12 @@ private fun Buffer.readSimpleResponseWrapped(
         RespCode.VERBATIM_STRING -> {
             val size = readDecimalCrlf().toInt()
             if (size < 0) return RType.Null
+            if (size < VERBATIM_PREFIX_LENGTH) throw ResponseParsingException(
+                "Invalid verbatim string length $size, expected at least $VERBATIM_PREFIX_LENGTH",
+            )
             val encoding = readByteArray(3).decodeToString()
             readByte() // skip ':' byte
-            val content = readPartLine(charset)
+            val content = readSizedText(size - VERBATIM_PREFIX_LENGTH, charset)
             VerbatimString(encoding, content)
         }
 
@@ -136,20 +140,18 @@ const val NEWLINE_BYTE = '\n'.code.toByte()
 
 private inline fun Buffer.readLineCRLF(): Buffer {
     val buffer = Buffer()
+    var byte = readByte()
     while (true) {
-        val byte = readByte()
-
         if (byte == CARRIAGE_RETURN_BYTE) {
             val nextByte = readByte()
-            if (nextByte == NEWLINE_BYTE) {
-                break
-            } else {
-                buffer.writeByte(CARRIAGE_RETURN_BYTE)
-                buffer.writeByte(nextByte)
-                continue
-            }
+            if (nextByte == NEWLINE_BYTE) break
+            // the byte after a lone CR may itself be the CR of the terminator
+            buffer.writeByte(CARRIAGE_RETURN_BYTE)
+            byte = nextByte
+            continue
         }
         buffer.writeByte(byte)
+        byte = readByte()
     }
     return buffer
 }
@@ -170,7 +172,7 @@ inline fun <reified T> RType.unwrap(): T? {
         this is Bool -> if (T::class == Boolean::class) value as T else null
         this is F64 -> if (T::class == Double::class) value as T else null
         this is BigNumber -> if (T::class == BigInteger::class) value as T else null
-        this is VerbatimString -> if (T::class == String::class) value as T else null
+        this is VerbatimString -> if (T::class == String::class) data as T else null
         this is BulkString && T::class == Buffer::class -> value as T
         this is BulkString && T::class == String::class -> value.readString() as T
         this is RArray || this is Push -> throw ResponseParsingException(
@@ -190,16 +192,36 @@ inline fun <reified T> RType.unwrap(): T? {
     }
 }
 
+/**
+ * Unwrap an array or push reply to a list of [T].
+ *
+ * [RType.Null] elements are skipped; any other element that does not unwrap to [T]
+ * fails with [ResponseParsingException] rather than silently shifting the indices.
+ */
 inline fun <reified T> RType.unwrapList(): List<T> {
     handleEx()
     val response = mutableListOf<T>()
     when (this) {
         is RArray -> {
-            value.forEach { i -> i.unwrap<T>()?.let { response.add(it) } }
+            value.forEach { i ->
+                if (i is RType.Null) return@forEach
+                response.add(
+                    i.unwrap<T>() ?: throw ResponseParsingException(
+                        "unwrapList() cannot unwrap element ${i::class.simpleName} to ${T::class.simpleName}",
+                    ),
+                )
+            }
         }
 
         is Push -> {
-            value.forEach { i -> i.unwrap<T>()?.let { response.add(it) } }
+            value.forEach { i ->
+                if (i is RType.Null) return@forEach
+                response.add(
+                    i.unwrap<T>() ?: throw ResponseParsingException(
+                        "unwrapList() cannot unwrap element ${i::class.simpleName} to ${T::class.simpleName}",
+                    ),
+                )
+            }
         }
 
         else -> {
@@ -244,8 +266,13 @@ inline fun <reified K, reified V> RType.unwrapMap(): Map<K, V?>? = run {
  */
 inline fun <reified L, reified R> RType.unwrapRESPAgnosticMap(): Map<L, R?>? = run {
     handleEx()
-    if (this is RArray) value.chunked(2).associate {
-        it.first().unwrap<L>()!! to it.last().unwrap<R>()
+    if (this is RArray) {
+        if (value.size % 2 != 0) throw ResponseParsingException(
+            "unwrapRESPAgnosticMap() expects an even number of array elements, got ${value.size}",
+        )
+        value.chunked(2).associate {
+            it.first().unwrap<L>()!! to it.last().unwrap<R>()
+        }
     } else unwrapMap<L, R>()
 }
 

@@ -9,5 +9,5 @@ import eu.vendeli.rethis.shared.types.RespCode
 
 @RedisCommand("FUNCTION FLUSH", RedisOperation.WRITE, [RespCode.SIMPLE_STRING])
 fun interface FunctionFlushCommand : RedisCommandSpec<Boolean> {
-    suspend fun encode(flushType: FlushType): CommandRequest
+    suspend fun encode(flushType: FlushType?): CommandRequest
 }

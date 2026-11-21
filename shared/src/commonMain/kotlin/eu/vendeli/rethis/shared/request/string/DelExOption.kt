@@ -10,8 +10,8 @@ sealed class DelExOption {
     class IfNe(@RedisOption.Name("ifne-value") val value: String) : DelExOption()
 
     @RedisOption.Token("IFDEQ")
-    class IfDigestEq(@RedisOption.Name("ifdeq-digest") val digest: Long) : DelExOption()
+    class IfDigestEq(@RedisOption.Name("ifdeq-digest") val digest: String) : DelExOption()
 
     @RedisOption.Token("IFDNE")
-    class IfDigestNe(@RedisOption.Name("ifdne-digest") val digest: Long) : DelExOption()
+    class IfDigestNe(@RedisOption.Name("ifdne-digest") val digest: String) : DelExOption()
 }

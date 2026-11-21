@@ -6,6 +6,7 @@ import eu.vendeli.rethis.shared.types.TimeUnit
 import kotlin.time.Instant
 
 sealed class XClaimOption {
+    /** @property ms idle time to set on the claimed entries, in milliseconds. */
     @RedisOption.Token("IDLE")
     class Idle(
         val ms: Long,

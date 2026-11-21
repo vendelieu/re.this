@@ -1,10 +1,19 @@
 package eu.vendeli.rethis.wrappers
 
 import eu.vendeli.rethis.ReThis
+import eu.vendeli.rethis.command.generic.del
 import eu.vendeli.rethis.command.hash.*
+import eu.vendeli.rethis.command.scripting.eval
 import eu.vendeli.rethis.shared.request.common.FieldValue
+import eu.vendeli.rethis.shared.types.BulkString
 import eu.vendeli.rethis.utils.coRunBlocking
+import kotlinx.io.readString
 
+/**
+ * Blocking map wrapper over a Redis hash.
+ *
+ * Not available on JS and wasmJs: every call throws [UnsupportedOperationException]; use the suspend API there.
+ */
 class ReThisMap(
     private val client: ReThis,
     private val bucket: String,
@@ -33,7 +42,7 @@ class ReThisMap(
             client.hVals(bucket).toMutableList()
         }
 
-    override fun put(key: String, value: String): String = updateValue(client, bucket, key to value)
+    override fun put(key: String, value: String): String? = updateValue(client, bucket, key to value)
 
     override fun get(key: String): String? = coRunBlocking {
         client.hGet(bucket, key)
@@ -44,23 +53,31 @@ class ReThisMap(
     }
 
     override fun clear(): Unit = coRunBlocking {
-        client.hDel(bucket, *keys.toTypedArray())
+        client.del(bucket)
     }
 
     override fun isEmpty(): Boolean = size == 0
 
     override fun putAll(from: Map<out String, String>): Unit = coRunBlocking {
+        if (from.isEmpty()) return@coRunBlocking
         client.hSet(bucket, *from.entries.map { FieldValue(it.key, it.value) }.toTypedArray())
     }
 
     override fun remove(key: String): String? = coRunBlocking {
-        client.hDel(bucket, key)
-        null
+        // HGETDEL needs Redis 8.0+; a script keeps the read-and-delete atomic on every server version
+        client
+            .eval(REMOVE_SCRIPT, bucket, arg = listOf(key))
+            .let { it as? BulkString }
+            ?.value
+            ?.readString()
     }
 
     override fun containsValue(value: String): Boolean = values.contains(value)
 }
 
+/**
+ * Creates a [ReThisMap] over the hash at [key]. Not available on JS and wasmJs.
+ */
 @Suppress("FunctionName")
 fun ReThis.Hash(key: String) = ReThisMap(this, key)
 
@@ -72,10 +89,17 @@ private inline fun Pair<String, String>.toMapEntry(
     override val key: String get() = first
     override val value: String get() = second
 
-    override fun setValue(newValue: String): String = updateValue(client, bucket, first to newValue)
+    // The entry came from a snapshot, so if the field vanished meanwhile the snapshot value is the previous one.
+    override fun setValue(newValue: String): String = updateValue(client, bucket, first to newValue) ?: second
 }
 
 @Suppress("NOTHING_TO_INLINE")
-private inline fun updateValue(client: ReThis, bucket: String, pair: Pair<String, String>) = coRunBlocking {
-    client.hMSet(bucket, FieldValue(pair.first, pair.second)).let { pair.second }
+private inline fun updateValue(client: ReThis, bucket: String, pair: Pair<String, String>): String? = coRunBlocking {
+    // HGET then HSET: not atomic, a concurrent writer can change the field in between.
+    val previous = client.hGet(bucket, pair.first)
+    client.hMSet(bucket, FieldValue(pair.first, pair.second))
+    previous
 }
+
+private const val REMOVE_SCRIPT =
+    "local v=redis.call('HGET',KEYS[1],ARGV[1]); redis.call('HDEL',KEYS[1],ARGV[1]); return v"

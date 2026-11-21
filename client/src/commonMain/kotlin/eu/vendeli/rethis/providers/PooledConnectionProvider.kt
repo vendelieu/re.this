@@ -5,6 +5,7 @@ import eu.vendeli.rethis.core.ConnectionPool
 import eu.vendeli.rethis.shared.types.CommandRequest
 import eu.vendeli.rethis.types.common.Address
 import eu.vendeli.rethis.types.common.RConnection
+import eu.vendeli.rethis.utils.BlockingUnsupportedException
 import eu.vendeli.rethis.utils.coRunBlocking
 import kotlinx.io.Buffer
 
@@ -17,11 +18,16 @@ internal class PooledConnectionProvider(
     }
 
     override suspend fun execute(request: CommandRequest): Buffer =
-        withConnection { it.doRequest(request.data, commandTimeout = client.cfg.commandTimeout) }
+        withConnection { it.doRequest(request.data, commandTimeout = client.cfg.commandTimeoutFor(request)) }
 
     override fun close() {
-        if (client.cfg.pool.closeGracefully) coRunBlocking { pool.closeGracefully() }
-        else pool.close()
+        if (!client.cfg.pool.closeGracefully) return pool.close()
+        try {
+            coRunBlocking { pool.closeGracefully() }
+        } catch (_: BlockingUnsupportedException) {
+            // Targets that cannot block (JS, wasmJs) close the pool immediately instead.
+            pool.close()
+        }
     }
 
     override suspend fun borrowConnection(): RConnection = pool.acquire()

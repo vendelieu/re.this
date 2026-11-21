@@ -124,6 +124,19 @@ public final class eu/vendeli/rethis/shared/decoders/aggregate/SetStringDecoder 
 	public fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;)Ljava/util/Set;
 }
 
+public final class eu/vendeli/rethis/shared/decoders/aggregate/XReadGroupDecoder : eu/vendeli/rethis/shared/decoders/ResponseDecoder {
+	public static final field INSTANCE Leu/vendeli/rethis/shared/decoders/aggregate/XReadGroupDecoder;
+	public synthetic fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;)Ljava/lang/Object;
+	public fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;)Ljava/util/List;
+	public final fun decodeNullable (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;)Ljava/util/List;
+}
+
+public final class eu/vendeli/rethis/shared/decoders/cluster/ClusterBumpEpochDecoder : eu/vendeli/rethis/shared/decoders/ResponseDecoder {
+	public static final field INSTANCE Leu/vendeli/rethis/shared/decoders/cluster/ClusterBumpEpochDecoder;
+	public fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;)Ljava/lang/Boolean;
+	public synthetic fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;)Ljava/lang/Object;
+}
+
 public final class eu/vendeli/rethis/shared/decoders/cluster/ClusterShardsDecoder : eu/vendeli/rethis/shared/decoders/ResponseDecoder {
 	public static final field INSTANCE Leu/vendeli/rethis/shared/decoders/cluster/ClusterShardsDecoder;
 	public synthetic fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;)Ljava/lang/Object;
@@ -164,12 +177,6 @@ public final class eu/vendeli/rethis/shared/decoders/common/StringScanDecoder : 
 	public static final field INSTANCE Leu/vendeli/rethis/shared/decoders/common/StringScanDecoder;
 	public fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;)Leu/vendeli/rethis/shared/response/common/ScanResult;
 	public synthetic fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;)Ljava/lang/Object;
-}
-
-public final class eu/vendeli/rethis/shared/decoders/connection/AclLogDecoder : eu/vendeli/rethis/shared/decoders/ResponseDecoder {
-	public static final field INSTANCE Leu/vendeli/rethis/shared/decoders/connection/AclLogDecoder;
-	public synthetic fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;)Ljava/lang/Object;
-	public fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;)Ljava/util/List;
 }
 
 public final class eu/vendeli/rethis/shared/decoders/general/BigDecimalDecoder : eu/vendeli/rethis/shared/decoders/ResponseDecoder {
@@ -275,6 +282,24 @@ public final class eu/vendeli/rethis/shared/decoders/pubsub/SubEventDecoder : eu
 	public fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;)Ljava/util/List;
 }
 
+public final class eu/vendeli/rethis/shared/decoders/sentinel/SentinelCkQuorumDecoder : eu/vendeli/rethis/shared/decoders/ResponseDecoder {
+	public static final field INSTANCE Leu/vendeli/rethis/shared/decoders/sentinel/SentinelCkQuorumDecoder;
+	public fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;)Ljava/lang/Boolean;
+	public synthetic fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;)Ljava/lang/Object;
+}
+
+public final class eu/vendeli/rethis/shared/decoders/sentinel/SentinelGetMasterAddrDecoder : eu/vendeli/rethis/shared/decoders/ResponseDecoder {
+	public static final field INSTANCE Leu/vendeli/rethis/shared/decoders/sentinel/SentinelGetMasterAddrDecoder;
+	public synthetic fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;)Ljava/lang/Object;
+	public fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;)Ljava/util/List;
+}
+
+public final class eu/vendeli/rethis/shared/decoders/sentinel/SentinelResetDecoder : eu/vendeli/rethis/shared/decoders/ResponseDecoder {
+	public static final field INSTANCE Leu/vendeli/rethis/shared/decoders/sentinel/SentinelResetDecoder;
+	public fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;)Ljava/lang/Boolean;
+	public synthetic fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;)Ljava/lang/Object;
+}
+
 public final class eu/vendeli/rethis/shared/decoders/server/ShutdownDecoder : eu/vendeli/rethis/shared/decoders/ResponseDecoder {
 	public static final field INSTANCE Leu/vendeli/rethis/shared/decoders/server/ShutdownDecoder;
 	public fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;)Ljava/lang/Boolean;
@@ -283,7 +308,7 @@ public final class eu/vendeli/rethis/shared/decoders/server/ShutdownDecoder : eu
 
 public final class eu/vendeli/rethis/shared/decoders/sortedset/ZPopResultDecoder : eu/vendeli/rethis/shared/decoders/ResponseDecoder {
 	public static final field INSTANCE Leu/vendeli/rethis/shared/decoders/sortedset/ZPopResultDecoder;
-	public fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;)Leu/vendeli/rethis/shared/response/stream/ZPopResult;
+	public fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;)Leu/vendeli/rethis/shared/response/sortedset/ZPopResult;
 	public synthetic fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;)Ljava/lang/Object;
 }
 
@@ -291,6 +316,76 @@ public final class eu/vendeli/rethis/shared/decoders/string/LcsDecoder : eu/vend
 	public static final field INSTANCE Leu/vendeli/rethis/shared/decoders/string/LcsDecoder;
 	public fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;)Leu/vendeli/rethis/shared/response/string/LcsResult;
 	public synthetic fun decode (Lkotlinx/io/Buffer;Ljava/nio/charset/Charset;Leu/vendeli/rethis/shared/types/RespCode;)Ljava/lang/Object;
+}
+
+public abstract class eu/vendeli/rethis/shared/request/bf/BfInfoOption {
+}
+
+public final class eu/vendeli/rethis/shared/request/bf/BfInfoOption$Capacity : eu/vendeli/rethis/shared/request/bf/BfInfoOption {
+	public static final field INSTANCE Leu/vendeli/rethis/shared/request/bf/BfInfoOption$Capacity;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class eu/vendeli/rethis/shared/request/bf/BfInfoOption$Expansion : eu/vendeli/rethis/shared/request/bf/BfInfoOption {
+	public static final field INSTANCE Leu/vendeli/rethis/shared/request/bf/BfInfoOption$Expansion;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class eu/vendeli/rethis/shared/request/bf/BfInfoOption$Filters : eu/vendeli/rethis/shared/request/bf/BfInfoOption {
+	public static final field INSTANCE Leu/vendeli/rethis/shared/request/bf/BfInfoOption$Filters;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class eu/vendeli/rethis/shared/request/bf/BfInfoOption$Items : eu/vendeli/rethis/shared/request/bf/BfInfoOption {
+	public static final field INSTANCE Leu/vendeli/rethis/shared/request/bf/BfInfoOption$Items;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class eu/vendeli/rethis/shared/request/bf/BfInfoOption$Size : eu/vendeli/rethis/shared/request/bf/BfInfoOption {
+	public static final field INSTANCE Leu/vendeli/rethis/shared/request/bf/BfInfoOption$Size;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract class eu/vendeli/rethis/shared/request/bf/BfInsertOption {
+}
+
+public final class eu/vendeli/rethis/shared/request/bf/BfInsertOption$Capacity : eu/vendeli/rethis/shared/request/bf/BfInsertOption {
+	public fun <init> (J)V
+	public final fun getCapacity ()J
+}
+
+public final class eu/vendeli/rethis/shared/request/bf/BfInsertOption$Error : eu/vendeli/rethis/shared/request/bf/BfInsertOption {
+	public fun <init> (D)V
+	public final fun getError ()D
+}
+
+public final class eu/vendeli/rethis/shared/request/bf/BfInsertOption$Expansion : eu/vendeli/rethis/shared/request/bf/BfInsertOption {
+	public fun <init> (J)V
+	public final fun getExpansion ()J
+}
+
+public final class eu/vendeli/rethis/shared/request/bf/BfInsertOption$NoCreate : eu/vendeli/rethis/shared/request/bf/BfInsertOption {
+	public static final field INSTANCE Leu/vendeli/rethis/shared/request/bf/BfInsertOption$NoCreate;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class eu/vendeli/rethis/shared/request/bf/BfInsertOption$NonScaling : eu/vendeli/rethis/shared/request/bf/BfInsertOption {
+	public static final field INSTANCE Leu/vendeli/rethis/shared/request/bf/BfInsertOption$NonScaling;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class eu/vendeli/rethis/shared/request/bitmap/BitOpOption {
@@ -366,6 +461,14 @@ public final class eu/vendeli/rethis/shared/request/cluster/ClusterFailoverOptio
 	public static fun values ()[Leu/vendeli/rethis/shared/request/cluster/ClusterFailoverOption;
 }
 
+public abstract class eu/vendeli/rethis/shared/request/cluster/ClusterMigrationOption {
+}
+
+public final class eu/vendeli/rethis/shared/request/cluster/ClusterMigrationOption$Other : eu/vendeli/rethis/shared/request/cluster/ClusterMigrationOption {
+	public fun <init> ([Ljava/lang/String;)V
+	public final fun getArgs ()[Ljava/lang/String;
+}
+
 public final class eu/vendeli/rethis/shared/request/cluster/ClusterResetMode : java/lang/Enum {
 	public static final field HARD Leu/vendeli/rethis/shared/request/cluster/ClusterResetMode;
 	public static final field SOFT Leu/vendeli/rethis/shared/request/cluster/ClusterResetMode;
@@ -397,6 +500,39 @@ public final class eu/vendeli/rethis/shared/request/cluster/ClusterSetSlotOption
 	public fun equals (Ljava/lang/Object;)Z
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
+}
+
+public abstract class eu/vendeli/rethis/shared/request/cluster/ClusterSlotStatsFilter {
+}
+
+public final class eu/vendeli/rethis/shared/request/cluster/ClusterSlotStatsFilter$OrderBy : eu/vendeli/rethis/shared/request/cluster/ClusterSlotStatsFilter {
+	public fun <init> (Ljava/lang/String;Ljava/lang/Long;Leu/vendeli/rethis/shared/request/cluster/ClusterSlotStatsFilter$OrderBy$Order;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/Long;Leu/vendeli/rethis/shared/request/cluster/ClusterSlotStatsFilter$OrderBy$Order;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getLimit ()Ljava/lang/Long;
+	public final fun getMetric ()Ljava/lang/String;
+	public final fun getOrder ()Leu/vendeli/rethis/shared/request/cluster/ClusterSlotStatsFilter$OrderBy$Order;
+}
+
+public final class eu/vendeli/rethis/shared/request/cluster/ClusterSlotStatsFilter$OrderBy$Order : java/lang/Enum {
+	public static final field ASC Leu/vendeli/rethis/shared/request/cluster/ClusterSlotStatsFilter$OrderBy$Order;
+	public static final field DESC Leu/vendeli/rethis/shared/request/cluster/ClusterSlotStatsFilter$OrderBy$Order;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Leu/vendeli/rethis/shared/request/cluster/ClusterSlotStatsFilter$OrderBy$Order;
+	public static fun values ()[Leu/vendeli/rethis/shared/request/cluster/ClusterSlotStatsFilter$OrderBy$Order;
+}
+
+public final class eu/vendeli/rethis/shared/request/cluster/ClusterSlotStatsFilter$SlotsRange : eu/vendeli/rethis/shared/request/cluster/ClusterSlotStatsFilter {
+	public fun <init> (JJ)V
+	public final fun getEndSlot ()J
+	public final fun getStartSlot ()J
+}
+
+public abstract class eu/vendeli/rethis/shared/request/cluster/ClusterSyncSlotsOption {
+}
+
+public final class eu/vendeli/rethis/shared/request/cluster/ClusterSyncSlotsOption$Other : eu/vendeli/rethis/shared/request/cluster/ClusterSyncSlotsOption {
+	public fun <init> ([Ljava/lang/String;)V
+	public final fun getArgs ()[Ljava/lang/String;
 }
 
 public final class eu/vendeli/rethis/shared/request/cluster/SlotRange {
@@ -456,6 +592,14 @@ public final class eu/vendeli/rethis/shared/request/common/UpdateStrategyOption$
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class eu/vendeli/rethis/shared/request/connection/ClientCachingMode : java/lang/Enum {
+	public static final field NO Leu/vendeli/rethis/shared/request/connection/ClientCachingMode;
+	public static final field YES Leu/vendeli/rethis/shared/request/connection/ClientCachingMode;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Leu/vendeli/rethis/shared/request/connection/ClientCachingMode;
+	public static fun values ()[Leu/vendeli/rethis/shared/request/connection/ClientCachingMode;
+}
+
 public abstract class eu/vendeli/rethis/shared/request/connection/ClientKillOptions {
 }
 
@@ -475,8 +619,8 @@ public final class eu/vendeli/rethis/shared/request/connection/ClientKillOptions
 }
 
 public final class eu/vendeli/rethis/shared/request/connection/ClientKillOptions$MaxAge : eu/vendeli/rethis/shared/request/connection/ClientKillOptions {
-	public fun <init> (Lkotlin/time/Instant;)V
-	public final fun getInstant ()Lkotlin/time/Instant;
+	public synthetic fun <init> (JLkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getMaxAge-UwyO8pc ()J
 }
 
 public abstract class eu/vendeli/rethis/shared/request/connection/ClientKillOptions$SkipMe : eu/vendeli/rethis/shared/request/connection/ClientKillOptions {
@@ -501,6 +645,22 @@ public final class eu/vendeli/rethis/shared/request/connection/ClientKillOptions
 	public final fun getUsername ()Ljava/lang/String;
 }
 
+public final class eu/vendeli/rethis/shared/request/connection/ClientNoEvictMode : java/lang/Enum {
+	public static final field OFF Leu/vendeli/rethis/shared/request/connection/ClientNoEvictMode;
+	public static final field ON Leu/vendeli/rethis/shared/request/connection/ClientNoEvictMode;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Leu/vendeli/rethis/shared/request/connection/ClientNoEvictMode;
+	public static fun values ()[Leu/vendeli/rethis/shared/request/connection/ClientNoEvictMode;
+}
+
+public final class eu/vendeli/rethis/shared/request/connection/ClientNoTouchMode : java/lang/Enum {
+	public static final field OFF Leu/vendeli/rethis/shared/request/connection/ClientNoTouchMode;
+	public static final field ON Leu/vendeli/rethis/shared/request/connection/ClientNoTouchMode;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Leu/vendeli/rethis/shared/request/connection/ClientNoTouchMode;
+	public static fun values ()[Leu/vendeli/rethis/shared/request/connection/ClientNoTouchMode;
+}
+
 public final class eu/vendeli/rethis/shared/request/connection/ClientPauseMode : java/lang/Enum {
 	public static final field ALL Leu/vendeli/rethis/shared/request/connection/ClientPauseMode;
 	public static final field WRITE Leu/vendeli/rethis/shared/request/connection/ClientPauseMode;
@@ -516,6 +676,19 @@ public final class eu/vendeli/rethis/shared/request/connection/ClientReplyMode :
 	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Leu/vendeli/rethis/shared/request/connection/ClientReplyMode;
 	public static fun values ()[Leu/vendeli/rethis/shared/request/connection/ClientReplyMode;
+}
+
+public abstract class eu/vendeli/rethis/shared/request/connection/ClientSetInfoAttribute {
+}
+
+public final class eu/vendeli/rethis/shared/request/connection/ClientSetInfoAttribute$LibName : eu/vendeli/rethis/shared/request/connection/ClientSetInfoAttribute {
+	public fun <init> (Ljava/lang/String;)V
+	public final fun getName ()Ljava/lang/String;
+}
+
+public final class eu/vendeli/rethis/shared/request/connection/ClientSetInfoAttribute$LibVer : eu/vendeli/rethis/shared/request/connection/ClientSetInfoAttribute {
+	public fun <init> (Ljava/lang/String;)V
+	public final fun getVersion ()Ljava/lang/String;
 }
 
 public abstract class eu/vendeli/rethis/shared/request/connection/ClientStandby : eu/vendeli/rethis/shared/request/connection/ClientTrackingMode {
@@ -602,13 +775,6 @@ public final class eu/vendeli/rethis/shared/request/connection/ClientType$PubSub
 
 public final class eu/vendeli/rethis/shared/request/connection/ClientType$Replica : eu/vendeli/rethis/shared/request/connection/ClientType {
 	public static final field INSTANCE Leu/vendeli/rethis/shared/request/connection/ClientType$Replica;
-	public fun equals (Ljava/lang/Object;)Z
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
-public final class eu/vendeli/rethis/shared/request/connection/ClientType$Slave : eu/vendeli/rethis/shared/request/connection/ClientType {
-	public static final field INSTANCE Leu/vendeli/rethis/shared/request/connection/ClientType$Slave;
 	public fun equals (Ljava/lang/Object;)Z
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
@@ -838,6 +1004,42 @@ public abstract class eu/vendeli/rethis/shared/request/geospatial/GeoSearchOptio
 public abstract class eu/vendeli/rethis/shared/request/geospatial/Shape : eu/vendeli/rethis/shared/request/geospatial/GeoSearchOption {
 }
 
+public final class eu/vendeli/rethis/shared/request/hash/HFieldValue {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
+	public final fun getField ()Ljava/lang/String;
+	public final fun getValue ()Ljava/lang/String;
+}
+
+public abstract class eu/vendeli/rethis/shared/request/hash/HGetExOption {
+}
+
+public final class eu/vendeli/rethis/shared/request/hash/HGetExOption$Ex : eu/vendeli/rethis/shared/request/hash/HGetExOption {
+	public synthetic fun <init> (JLkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getSeconds-UwyO8pc ()J
+}
+
+public final class eu/vendeli/rethis/shared/request/hash/HGetExOption$ExAt : eu/vendeli/rethis/shared/request/hash/HGetExOption {
+	public fun <init> (Lkotlin/time/Instant;)V
+	public final fun getUnixTimeSeconds ()Lkotlin/time/Instant;
+}
+
+public final class eu/vendeli/rethis/shared/request/hash/HGetExOption$PERSIST : eu/vendeli/rethis/shared/request/hash/HGetExOption {
+	public static final field INSTANCE Leu/vendeli/rethis/shared/request/hash/HGetExOption$PERSIST;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class eu/vendeli/rethis/shared/request/hash/HGetExOption$Px : eu/vendeli/rethis/shared/request/hash/HGetExOption {
+	public synthetic fun <init> (JLkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getMilliseconds-UwyO8pc ()J
+}
+
+public final class eu/vendeli/rethis/shared/request/hash/HGetExOption$PxAt : eu/vendeli/rethis/shared/request/hash/HGetExOption {
+	public fun <init> (Lkotlin/time/Instant;)V
+	public final fun getUnixTimeMilliseconds ()Lkotlin/time/Instant;
+}
+
 public abstract class eu/vendeli/rethis/shared/request/hash/HScanOption {
 }
 
@@ -856,6 +1058,56 @@ public final class eu/vendeli/rethis/shared/request/hash/HScanOption$NOVALUES : 
 	public fun equals (Ljava/lang/Object;)Z
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
+}
+
+public abstract class eu/vendeli/rethis/shared/request/hash/HSetExOption {
+}
+
+public abstract class eu/vendeli/rethis/shared/request/hash/HSetExOption$Condition : eu/vendeli/rethis/shared/request/hash/HSetExOption {
+}
+
+public final class eu/vendeli/rethis/shared/request/hash/HSetExOption$Condition$FNX : eu/vendeli/rethis/shared/request/hash/HSetExOption$Condition {
+	public static final field INSTANCE Leu/vendeli/rethis/shared/request/hash/HSetExOption$Condition$FNX;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class eu/vendeli/rethis/shared/request/hash/HSetExOption$Condition$FXX : eu/vendeli/rethis/shared/request/hash/HSetExOption$Condition {
+	public static final field INSTANCE Leu/vendeli/rethis/shared/request/hash/HSetExOption$Condition$FXX;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract class eu/vendeli/rethis/shared/request/hash/HSetExOption$Expiration : eu/vendeli/rethis/shared/request/hash/HSetExOption {
+}
+
+public final class eu/vendeli/rethis/shared/request/hash/HSetExOption$Expiration$Ex : eu/vendeli/rethis/shared/request/hash/HSetExOption$Expiration {
+	public synthetic fun <init> (JLkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getSeconds-UwyO8pc ()J
+}
+
+public final class eu/vendeli/rethis/shared/request/hash/HSetExOption$Expiration$ExAt : eu/vendeli/rethis/shared/request/hash/HSetExOption$Expiration {
+	public fun <init> (Lkotlin/time/Instant;)V
+	public final fun getUnixTimeSeconds ()Lkotlin/time/Instant;
+}
+
+public final class eu/vendeli/rethis/shared/request/hash/HSetExOption$Expiration$KEEPTTL : eu/vendeli/rethis/shared/request/hash/HSetExOption$Expiration {
+	public static final field INSTANCE Leu/vendeli/rethis/shared/request/hash/HSetExOption$Expiration$KEEPTTL;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class eu/vendeli/rethis/shared/request/hash/HSetExOption$Expiration$Px : eu/vendeli/rethis/shared/request/hash/HSetExOption$Expiration {
+	public synthetic fun <init> (JLkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getMilliseconds-UwyO8pc ()J
+}
+
+public final class eu/vendeli/rethis/shared/request/hash/HSetExOption$Expiration$PxAt : eu/vendeli/rethis/shared/request/hash/HSetExOption$Expiration {
+	public fun <init> (Lkotlin/time/Instant;)V
+	public final fun getUnixTimeMilliseconds ()Lkotlin/time/Instant;
 }
 
 public final class eu/vendeli/rethis/shared/request/json/JsonEntry {
@@ -942,6 +1194,37 @@ public final class eu/vendeli/rethis/shared/request/scripting/ScriptDebugMode : 
 	public static fun values ()[Leu/vendeli/rethis/shared/request/scripting/ScriptDebugMode;
 }
 
+public abstract class eu/vendeli/rethis/shared/request/search/FtProfileQueryType {
+}
+
+public final class eu/vendeli/rethis/shared/request/search/FtProfileQueryType$Aggregate : eu/vendeli/rethis/shared/request/search/FtProfileQueryType {
+	public static final field INSTANCE Leu/vendeli/rethis/shared/request/search/FtProfileQueryType$Aggregate;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class eu/vendeli/rethis/shared/request/search/FtProfileQueryType$Search : eu/vendeli/rethis/shared/request/search/FtProfileQueryType {
+	public static final field INSTANCE Leu/vendeli/rethis/shared/request/search/FtProfileQueryType$Search;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract class eu/vendeli/rethis/shared/request/sentinel/SentinelDebugOption {
+}
+
+public final class eu/vendeli/rethis/shared/request/sentinel/SentinelDebugOption$Other : eu/vendeli/rethis/shared/request/sentinel/SentinelDebugOption {
+	public fun <init> ([Ljava/lang/String;)V
+	public final fun getArgs ()[Ljava/lang/String;
+}
+
+public final class eu/vendeli/rethis/shared/request/sentinel/SentinelDebugOption$Param : eu/vendeli/rethis/shared/request/sentinel/SentinelDebugOption {
+	public fun <init> (Ljava/lang/String;J)V
+	public final fun getName ()Ljava/lang/String;
+	public final fun getValue ()J
+}
+
 public final class eu/vendeli/rethis/shared/request/sentinel/SentinelSimulateFailureMode : java/lang/Enum {
 	public static final field CRASH_AFTER_ELECTION Leu/vendeli/rethis/shared/request/sentinel/SentinelSimulateFailureMode;
 	public static final field CRASH_AFTER_PROMOTION Leu/vendeli/rethis/shared/request/sentinel/SentinelSimulateFailureMode;
@@ -950,6 +1233,63 @@ public final class eu/vendeli/rethis/shared/request/sentinel/SentinelSimulateFai
 	public fun toString ()Ljava/lang/String;
 	public static fun valueOf (Ljava/lang/String;)Leu/vendeli/rethis/shared/request/sentinel/SentinelSimulateFailureMode;
 	public static fun values ()[Leu/vendeli/rethis/shared/request/sentinel/SentinelSimulateFailureMode;
+}
+
+public abstract class eu/vendeli/rethis/shared/request/server/CommandListFilter {
+}
+
+public final class eu/vendeli/rethis/shared/request/server/CommandListFilter$AclCat : eu/vendeli/rethis/shared/request/server/CommandListFilter {
+	public fun <init> (Ljava/lang/String;)V
+	public final fun getCategory ()Ljava/lang/String;
+}
+
+public final class eu/vendeli/rethis/shared/request/server/CommandListFilter$Module : eu/vendeli/rethis/shared/request/server/CommandListFilter {
+	public fun <init> (Ljava/lang/String;)V
+	public final fun getName ()Ljava/lang/String;
+}
+
+public final class eu/vendeli/rethis/shared/request/server/CommandListFilter$Pattern : eu/vendeli/rethis/shared/request/server/CommandListFilter {
+	public fun <init> (Ljava/lang/String;)V
+	public final fun getPattern ()Ljava/lang/String;
+}
+
+public abstract class eu/vendeli/rethis/shared/request/server/DebugOption {
+}
+
+public final class eu/vendeli/rethis/shared/request/server/DebugOption$Object_ : eu/vendeli/rethis/shared/request/server/DebugOption {
+	public fun <init> (Ljava/lang/String;)V
+	public final fun getKey ()Ljava/lang/String;
+}
+
+public final class eu/vendeli/rethis/shared/request/server/DebugOption$Other : eu/vendeli/rethis/shared/request/server/DebugOption {
+	public fun <init> ([Ljava/lang/String;)V
+	public final fun getArgs ()[Ljava/lang/String;
+}
+
+public final class eu/vendeli/rethis/shared/request/server/DebugOption$QuicklistPackedThreshold : eu/vendeli/rethis/shared/request/server/DebugOption {
+	public fun <init> (J)V
+	public final fun getBytes ()J
+}
+
+public final class eu/vendeli/rethis/shared/request/server/DebugOption$Sdslen : eu/vendeli/rethis/shared/request/server/DebugOption {
+	public fun <init> (Ljava/lang/String;)V
+	public final fun getKey ()Ljava/lang/String;
+}
+
+public final class eu/vendeli/rethis/shared/request/server/DebugOption$SetActiveExpire : eu/vendeli/rethis/shared/request/server/DebugOption {
+	public fun <init> (J)V
+	public final fun getEnabled ()J
+}
+
+public final class eu/vendeli/rethis/shared/request/server/DebugOption$Sleep : eu/vendeli/rethis/shared/request/server/DebugOption {
+	public fun <init> (D)V
+	public final fun getSeconds ()D
+}
+
+public final class eu/vendeli/rethis/shared/request/server/DebugOption$StringmatchLen : eu/vendeli/rethis/shared/request/server/DebugOption {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
+	public final fun getPattern ()Ljava/lang/String;
+	public final fun getTarget ()Ljava/lang/String;
 }
 
 public abstract class eu/vendeli/rethis/shared/request/server/FailoverOptions {
@@ -973,6 +1313,24 @@ public final class eu/vendeli/rethis/shared/request/server/FailoverOptions$To : 
 	public final fun getForce ()Z
 	public final fun getHost ()Ljava/lang/String;
 	public final fun getPort ()J
+}
+
+public abstract class eu/vendeli/rethis/shared/request/server/HotkeysStartOption {
+}
+
+public final class eu/vendeli/rethis/shared/request/server/HotkeysStartOption$Count : eu/vendeli/rethis/shared/request/server/HotkeysStartOption {
+	public fun <init> (J)V
+	public final fun getK ()J
+}
+
+public final class eu/vendeli/rethis/shared/request/server/HotkeysStartOption$Duration : eu/vendeli/rethis/shared/request/server/HotkeysStartOption {
+	public fun <init> (J)V
+	public final fun getSeconds ()J
+}
+
+public final class eu/vendeli/rethis/shared/request/server/HotkeysStartOption$Sample : eu/vendeli/rethis/shared/request/server/HotkeysStartOption {
+	public fun <init> (J)V
+	public final fun getRatio ()J
 }
 
 public abstract class eu/vendeli/rethis/shared/request/server/ModuleOption {
@@ -1022,6 +1380,34 @@ public final class eu/vendeli/rethis/shared/request/server/SaveSelector$SAVE : e
 	public fun toString ()Ljava/lang/String;
 }
 
+public abstract class eu/vendeli/rethis/shared/request/server/SflushOption {
+}
+
+public final class eu/vendeli/rethis/shared/request/server/SflushOption$Async : eu/vendeli/rethis/shared/request/server/SflushOption {
+	public static final field INSTANCE Leu/vendeli/rethis/shared/request/server/SflushOption$Async;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class eu/vendeli/rethis/shared/request/server/SflushOption$Other : eu/vendeli/rethis/shared/request/server/SflushOption {
+	public fun <init> ([Ljava/lang/String;)V
+	public final fun getArgs ()[Ljava/lang/String;
+}
+
+public final class eu/vendeli/rethis/shared/request/server/SflushOption$SlotRange : eu/vendeli/rethis/shared/request/server/SflushOption {
+	public fun <init> (JJ)V
+	public final fun getEndSlot ()J
+	public final fun getStartSlot ()J
+}
+
+public final class eu/vendeli/rethis/shared/request/server/SflushOption$Sync : eu/vendeli/rethis/shared/request/server/SflushOption {
+	public static final field INSTANCE Leu/vendeli/rethis/shared/request/server/SflushOption$Sync;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
 public abstract class eu/vendeli/rethis/shared/request/server/ShutdownOptions {
 }
 
@@ -1044,6 +1430,20 @@ public final class eu/vendeli/rethis/shared/request/server/ShutdownOptions$NOW :
 	public fun equals (Ljava/lang/Object;)Z
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
+}
+
+public abstract class eu/vendeli/rethis/shared/request/server/TrimSlotsOption {
+}
+
+public final class eu/vendeli/rethis/shared/request/server/TrimSlotsOption$Other : eu/vendeli/rethis/shared/request/server/TrimSlotsOption {
+	public fun <init> ([Ljava/lang/String;)V
+	public final fun getArgs ()[Ljava/lang/String;
+}
+
+public final class eu/vendeli/rethis/shared/request/server/TrimSlotsOption$SlotRange : eu/vendeli/rethis/shared/request/server/TrimSlotsOption {
+	public fun <init> (JJ)V
+	public final fun getEndSlot ()J
+	public final fun getStartSlot ()J
 }
 
 public abstract class eu/vendeli/rethis/shared/request/set/SScanOption {
@@ -1216,6 +1616,24 @@ public final class eu/vendeli/rethis/shared/request/stream/XId$LastEntry : eu/ve
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class eu/vendeli/rethis/shared/request/stream/XKeepRefMode : java/lang/Enum {
+	public static final field ACKED Leu/vendeli/rethis/shared/request/stream/XKeepRefMode;
+	public static final field DELREF Leu/vendeli/rethis/shared/request/stream/XKeepRefMode;
+	public static final field KEEPREF Leu/vendeli/rethis/shared/request/stream/XKeepRefMode;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Leu/vendeli/rethis/shared/request/stream/XKeepRefMode;
+	public static fun values ()[Leu/vendeli/rethis/shared/request/stream/XKeepRefMode;
+}
+
+public final class eu/vendeli/rethis/shared/request/stream/XNackMode : java/lang/Enum {
+	public static final field FAIL Leu/vendeli/rethis/shared/request/stream/XNackMode;
+	public static final field FATAL Leu/vendeli/rethis/shared/request/stream/XNackMode;
+	public static final field SILENT Leu/vendeli/rethis/shared/request/stream/XNackMode;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Leu/vendeli/rethis/shared/request/stream/XNackMode;
+	public static fun values ()[Leu/vendeli/rethis/shared/request/stream/XNackMode;
+}
+
 public abstract class eu/vendeli/rethis/shared/request/stream/XOption {
 }
 
@@ -1253,6 +1671,29 @@ public final class eu/vendeli/rethis/shared/request/stream/XReadGroupOption$NoAc
 	public fun equals (Ljava/lang/Object;)Z
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
+}
+
+public abstract class eu/vendeli/rethis/shared/request/string/DelExOption {
+}
+
+public final class eu/vendeli/rethis/shared/request/string/DelExOption$IfDigestEq : eu/vendeli/rethis/shared/request/string/DelExOption {
+	public fun <init> (Ljava/lang/String;)V
+	public final fun getDigest ()Ljava/lang/String;
+}
+
+public final class eu/vendeli/rethis/shared/request/string/DelExOption$IfDigestNe : eu/vendeli/rethis/shared/request/string/DelExOption {
+	public fun <init> (Ljava/lang/String;)V
+	public final fun getDigest ()Ljava/lang/String;
+}
+
+public final class eu/vendeli/rethis/shared/request/string/DelExOption$IfEq : eu/vendeli/rethis/shared/request/string/DelExOption {
+	public fun <init> (Ljava/lang/String;)V
+	public final fun getValue ()Ljava/lang/String;
+}
+
+public final class eu/vendeli/rethis/shared/request/string/DelExOption$IfNe : eu/vendeli/rethis/shared/request/string/DelExOption {
+	public fun <init> (Ljava/lang/String;)V
+	public final fun getValue ()Ljava/lang/String;
 }
 
 public final class eu/vendeli/rethis/shared/request/string/GET : eu/vendeli/rethis/shared/request/string/SetOption {
@@ -1318,6 +1759,56 @@ public final class eu/vendeli/rethis/shared/request/string/LcsMode$LEN : eu/vend
 public abstract class eu/vendeli/rethis/shared/request/string/LcsOptions {
 }
 
+public abstract class eu/vendeli/rethis/shared/request/string/MSetExOption {
+}
+
+public abstract class eu/vendeli/rethis/shared/request/string/MSetExOption$Condition : eu/vendeli/rethis/shared/request/string/MSetExOption {
+}
+
+public final class eu/vendeli/rethis/shared/request/string/MSetExOption$Condition$NX : eu/vendeli/rethis/shared/request/string/MSetExOption$Condition {
+	public static final field INSTANCE Leu/vendeli/rethis/shared/request/string/MSetExOption$Condition$NX;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class eu/vendeli/rethis/shared/request/string/MSetExOption$Condition$XX : eu/vendeli/rethis/shared/request/string/MSetExOption$Condition {
+	public static final field INSTANCE Leu/vendeli/rethis/shared/request/string/MSetExOption$Condition$XX;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract class eu/vendeli/rethis/shared/request/string/MSetExOption$Expiration : eu/vendeli/rethis/shared/request/string/MSetExOption {
+}
+
+public final class eu/vendeli/rethis/shared/request/string/MSetExOption$Expiration$Ex : eu/vendeli/rethis/shared/request/string/MSetExOption$Expiration {
+	public synthetic fun <init> (JLkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getSeconds-UwyO8pc ()J
+}
+
+public final class eu/vendeli/rethis/shared/request/string/MSetExOption$Expiration$ExAt : eu/vendeli/rethis/shared/request/string/MSetExOption$Expiration {
+	public fun <init> (Lkotlin/time/Instant;)V
+	public final fun getUnixTimeSeconds ()Lkotlin/time/Instant;
+}
+
+public final class eu/vendeli/rethis/shared/request/string/MSetExOption$Expiration$KEEPTTL : eu/vendeli/rethis/shared/request/string/MSetExOption$Expiration {
+	public static final field INSTANCE Leu/vendeli/rethis/shared/request/string/MSetExOption$Expiration$KEEPTTL;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class eu/vendeli/rethis/shared/request/string/MSetExOption$Expiration$Px : eu/vendeli/rethis/shared/request/string/MSetExOption$Expiration {
+	public synthetic fun <init> (JLkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getMilliseconds-UwyO8pc ()J
+}
+
+public final class eu/vendeli/rethis/shared/request/string/MSetExOption$Expiration$PxAt : eu/vendeli/rethis/shared/request/string/MSetExOption$Expiration {
+	public fun <init> (Lkotlin/time/Instant;)V
+	public final fun getUnixTimeMilliseconds ()Lkotlin/time/Instant;
+}
+
 public final class eu/vendeli/rethis/shared/request/string/MinMatchLen : eu/vendeli/rethis/shared/request/string/LcsOptions {
 	public fun <init> (J)V
 	public final fun getMinMatchLen ()J
@@ -1371,6 +1862,427 @@ public final class eu/vendeli/rethis/shared/request/string/UpsertMode$XX : eu/ve
 	public fun equals (Ljava/lang/Object;)Z
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
+}
+
+public abstract class eu/vendeli/rethis/shared/request/timeseries/TsAggregator {
+}
+
+public final class eu/vendeli/rethis/shared/request/timeseries/TsAggregator$Avg : eu/vendeli/rethis/shared/request/timeseries/TsAggregator {
+	public static final field INSTANCE Leu/vendeli/rethis/shared/request/timeseries/TsAggregator$Avg;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class eu/vendeli/rethis/shared/request/timeseries/TsAggregator$Count : eu/vendeli/rethis/shared/request/timeseries/TsAggregator {
+	public static final field INSTANCE Leu/vendeli/rethis/shared/request/timeseries/TsAggregator$Count;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class eu/vendeli/rethis/shared/request/timeseries/TsAggregator$CountAll : eu/vendeli/rethis/shared/request/timeseries/TsAggregator {
+	public static final field INSTANCE Leu/vendeli/rethis/shared/request/timeseries/TsAggregator$CountAll;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class eu/vendeli/rethis/shared/request/timeseries/TsAggregator$CountNan : eu/vendeli/rethis/shared/request/timeseries/TsAggregator {
+	public static final field INSTANCE Leu/vendeli/rethis/shared/request/timeseries/TsAggregator$CountNan;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class eu/vendeli/rethis/shared/request/timeseries/TsAggregator$First : eu/vendeli/rethis/shared/request/timeseries/TsAggregator {
+	public static final field INSTANCE Leu/vendeli/rethis/shared/request/timeseries/TsAggregator$First;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class eu/vendeli/rethis/shared/request/timeseries/TsAggregator$Last : eu/vendeli/rethis/shared/request/timeseries/TsAggregator {
+	public static final field INSTANCE Leu/vendeli/rethis/shared/request/timeseries/TsAggregator$Last;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class eu/vendeli/rethis/shared/request/timeseries/TsAggregator$Max : eu/vendeli/rethis/shared/request/timeseries/TsAggregator {
+	public static final field INSTANCE Leu/vendeli/rethis/shared/request/timeseries/TsAggregator$Max;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class eu/vendeli/rethis/shared/request/timeseries/TsAggregator$Min : eu/vendeli/rethis/shared/request/timeseries/TsAggregator {
+	public static final field INSTANCE Leu/vendeli/rethis/shared/request/timeseries/TsAggregator$Min;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class eu/vendeli/rethis/shared/request/timeseries/TsAggregator$Range : eu/vendeli/rethis/shared/request/timeseries/TsAggregator {
+	public static final field INSTANCE Leu/vendeli/rethis/shared/request/timeseries/TsAggregator$Range;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class eu/vendeli/rethis/shared/request/timeseries/TsAggregator$StdP : eu/vendeli/rethis/shared/request/timeseries/TsAggregator {
+	public static final field INSTANCE Leu/vendeli/rethis/shared/request/timeseries/TsAggregator$StdP;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class eu/vendeli/rethis/shared/request/timeseries/TsAggregator$StdS : eu/vendeli/rethis/shared/request/timeseries/TsAggregator {
+	public static final field INSTANCE Leu/vendeli/rethis/shared/request/timeseries/TsAggregator$StdS;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class eu/vendeli/rethis/shared/request/timeseries/TsAggregator$Sum : eu/vendeli/rethis/shared/request/timeseries/TsAggregator {
+	public static final field INSTANCE Leu/vendeli/rethis/shared/request/timeseries/TsAggregator$Sum;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class eu/vendeli/rethis/shared/request/timeseries/TsAggregator$Twa : eu/vendeli/rethis/shared/request/timeseries/TsAggregator {
+	public static final field INSTANCE Leu/vendeli/rethis/shared/request/timeseries/TsAggregator$Twa;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class eu/vendeli/rethis/shared/request/timeseries/TsAggregator$VarP : eu/vendeli/rethis/shared/request/timeseries/TsAggregator {
+	public static final field INSTANCE Leu/vendeli/rethis/shared/request/timeseries/TsAggregator$VarP;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class eu/vendeli/rethis/shared/request/timeseries/TsAggregator$VarS : eu/vendeli/rethis/shared/request/timeseries/TsAggregator {
+	public static final field INSTANCE Leu/vendeli/rethis/shared/request/timeseries/TsAggregator$VarS;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract class eu/vendeli/rethis/shared/request/timeseries/TsBucketTimestamp {
+}
+
+public final class eu/vendeli/rethis/shared/request/timeseries/TsBucketTimestamp$High : eu/vendeli/rethis/shared/request/timeseries/TsBucketTimestamp {
+	public static final field INSTANCE Leu/vendeli/rethis/shared/request/timeseries/TsBucketTimestamp$High;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class eu/vendeli/rethis/shared/request/timeseries/TsBucketTimestamp$Low : eu/vendeli/rethis/shared/request/timeseries/TsBucketTimestamp {
+	public static final field INSTANCE Leu/vendeli/rethis/shared/request/timeseries/TsBucketTimestamp$Low;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class eu/vendeli/rethis/shared/request/timeseries/TsBucketTimestamp$Mid : eu/vendeli/rethis/shared/request/timeseries/TsBucketTimestamp {
+	public static final field INSTANCE Leu/vendeli/rethis/shared/request/timeseries/TsBucketTimestamp$Mid;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract class eu/vendeli/rethis/shared/request/timeseries/TsDuplicatePolicy {
+}
+
+public final class eu/vendeli/rethis/shared/request/timeseries/TsDuplicatePolicy$Block : eu/vendeli/rethis/shared/request/timeseries/TsDuplicatePolicy {
+	public static final field INSTANCE Leu/vendeli/rethis/shared/request/timeseries/TsDuplicatePolicy$Block;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class eu/vendeli/rethis/shared/request/timeseries/TsDuplicatePolicy$First : eu/vendeli/rethis/shared/request/timeseries/TsDuplicatePolicy {
+	public static final field INSTANCE Leu/vendeli/rethis/shared/request/timeseries/TsDuplicatePolicy$First;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class eu/vendeli/rethis/shared/request/timeseries/TsDuplicatePolicy$Last : eu/vendeli/rethis/shared/request/timeseries/TsDuplicatePolicy {
+	public static final field INSTANCE Leu/vendeli/rethis/shared/request/timeseries/TsDuplicatePolicy$Last;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class eu/vendeli/rethis/shared/request/timeseries/TsDuplicatePolicy$Max : eu/vendeli/rethis/shared/request/timeseries/TsDuplicatePolicy {
+	public static final field INSTANCE Leu/vendeli/rethis/shared/request/timeseries/TsDuplicatePolicy$Max;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class eu/vendeli/rethis/shared/request/timeseries/TsDuplicatePolicy$Min : eu/vendeli/rethis/shared/request/timeseries/TsDuplicatePolicy {
+	public static final field INSTANCE Leu/vendeli/rethis/shared/request/timeseries/TsDuplicatePolicy$Min;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class eu/vendeli/rethis/shared/request/timeseries/TsDuplicatePolicy$Sum : eu/vendeli/rethis/shared/request/timeseries/TsDuplicatePolicy {
+	public static final field INSTANCE Leu/vendeli/rethis/shared/request/timeseries/TsDuplicatePolicy$Sum;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract class eu/vendeli/rethis/shared/request/timeseries/TsEncoding {
+}
+
+public final class eu/vendeli/rethis/shared/request/timeseries/TsEncoding$Compressed : eu/vendeli/rethis/shared/request/timeseries/TsEncoding {
+	public static final field INSTANCE Leu/vendeli/rethis/shared/request/timeseries/TsEncoding$Compressed;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class eu/vendeli/rethis/shared/request/timeseries/TsEncoding$Uncompressed : eu/vendeli/rethis/shared/request/timeseries/TsEncoding {
+	public static final field INSTANCE Leu/vendeli/rethis/shared/request/timeseries/TsEncoding$Uncompressed;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class eu/vendeli/rethis/shared/request/timeseries/TsLabel {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;)Leu/vendeli/rethis/shared/request/timeseries/TsLabel;
+	public static synthetic fun copy$default (Leu/vendeli/rethis/shared/request/timeseries/TsLabel;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Leu/vendeli/rethis/shared/request/timeseries/TsLabel;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getLabel ()Ljava/lang/String;
+	public final fun getValue ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract class eu/vendeli/rethis/shared/request/timeseries/TsOnDuplicate {
+}
+
+public final class eu/vendeli/rethis/shared/request/timeseries/TsOnDuplicate$Block : eu/vendeli/rethis/shared/request/timeseries/TsOnDuplicate {
+	public static final field INSTANCE Leu/vendeli/rethis/shared/request/timeseries/TsOnDuplicate$Block;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class eu/vendeli/rethis/shared/request/timeseries/TsOnDuplicate$First : eu/vendeli/rethis/shared/request/timeseries/TsOnDuplicate {
+	public static final field INSTANCE Leu/vendeli/rethis/shared/request/timeseries/TsOnDuplicate$First;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class eu/vendeli/rethis/shared/request/timeseries/TsOnDuplicate$Last : eu/vendeli/rethis/shared/request/timeseries/TsOnDuplicate {
+	public static final field INSTANCE Leu/vendeli/rethis/shared/request/timeseries/TsOnDuplicate$Last;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class eu/vendeli/rethis/shared/request/timeseries/TsOnDuplicate$Max : eu/vendeli/rethis/shared/request/timeseries/TsOnDuplicate {
+	public static final field INSTANCE Leu/vendeli/rethis/shared/request/timeseries/TsOnDuplicate$Max;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class eu/vendeli/rethis/shared/request/timeseries/TsOnDuplicate$Min : eu/vendeli/rethis/shared/request/timeseries/TsOnDuplicate {
+	public static final field INSTANCE Leu/vendeli/rethis/shared/request/timeseries/TsOnDuplicate$Min;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class eu/vendeli/rethis/shared/request/timeseries/TsOnDuplicate$Sum : eu/vendeli/rethis/shared/request/timeseries/TsOnDuplicate {
+	public static final field INSTANCE Leu/vendeli/rethis/shared/request/timeseries/TsOnDuplicate$Sum;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class eu/vendeli/rethis/shared/request/timeseries/TsSample {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;D)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()D
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;D)Leu/vendeli/rethis/shared/request/timeseries/TsSample;
+	public static synthetic fun copy$default (Leu/vendeli/rethis/shared/request/timeseries/TsSample;Ljava/lang/String;Ljava/lang/String;DILjava/lang/Object;)Leu/vendeli/rethis/shared/request/timeseries/TsSample;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getKey ()Ljava/lang/String;
+	public final fun getTimestamp ()Ljava/lang/String;
+	public final fun getValue ()D
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class eu/vendeli/rethis/shared/request/timeseries/TsValueRange {
+	public fun <init> (DD)V
+	public final fun component1 ()D
+	public final fun component2 ()D
+	public final fun copy (DD)Leu/vendeli/rethis/shared/request/timeseries/TsValueRange;
+	public static synthetic fun copy$default (Leu/vendeli/rethis/shared/request/timeseries/TsValueRange;DDILjava/lang/Object;)Leu/vendeli/rethis/shared/request/timeseries/TsValueRange;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getMax ()D
+	public final fun getMin ()D
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class eu/vendeli/rethis/shared/request/topk/TopkReserveParams {
+	public fun <init> (JJD)V
+	public final fun getDecay ()D
+	public final fun getDepth ()J
+	public final fun getWidth ()J
+}
+
+public abstract class eu/vendeli/rethis/shared/request/vector/VAddInput {
+}
+
+public final class eu/vendeli/rethis/shared/request/vector/VAddInput$Fp32 : eu/vendeli/rethis/shared/request/vector/VAddInput {
+	public fun <init> ([B)V
+	public final fun getBlob ()[B
+}
+
+public final class eu/vendeli/rethis/shared/request/vector/VAddInput$Values : eu/vendeli/rethis/shared/request/vector/VAddInput {
+	public fun <init> ([D)V
+	public final fun getComponents ()[D
+}
+
+public abstract class eu/vendeli/rethis/shared/request/vector/VAddOption {
+}
+
+public final class eu/vendeli/rethis/shared/request/vector/VAddOption$Cas : eu/vendeli/rethis/shared/request/vector/VAddOption {
+	public static final field INSTANCE Leu/vendeli/rethis/shared/request/vector/VAddOption$Cas;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class eu/vendeli/rethis/shared/request/vector/VAddOption$Ef : eu/vendeli/rethis/shared/request/vector/VAddOption {
+	public fun <init> (J)V
+	public final fun getBuildExpansion ()J
+}
+
+public final class eu/vendeli/rethis/shared/request/vector/VAddOption$MaxConn : eu/vendeli/rethis/shared/request/vector/VAddOption {
+	public fun <init> (J)V
+	public final fun getM ()J
+}
+
+public abstract class eu/vendeli/rethis/shared/request/vector/VAddOption$Quantization : eu/vendeli/rethis/shared/request/vector/VAddOption {
+}
+
+public final class eu/vendeli/rethis/shared/request/vector/VAddOption$Quantization$Bin : eu/vendeli/rethis/shared/request/vector/VAddOption$Quantization {
+	public static final field INSTANCE Leu/vendeli/rethis/shared/request/vector/VAddOption$Quantization$Bin;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class eu/vendeli/rethis/shared/request/vector/VAddOption$Quantization$NoQuant : eu/vendeli/rethis/shared/request/vector/VAddOption$Quantization {
+	public static final field INSTANCE Leu/vendeli/rethis/shared/request/vector/VAddOption$Quantization$NoQuant;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class eu/vendeli/rethis/shared/request/vector/VAddOption$Quantization$Q8 : eu/vendeli/rethis/shared/request/vector/VAddOption$Quantization {
+	public static final field INSTANCE Leu/vendeli/rethis/shared/request/vector/VAddOption$Quantization$Q8;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class eu/vendeli/rethis/shared/request/vector/VAddOption$Reduce : eu/vendeli/rethis/shared/request/vector/VAddOption {
+	public fun <init> (J)V
+	public final fun getDim ()J
+}
+
+public final class eu/vendeli/rethis/shared/request/vector/VAddOption$SetAttr : eu/vendeli/rethis/shared/request/vector/VAddOption {
+	public fun <init> (Ljava/lang/String;)V
+	public final fun getAttributes ()Ljava/lang/String;
+}
+
+public abstract class eu/vendeli/rethis/shared/request/vector/VSimOption {
+}
+
+public final class eu/vendeli/rethis/shared/request/vector/VSimOption$Count : eu/vendeli/rethis/shared/request/vector/VSimOption {
+	public fun <init> (J)V
+	public final fun getN ()J
+}
+
+public final class eu/vendeli/rethis/shared/request/vector/VSimOption$Ef : eu/vendeli/rethis/shared/request/vector/VSimOption {
+	public fun <init> (J)V
+	public final fun getMaxSearchExpansion ()J
+}
+
+public final class eu/vendeli/rethis/shared/request/vector/VSimOption$Epsilon : eu/vendeli/rethis/shared/request/vector/VSimOption {
+	public fun <init> (D)V
+	public final fun getDelta ()D
+}
+
+public final class eu/vendeli/rethis/shared/request/vector/VSimOption$Filter : eu/vendeli/rethis/shared/request/vector/VSimOption {
+	public fun <init> (Ljava/lang/String;)V
+	public final fun getExpression ()Ljava/lang/String;
+}
+
+public final class eu/vendeli/rethis/shared/request/vector/VSimOption$FilterEf : eu/vendeli/rethis/shared/request/vector/VSimOption {
+	public fun <init> (J)V
+	public final fun getMaxFilteringEffort ()J
+}
+
+public final class eu/vendeli/rethis/shared/request/vector/VSimOption$NoThread : eu/vendeli/rethis/shared/request/vector/VSimOption {
+	public static final field INSTANCE Leu/vendeli/rethis/shared/request/vector/VSimOption$NoThread;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class eu/vendeli/rethis/shared/request/vector/VSimOption$Truth : eu/vendeli/rethis/shared/request/vector/VSimOption {
+	public static final field INSTANCE Leu/vendeli/rethis/shared/request/vector/VSimOption$Truth;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class eu/vendeli/rethis/shared/request/vector/VSimOption$WithScores : eu/vendeli/rethis/shared/request/vector/VSimOption {
+	public static final field INSTANCE Leu/vendeli/rethis/shared/request/vector/VSimOption$WithScores;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract class eu/vendeli/rethis/shared/request/vector/VSimSource {
+}
+
+public final class eu/vendeli/rethis/shared/request/vector/VSimSource$Ele : eu/vendeli/rethis/shared/request/vector/VSimSource {
+	public fun <init> (Ljava/lang/String;)V
+	public final fun getElement ()Ljava/lang/String;
+}
+
+public final class eu/vendeli/rethis/shared/request/vector/VSimSource$Fp32 : eu/vendeli/rethis/shared/request/vector/VSimSource {
+	public fun <init> ([B)V
+	public final fun getBlob ()[B
+}
+
+public final class eu/vendeli/rethis/shared/request/vector/VSimSource$Values : eu/vendeli/rethis/shared/request/vector/VSimSource {
+	public fun <init> ([D)V
+	public final fun getComponents ()[D
 }
 
 public final class eu/vendeli/rethis/shared/response/cluster/Cluster {
@@ -1446,6 +2358,19 @@ public final class eu/vendeli/rethis/shared/response/cluster/ShardNode$HealthSta
 	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Leu/vendeli/rethis/shared/response/cluster/ShardNode$HealthStatus;
 	public static fun values ()[Leu/vendeli/rethis/shared/response/cluster/ShardNode$HealthStatus;
+}
+
+public final class eu/vendeli/rethis/shared/response/cms/CmsIncrement {
+	public fun <init> (Ljava/lang/String;J)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()J
+	public final fun copy (Ljava/lang/String;J)Leu/vendeli/rethis/shared/response/cms/CmsIncrement;
+	public static synthetic fun copy$default (Leu/vendeli/rethis/shared/response/cms/CmsIncrement;Ljava/lang/String;JILjava/lang/Object;)Leu/vendeli/rethis/shared/response/cms/CmsIncrement;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getIncrement ()J
+	public final fun getItem ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class eu/vendeli/rethis/shared/response/common/HostAndPort {
@@ -1598,12 +2523,12 @@ public final class eu/vendeli/rethis/shared/response/geospatial/GeoUnit : java/l
 	public static fun values ()[Leu/vendeli/rethis/shared/response/geospatial/GeoUnit;
 }
 
-public final class eu/vendeli/rethis/shared/response/stream/ZMember {
+public final class eu/vendeli/rethis/shared/response/sortedset/ZMember {
 	public fun <init> (Ljava/lang/String;D)V
 	public final fun component1 ()Ljava/lang/String;
 	public final fun component2 ()D
-	public final fun copy (Ljava/lang/String;D)Leu/vendeli/rethis/shared/response/stream/ZMember;
-	public static synthetic fun copy$default (Leu/vendeli/rethis/shared/response/stream/ZMember;Ljava/lang/String;DILjava/lang/Object;)Leu/vendeli/rethis/shared/response/stream/ZMember;
+	public final fun copy (Ljava/lang/String;D)Leu/vendeli/rethis/shared/response/sortedset/ZMember;
+	public static synthetic fun copy$default (Leu/vendeli/rethis/shared/response/sortedset/ZMember;Ljava/lang/String;DILjava/lang/Object;)Leu/vendeli/rethis/shared/response/sortedset/ZMember;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getMember ()Ljava/lang/String;
 	public final fun getScore ()D
@@ -1611,12 +2536,12 @@ public final class eu/vendeli/rethis/shared/response/stream/ZMember {
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class eu/vendeli/rethis/shared/response/stream/ZMemberBA {
+public final class eu/vendeli/rethis/shared/response/sortedset/ZMemberBA {
 	public fun <init> ([BD)V
 	public final fun component1 ()[B
 	public final fun component2 ()D
-	public final fun copy ([BD)Leu/vendeli/rethis/shared/response/stream/ZMemberBA;
-	public static synthetic fun copy$default (Leu/vendeli/rethis/shared/response/stream/ZMemberBA;[BDILjava/lang/Object;)Leu/vendeli/rethis/shared/response/stream/ZMemberBA;
+	public final fun copy ([BD)Leu/vendeli/rethis/shared/response/sortedset/ZMemberBA;
+	public static synthetic fun copy$default (Leu/vendeli/rethis/shared/response/sortedset/ZMemberBA;[BDILjava/lang/Object;)Leu/vendeli/rethis/shared/response/sortedset/ZMemberBA;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getMember ()[B
 	public final fun getScore ()D
@@ -1624,13 +2549,13 @@ public final class eu/vendeli/rethis/shared/response/stream/ZMemberBA {
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class eu/vendeli/rethis/shared/response/stream/ZPopResult {
+public final class eu/vendeli/rethis/shared/response/sortedset/ZPopResult {
 	public fun <init> (Ljava/lang/String;Ljava/lang/String;D)V
 	public final fun component1 ()Ljava/lang/String;
 	public final fun component2 ()Ljava/lang/String;
 	public final fun component3 ()D
-	public final fun copy (Ljava/lang/String;Ljava/lang/String;D)Leu/vendeli/rethis/shared/response/stream/ZPopResult;
-	public static synthetic fun copy$default (Leu/vendeli/rethis/shared/response/stream/ZPopResult;Ljava/lang/String;Ljava/lang/String;DILjava/lang/Object;)Leu/vendeli/rethis/shared/response/stream/ZPopResult;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;D)Leu/vendeli/rethis/shared/response/sortedset/ZPopResult;
+	public static synthetic fun copy$default (Leu/vendeli/rethis/shared/response/sortedset/ZPopResult;Ljava/lang/String;Ljava/lang/String;DILjava/lang/Object;)Leu/vendeli/rethis/shared/response/sortedset/ZPopResult;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getKey ()Ljava/lang/String;
 	public final fun getPopped ()Ljava/lang/String;
@@ -1653,17 +2578,41 @@ public final class eu/vendeli/rethis/shared/response/string/LcsResult {
 }
 
 public final class eu/vendeli/rethis/shared/response/string/LcsResult$LcsMatch {
-	public fun <init> (JJLjava/lang/Long;)V
-	public synthetic fun <init> (JJLjava/lang/Long;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public final fun component1 ()J
-	public final fun component2 ()J
+	public fun <init> (Lkotlin/ranges/LongRange;Lkotlin/ranges/LongRange;Ljava/lang/Long;)V
+	public synthetic fun <init> (Lkotlin/ranges/LongRange;Lkotlin/ranges/LongRange;Ljava/lang/Long;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Lkotlin/ranges/LongRange;
+	public final fun component2 ()Lkotlin/ranges/LongRange;
 	public final fun component3 ()Ljava/lang/Long;
-	public final fun copy (JJLjava/lang/Long;)Leu/vendeli/rethis/shared/response/string/LcsResult$LcsMatch;
-	public static synthetic fun copy$default (Leu/vendeli/rethis/shared/response/string/LcsResult$LcsMatch;JJLjava/lang/Long;ILjava/lang/Object;)Leu/vendeli/rethis/shared/response/string/LcsResult$LcsMatch;
+	public final fun copy (Lkotlin/ranges/LongRange;Lkotlin/ranges/LongRange;Ljava/lang/Long;)Leu/vendeli/rethis/shared/response/string/LcsResult$LcsMatch;
+	public static synthetic fun copy$default (Leu/vendeli/rethis/shared/response/string/LcsResult$LcsMatch;Lkotlin/ranges/LongRange;Lkotlin/ranges/LongRange;Ljava/lang/Long;ILjava/lang/Object;)Leu/vendeli/rethis/shared/response/string/LcsResult$LcsMatch;
 	public fun equals (Ljava/lang/Object;)Z
-	public final fun getEnd ()J
+	public final fun getFirst ()Lkotlin/ranges/LongRange;
 	public final fun getLength ()Ljava/lang/Long;
-	public final fun getStart ()J
+	public final fun getSecond ()Lkotlin/ranges/LongRange;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class eu/vendeli/rethis/shared/response/tdigest/TDigestValue {
+	public fun <init> (D)V
+	public final fun component1 ()D
+	public final fun copy (D)Leu/vendeli/rethis/shared/response/tdigest/TDigestValue;
+	public static synthetic fun copy$default (Leu/vendeli/rethis/shared/response/tdigest/TDigestValue;DILjava/lang/Object;)Leu/vendeli/rethis/shared/response/tdigest/TDigestValue;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getValue ()D
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class eu/vendeli/rethis/shared/response/topk/TopkIncrement {
+	public fun <init> (Ljava/lang/String;J)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()J
+	public final fun copy (Ljava/lang/String;J)Leu/vendeli/rethis/shared/response/topk/TopkIncrement;
+	public static synthetic fun copy$default (Leu/vendeli/rethis/shared/response/topk/TopkIncrement;Ljava/lang/String;JILjava/lang/Object;)Leu/vendeli/rethis/shared/response/topk/TopkIncrement;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getIncrement ()J
+	public final fun getItem ()Ljava/lang/String;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -1714,14 +2663,16 @@ public class eu/vendeli/rethis/shared/types/ClusterException : eu/vendeli/rethis
 }
 
 public final class eu/vendeli/rethis/shared/types/CommandRequest {
-	public fun <init> (Lkotlinx/io/Buffer;Leu/vendeli/rethis/shared/types/RedisOperation;Z)V
-	public synthetic fun <init> (Lkotlinx/io/Buffer;Leu/vendeli/rethis/shared/types/RedisOperation;ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Lkotlinx/io/Buffer;Leu/vendeli/rethis/shared/types/RedisOperation;ZLjava/lang/String;)V
+	public synthetic fun <init> (Lkotlinx/io/Buffer;Leu/vendeli/rethis/shared/types/RedisOperation;ZLjava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Lkotlinx/io/Buffer;
 	public final fun component2 ()Leu/vendeli/rethis/shared/types/RedisOperation;
 	public final fun component3 ()Z
-	public final fun copy (Lkotlinx/io/Buffer;Leu/vendeli/rethis/shared/types/RedisOperation;Z)Leu/vendeli/rethis/shared/types/CommandRequest;
-	public static synthetic fun copy$default (Leu/vendeli/rethis/shared/types/CommandRequest;Lkotlinx/io/Buffer;Leu/vendeli/rethis/shared/types/RedisOperation;ZILjava/lang/Object;)Leu/vendeli/rethis/shared/types/CommandRequest;
+	public final fun component4 ()Ljava/lang/String;
+	public final fun copy (Lkotlinx/io/Buffer;Leu/vendeli/rethis/shared/types/RedisOperation;ZLjava/lang/String;)Leu/vendeli/rethis/shared/types/CommandRequest;
+	public static synthetic fun copy$default (Leu/vendeli/rethis/shared/types/CommandRequest;Lkotlinx/io/Buffer;Leu/vendeli/rethis/shared/types/RedisOperation;ZLjava/lang/String;ILjava/lang/Object;)Leu/vendeli/rethis/shared/types/CommandRequest;
 	public fun equals (Ljava/lang/Object;)Z
+	public final fun getCommand ()Ljava/lang/String;
 	public final fun getComputedSlot ()Ljava/lang/Integer;
 	public final fun getData ()Lkotlinx/io/Buffer;
 	public final fun getOperation ()Leu/vendeli/rethis/shared/types/RedisOperation;
@@ -1729,6 +2680,14 @@ public final class eu/vendeli/rethis/shared/types/CommandRequest {
 	public final fun isBlocking ()Z
 	public fun toString ()Ljava/lang/String;
 	public final fun withSlot (I)Leu/vendeli/rethis/shared/types/CommandRequest;
+}
+
+public final class eu/vendeli/rethis/shared/types/CommandTimeoutException : eu/vendeli/rethis/shared/types/ReThisException {
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/String;Ljava/lang/Throwable;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/Throwable;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun getCause ()Ljava/lang/Throwable;
+	public fun getMessage ()Ljava/lang/String;
 }
 
 public final class eu/vendeli/rethis/shared/types/CrossSlotOperationException : eu/vendeli/rethis/shared/types/ClusterException {
@@ -2043,13 +3002,45 @@ public final class eu/vendeli/rethis/shared/types/VerbatimString : eu/vendeli/re
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class eu/vendeli/rethis/shared/types/stream/XReadGroupMessage {
+	public fun <init> (Ljava/lang/String;Ljava/util/Map;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/util/Map;
+	public final fun copy (Ljava/lang/String;Ljava/util/Map;)Leu/vendeli/rethis/shared/types/stream/XReadGroupMessage;
+	public static synthetic fun copy$default (Leu/vendeli/rethis/shared/types/stream/XReadGroupMessage;Ljava/lang/String;Ljava/util/Map;ILjava/lang/Object;)Leu/vendeli/rethis/shared/types/stream/XReadGroupMessage;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getData ()Ljava/util/Map;
+	public final fun getId ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class eu/vendeli/rethis/shared/types/stream/XReadGroupResponse {
+	public fun <init> (Ljava/lang/String;Ljava/util/List;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/util/List;
+	public final fun copy (Ljava/lang/String;Ljava/util/List;)Leu/vendeli/rethis/shared/types/stream/XReadGroupResponse;
+	public static synthetic fun copy$default (Leu/vendeli/rethis/shared/types/stream/XReadGroupResponse;Ljava/lang/String;Ljava/util/List;ILjava/lang/Object;)Leu/vendeli/rethis/shared/types/stream/XReadGroupResponse;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getMessages ()Ljava/util/List;
+	public final fun getStream ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
 public final class eu/vendeli/rethis/shared/utils/CRC16 {
 	public static final field INSTANCE Leu/vendeli/rethis/shared/utils/CRC16;
 	public final fun lookup ([B)I
+	public final fun slot ([B)I
+}
+
+public final class eu/vendeli/rethis/shared/utils/DoubleParsingKt {
+	public static final fun toRespDouble (Ljava/lang/String;)D
 }
 
 public final class eu/vendeli/rethis/shared/utils/ErrorUtilsKt {
-	public static final fun tryInferCause (Lkotlinx/io/Buffer;Leu/vendeli/rethis/shared/types/RespCode;)Leu/vendeli/rethis/shared/types/ReThisException;
+	public static final fun tryInferCause (Lkotlinx/io/Buffer;Leu/vendeli/rethis/shared/types/RespCode;Ljava/nio/charset/Charset;)Leu/vendeli/rethis/shared/types/ReThisException;
+	public static synthetic fun tryInferCause$default (Lkotlinx/io/Buffer;Leu/vendeli/rethis/shared/types/RespCode;Ljava/nio/charset/Charset;ILjava/lang/Object;)Leu/vendeli/rethis/shared/types/ReThisException;
 }
 
 public final class eu/vendeli/rethis/shared/utils/ParsingUtilsKt {
@@ -2057,7 +3048,8 @@ public final class eu/vendeli/rethis/shared/utils/ParsingUtilsKt {
 	public static final field BYTE_9 B
 	public static final field BYTE_MINUS B
 	public static final fun getEMPTY_BUFFER ()Lkotlinx/io/Buffer;
-	public static final fun readCompleteResponseInto (Lio/ktor/utils/io/ByteReadChannel;Lkotlinx/io/Buffer;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static final fun readCompleteResponseInto (Lio/ktor/utils/io/ByteReadChannel;Lkotlinx/io/Buffer;Lkotlinx/io/Buffer;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun readCompleteResponseInto$default (Lio/ktor/utils/io/ByteReadChannel;Lkotlinx/io/Buffer;Lkotlinx/io/Buffer;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
 }
 
 public final class eu/vendeli/rethis/shared/utils/RTypeUtilsKt {
@@ -2077,5 +3069,21 @@ public final class eu/vendeli/rethis/shared/utils/SlotUtilsKt {
 public final class eu/vendeli/rethis/shared/utils/StringCodec {
 	public static final field INSTANCE Leu/vendeli/rethis/shared/utils/StringCodec;
 	public final fun decodeToString (Ljava/nio/charset/Charset;Lkotlinx/io/Buffer;)Ljava/lang/String;
+}
+
+public final class eu/vendeli/rethis/utils/BufferExtUtilsKt {
+	public static final fun writeArrayHeader (Lkotlinx/io/Buffer;I)V
+	public static final fun writeBooleanArg (Lkotlinx/io/Buffer;ZLjava/nio/charset/Charset;)V
+	public static final fun writeBulkString (Lkotlinx/io/Buffer;[B)V
+	public static final fun writeByteArrayArg (Lkotlinx/io/Buffer;[BLjava/nio/charset/Charset;)V
+	public static final fun writeDoubleArg (Lkotlinx/io/Buffer;DLjava/nio/charset/Charset;)V
+	public static final fun writeIntArg (Lkotlinx/io/Buffer;ILjava/nio/charset/Charset;)V
+	public static final fun writeLongArg (Lkotlinx/io/Buffer;JLjava/nio/charset/Charset;)V
+	public static final fun writeStringArg (Lkotlinx/io/Buffer;Ljava/lang/String;Ljava/nio/charset/Charset;)V
+}
+
+public final class eu/vendeli/rethis/utils/SharedCommonUtilsKt {
+	public static final fun parseCode (Lkotlinx/io/Buffer;Leu/vendeli/rethis/shared/types/RespCode;)Leu/vendeli/rethis/shared/types/RespCode;
+	public static final fun skipNullAggregateHeader (Lkotlinx/io/Buffer;)Z
 }
 

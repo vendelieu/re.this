@@ -25,7 +25,7 @@ object BulkStringDecoder : ResponseDecoder<String> {
     }
 
     fun decodeNullable(input: Buffer, charset: Charset, code: RespCode? = null): String? {
-        if (input == EMPTY_BUFFER) return ""
+        if (input == EMPTY_BUFFER) return null
         if (code == null) input.resolveToken(RespCode.BULK)
 
         val size = input.readDecimalCrlf().toInt()

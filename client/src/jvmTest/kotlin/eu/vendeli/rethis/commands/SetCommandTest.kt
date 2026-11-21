@@ -4,6 +4,7 @@ import eu.vendeli.rethis.ReThisTestCtx
 import eu.vendeli.rethis.command.set.*
 import eu.vendeli.rethis.shared.request.set.SScanOption
 import eu.vendeli.rethis.shared.response.common.ScanResult
+import eu.vendeli.rethis.types.common.RespVer
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.shouldBe
 
@@ -89,5 +90,35 @@ class SetCommandTest : ReThisTestCtx() {
         client.sAdd("testSet37", "testValue1", "testValue2")
 
         client.sMisMember("testSet37", "testValue1", "testValue2", "testValue3") shouldBe listOf(true, true, false)
+    }
+
+    @Test
+    suspend fun `test SRANDMEMBER returns null for a missing key on RESP3`() {
+        client.sRandMember("missingRandKey") shouldBe null
+        client.sRandMemberBA("missingRandKey") shouldBe null
+    }
+
+    @Test
+    suspend fun `test SRANDMEMBER returns null for a missing key on RESP2`() {
+        val resp2 = createClient(protocol = RespVer.V2)
+        try {
+            resp2.sRandMember("missingRandKey2") shouldBe null
+            resp2.sRandMemberBA("missingRandKey2") shouldBe null
+        } finally {
+            resp2.close()
+        }
+    }
+
+    @Test
+    suspend fun `test SRANDMEMBER and SPOP with count on a missing key`() {
+        client.sRandMemberCount("missingCountKey", 2) shouldBe emptyList()
+        client.sPopCount("missingCountKey", 2) shouldBe emptySet()
+        val resp2 = createClient(protocol = RespVer.V2)
+        try {
+            resp2.sRandMemberCount("missingCountKey2", 2) shouldBe emptyList()
+            resp2.sPopCount("missingCountKey2", 2) shouldBe emptySet()
+        } finally {
+            resp2.close()
+        }
     }
 }

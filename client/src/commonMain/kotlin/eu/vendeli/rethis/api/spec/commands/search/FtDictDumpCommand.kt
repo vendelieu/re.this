@@ -6,7 +6,7 @@ import eu.vendeli.rethis.shared.types.RedisCommandSpec
 import eu.vendeli.rethis.shared.types.RedisOperation
 import eu.vendeli.rethis.shared.types.RespCode
 
-@RedisCommand("FT.DICTDUMP", RedisOperation.READ, [RespCode.ARRAY])
-fun interface FtDictDumpCommand : RedisCommandSpec<List<String>> {
+@RedisCommand("FT.DICTDUMP", RedisOperation.READ, [RespCode.ARRAY, RespCode.SET])
+fun interface FtDictDumpCommand : RedisCommandSpec<Set<String>> {
     suspend fun encode(dict: String): CommandRequest
 }

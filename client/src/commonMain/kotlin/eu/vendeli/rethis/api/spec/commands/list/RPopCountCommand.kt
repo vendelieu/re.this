@@ -6,10 +6,10 @@ import eu.vendeli.rethis.shared.types.RedisCommandSpec
 import eu.vendeli.rethis.shared.types.RedisOperation
 import eu.vendeli.rethis.shared.types.RespCode
 
-@RedisCommand("RPOP", RedisOperation.WRITE, [RespCode.ARRAY])
+@RedisCommand("RPOP", RedisOperation.WRITE, [RespCode.ARRAY, RespCode.NULL])
 fun interface RPopCountCommand : RedisCommandSpec<List<String>> {
     suspend fun encode(
         key: String,
-        count: Long?,
+        count: Long,
     ): CommandRequest
 }

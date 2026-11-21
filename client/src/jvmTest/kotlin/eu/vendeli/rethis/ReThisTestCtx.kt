@@ -12,6 +12,7 @@ import io.kotest.core.test.config.DefaultTestConfig
 import kotlinx.coroutines.runBlocking
 import kotlinx.io.Buffer
 import org.testcontainers.utility.DockerImageName
+import java.util.concurrent.CopyOnWriteArrayList
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
@@ -50,6 +51,9 @@ open class ReThisTestCtx : TestCtx() {
         PingCommandCodec.encode(Charsets.UTF_8, null),
     )
 
+    // Every unclosed client keeps its selector thread busy, which starves the clients of the specs that follow.
+    private val createdClients = CopyOnWriteArrayList<ReThis>()
+
     protected fun createClient(
         host: String = redis.host,
         port: Int = redis.firstMappedPort,
@@ -58,12 +62,13 @@ open class ReThisTestCtx : TestCtx() {
     ): ReThis = ReThis(host, port, protocol) {
         DEFAULT_SIMPLE_TEST_CFG()
         cfg()
-    }
+    }.also { createdClients += it }
 
     @AfterAll
     fun cleanup() = runBlocking {
         runCatching { client.flushAll(FlushType.SYNC) }
         runCatching { client.close() }
+        createdClients.forEach { runCatching { it.close() } }
     }
 
     companion object {

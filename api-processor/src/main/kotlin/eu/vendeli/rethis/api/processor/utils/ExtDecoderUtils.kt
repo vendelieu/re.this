@@ -35,7 +35,7 @@ internal fun CodeBlock.Builder.writeDecoder(code: RespCode) {
             addImport(decoder)
 
             val baseStatement = if (baseArg.isNullable) DECODE_STRING_N else DECODE_STRING
-            addStatement(baseStatement, decoder.name)
+            addStatement(nullArrayGuard(respCode) + baseStatement, decoder.name)
         }
 
         code.isSimple -> writePlainDecoder(code)
@@ -48,6 +48,16 @@ internal fun CodeBlock.Builder.writeDecoder(code: RespCode) {
     }
 
     endControlFlow()
+}
+
+/**
+ * A RESP2 null array (`*-1`) reaches the ARRAY branch, while RESP3 sends a `_` that reaches the NULL branch:
+ * when the spec declares NULL both must yield null, otherwise the decoder keeps its empty collection.
+ */
+private fun CodeBlock.Builder.nullArrayGuard(respCode: List<RespCode>): String {
+    if (RespCode.NULL !in respCode) return ""
+    addImport("eu.vendeli.rethis.utils.skipNullAggregateHeader")
+    return "if (input.skipNullAggregateHeader()) null else "
 }
 
 private fun RespCode.isString() = this == RespCode.SIMPLE_STRING || this == RespCode.BULK
@@ -86,7 +96,8 @@ internal fun CodeBlock.Builder.writePlainDecoder(code: RespCode) {
 
         code.isString() && isReturnDouble -> {
             if (statement[10] == DECODE_STRING_N[10]) statement.append("?")
-            statement.append(".toDouble()")
+            statement.append(".toRespDouble()")
+            addImport("eu.vendeli.rethis.shared.utils.toRespDouble")
         }
     }
 
@@ -113,7 +124,7 @@ internal fun CodeBlock.Builder.writeCollectionDecoder(code: RespCode) {
         ?: throw ReThisException("Unsupported type for collection decoder: $argument [${currName()}]")
     addImport(decoder)
 
-    addStatement(baseStatement, decoder.name)
+    addStatement(if (code == RespCode.ARRAY) nullArrayGuard(respCode) + baseStatement else baseStatement, decoder.name)
 }
 
 internal fun CodeBlock.Builder.writeMapDecoder() {

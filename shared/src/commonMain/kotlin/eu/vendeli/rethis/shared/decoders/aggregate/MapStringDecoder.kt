@@ -20,8 +20,8 @@ object MapStringDecoder : ResponseDecoder<Map<String, String>> {
     ): Map<String, String> {
         if (input == EMPTY_BUFFER) return emptyMap()
         val code = code ?: RespCode.fromCode(input.readByte())
-        if (code != RespCode.MAP && code != RespCode.ARRAY) throw ResponseParsingException(
-            "Invalid response structure, expected map token, given $code", input.tryInferCause(code),
+        if (code != RespCode.MAP && code != RespCode.ARRAY) throw input.tryInferCause(code, charset) ?: ResponseParsingException(
+            "Invalid response structure, expected map token, given $code",
         )
 
         val size = input.readDecimalCrlf().toInt().let { if (code == RespCode.MAP) it else it / 2 }
@@ -43,8 +43,8 @@ object MapStringDecoder : ResponseDecoder<Map<String, String>> {
     ): Map<String, String?> {
         if (input == EMPTY_BUFFER) return emptyMap()
         val code = code ?: RespCode.fromCode(input.readByte())
-        if (code != RespCode.MAP && code != RespCode.ARRAY) throw ResponseParsingException(
-            "Invalid response structure, expected map token, given $code", input.tryInferCause(code),
+        if (code != RespCode.MAP && code != RespCode.ARRAY) throw input.tryInferCause(code, charset) ?: ResponseParsingException(
+            "Invalid response structure, expected map token, given $code",
         )
 
         val size = input.readDecimalCrlf().toInt().let { if (code == RespCode.MAP) it else it / 2 }
@@ -54,7 +54,7 @@ object MapStringDecoder : ResponseDecoder<Map<String, String>> {
             repeat(size) {
                 val key = BulkStringDecoder.decodeNullable(input, charset) ?: throw ResponseParsingException(
                     "Invalid response structure, expected string token got null",
-                    input.tryInferCause(code),
+                    input.tryInferCause(code, charset),
                 )
                 val value = decodeNullableStringElement(input, charset)
                 put(key, value)

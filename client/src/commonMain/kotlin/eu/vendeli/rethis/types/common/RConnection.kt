@@ -8,6 +8,8 @@ import io.ktor.network.sockets.*
 import io.ktor.util.logging.*
 import io.ktor.utils.io.*
 import kotlinx.coroutines.TimeoutCancellationException
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.withTimeout
 import kotlinx.io.Buffer
 import kotlinx.io.InternalIoApi
@@ -61,7 +63,7 @@ data class RConnection(
             "Request:\n${payload.joinToString("\n") { it.copy().readString() }}"
         }
         for (request in payload) {
-            output.writeBuffer(request)
+            output.writeBuffer(request.copy())
         }
         output.flush()
 
@@ -88,6 +90,8 @@ data class RConnection(
         try {
             withTimeout(timeout) { block() }
         } catch (e: TimeoutCancellationException) {
+            // an enclosing deadline also surfaces here: keep its cancellation instead of masking it as a command timeout
+            currentCoroutineContext().ensureActive()
             throw CommandTimeoutException("Command timed out after $timeout", e)
         }
     }

@@ -10,7 +10,7 @@ import eu.vendeli.rethis.shared.types.RedisOperation
 import eu.vendeli.rethis.shared.types.RespCode
 
 @RedisCommand("HGETEX", RedisOperation.WRITE, [RespCode.ARRAY])
-fun interface HGetExCommand : RedisCommandSpec<List<String>> {
+fun interface HGetExCommand : RedisCommandSpec<List<String?>> {
     suspend fun encode(
         key: String,
         expiration: HGetExOption?,

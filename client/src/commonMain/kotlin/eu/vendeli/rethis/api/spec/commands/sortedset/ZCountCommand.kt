@@ -10,7 +10,7 @@ import eu.vendeli.rethis.shared.types.RespCode
 fun interface ZCountCommand : RedisCommandSpec<Long> {
     suspend fun encode(
         key: String,
-        min: Double,
-        max: Double,
+        min: String,
+        max: String,
     ): CommandRequest
 }

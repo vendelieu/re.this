@@ -36,20 +36,21 @@ object LcsDecoder : ResponseDecoder<LcsResult> {
         return LcsResult(processMatches(matches), totalLength)
     }
 
-    private fun processMatches(matchesArr: List<Any>): List<List<LcsResult.LcsMatch>> =
-        matchesArr.map { matchGroup ->
-            val length = matchGroup.safeCast<RArray>()?.value?.getOrNull(2)?.let { match ->
-                match.safeCast<Int64>()?.value
-            }
-            matchGroup.cast<RArray>().value.dropLast(1).map { match ->
-                if (match is RArray) {
-                    val range = match.value
-                    val start = range[0].unwrap<Long>() ?: 0L
-                    val end = range[1].unwrap<Long>() ?: 0L
-                    LcsResult.LcsMatch(start = start, end = end, length = length)
-                } else {
-                    processingException { "Unexpected match type" }
-                }
-            }
-        }
+    private fun processMatches(matchesArr: List<Any>): List<LcsResult.LcsMatch> = matchesArr.map { matchGroup ->
+        val parts = matchGroup.safeCast<RArray>()?.value ?: processingException { "Unexpected match type" }
+        if (parts.size < 2) processingException { "Unexpected match size ${parts.size}" }
+
+        LcsResult.LcsMatch(
+            first = parts[0].toRange(),
+            second = parts[1].toRange(),
+            length = parts.getOrNull(2)?.safeCast<Int64>()?.value,
+        )
+    }
+
+    private fun Any.toRange(): LongRange {
+        val bounds = safeCast<RArray>()?.value ?: processingException { "Unexpected match range type" }
+        if (bounds.size != 2) processingException { "Unexpected match range size ${bounds.size}" }
+
+        return (bounds[0].unwrap<Long>() ?: 0L)..(bounds[1].unwrap<Long>() ?: 0L)
+    }
 }

@@ -15,8 +15,16 @@ import kotlin.native.Platform.getAvailableProcessors
 @OptIn(ExperimentalNativeApi::class)
 private val parallelismLimit = maxOf(getAvailableProcessors(), 64)
 
+/**
+ * Created once and shared by every client in the process, so the thread limit holds no matter how many clients
+ * and pools are created. It is intentionally never closed: no single client owns it.
+ */
 @OptIn(DelicateCoroutinesApi::class)
+private val ioDispatcher: CoroutineDispatcher by lazy {
+    newFixedThreadPoolContext(nThreads = parallelismLimit, name = "IO")
+}
+
 actual val Dispatchers.IO_OR_UNCONFINED: CoroutineDispatcher
-    get() = newFixedThreadPoolContext(nThreads = parallelismLimit, name = "IO")
+    get() = ioDispatcher
 
 actual fun <T> coRunBlocking(block: suspend CoroutineScope.() -> T) = runBlocking(block = block)

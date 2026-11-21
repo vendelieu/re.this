@@ -15,6 +15,6 @@ import eu.vendeli.rethis.shared.types.RespCode
 fun interface TDigestByRevRankCommand : RedisCommandSpec<RType> {
     suspend fun encode(
         key: String,
-        @RedisOption.Name("reverse_rank") vararg reverseRank: Double,
+        @RedisOption.Name("reverse_rank") vararg reverseRank: Long,
     ): CommandRequest
 }

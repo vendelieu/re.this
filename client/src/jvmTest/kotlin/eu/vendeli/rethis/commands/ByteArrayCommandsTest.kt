@@ -100,9 +100,12 @@ class ByteArrayCommandsTest : ReThisTestCtx() {
     @Test
     suspend fun `test LMOVE BA command`() {
         client.lPush("baListKey3", "listValue3")
-        client
-            .lMoveBA("baListKey3", "baListKey4", MoveDirection.LEFT, MoveDirection.LEFT)
-            .decodeToString() shouldBe "listValue3"
+        client.lMoveBA(
+            "baListKey3",
+            "baListKey4",
+            MoveDirection.LEFT,
+            MoveDirection.LEFT,
+        ) shouldDecodeToString "listValue3"
     }
 
     @Test
@@ -128,7 +131,7 @@ class ByteArrayCommandsTest : ReThisTestCtx() {
     @Test
     suspend fun `test SRANDMEMBER BA command`() {
         client.sAdd("baSetKey2", "setValue2")
-        client.sRandMemberBA("baSetKey2").decodeToString() shouldBe "setValue2"
+        client.sRandMemberBA("baSetKey2") shouldDecodeToString "setValue2"
     }
 
     // ==================== Sorted Set Commands ====================
@@ -143,6 +146,6 @@ class ByteArrayCommandsTest : ReThisTestCtx() {
     @Test
     suspend fun `test ZRANDMEMBER BA command`() {
         client.zAdd("baZSetKey2", ZMember("zsetValue2", 1.0))
-        client.zRandMemberBA("baZSetKey2").decodeToString() shouldBe "zsetValue2"
+        client.zRandMemberBA("baZSetKey2") shouldDecodeToString "zsetValue2"
     }
 }

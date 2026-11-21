@@ -24,6 +24,9 @@ autoservice-annotations = "1.1.1"
 autoservice-ksp = "1.2.0"
 dotenv-kotlin = "6.5.1"
 
+# Commit of vendelieu/redis-spec the KSP processor downloads output/spec.json from (api-processor/build.gradle.kts).
+redis-spec = "9bf79d7541198326e0fda8ddc2b4f676359cf2d1"
+
 # Security pins: forced on every configuration by buildSrc/src/main/kotlin/security-pins.gradle.kts.
 # Any library named `pin-*` below is pinned to its version; any version named `npm-*` becomes a Yarn
 # resolution for the Kotlin/JS toolchain. Bump these (Renovate does) instead of editing build scripts.

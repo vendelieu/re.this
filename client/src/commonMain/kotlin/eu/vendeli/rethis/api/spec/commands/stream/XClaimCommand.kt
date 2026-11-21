@@ -6,6 +6,10 @@ import eu.vendeli.rethis.shared.annotations.RedisOption
 import eu.vendeli.rethis.shared.request.stream.XClaimOption
 import eu.vendeli.rethis.shared.types.*
 
+/**
+ * @param minIdleTime minimum idle time of a pending entry, in milliseconds.
+ * @param idle `IDLE` value, in milliseconds.
+ */
 @RedisCommand(
     "XCLAIM",
     RedisOperation.WRITE,

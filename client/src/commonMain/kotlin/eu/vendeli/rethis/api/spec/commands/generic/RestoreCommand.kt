@@ -8,6 +8,9 @@ import eu.vendeli.rethis.shared.types.RedisCommandSpec
 import eu.vendeli.rethis.shared.types.RedisOperation
 import eu.vendeli.rethis.shared.types.RespCode
 
+/**
+ * @param ttl time to live in milliseconds (a unix timestamp in milliseconds with `ABSTTL`); `0` means no expiry.
+ */
 @RedisCommand("RESTORE", RedisOperation.WRITE, [RespCode.SIMPLE_STRING])
 fun interface RestoreCommand : RedisCommandSpec<Boolean> {
     suspend fun encode(

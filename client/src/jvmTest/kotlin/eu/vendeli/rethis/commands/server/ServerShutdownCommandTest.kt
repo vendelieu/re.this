@@ -18,9 +18,12 @@ class ServerShutdownCommandTest : AnnotationSpec() {
         try {
             container.start()
             val client = ReThis(container.host, container.firstMappedPort)
-
-            shouldThrow<RespUnexpectedEOF> {
-                client.shutdown(SaveSelector.NOSAVE).shouldBeNull()
+            try {
+                shouldThrow<RespUnexpectedEOF> {
+                    client.shutdown(SaveSelector.NOSAVE).shouldBeNull()
+                }
+            } finally {
+                client.close()
             }
         } finally {
             runCatching { container.stop() }
