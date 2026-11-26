@@ -1,9 +1,9 @@
 package eu.vendeli.rethis.core
 
+import eu.vendeli.rethis.codecs.cluster.ReadOnlyCommandCodec
 import eu.vendeli.rethis.codecs.connection.AuthCommandCodec
 import eu.vendeli.rethis.codecs.connection.ClientSetNameCommandCodec
 import eu.vendeli.rethis.codecs.connection.HelloCommandCodec
-import eu.vendeli.rethis.codecs.cluster.ReadOnlyCommandCodec
 import eu.vendeli.rethis.codecs.connection.SelectCommandCodec
 import eu.vendeli.rethis.configuration.ClusterConfiguration
 import eu.vendeli.rethis.configuration.ReThisConfiguration
@@ -21,6 +21,7 @@ import io.ktor.network.sockets.*
 import io.ktor.network.tls.*
 import io.ktor.util.logging.*
 import io.ktor.utils.io.charsets.*
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -55,8 +56,9 @@ internal class ConnectionFactory(
         }
 
         var socket: Socket? = null
+        var connection: RConnection? = null
         try {
-            socket = aSocket(selector)
+            val tcpSocket = aSocket(selector)
                 .tcp()
                 .connect(address) {
                     cfg.socket.run {
@@ -65,17 +67,19 @@ internal class ConnectionFactory(
                         this@connect.keepAlive = keepAlive
                         this@connect.noDelay = noDelay
                     }
-                }.let { s ->
-                    cfg.tls?.let { s.tls(selector.coroutineContext, it.withServerName(address)) } ?: s
                 }
-            val conn = socket.rConnection()
+            socket = tcpSocket
+            val connectedSocket = cfg.tls?.let { tcpSocket.tls(selector.coroutineContext, it.withServerName(address)) }
+                ?: tcpSocket
+            socket = connectedSocket
+            val conn = connectedSocket.rConnection()
+            connection = conn
             prepareConnection(conn)
             return conn
         } catch (e: Throwable) {
-            // Cancellation (e.g. enclosing withTimeout) used to drop the half-built
-            // socket on the floor and only release the permit on GC, eventually
-            // starving the pool / hitting Redis maxclients.
-            socket?.runCatching { dispose() }
+            runCatching {
+                if (connection == null) socket?.dispose() else closeConnection(connection)
+            }
             connections.release()
             throw e
         }
@@ -144,7 +148,16 @@ internal class ConnectionFactory(
         connections.runCatching { release() }.onFailure {
             logger.debug("Failed to release connection", it)
         }
-        conn.socket.dispose()
+        closeConnection(conn)
+    }
+
+    private fun closeConnection(conn: RConnection) {
+        try {
+            // Ktor closes the TLS transport while its application writer can still be waiting for bytes.
+            if (cfg.tls != null) conn.output.cancel(CancellationException("TLS connection disposed"))
+        } finally {
+            conn.socket.dispose()
+        }
     }
 }
 
